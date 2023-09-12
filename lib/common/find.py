@@ -54,11 +54,11 @@ class Finder:
 
 class File(Finder):
 
-    def __init__(self, path, is_recursive) -> None:
+    def __init__(self, path, is_recursive=True) -> None:
         super().__init__(path, is_recursive)
         
 
-    def by_extention(self, extention:str) -> list:
+    def by_extention(self, extension:str) -> list:
         """
             Find files by extention
         """
@@ -69,14 +69,14 @@ class File(Finder):
 
             for root, file in self.get_files_recursive():
 
-                if file.endswith(f".{extention}"):
+                if file.endswith(f".{extension}"):
                     detected_files.append(f"{root}\{file}")
         
         else:
 
             for file in self.get_files():
 
-                if file.endswith(f".{extention}"):
+                if file.endswith(f".{extension}"):
                     detected_files.append(file)
 
 
@@ -112,7 +112,7 @@ class File(Finder):
 
 class Folder(Finder):
     
-    def __init__(self, path, is_recursive) -> None:
+    def __init__(self, path, is_recursive=True) -> None:
         super().__init__(path, is_recursive)
     
     

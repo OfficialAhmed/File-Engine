@@ -1,17 +1,18 @@
 
-import lib.common.find as Find
-
+import lib.move as Move
+import lib.delete as Delete
+import lib.common.find as Finder
 
 class Common:
 
     def __init__(self) -> None:
-        pass
-
+        self.file_finder = Finder.File
+        self.folder_finder = Finder.Folder
+        self.current_path = "test"
+        
 
 if __name__ == "__main__":
-    path = "test"
-    
-    # print( Find.File(path, False).by_extention("png") )
-    # print( Find.File(path, True).by_name("testing") )
+    c = Common()
 
-    print( Find.Folder(path, True).by_name("New folder") )
+    # Move.File().by_extension("txt")
+    Delete.File().by_extension("png")
