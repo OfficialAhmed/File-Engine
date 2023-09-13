@@ -11,7 +11,10 @@ from main import Common
 
 
 class Engine(Common):
-    """ Parent class for removing. Hold the common data processing between files and folders """
+    """ 
+        Parent class for removing. 
+        Hold the common data processing between files and folders 
+    """
 
     def __init__(self) -> None:
         super().__init__()
@@ -38,22 +41,39 @@ class Engine(Common):
             os.remove(file)
 
 
+
 class File(Engine):
 
     def __init__(self) -> None:
         super().__init__()
 
 
-    def by_extension(self, extension:str):
+    def by_extension(self, extension:str) -> None:
         """
-            Find the files with the provided extension then move them to trash folder
+            Move the files with the provided extension 
         """
 
         for file in self.file_finder(self.current_path).by_extention(extension):  
-            shutil.move(file, self.trash_folder)
+            self.move_file(file, self.trash_folder)
 
-    def by_name(self):
-        pass
+
+    def by_name(self, name:str) -> None:
+        """
+            Move files with exact file name
+        """
+
+        for file in self.file_finder(self.current_path).by_name(name):
+            self.move_file(file, self.trash_folder)
+
+    
+    def by_name_contains(self, name:str) -> None:
+        """
+            Move files contain the provided name
+        """
+
+        for file in self.file_finder(self.current_path).by_name_contains(name):
+            self.move_file(file, self.trash_folder)
+
 
 
 class Folder(Engine):

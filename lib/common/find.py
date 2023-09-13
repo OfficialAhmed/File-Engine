@@ -1,6 +1,6 @@
 """
     ### Classes handle Searching for file/folder if exist(s)
-    
+
 
 """
 
@@ -52,6 +52,7 @@ class Finder:
                 yield (root, folder)
 
 
+
 class File(Finder):
 
     def __init__(self, path, is_recursive=True) -> None:
@@ -85,7 +86,7 @@ class File(Finder):
 
     def by_name(self, name:str) -> list:
         """
-            Find files by name
+            Find files by name preciesly
         """
         
         detected_files = []
@@ -106,7 +107,31 @@ class File(Finder):
             
 
         return detected_files
+    
+    
+    def by_name_contains(self, name:str) -> list:
+        """
+            Find files contain the given name
+        """
         
+        detected_files = []
+
+        if self.is_recursive:    
+
+            for root, file in self.get_files_recursive():
+
+                if name in file:
+                    detected_files.append(f"{root}\{file}")
+        
+        else:
+
+            for file in self.get_files():
+
+                if name in file:
+                    detected_files.append(file)
+            
+
+        return detected_files       
 
 
 
