@@ -143,10 +143,10 @@ class Folder(Finder):
     
     def by_name(self, name:str) -> list:
         """
-            Find files by name
+            Find files by exact name
         """
         
-        detected_files = []
+        detected_folders = []
 
             
         if self.is_recursive:    
@@ -154,15 +154,41 @@ class Folder(Finder):
             for root, folder in self.get_folders_recursive():
 
                 if folder == name:
-                    detected_files.append(f"{root}\{folder}")
+                    detected_folders.append(f"{root}\{folder}")
 
         else:
             
             for folder in self.get_folders():
 
                 if folder == name:
-                    detected_files.append(folder)
+                    detected_folders.append(folder)
 
 
+        return detected_folders
     
-        return detected_files
+
+    def by_name_contains(self, name:str) -> list:
+        """
+            Find files contain the given name
+        """
+        
+        detected_folders = []
+
+        if self.is_recursive:    
+
+            for root, folder in self.get_folders_recursive():
+
+                if name in folder:
+
+                    # Add the root before to keep track of the full path
+                    detected_folders.append(f"{root}\{folder}")
+        
+        else:
+
+            for folder in self.get_folders():
+
+                if name in folder:
+                    detected_folders.append(folder)
+            
+
+        return detected_folders       

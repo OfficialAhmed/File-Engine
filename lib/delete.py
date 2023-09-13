@@ -6,10 +6,12 @@
     
 """
 
-import os, shutil
+import os, json
+import shutil
 from main import Common
 
 
+    
 class Engine(Common):
     """ 
         Parent class for removing. 
@@ -19,27 +21,68 @@ class Engine(Common):
     def __init__(self) -> None:
         super().__init__()
 
-        self.trash_folder = "trash"
         self.create_trash()
 
+        # Removed content tracker -> For restoring feature
+        self.removed_content = {}
 
-    def create_trash(self):
+        self.conflict_folders = 0
+
+        if os.path.exists(self.trash_content):
+            self.removed_content = json.load(open(self.trash_content))
+
+
+    def create_trash(self) -> None:
         """
             Make trash if it doesnt exist
         """
 
-        if not os.path.exists(self.trash_folder):
-            os.mkdir(self.trash_folder)
+        if not os.path.exists(self.trash_folder_path):
+            os.mkdir(self.trash_folder_path)
 
 
-    def empty_trash(self):
+    def empty_trash(self) -> None:
         """
             Delete all content in the "trash" folder
         """
 
-        for file in os.listdir(self.trash_folder):
+        for file in os.listdir(self.trash_folder_path):
             os.remove(file)
 
+
+    def dump_trash_content(self, content:dict) -> None:
+        """
+            Store deleted content information as json
+        """
+
+        if content:
+            with open(self.trash_content, "w+") as file:
+                json.dump(content, file)
+
+
+    def move(self, source:str, folder_name:str = "") -> None:
+        """
+            Store content in trash
+        """
+        
+        try:
+
+            if not os.path.exists(self.trash_folder_path+f"\\{folder_name}"):
+                shutil.move(source, f"{self.trash_folder_path}\\{source}")
+
+            # Keep track of the removed content
+            total_content = len(self.removed_content) + 1
+            self.removed_content[total_content] = source
+
+        except Exception as e: print(str(e))
+        
+
+    def restore(self) -> None:
+        """
+            Redo moving from trash to original content destination
+        """
+
+        pass
 
 
 class File(Engine):
@@ -54,7 +97,8 @@ class File(Engine):
         """
 
         for file in self.file_finder(self.current_path).by_extention(extension):  
-            self.move_file(file, self.trash_folder)
+            self.move(file)
+        self.dump_trash_content(self.removed_content)
 
 
     def by_name(self, name:str) -> None:
@@ -63,7 +107,8 @@ class File(Engine):
         """
 
         for file in self.file_finder(self.current_path).by_name(name):
-            self.move_file(file, self.trash_folder)
+            self.move(file)
+        self.dump_trash_content(self.removed_content)
 
     
     def by_name_contains(self, name:str) -> None:
@@ -72,10 +117,32 @@ class File(Engine):
         """
 
         for file in self.file_finder(self.current_path).by_name_contains(name):
-            self.move_file(file, self.trash_folder)
+            self.move(file)
+        self.dump_trash_content(self.removed_content)
 
 
 
 class Folder(Engine):
+    
     def __init__(self) -> None:
         super().__init__()
+
+
+    def by_name(self, name:str) -> None:
+        """
+            Move folders with exact name
+        """
+
+        for folder in self.folder_finder(self.current_path).by_name(name):
+            self.move(folder, folder)
+        self.dump_trash_content(self.removed_content)
+
+    
+    def by_name_contains(self, name:str) -> None:
+        """
+            Move folders contain the provided name
+        """
+
+        for folder in self.folder_finder(self.current_path).by_name_contains(name):
+            self.move(folder, folder)
+        self.dump_trash_content(self.removed_content)
