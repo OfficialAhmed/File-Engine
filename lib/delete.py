@@ -26,8 +26,8 @@ class Engine(Common):
         # Removed content tracker -> For restoring feature
         self.removed_content = {}
 
-        if os.path.exists(self.trash_content):
-            self.removed_content = json.load(open(self.trash_content))
+        if os.path.exists(self.trash_content_file):
+            self.removed_content = json.load(open(self.trash_content_file))
 
 
     def create_trash(self) -> None:
@@ -54,7 +54,7 @@ class Engine(Common):
         """
 
         if content:
-            with open(self.trash_content, "w+") as file:
+            with open(self.trash_content_file, "w+") as file:
                 json.dump(content, file)
 
 
@@ -80,7 +80,7 @@ class Engine(Common):
             Redo moving from trash to original content's destination by reading the generated JSON
         """
 
-        data:dict = json.load(open(self.trash_content))
+        data:dict = json.load(open(self.trash_content_file))
 
         for destination in data.values():
             
@@ -88,6 +88,10 @@ class Engine(Common):
                 f"{self.trash_folder_path}\\{destination}", 
                 destination
             )
+
+        # Reset JSON content by overwriting the file
+        open(self.trash_content_file, "w+")
+
 
 
 class File(Engine):
