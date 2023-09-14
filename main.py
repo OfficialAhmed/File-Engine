@@ -16,7 +16,7 @@ class Common:
         self.current_path = "test"
         self.trash_folder_path = "trash"
 
-        self.trash_content = f"{self.trash_folder_path}\\content.json"
+        self.trash_content_file = f"{self.trash_folder_path}\\content.json"
         
     
     def get_file_finder(self) -> Finder.File:
@@ -28,7 +28,13 @@ class Common:
 
 if __name__ == "__main__":
 
+    """
+        Library testing
+        to be removed 
+    """
+
     # Move.File().by_extension("txt")
     # Delete.File().by_name_contains("testing")
 
-    Delete.Folder().by_name_contains("New folder")
+    # Delete.Folder().by_name_contains("New")
+    Delete.Folder().restore()
