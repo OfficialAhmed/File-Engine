@@ -27,7 +27,13 @@ class Engine(Common):
         self.removed_content = {}
 
         if os.path.exists(self.trash_content_file):
-            self.removed_content = json.load(open(self.trash_content_file))
+            
+            try:
+                self.removed_content = json.load(open(self.trash_content_file))
+            
+            # JSON exists but empty 
+            except json.decoder.JSONDecodeError:
+                pass
 
 
     def create_trash(self) -> None:
