@@ -26,8 +26,6 @@ class Engine(Common):
         # Removed content tracker -> For restoring feature
         self.removed_content = {}
 
-        self.conflict_folders = 0
-
         if os.path.exists(self.trash_content):
             self.removed_content = json.load(open(self.trash_content))
 
@@ -79,10 +77,17 @@ class Engine(Common):
 
     def restore(self) -> None:
         """
-            Redo moving from trash to original content destination
+            Redo moving from trash to original content's destination by reading the generated JSON
         """
 
-        pass
+        data:dict = json.load(open(self.trash_content))
+
+        for destination in data.values():
+            
+            shutil.move(
+                f"{self.trash_folder_path}\\{destination}", 
+                destination
+            )
 
 
 class File(Engine):
