@@ -21,6 +21,7 @@ class Engine(Common):
     def __init__(self) -> None:
         super().__init__()
 
+        self.__removed_content_count = 0
         self.create_trash()
 
         # Removed content tracker -> For restoring feature
@@ -50,8 +51,7 @@ class Engine(Common):
             Delete all content in the "trash" folder
         """
 
-        for file in os.listdir(self.trash_folder_path):
-            os.remove(file)
+        shutil.rmtree(self.trash_folder_path)
 
 
     def dump_trash_content(self, content:dict) -> None:
@@ -71,22 +71,24 @@ class Engine(Common):
         
         try:
             
+            # File is selected to be moved
             if not folder_name:
 
-                file_destination = "\\".join(source.split("\\")[:-1])
+                file_destination = self.trash_folder_path + "\\".join(source.split("\\")[:-1])
 
                 # Replicate the directory tree inside trash before moving the file
-                os.makedirs(f"{self.trash_folder_path}{file_destination}", exist_ok=True)
-                shutil.move(source, f"{self.trash_folder_path}{file_destination}")
+                os.makedirs(file_destination, exist_ok=True)
+                shutil.move(source, file_destination)
+
 
             # If folder is selected, check existence before moving
-            if not os.path.exists(self.trash_folder_path+f"{folder_name}"):
+            if not os.path.exists(f"{self.trash_folder_path}{folder_name}"):
                 shutil.move(source, f"{self.trash_folder_path}{source}")
 
 
             # Keep track of the removed content
-            total_content = len(self.removed_content) + 1
-            self.removed_content[total_content] = source
+            self.removed_content[len(self.removed_content) + 1] = source
+            self.__removed_content_count += 1
 
         except Exception as e: print(str(e))
         
@@ -112,6 +114,11 @@ class Engine(Common):
 
         # Reset JSON content by overwriting the file
         open(self.trash_content_file, "w+")
+
+
+    def get_removed_content_count(self) -> int:
+        return self.__removed_content_count
+
 
 
 class File(Engine):

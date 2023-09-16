@@ -32,9 +32,10 @@ if __name__ == "__main__":
         Library testing
         to be removed 
     """
+    
+    remove_folder = Delete.Folder()
 
-    # Move.File().by_extension("txt")
-    # Delete.File().by_name_contains("test")
-
-    # Delete.Folder().by_name_contains("New")
-    Delete.Folder().restore()
+    remove_folder.by_name_contains("New")
+    print(remove_folder.get_removed_content_count())
+    # remove_folder.restore()
+    # remove_folder.empty_trash()
