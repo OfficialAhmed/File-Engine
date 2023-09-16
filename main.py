@@ -14,9 +14,9 @@ class Common:
         self.file_finder:Finder.File = self.get_file_finder()
         self.folder_finder:Finder.Folder = self.get_folder_finder()
         self.current_path = "test"
-        self.trash_folder_path = "trash"
+        self.trash_folder_path = "trash\\"
 
-        self.trash_content_file = f"{self.trash_folder_path}\\content.json"
+        self.trash_content_file = f"{self.trash_folder_path}content.json"
         
     
     def get_file_finder(self) -> Finder.File:
@@ -34,7 +34,7 @@ if __name__ == "__main__":
     """
 
     # Move.File().by_extension("txt")
-    # Delete.File().by_name_contains("testing")
+    # Delete.File().by_name_contains("test")
 
     # Delete.Folder().by_name_contains("New")
     Delete.Folder().restore()

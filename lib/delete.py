@@ -70,9 +70,19 @@ class Engine(Common):
         """
         
         try:
+            
+            if not folder_name:
 
-            if not os.path.exists(self.trash_folder_path+f"\\{folder_name}"):
-                shutil.move(source, f"{self.trash_folder_path}\\{source}")
+                file_destination = "\\".join(source.split("\\")[:-1])
+
+                # Replicate the directory tree inside trash before moving the file
+                os.makedirs(f"{self.trash_folder_path}{file_destination}", exist_ok=True)
+                shutil.move(source, f"{self.trash_folder_path}{file_destination}")
+
+            # If folder is selected, check existence before moving
+            if not os.path.exists(self.trash_folder_path+f"{folder_name}"):
+                shutil.move(source, f"{self.trash_folder_path}{source}")
+
 
             # Keep track of the removed content
             total_content = len(self.removed_content) + 1
@@ -86,18 +96,22 @@ class Engine(Common):
             Redo moving from trash to original content's destination by reading the generated JSON
         """
 
+        if not os.path.exists(self.trash_content_file):
+            
+            print("Restore not available. Content file not found")
+            return
+
         data:dict = json.load(open(self.trash_content_file))
 
         for destination in data.values():
             
             shutil.move(
-                f"{self.trash_folder_path}\\{destination}", 
+                f"{self.trash_folder_path}{destination}", 
                 destination
             )
 
         # Reset JSON content by overwriting the file
         open(self.trash_content_file, "w+")
-
 
 
 class File(Engine):
