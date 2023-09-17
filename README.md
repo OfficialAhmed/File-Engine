@@ -1,3 +1,7 @@
+<div align="center" >
+  <img style="height:190px; width:80%" src="Untitled-1.png" alt="Image"">
+</div>
+
 # File Engine
 
 File Engine is a powerful and flexible file management and automation tool that simplifies the process of handling large files, searching for specific formats, and performing various file operations with ease.
