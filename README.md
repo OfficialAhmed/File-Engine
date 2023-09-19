@@ -1,5 +1,5 @@
 <div align="center" >
-  <img style="height:190px; width:85%" src="UI/File Engine (dracula theme) BANNER.png" alt="Image"">
+  <img style="height:190px; width:85%" src="Interface/File Engine (dracula theme) BANNER.png" alt="Image"">
 </div>
 
 # INTRODUCTION
