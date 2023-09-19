@@ -2,6 +2,9 @@
 from main import *
 from PyQt5.QtCore import QFile, QTextStream
 
+# APP SETTINGS
+from . app_settings import Settings
+
 GLOBAL_STATE = False
 GLOBAL_TITLE_BAR = True
 
@@ -89,8 +92,8 @@ class UIFunctions(MainWindow):
                 # SELECT BTN
                 self.ui.toggleLeftBox.setStyleSheet(style + color)
                 if widthRightBox != 0:
-                    style = self.ui.settingsTopBtn.styleSheet()
-                    self.ui.settingsTopBtn.setStyleSheet(style.replace(Settings.BTN_RIGHT_BOX_COLOR, ''))
+                    style = self.ui.moreBtn.styleSheet()
+                    self.ui.moreBtn.setStyleSheet(style.replace(Settings.BTN_RIGHT_BOX_COLOR, ''))
             else:
                 widthExtended = standard
                 # RESET BTN
@@ -110,20 +113,20 @@ class UIFunctions(MainWindow):
             standard = 0
 
             # GET BTN STYLE
-            style = self.ui.settingsTopBtn.styleSheet()
+            style = self.ui.moreBtn.styleSheet()
 
             # SET MAX WIDTH
             if width == 0:
                 widthExtended = maxExtend
                 # SELECT BTN
-                self.ui.settingsTopBtn.setStyleSheet(style + color)
+                self.ui.moreBtn.setStyleSheet(style + color)
                 if widthLeftBox != 0:
                     style = self.ui.toggleLeftBox.styleSheet()
                     self.ui.toggleLeftBox.setStyleSheet(style.replace(Settings.BTN_LEFT_BOX_COLOR, ''))
             else:
                 widthExtended = standard
                 # RESET BTN
-                self.ui.settingsTopBtn.setStyleSheet(style.replace(color, ''))
+                self.ui.moreBtn.setStyleSheet(style.replace(color, ''))
 
             UIFunctions.start_box_animation(self, widthLeftBox, width, "right")
 

@@ -1,24 +1,13 @@
-# ///////////////////////////////////////////////////////////////
-#
-# Created BY: WANDERSON M.PIMENTA
-# PROJECT MADE WITH: Qt Designer and PySide6
-#
-# This project can be used freely for all uses, as long as they maintain the
-# respective credits only in the Python scripts, any information in the visual
-# interface (GUI) can be modified without any implication.
-#
-# There are limitations on Qt licenses if you want to use your products
-# commercially, I recommend reading them on the official website:
-# https://doc.qt.io/qtforpython/licenses.html
-#
+# UI Created BY: WANDERSON M.PIMENTA
 
 import sys
 import os
 import platform
 
 # IMPORT / GUI AND MODULES AND WIDGETS
-from modules import *
-from widgets import *
+from Interface.modules import *
+from Interface.widgets import *
+
 os.environ["QT_FONT_DPI"] = "96" # FIX Problem for High DPI and Scale above 100%
 
 # SET AS GLOBAL WIDGETS
@@ -66,7 +55,6 @@ class MainWindow(QMainWindow):
         widgets.rename_page.clicked.connect(self.buttonClick)
         widgets.lookup_page.clicked.connect(self.buttonClick)
 
-
         # EXTRA LEFT MENU
         widgets.toggleLeftBox.clicked.connect(
             lambda: UIFunctions.toggleLeftBox(self, True)
@@ -76,7 +64,7 @@ class MainWindow(QMainWindow):
         )
 
         # EXTRA RIGHT MENU
-        widgets.settingsTopBtn.clicked.connect(
+        widgets.moreBtn.clicked.connect(
             lambda: UIFunctions.toggleRightBox(self, True)
         )
 
@@ -132,13 +120,13 @@ class MainWindow(QMainWindow):
 
             case "rename_page":
                 widgets.stackedWidget.setCurrentWidget(widgets.new_page) # SET PAGE
-                UIFunctions.resetStyle(self, btn_name) # RESET ANOTHERS BUTTONS SELECTED
-                btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet())) # SELECT MENU
+                UIFunctions.resetStyle(self, btn_name) 
+                btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet()))
 
             case "lookup_page":
-                widgets.stackedWidget.setCurrentWidget(widgets.new_page) # SET PAGE
-                UIFunctions.resetStyle(self, btn_name) # RESET ANOTHERS BUTTONS SELECTED
-                btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet())) # SELECT MENU
+                widgets.stackedWidget.setCurrentWidget(widgets.new_page) 
+                UIFunctions.resetStyle(self, btn_name) 
+                btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet()))
 
         # PRINT BTN NAME
         print(f'Button "{btn_name}" pressed!')

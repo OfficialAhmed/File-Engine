@@ -1,11 +1,18 @@
-
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 
 from . resources_rc import *
+from ..environment import Constant
+
 
 class Ui_MainWindow(object):
+
+    def __init__(self) -> None:
+        super().__init__()
+
+        self.constant = Constant()
+
 
     def setupUi(self, MainWindow):
 
@@ -66,7 +73,7 @@ class Ui_MainWindow(object):
 "}"
 "#topLogo {"
 "	background-color: rgb(33, 37, 43);"
-"	background-image: url('images/images/File Engine logo.png');"
+"	background-image: url('Interface/images/images/File Engine logo.png');"
 "	background-position: centered;"
 "	background-repeat: no-repeat;"
 "}"
@@ -147,7 +154,7 @@ class Ui_MainWindow(object):
 "#extraIcon {"
 "	background-position: center;"
 "	background-repeat: no-repeat;"
-"	background-image: url(:/images/images/icons/settings.png);"
+"	background-image: url(:images/images/icons/settings.svg);"
 "}"
 ""
 "/* Label */"
@@ -404,7 +411,7 @@ class Ui_MainWindow(object):
 "    background: 3px solid rgb(52, 59, 72);"
 "	border: 3px solid rgb(52, 59, 72);	"
 "	back"
-        "ground-image: url('images/icons/tick-outline.svg');"
+        "ground-image: url('Interface/images/icons/tick-outline.svg');"
 "}"
 ""
 "/* /////////////////////////////////////////////////////////////////////////////////////////////////"
@@ -898,13 +905,13 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2.setSpacing(5)
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
         self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
-        self.settingsTopBtn = QPushButton(self.rightButtons)
-        self.settingsTopBtn.setObjectName(u"settingsTopBtn")
-        self.settingsTopBtn.setMinimumSize(QSize(28, 28))
-        self.settingsTopBtn.setMaximumSize(QSize(28, 28))
-        self.settingsTopBtn.setCursor(QCursor(Qt.PointingHandCursor))
+        self.moreBtn = QPushButton(self.rightButtons)
+        self.moreBtn.setObjectName(u"moreBtn")
+        self.moreBtn.setMinimumSize(QSize(28, 28))
+        self.moreBtn.setMaximumSize(QSize(28, 28))
+        self.moreBtn.setCursor(QCursor(Qt.PointingHandCursor))
 
-        self.horizontalLayout_2.addWidget(self.settingsTopBtn)
+        self.horizontalLayout_2.addWidget(self.moreBtn)
 
         self.minimizeAppBtn = QPushButton(self.rightButtons)
         self.minimizeAppBtn.setObjectName(u"minimizeAppBtn")
@@ -1000,7 +1007,6 @@ class Ui_MainWindow(object):
         self.LookupType_comboBox.setFont(font)
         self.LookupType_comboBox.setAutoFillBackground(False)
         self.LookupType_comboBox.setStyleSheet(u"background-color: rgb(33, 37, 43);")
-        self.LookupType_comboBox.setIconSize(QSize(16, 16))
         self.LookupType_comboBox.setFrame(True)
 
         self.first_layout.addWidget(self.LookupType_comboBox, 1, 0, 1, 1)
@@ -1042,9 +1048,6 @@ class Ui_MainWindow(object):
         self.browseCurrentPath_btn.setFont(font)
         self.browseCurrentPath_btn.setCursor(QCursor(Qt.PointingHandCursor))
         self.browseCurrentPath_btn.setStyleSheet(u"background-color: rgb(52, 59, 72);")
-        icon6 = QIcon()
-        icon6.addFile(u"images/icons/folder_outline.svg", QSize(), QIcon.Normal, QIcon.Off)
-        self.browseCurrentPath_btn.setIcon(icon6)
 
         self.second_layout.addWidget(self.browseCurrentPath_btn, 0, 2, 1, 1)
         self.horizontalLayout_13.addLayout(self.second_layout)
@@ -1073,9 +1076,6 @@ class Ui_MainWindow(object):
         self.startLookup_btn.setFont(font)
         self.startLookup_btn.setCursor(QCursor(Qt.PointingHandCursor))
         self.startLookup_btn.setStyleSheet(u"background-color: rgb(52, 59, 72);")
-        icon7 = QIcon()
-        icon7.addFile(u"images/icons/start.svg", QSize(), QIcon.Normal, QIcon.Off)
-        self.startLookup_btn.setIcon(icon7)
 
         self.third_layout.addWidget(self.startLookup_btn, 1, 2, 1, 1)
 
@@ -1087,7 +1087,6 @@ class Ui_MainWindow(object):
         self.currentLookupBy_comboBox.setFont(font)
         self.currentLookupBy_comboBox.setAutoFillBackground(False)
         self.currentLookupBy_comboBox.setStyleSheet(u"background-color: rgb(33, 37, 43);")
-        self.currentLookupBy_comboBox.setIconSize(QSize(16, 16))
         self.currentLookupBy_comboBox.setFrame(True)
 
         self.third_layout.addWidget(self.currentLookupBy_comboBox, 1, 0, 1, 1)
@@ -1247,10 +1246,6 @@ class Ui_MainWindow(object):
         self.delete_btn.setFont(font)
         self.delete_btn.setCursor(QCursor(Qt.PointingHandCursor))
         self.delete_btn.setStyleSheet(u"background-color: rgb(52, 59, 72);")
-        icon8 = QIcon()
-        icon8.addFile(u"images/icons/delete sign.svg", QSize(), QIcon.Normal, QIcon.Off)
-        self.delete_btn.setIcon(icon8)
-        self.delete_btn.setIconSize(QSize(30, 30))
 
         self.optionBtns_layout.addWidget(self.delete_btn)
 
@@ -1261,10 +1256,6 @@ class Ui_MainWindow(object):
         self.restore_btn.setFont(font)
         self.restore_btn.setCursor(QCursor(Qt.PointingHandCursor))
         self.restore_btn.setStyleSheet(u"background-color: rgb(52, 59, 72);")
-        icon9 = QIcon()
-        icon9.addFile(u"images/icons/restore file.svg", QSize(), QIcon.Normal, QIcon.Off)
-        self.restore_btn.setIcon(icon9)
-        self.restore_btn.setIconSize(QSize(30, 30))
 
         self.optionBtns_layout.addWidget(self.restore_btn)
 
@@ -1275,10 +1266,6 @@ class Ui_MainWindow(object):
         self.save_btn.setFont(font)
         self.save_btn.setCursor(QCursor(Qt.PointingHandCursor))
         self.save_btn.setStyleSheet(u"background-color: rgb(52, 59, 72);")
-        icon10 = QIcon()
-        icon10.addFile(u"images/icons/file download.svg", QSize(), QIcon.Normal, QIcon.Off)
-        self.save_btn.setIcon(icon10)
-        self.save_btn.setIconSize(QSize(30, 30))
 
         self.optionBtns_layout.addWidget(self.save_btn)
 
@@ -1289,10 +1276,6 @@ class Ui_MainWindow(object):
         self.load_btn.setFont(font)
         self.load_btn.setCursor(QCursor(Qt.PointingHandCursor))
         self.load_btn.setStyleSheet(u"background-color: rgb(52, 59, 72);")
-        icon11 = QIcon()
-        icon11.addFile(u"images/icons/file upload.svg", QSize(), QIcon.Normal, QIcon.Off)
-        self.load_btn.setIcon(icon11)
-        self.load_btn.setIconSize(QSize(30, 30))
 
         self.optionBtns_layout.addWidget(self.load_btn)
         self.horizontalLayout_12.addLayout(self.optionBtns_layout)
@@ -1429,6 +1412,8 @@ class Ui_MainWindow(object):
         self.render_images()
         self.stackedWidget.setCurrentIndex(1)
 
+        self.render_delete_page_icons()
+
         QMetaObject.connectSlotsByName(MainWindow)
 
 
@@ -1444,30 +1429,33 @@ class Ui_MainWindow(object):
         self.rename_page.setText(QCoreApplication.translate("MainWindow", u"RENAME", None))
         self.move_page.setText(QCoreApplication.translate("MainWindow", u"MOVE", None))
         self.lookup_page.setText(QCoreApplication.translate("MainWindow", u"LOOKUP", None))
-        self.toggleLeftBox.setText(QCoreApplication.translate("MainWindow", u"Left Box", None))
-        self.extraLabel.setText(QCoreApplication.translate("MainWindow", u"Left Box", None))
-        self.extraCloseColumnBtn.setToolTip(QCoreApplication.translate("MainWindow", u"Close left box", None))
+        self.toggleLeftBox.setText(QCoreApplication.translate("MainWindow", u"Settings", None))
+        self.extraLabel.setText(QCoreApplication.translate("MainWindow", u"Settings", None))
+        self.extraCloseColumnBtn.setToolTip(QCoreApplication.translate("MainWindow", u"Close Settings", None))
         self.extraCloseColumnBtn.setText("")
-        self.btn_share.setText(QCoreApplication.translate("MainWindow", u"Share", None))
-        self.btn_adjustments.setText(QCoreApplication.translate("MainWindow", u"Adjustments", None))
-        self.btn_more.setText(QCoreApplication.translate("MainWindow", u"More", None))
+        self.btn_share.setText(QCoreApplication.translate("MainWindow", u"...", None))
+        self.btn_adjustments.setText(QCoreApplication.translate("MainWindow", u"...", None))
+        self.btn_more.setText(QCoreApplication.translate("MainWindow", u"...", None))
+
+
         self.textEdit.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:'Segoe UI'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
-"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600; color:#ff79c6;\">PyDracula</span></p>\n"
-"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" color:#ffffff;\">An interface created using Python and PySide (support for PyQt), and with colors based on the Dracula theme created by Zeno Rocha.</span></p>\n"
+"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600; color:#ff79c6;\">CREDITS</span></p>\n"
+"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" color:#ffffff;\">UI design by: Wanderson M. Pimenta\nDracula theme by: Zeno Rocha</span></p>\n"
 "<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><"
                         "span style=\" color:#ffffff;\">MIT License</span></p>\n"
-"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" color:#bd93f9;\">Created by: Wanderson M. Pimenta</span></p>\n"
-"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600; color:#ff79c6;\">Convert UI</span></p>\n"
-"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:9pt; color:#ffffff;\">pyside6-uic main.ui &gt; ui_main.py</span></p>\n"
-"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600; color:#ff79c6;\">Convert QRC</span></p>\n"
+"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" color:#bd93f9;\">2023</span></p>\n"
+"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600; color:#ff79c6;\">DEVELOPER</span></p>\n"
+"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:9pt; color:#ffffff;\">@OfficialAhmed0</span></p>\n"
+"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600; color:#ff79c6;\">GitHub</span></p>\n"
 "<p align=\"center\" style=\" margin-top:12px; "
-                        "margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:9pt; color:#ffffff;\">pyside6-rcc resources.qrc -o resources_rc.py</span></p></body></html>", None))
+                        "margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:9pt; color:#ffffff;\">https://github.com/OfficialAhmed/File-Engine</span></p></body></html>", None))
+        
+        
         self.titleRightInfo.setText(QCoreApplication.translate("MainWindow", u"File Engine - File management and automation tool", None))
-        self.settingsTopBtn.setToolTip(QCoreApplication.translate("MainWindow", u"Settings", None))
-        self.settingsTopBtn.setText("")
+        self.moreBtn.setToolTip(QCoreApplication.translate("MainWindow", u"More", None))
         self.minimizeAppBtn.setToolTip(QCoreApplication.translate("MainWindow", u"Minimize", None))
         self.minimizeAppBtn.setText("")
         self.maximizeRestoreAppBtn.setToolTip(QCoreApplication.translate("MainWindow", u"Maximize", None))
@@ -1494,52 +1482,52 @@ class Ui_MainWindow(object):
         self.isRecursive_checkBox.setText(QCoreApplication.translate("MainWindow", u"RECURSIVE", None))
         self.LookuByTitle_label.setText(QCoreApplication.translate("MainWindow", u"LOOKUP BY", None))
         ___qtablewidgetitem = self.table_layout.horizontalHeaderItem(0)
-        ___qtablewidgetitem.setText(QCoreApplication.translate("MainWindow", u"0", None));
+        ___qtablewidgetitem.setText(QCoreApplication.translate("MainWindow", u"0", None))
         ___qtablewidgetitem1 = self.table_layout.horizontalHeaderItem(1)
-        ___qtablewidgetitem1.setText(QCoreApplication.translate("MainWindow", u"1", None));
+        ___qtablewidgetitem1.setText(QCoreApplication.translate("MainWindow", u"1", None))
         ___qtablewidgetitem2 = self.table_layout.horizontalHeaderItem(2)
-        ___qtablewidgetitem2.setText(QCoreApplication.translate("MainWindow", u"2", None));
+        ___qtablewidgetitem2.setText(QCoreApplication.translate("MainWindow", u"2", None))
         ___qtablewidgetitem3 = self.table_layout.horizontalHeaderItem(3)
-        ___qtablewidgetitem3.setText(QCoreApplication.translate("MainWindow", u"3", None));
+        ___qtablewidgetitem3.setText(QCoreApplication.translate("MainWindow", u"3", None))
         ___qtablewidgetitem4 = self.table_layout.verticalHeaderItem(0)
-        ___qtablewidgetitem4.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        ___qtablewidgetitem4.setText(QCoreApplication.translate("MainWindow", u"New Row", None))
         ___qtablewidgetitem5 = self.table_layout.verticalHeaderItem(1)
-        ___qtablewidgetitem5.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        ___qtablewidgetitem5.setText(QCoreApplication.translate("MainWindow", u"New Row", None))
         ___qtablewidgetitem6 = self.table_layout.verticalHeaderItem(2)
-        ___qtablewidgetitem6.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        ___qtablewidgetitem6.setText(QCoreApplication.translate("MainWindow", u"New Row", None))
         ___qtablewidgetitem7 = self.table_layout.verticalHeaderItem(3)
-        ___qtablewidgetitem7.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        ___qtablewidgetitem7.setText(QCoreApplication.translate("MainWindow", u"New Row", None))
         ___qtablewidgetitem8 = self.table_layout.verticalHeaderItem(4)
-        ___qtablewidgetitem8.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        ___qtablewidgetitem8.setText(QCoreApplication.translate("MainWindow", u"New Row", None))
 
         __sortingEnabled = self.table_layout.isSortingEnabled()
         self.table_layout.setSortingEnabled(False)
         ___qtablewidgetitem9 = self.table_layout.item(0, 0)
-        ___qtablewidgetitem9.setText(QCoreApplication.translate("MainWindow", u"Test", None));
+        ___qtablewidgetitem9.setText(QCoreApplication.translate("MainWindow", u"SOURCE", None))
         ___qtablewidgetitem10 = self.table_layout.item(0, 1)
-        ___qtablewidgetitem10.setText(QCoreApplication.translate("MainWindow", u"Text", None));
+        ___qtablewidgetitem10.setText(QCoreApplication.translate("MainWindow", u"FILE", None))
         ___qtablewidgetitem11 = self.table_layout.item(0, 2)
-        ___qtablewidgetitem11.setText(QCoreApplication.translate("MainWindow", u"Cell", None));
+        ___qtablewidgetitem11.setText(QCoreApplication.translate("MainWindow", u"File", None))
         ___qtablewidgetitem12 = self.table_layout.item(0, 3)
-        ___qtablewidgetitem12.setText(QCoreApplication.translate("MainWindow", u"SELECT", None));
+        ___qtablewidgetitem12.setText(QCoreApplication.translate("MainWindow", u"SELECT", None))
         ___qtablewidgetitem13 = self.table_layout.item(1, 0)
-        ___qtablewidgetitem13.setText(QCoreApplication.translate("MainWindow", u"test (c 0, r 0)", None));
+        ___qtablewidgetitem13.setText(QCoreApplication.translate("MainWindow", u"test (c 0, r 0)", None))
         ___qtablewidgetitem14 = self.table_layout.item(1, 1)
-        ___qtablewidgetitem14.setText(QCoreApplication.translate("MainWindow", u"test (c 1, r 0)", None));
+        ___qtablewidgetitem14.setText(QCoreApplication.translate("MainWindow", u"test (c 1, r 0)", None))
         ___qtablewidgetitem15 = self.table_layout.item(1, 2)
-        ___qtablewidgetitem15.setText(QCoreApplication.translate("MainWindow", u"test (c 2, r 0)", None));
+        ___qtablewidgetitem15.setText(QCoreApplication.translate("MainWindow", u"test (c 2, r 0)", None))
         ___qtablewidgetitem16 = self.table_layout.item(2, 0)
-        ___qtablewidgetitem16.setText(QCoreApplication.translate("MainWindow", u"test (c 0, r 1)", None));
+        ___qtablewidgetitem16.setText(QCoreApplication.translate("MainWindow", u"test (c 0, r 1)", None))
         ___qtablewidgetitem17 = self.table_layout.item(2, 1)
-        ___qtablewidgetitem17.setText(QCoreApplication.translate("MainWindow", u"test (c 1, r 1)", None));
+        ___qtablewidgetitem17.setText(QCoreApplication.translate("MainWindow", u"test (c 1, r 1)", None))
         ___qtablewidgetitem18 = self.table_layout.item(2, 2)
-        ___qtablewidgetitem18.setText(QCoreApplication.translate("MainWindow", u"test (c 2, r 1)", None));
+        ___qtablewidgetitem18.setText(QCoreApplication.translate("MainWindow", u"test (c 2, r 1)", None))
         ___qtablewidgetitem19 = self.table_layout.item(3, 0)
-        ___qtablewidgetitem19.setText(QCoreApplication.translate("MainWindow", u"test (c 0, r 2)", None));
+        ___qtablewidgetitem19.setText(QCoreApplication.translate("MainWindow", u"test (c 0, r 2)", None))
         ___qtablewidgetitem20 = self.table_layout.item(3, 1)
-        ___qtablewidgetitem20.setText(QCoreApplication.translate("MainWindow", u"test (c 1, r 2)", None));
+        ___qtablewidgetitem20.setText(QCoreApplication.translate("MainWindow", u"test (c 1, r 2)", None))
         ___qtablewidgetitem21 = self.table_layout.item(3, 2)
-        ___qtablewidgetitem21.setText(QCoreApplication.translate("MainWindow", u"test (c 2 r 2)", None));
+        ___qtablewidgetitem21.setText(QCoreApplication.translate("MainWindow", u"test (c 2 r 2)", None))
         self.table_layout.setSortingEnabled(__sortingEnabled)
 
         self.delete_btn.setToolTip(QCoreApplication.translate("MainWindow", u"Delete all selected items", None))
@@ -1551,17 +1539,30 @@ class Ui_MainWindow(object):
         self.load_btn.setToolTip(QCoreApplication.translate("MainWindow", u"Load previous lookup", None))
         self.load_btn.setText(QCoreApplication.translate("MainWindow", u"LOAD", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"NEW PAGE TEST", None))
-        self.btn_message.setText(QCoreApplication.translate("MainWindow", u"Message", None))
-        self.btn_print.setText(QCoreApplication.translate("MainWindow", u"Print", None))
-        self.btn_logout.setText(QCoreApplication.translate("MainWindow", u"Logout", None))
+
+        self.btn_message.setText(QCoreApplication.translate("MainWindow", u"...", None))
+        self.btn_print.setText(QCoreApplication.translate("MainWindow", u"...", None))
+        self.btn_logout.setText(QCoreApplication.translate("MainWindow", u"...", None))
+        
         self.creditsLabel.setText(QCoreApplication.translate("MainWindow", u"Developed by @OfficialAhmed0", None))
         self.version.setText(QCoreApplication.translate("MainWindow", u"v1.1.2", None))
         
 
+    def render_delete_page_icons(self):
+        
+        size = 20
+        self.set_icon(self.browseCurrentPath_btn, "folder_outline", (size, size))
+        self.set_icon(self.startLookup_btn, "start", (size, size))
+        self.set_icon(self.delete_btn, "delete sign", (size, size))
+        self.set_icon(self.restore_btn, "restore file", (size, size))
+        self.set_icon(self.load_btn, "file upload", (size, size))
+        self.set_icon(self.save_btn, "file download", (size, size))
+
+
     def render_images(self) -> None:
 
         # WINDOW 
-        self.set_icon(self.settingsTopBtn, "more")
+        self.set_icon(self.moreBtn, "more")
         self.set_icon(self.minimizeAppBtn, "minimize")
         self.set_icon(self.maximizeRestoreAppBtn, "maximize")
         self.set_icon(self.closeAppBtn, "close")
@@ -1606,15 +1607,15 @@ class Ui_MainWindow(object):
         ext = "svg" if is_icon else "png"
 
         widget.setStyleSheet(
-            f"background-image: url(:/images/images/{path}/{name}.{ext});\
+            f"background-image: url({self.constant.get_resources_path()}{path}/{name}.{ext});\
             {extra_style}"
         )
 
 
-    def set_icon(self, widget:QWidget, name:str) -> str:
+    def set_icon(self, widget:QWidget, name:str, size=(18, 18)) -> str:
 
         widget.setIcon(
-            QIcon(f":/images/images/icons/{name}.svg") 
+            QIcon(f"{self.constant.get_resources_path()}icons/{name}.svg") 
         )
 
-        widget.setIconSize(QSize(16, 16))
+        widget.setIconSize(QSize(*size))
