@@ -1,6 +1,9 @@
 
 from main import *
-from PyQt5.QtCore import QFile, QTextStream
+
+from PySide6.QtCore import *
+from PySide6.QtGui import *
+from PySide6.QtWidgets import *
 
 # APP SETTINGS
 from . app_settings import Settings
@@ -39,18 +42,15 @@ class UIFunctions(MainWindow):
             self.bottom_grip.show()
 
     # RETURN STATUS
-    # ///////////////////////////////////////////////////////////////
     def returStatus(self):
         return GLOBAL_STATE
 
     # SET STATUS
-    # ///////////////////////////////////////////////////////////////
     def setStatus(self, status):
         global GLOBAL_STATE
         GLOBAL_STATE = status
 
     # TOGGLE MENU
-    # ///////////////////////////////////////////////////////////////
     def toggleMenu(self, enable):
         if enable:
             # GET WIDTH
@@ -166,7 +166,7 @@ class UIFunctions(MainWindow):
         self.group.start()
 
     # SELECT/DESELECT MENU
-    # ///////////////////////////////////////////////////////////////
+
     # SELECT
     def selectMenu(getStyle):
         select = getStyle + Settings.MENU_SELECTED_STYLESHEET
@@ -190,14 +190,12 @@ class UIFunctions(MainWindow):
                 w.setStyleSheet(UIFunctions.deselectMenu(w.styleSheet()))
 
     # IMPORT THEMES FILES QSS/CSS
-    # ///////////////////////////////////////////////////////////////
     def theme(self, file, useCustomTheme):
         if useCustomTheme:
             str = open(file, 'r').read()
             self.ui.styleSheet.setStyleSheet(str)
 
     # START - GUI DEFINITIONS
-    # ///////////////////////////////////////////////////////////////
     def uiDefinitions(self):
         def dobleClickMaximizeRestore(event):
             # IF DOUBLE CLICK CHANGE STATUS

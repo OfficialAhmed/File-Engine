@@ -8,6 +8,7 @@ import platform
 from Interface.modules import *
 from Interface.widgets import *
 
+
 os.environ["QT_FONT_DPI"] = "96" # FIX Problem for High DPI and Scale above 100%
 
 # SET AS GLOBAL WIDGETS

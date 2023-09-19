@@ -11,15 +11,14 @@
 # There are limitations on Qt licenses if you want to use your products
 # commercially, I recommend reading them on the official website:
 # https://doc.qt.io/qtforpython/licenses.html
-#
-# ///////////////////////////////////////////////////////////////
 
 # MAIN FILE
-# ///////////////////////////////////////////////////////////////
 from main import *
 
+# APP SETTINGS
+from . app_settings import Settings
+
 # WITH ACCESS TO MAIN WINDOW WIDGETS
-# ///////////////////////////////////////////////////////////////
 class AppFunctions(MainWindow):
     def setThemeHack(self):
         Settings.BTN_LEFT_BOX_COLOR = "background-color: #495474;"
