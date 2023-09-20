@@ -1,5 +1,8 @@
-# UI Created BY: WANDERSON M.PIMENTA
+from PySide6.QtWidgets import *
+from PySide6.QtCore import *
+from PySide6.QtGui import *
 
+# UI Created BY: WANDERSON M.PIMENTA
 import sys
 import os
 import platform
@@ -7,6 +10,7 @@ import platform
 # IMPORT / GUI AND MODULES AND WIDGETS
 from Interface.modules import *
 from Interface.widgets import *
+from Interface.modules.ui_main import Ui
 
 
 os.environ["QT_FONT_DPI"] = "96" # FIX Problem for High DPI and Scale above 100%
@@ -20,7 +24,7 @@ class MainWindow(QMainWindow):
         QMainWindow.__init__(self)
 
         # SET AS GLOBAL WIDGETS
-        self.ui = Ui_MainWindow()
+        self.ui = Ui()
         self.ui.setupUi(self)
         global widgets
         widgets = self.ui

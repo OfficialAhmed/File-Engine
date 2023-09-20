@@ -3,15 +3,17 @@ from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 
 from . resources_rc import *
-from ..environment import Constant
+from ..environment import Constant, Common
+from . ui_delete import Ui as Ui_delete
 
 
-class Ui_MainWindow(object):
+class Ui(object):
 
     def __init__(self) -> None:
         super().__init__()
 
         self.constant = Constant()
+        self.common_functions = Common()
 
 
     def setupUi(self, MainWindow):
@@ -646,6 +648,13 @@ class Ui_MainWindow(object):
         self.verticalLayout_8.setSpacing(0)
         self.verticalLayout_8.setObjectName(u"verticalLayout_8")
         self.verticalLayout_8.setContentsMargins(0, 0, 0, 0)
+
+        """
+        ////////////////////////////////////////////////
+                LEFT MENU BUTTONS 
+        ////////////////////////////////////////////////
+        """
+
         self.home_page = QPushButton(self.topMenu)
         self.home_page.setObjectName(u"home_page")
         sizePolicy.setHeightForWidth(self.home_page.sizePolicy().hasHeightForWidth())
@@ -974,314 +983,38 @@ class Ui_MainWindow(object):
         self.stackedWidget = QStackedWidget(self.pagesContainer)
         self.stackedWidget.setObjectName(u"stackedWidget")
         self.stackedWidget.setStyleSheet(u"background: transparent;")
+        
+
+        """
+        ////////////////////////////////////////////////
+                HOME PAGE CONTENT
+        ////////////////////////////////////////////////
+        """
+
+        
         self.home = QWidget()
         self.home.setObjectName(u"home")
         
         self.stackedWidget.addWidget(self.home)
-        self.widgets = QWidget()
-        self.widgets.setObjectName(u"widgets")
-        self.widgets.setStyleSheet(u"b")
-        self.verticalLayout = QVBoxLayout(self.widgets)
-        self.verticalLayout.setSpacing(10)
-        self.verticalLayout.setObjectName(u"verticalLayout")
-        self.verticalLayout.setContentsMargins(10, 10, 10, 10)
-        self.frame_content_wid_3 = QFrame(self.widgets)
-        self.frame_content_wid_3.setObjectName(u"frame_content_wid_3")
-        self.frame_content_wid_3.setFrameShape(QFrame.NoFrame)
-        self.frame_content_wid_3.setFrameShadow(QFrame.Raised)
-        self.horizontalLayout_11 = QHBoxLayout(self.frame_content_wid_3)
-        self.horizontalLayout_11.setObjectName(u"horizontalLayout_11")
-        self.first_layout = QGridLayout()
-        self.first_layout.setObjectName(u"first_layout")
-        self.PageTitle_label = QLabel(self.frame_content_wid_3)
-        self.PageTitle_label.setObjectName(u"PageTitle_label")
-        self.PageTitle_label.setFont(font)
-        self.PageTitle_label.setStyleSheet(u"")
 
-        self.first_layout.addWidget(self.PageTitle_label, 0, 0, 1, 1)
 
-        self.LookupType_comboBox = QComboBox(self.frame_content_wid_3)
-        self.LookupType_comboBox.addItem("")
-        self.LookupType_comboBox.addItem("")
-        self.LookupType_comboBox.setObjectName(u"LookupType_comboBox")
-        self.LookupType_comboBox.setFont(font)
-        self.LookupType_comboBox.setAutoFillBackground(False)
-        self.LookupType_comboBox.setStyleSheet(u"background-color: rgb(33, 37, 43);")
-        self.LookupType_comboBox.setFrame(True)
-
-        self.first_layout.addWidget(self.LookupType_comboBox, 1, 0, 1, 1)
-        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-        self.first_layout.addItem(self.horizontalSpacer, 1, 1, 1, 1)
-        self.horizontalLayout_11.addLayout(self.first_layout)
-        self.verticalLayout.addWidget(self.frame_content_wid_3)
-
-        self.row_1 = QFrame(self.widgets)
-        self.row_1.setObjectName(u"row_1")
-        self.row_1.setFrameShape(QFrame.StyledPanel)
-        self.row_1.setFrameShadow(QFrame.Raised)
-        self.verticalLayout_16 = QVBoxLayout(self.row_1)
-        self.verticalLayout_16.setSpacing(0)
-        self.verticalLayout_16.setObjectName(u"verticalLayout_16")
-        self.verticalLayout_16.setContentsMargins(0, 0, 0, 0)
-
-        self.verticalLayout.addWidget(self.row_1)
-
-        self.frame_content_wid_4 = QFrame(self.widgets)
-        self.frame_content_wid_4.setObjectName(u"frame_content_wid_4")
-        self.frame_content_wid_4.setFrameShape(QFrame.NoFrame)
-        self.frame_content_wid_4.setFrameShadow(QFrame.Raised)
-        self.horizontalLayout_13 = QHBoxLayout(self.frame_content_wid_4)
-        self.horizontalLayout_13.setObjectName(u"horizontalLayout_13")
-        self.second_layout = QGridLayout()
-        self.second_layout.setObjectName(u"second_layout")
-        self.second_layout.setContentsMargins(-1, -1, -1, 0)
-        self.currentPath_lineEdit = QLineEdit(self.frame_content_wid_4)
-        self.currentPath_lineEdit.setObjectName(u"currentPath_lineEdit")
-        self.currentPath_lineEdit.setMinimumSize(QSize(0, 30))
-        self.currentPath_lineEdit.setStyleSheet(u"background-color: rgb(33, 37, 43);")
-
-        self.second_layout.addWidget(self.currentPath_lineEdit, 0, 1, 1, 1)
-
-        self.browseCurrentPath_btn = QPushButton(self.frame_content_wid_4)
-        self.browseCurrentPath_btn.setObjectName(u"browseCurrentPath_btn")
-        self.browseCurrentPath_btn.setMinimumSize(QSize(150, 30))
-        self.browseCurrentPath_btn.setFont(font)
-        self.browseCurrentPath_btn.setCursor(QCursor(Qt.PointingHandCursor))
-        self.browseCurrentPath_btn.setStyleSheet(u"background-color: rgb(52, 59, 72);")
-
-        self.second_layout.addWidget(self.browseCurrentPath_btn, 0, 2, 1, 1)
-        self.horizontalLayout_13.addLayout(self.second_layout)
-        self.verticalLayout.addWidget(self.frame_content_wid_4)
-
-        self.frame_content_wid_2 = QFrame(self.widgets)
-        self.frame_content_wid_2.setObjectName(u"frame_content_wid_2")
-        self.frame_content_wid_2.setFrameShape(QFrame.NoFrame)
-        self.frame_content_wid_2.setFrameShadow(QFrame.Raised)
-        self.horizontalLayout_10 = QHBoxLayout(self.frame_content_wid_2)
-        self.horizontalLayout_10.setObjectName(u"horizontalLayout_10")
-        self.third_layout = QGridLayout()
-        self.third_layout.setObjectName(u"third_layout")
-        self.third_layout.setContentsMargins(-1, -1, -1, 0)
-        self.currentLookupInput_lineEdit = QLineEdit(self.frame_content_wid_2)
-        self.currentLookupInput_lineEdit.setObjectName(u"currentLookupInput_lineEdit")
-        self.currentLookupInput_lineEdit.setMinimumSize(QSize(0, 30))
-        self.currentLookupInput_lineEdit.setStyleSheet(u"background-color: rgb(33, 37, 43);")
-
-        self.third_layout.addWidget(self.currentLookupInput_lineEdit, 1, 1, 1, 1)
-
-        self.startLookup_btn = QPushButton(self.frame_content_wid_2)
-        self.startLookup_btn.setObjectName(u"startLookup_btn")
-        self.startLookup_btn.setEnabled(False)
-        self.startLookup_btn.setMinimumSize(QSize(150, 30))
-        self.startLookup_btn.setFont(font)
-        self.startLookup_btn.setCursor(QCursor(Qt.PointingHandCursor))
-        self.startLookup_btn.setStyleSheet(u"background-color: rgb(52, 59, 72);")
-
-        self.third_layout.addWidget(self.startLookup_btn, 1, 2, 1, 1)
-
-        self.currentLookupBy_comboBox = QComboBox(self.frame_content_wid_2)
-        self.currentLookupBy_comboBox.addItem("")
-        self.currentLookupBy_comboBox.addItem("")
-        self.currentLookupBy_comboBox.addItem("")
-        self.currentLookupBy_comboBox.setObjectName(u"currentLookupBy_comboBox")
-        self.currentLookupBy_comboBox.setFont(font)
-        self.currentLookupBy_comboBox.setAutoFillBackground(False)
-        self.currentLookupBy_comboBox.setStyleSheet(u"background-color: rgb(33, 37, 43);")
-        self.currentLookupBy_comboBox.setFrame(True)
-
-        self.third_layout.addWidget(self.currentLookupBy_comboBox, 1, 0, 1, 1)
-
-        self.isRecursive_checkBox = QCheckBox(self.frame_content_wid_2)
-        self.isRecursive_checkBox.setObjectName(u"isRecursive_checkBox")
-        self.isRecursive_checkBox.setEnabled(True)
-        self.isRecursive_checkBox.setAutoFillBackground(False)
-        self.isRecursive_checkBox.setStyleSheet(u"")
-        self.isRecursive_checkBox.setChecked(True)
-
-        self.third_layout.addWidget(self.isRecursive_checkBox, 2, 0, 1, 1)
-
-        self.LookuByTitle_label = QLabel(self.frame_content_wid_2)
-        self.LookuByTitle_label.setObjectName(u"LookuByTitle_label")
-        self.LookuByTitle_label.setStyleSheet(u"color: rgb(113, 126, 149);")
-        self.LookuByTitle_label.setLineWidth(1)
-        self.LookuByTitle_label.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
-
-        self.third_layout.addWidget(self.LookuByTitle_label, 0, 0, 1, 1)
-        self.horizontalLayout_10.addLayout(self.third_layout)
-        self.verticalLayout.addWidget(self.frame_content_wid_2)
-
-        self.row_3 = QFrame(self.widgets)
-        self.row_3.setObjectName(u"row_3")
-        self.row_3.setMinimumSize(QSize(0, 150))
-        self.row_3.setFrameShape(QFrame.StyledPanel)
-        self.row_3.setFrameShadow(QFrame.Raised)
-        self.horizontalLayout_12 = QHBoxLayout(self.row_3)
-        self.horizontalLayout_12.setSpacing(0)
-        self.horizontalLayout_12.setObjectName(u"horizontalLayout_12")
-        self.horizontalLayout_12.setContentsMargins(0, 0, 0, 0)
-        self.table_layout = QTableWidget(self.row_3)
-        if (self.table_layout.columnCount() < 4):
-            self.table_layout.setColumnCount(4)
-        __qtablewidgetitem = QTableWidgetItem()
-        self.table_layout.setHorizontalHeaderItem(0, __qtablewidgetitem)
-        __qtablewidgetitem1 = QTableWidgetItem()
-        self.table_layout.setHorizontalHeaderItem(1, __qtablewidgetitem1)
-        __qtablewidgetitem2 = QTableWidgetItem()
-        self.table_layout.setHorizontalHeaderItem(2, __qtablewidgetitem2)
-        __qtablewidgetitem3 = QTableWidgetItem()
-        self.table_layout.setHorizontalHeaderItem(3, __qtablewidgetitem3)
-        if (self.table_layout.rowCount() < 5):
-            self.table_layout.setRowCount(5)
-        font4 = QFont()
-        font4.setFamilies([u"Segoe UI"])
-        __qtablewidgetitem4 = QTableWidgetItem()
-        __qtablewidgetitem4.setFont(font4);
-        self.table_layout.setVerticalHeaderItem(0, __qtablewidgetitem4)
-        __qtablewidgetitem5 = QTableWidgetItem()
-        self.table_layout.setVerticalHeaderItem(1, __qtablewidgetitem5)
-        __qtablewidgetitem6 = QTableWidgetItem()
-        self.table_layout.setVerticalHeaderItem(2, __qtablewidgetitem6)
-        __qtablewidgetitem7 = QTableWidgetItem()
-        self.table_layout.setVerticalHeaderItem(3, __qtablewidgetitem7)
-        __qtablewidgetitem8 = QTableWidgetItem()
-        self.table_layout.setVerticalHeaderItem(4, __qtablewidgetitem8)
-        __qtablewidgetitem9 = QTableWidgetItem()
-        self.table_layout.setItem(0, 0, __qtablewidgetitem9)
-        __qtablewidgetitem10 = QTableWidgetItem()
-        self.table_layout.setItem(0, 1, __qtablewidgetitem10)
-        __qtablewidgetitem11 = QTableWidgetItem()
-        self.table_layout.setItem(0, 2, __qtablewidgetitem11)
-        __qtablewidgetitem12 = QTableWidgetItem()
-        __qtablewidgetitem12.setCheckState(Qt.Checked);
-        self.table_layout.setItem(0, 3, __qtablewidgetitem12)
-        __qtablewidgetitem13 = QTableWidgetItem()
-        self.table_layout.setItem(1, 0, __qtablewidgetitem13)
-        __qtablewidgetitem14 = QTableWidgetItem()
-        self.table_layout.setItem(1, 1, __qtablewidgetitem14)
-        __qtablewidgetitem15 = QTableWidgetItem()
-        self.table_layout.setItem(1, 2, __qtablewidgetitem15)
-        __qtablewidgetitem16 = QTableWidgetItem()
-        __qtablewidgetitem16.setCheckState(Qt.Checked);
-        self.table_layout.setItem(1, 3, __qtablewidgetitem16)
-        __qtablewidgetitem17 = QTableWidgetItem()
-        self.table_layout.setItem(2, 0, __qtablewidgetitem17)
-        __qtablewidgetitem18 = QTableWidgetItem()
-        self.table_layout.setItem(2, 1, __qtablewidgetitem18)
-        __qtablewidgetitem19 = QTableWidgetItem()
-        self.table_layout.setItem(2, 2, __qtablewidgetitem19)
-        __qtablewidgetitem20 = QTableWidgetItem()
-        __qtablewidgetitem20.setCheckState(Qt.Checked);
-        self.table_layout.setItem(2, 3, __qtablewidgetitem20)
-        __qtablewidgetitem21 = QTableWidgetItem()
-        self.table_layout.setItem(3, 0, __qtablewidgetitem21)
-        __qtablewidgetitem22 = QTableWidgetItem()
-        self.table_layout.setItem(3, 1, __qtablewidgetitem22)
-        __qtablewidgetitem23 = QTableWidgetItem()
-        self.table_layout.setItem(3, 2, __qtablewidgetitem23)
-        __qtablewidgetitem24 = QTableWidgetItem()
-        __qtablewidgetitem24.setCheckState(Qt.Checked);
-        self.table_layout.setItem(3, 3, __qtablewidgetitem24)
-        self.table_layout.setObjectName(u"table_layout")
-        sizePolicy3 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        sizePolicy3.setHorizontalStretch(0)
-        sizePolicy3.setVerticalStretch(0)
-        sizePolicy3.setHeightForWidth(self.table_layout.sizePolicy().hasHeightForWidth())
-        self.table_layout.setSizePolicy(sizePolicy3)
-        palette = QPalette()
-        brush = QBrush(QColor(221, 221, 221, 255))
-        brush.setStyle(Qt.SolidPattern)
-        palette.setBrush(QPalette.Active, QPalette.WindowText, brush)
-        brush1 = QBrush(QColor(0, 0, 0, 0))
-        brush1.setStyle(Qt.SolidPattern)
-        palette.setBrush(QPalette.Active, QPalette.Button, brush1)
-        palette.setBrush(QPalette.Active, QPalette.Text, brush)
-        palette.setBrush(QPalette.Active, QPalette.ButtonText, brush)
-        brush2 = QBrush(QColor(0, 0, 0, 255))
-        brush2.setStyle(Qt.NoBrush)
-        palette.setBrush(QPalette.Active, QPalette.Base, brush2)
-        palette.setBrush(QPalette.Active, QPalette.Window, brush1)
-        palette.setBrush(QPalette.Inactive, QPalette.WindowText, brush)
-        palette.setBrush(QPalette.Inactive, QPalette.Button, brush1)
-        palette.setBrush(QPalette.Inactive, QPalette.Text, brush)
-        palette.setBrush(QPalette.Inactive, QPalette.ButtonText, brush)
-        brush3 = QBrush(QColor(0, 0, 0, 255))
-        brush3.setStyle(Qt.NoBrush)
-        palette.setBrush(QPalette.Inactive, QPalette.Base, brush3)
-        palette.setBrush(QPalette.Inactive, QPalette.Window, brush1)
-        palette.setBrush(QPalette.Disabled, QPalette.WindowText, brush)
-        palette.setBrush(QPalette.Disabled, QPalette.Button, brush1)
-        palette.setBrush(QPalette.Disabled, QPalette.Text, brush)
-        palette.setBrush(QPalette.Disabled, QPalette.ButtonText, brush)
-        brush4 = QBrush(QColor(0, 0, 0, 255))
-        brush4.setStyle(Qt.NoBrush)
-        palette.setBrush(QPalette.Disabled, QPalette.Base, brush4)
-        palette.setBrush(QPalette.Disabled, QPalette.Window, brush1)
-        self.table_layout.setPalette(palette)
-        self.table_layout.setFrameShape(QFrame.NoFrame)
-        self.table_layout.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
-        self.table_layout.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
-        self.table_layout.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.table_layout.setSelectionMode(QAbstractItemView.NoSelection)
-        self.table_layout.setSelectionBehavior(QAbstractItemView.SelectRows)
-        self.table_layout.setShowGrid(True)
-        self.table_layout.setGridStyle(Qt.SolidLine)
-        self.table_layout.setSortingEnabled(True)
-        self.table_layout.horizontalHeader().setVisible(False)
-        self.table_layout.horizontalHeader().setCascadingSectionResizes(True)
-        self.table_layout.horizontalHeader().setDefaultSectionSize(200)
-        self.table_layout.horizontalHeader().setStretchLastSection(True)
-        self.table_layout.verticalHeader().setVisible(False)
-        self.table_layout.verticalHeader().setCascadingSectionResizes(False)
-        self.table_layout.verticalHeader().setHighlightSections(False)
-        self.table_layout.verticalHeader().setStretchLastSection(True)
-
-        self.horizontalLayout_12.addWidget(self.table_layout)
-
-        self.optionBtns_layout = QVBoxLayout()
-        self.optionBtns_layout.setObjectName(u"optionBtns_layout")
-        self.delete_btn = QPushButton(self.row_3)
-        self.delete_btn.setObjectName(u"delete_btn")
-        self.delete_btn.setEnabled(False)
-        self.delete_btn.setMinimumSize(QSize(150, 30))
-        self.delete_btn.setFont(font)
-        self.delete_btn.setCursor(QCursor(Qt.PointingHandCursor))
-        self.delete_btn.setStyleSheet(u"background-color: rgb(52, 59, 72);")
-
-        self.optionBtns_layout.addWidget(self.delete_btn)
-
-        self.restore_btn = QPushButton(self.row_3)
-        self.restore_btn.setObjectName(u"restore_btn")
-        self.restore_btn.setEnabled(False)
-        self.restore_btn.setMinimumSize(QSize(150, 30))
-        self.restore_btn.setFont(font)
-        self.restore_btn.setCursor(QCursor(Qt.PointingHandCursor))
-        self.restore_btn.setStyleSheet(u"background-color: rgb(52, 59, 72);")
-
-        self.optionBtns_layout.addWidget(self.restore_btn)
-
-        self.save_btn = QPushButton(self.row_3)
-        self.save_btn.setObjectName(u"save_btn")
-        self.save_btn.setEnabled(False)
-        self.save_btn.setMinimumSize(QSize(150, 30))
-        self.save_btn.setFont(font)
-        self.save_btn.setCursor(QCursor(Qt.PointingHandCursor))
-        self.save_btn.setStyleSheet(u"background-color: rgb(52, 59, 72);")
-
-        self.optionBtns_layout.addWidget(self.save_btn)
-
-        self.load_btn = QPushButton(self.row_3)
-        self.load_btn.setObjectName(u"load_btn")
-        self.load_btn.setEnabled(False)
-        self.load_btn.setMinimumSize(QSize(150, 30))
-        self.load_btn.setFont(font)
-        self.load_btn.setCursor(QCursor(Qt.PointingHandCursor))
-        self.load_btn.setStyleSheet(u"background-color: rgb(52, 59, 72);")
-
-        self.optionBtns_layout.addWidget(self.load_btn)
-        self.horizontalLayout_12.addLayout(self.optionBtns_layout)
-        self.verticalLayout.addWidget(self.row_3)
+        """
+        ////////////////////////////////////////////////
+                DELETE PAGE CONTENT
+        ////////////////////////////////////////////////
+        """
+        
+        self.widgets = Ui_delete().render()
 
         self.stackedWidget.addWidget(self.widgets)
+
+
+        """
+        ////////////////////////////////////////////////
+                LEFT MENU BUTTONS 
+        ////////////////////////////////////////////////
+        """
+
         self.new_page = QWidget()
         self.new_page.setObjectName(u"new_page")
         self.verticalLayout_20 = QVBoxLayout(self.new_page)
@@ -1412,7 +1145,7 @@ class Ui_MainWindow(object):
         self.render_images()
         self.stackedWidget.setCurrentIndex(1)
 
-        self.render_delete_page_icons()
+        # self.render_delete_page_icons()
 
         QMetaObject.connectSlotsByName(MainWindow)
 
@@ -1462,84 +1195,8 @@ class Ui_MainWindow(object):
         self.maximizeRestoreAppBtn.setText("")
         self.closeAppBtn.setToolTip(QCoreApplication.translate("MainWindow", u"Close", None))
         self.closeAppBtn.setText("")
-        self.PageTitle_label.setText(QCoreApplication.translate("MainWindow", u"DELETE", None))
-        self.LookupType_comboBox.setItemText(0, QCoreApplication.translate("MainWindow", u"FILES", None))
-        self.LookupType_comboBox.setItemText(1, QCoreApplication.translate("MainWindow", u"FOLDERS", None))
-
-        self.currentPath_lineEdit.setToolTip(QCoreApplication.translate("MainWindow", u"Enter the path where should the lookup process begin", None))
-        self.currentPath_lineEdit.setText("")
-        self.currentPath_lineEdit.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Enter the path here", None))
-        self.browseCurrentPath_btn.setText(QCoreApplication.translate("MainWindow", u"OPEN", None))
-        self.currentLookupInput_lineEdit.setText("")
-        self.currentLookupInput_lineEdit.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Enter your input", None))
-        self.startLookup_btn.setToolTip(QCoreApplication.translate("MainWindow", u"Start lookup process", None))
-        self.startLookup_btn.setText(QCoreApplication.translate("MainWindow", u"START", None))
-        self.currentLookupBy_comboBox.setItemText(0, QCoreApplication.translate("MainWindow", u"NAME", None))
-        self.currentLookupBy_comboBox.setItemText(1, QCoreApplication.translate("MainWindow", u"PATTERN", None))
-        self.currentLookupBy_comboBox.setItemText(2, QCoreApplication.translate("MainWindow", u"EXTENSION", None))
-
-        self.isRecursive_checkBox.setToolTip(QCoreApplication.translate("MainWindow", u"Find files recursively through the selected path", None))
-        self.isRecursive_checkBox.setText(QCoreApplication.translate("MainWindow", u"RECURSIVE", None))
-        self.LookuByTitle_label.setText(QCoreApplication.translate("MainWindow", u"LOOKUP BY", None))
-        ___qtablewidgetitem = self.table_layout.horizontalHeaderItem(0)
-        ___qtablewidgetitem.setText(QCoreApplication.translate("MainWindow", u"0", None))
-        ___qtablewidgetitem1 = self.table_layout.horizontalHeaderItem(1)
-        ___qtablewidgetitem1.setText(QCoreApplication.translate("MainWindow", u"1", None))
-        ___qtablewidgetitem2 = self.table_layout.horizontalHeaderItem(2)
-        ___qtablewidgetitem2.setText(QCoreApplication.translate("MainWindow", u"2", None))
-        ___qtablewidgetitem3 = self.table_layout.horizontalHeaderItem(3)
-        ___qtablewidgetitem3.setText(QCoreApplication.translate("MainWindow", u"3", None))
-        ___qtablewidgetitem4 = self.table_layout.verticalHeaderItem(0)
-        ___qtablewidgetitem4.setText(QCoreApplication.translate("MainWindow", u"New Row", None))
-        ___qtablewidgetitem5 = self.table_layout.verticalHeaderItem(1)
-        ___qtablewidgetitem5.setText(QCoreApplication.translate("MainWindow", u"New Row", None))
-        ___qtablewidgetitem6 = self.table_layout.verticalHeaderItem(2)
-        ___qtablewidgetitem6.setText(QCoreApplication.translate("MainWindow", u"New Row", None))
-        ___qtablewidgetitem7 = self.table_layout.verticalHeaderItem(3)
-        ___qtablewidgetitem7.setText(QCoreApplication.translate("MainWindow", u"New Row", None))
-        ___qtablewidgetitem8 = self.table_layout.verticalHeaderItem(4)
-        ___qtablewidgetitem8.setText(QCoreApplication.translate("MainWindow", u"New Row", None))
-
-        __sortingEnabled = self.table_layout.isSortingEnabled()
-        self.table_layout.setSortingEnabled(False)
-        ___qtablewidgetitem9 = self.table_layout.item(0, 0)
-        ___qtablewidgetitem9.setText(QCoreApplication.translate("MainWindow", u"SOURCE", None))
-        ___qtablewidgetitem10 = self.table_layout.item(0, 1)
-        ___qtablewidgetitem10.setText(QCoreApplication.translate("MainWindow", u"FILE", None))
-        ___qtablewidgetitem11 = self.table_layout.item(0, 2)
-        ___qtablewidgetitem11.setText(QCoreApplication.translate("MainWindow", u"File", None))
-        ___qtablewidgetitem12 = self.table_layout.item(0, 3)
-        ___qtablewidgetitem12.setText(QCoreApplication.translate("MainWindow", u"SELECT", None))
-        ___qtablewidgetitem13 = self.table_layout.item(1, 0)
-        ___qtablewidgetitem13.setText(QCoreApplication.translate("MainWindow", u"test (c 0, r 0)", None))
-        ___qtablewidgetitem14 = self.table_layout.item(1, 1)
-        ___qtablewidgetitem14.setText(QCoreApplication.translate("MainWindow", u"test (c 1, r 0)", None))
-        ___qtablewidgetitem15 = self.table_layout.item(1, 2)
-        ___qtablewidgetitem15.setText(QCoreApplication.translate("MainWindow", u"test (c 2, r 0)", None))
-        ___qtablewidgetitem16 = self.table_layout.item(2, 0)
-        ___qtablewidgetitem16.setText(QCoreApplication.translate("MainWindow", u"test (c 0, r 1)", None))
-        ___qtablewidgetitem17 = self.table_layout.item(2, 1)
-        ___qtablewidgetitem17.setText(QCoreApplication.translate("MainWindow", u"test (c 1, r 1)", None))
-        ___qtablewidgetitem18 = self.table_layout.item(2, 2)
-        ___qtablewidgetitem18.setText(QCoreApplication.translate("MainWindow", u"test (c 2, r 1)", None))
-        ___qtablewidgetitem19 = self.table_layout.item(3, 0)
-        ___qtablewidgetitem19.setText(QCoreApplication.translate("MainWindow", u"test (c 0, r 2)", None))
-        ___qtablewidgetitem20 = self.table_layout.item(3, 1)
-        ___qtablewidgetitem20.setText(QCoreApplication.translate("MainWindow", u"test (c 1, r 2)", None))
-        ___qtablewidgetitem21 = self.table_layout.item(3, 2)
-        ___qtablewidgetitem21.setText(QCoreApplication.translate("MainWindow", u"test (c 2 r 2)", None))
-        self.table_layout.setSortingEnabled(__sortingEnabled)
-
-        self.delete_btn.setToolTip(QCoreApplication.translate("MainWindow", u"Delete all selected items", None))
-        self.delete_btn.setText(QCoreApplication.translate("MainWindow", u"DELETE", None))
-        self.restore_btn.setToolTip(QCoreApplication.translate("MainWindow", u"Restore last deleted process", None))
-        self.restore_btn.setText(QCoreApplication.translate("MainWindow", u"RESTORE", None))
-        self.save_btn.setToolTip(QCoreApplication.translate("MainWindow", u"Store current lookup", None))
-        self.save_btn.setText(QCoreApplication.translate("MainWindow", u"SAVE", None))
-        self.load_btn.setToolTip(QCoreApplication.translate("MainWindow", u"Load previous lookup", None))
-        self.load_btn.setText(QCoreApplication.translate("MainWindow", u"LOAD", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"NEW PAGE TEST", None))
-
+        
         self.btn_message.setText(QCoreApplication.translate("MainWindow", u"...", None))
         self.btn_print.setText(QCoreApplication.translate("MainWindow", u"...", None))
         self.btn_logout.setText(QCoreApplication.translate("MainWindow", u"...", None))
@@ -1548,24 +1205,14 @@ class Ui_MainWindow(object):
         self.version.setText(QCoreApplication.translate("MainWindow", u"v1.1.2", None))
         
 
-    def render_delete_page_icons(self):
-        
-        size = 20
-        self.set_icon(self.browseCurrentPath_btn, "folder_outline", (size, size))
-        self.set_icon(self.startLookup_btn, "start", (size, size))
-        self.set_icon(self.delete_btn, "delete sign", (size, size))
-        self.set_icon(self.restore_btn, "restore file", (size, size))
-        self.set_icon(self.load_btn, "file upload", (size, size))
-        self.set_icon(self.save_btn, "file download", (size, size))
-
 
     def render_images(self) -> None:
 
         # WINDOW 
-        self.set_icon(self.moreBtn, "more")
-        self.set_icon(self.minimizeAppBtn, "minimize")
-        self.set_icon(self.maximizeRestoreAppBtn, "maximize")
-        self.set_icon(self.closeAppBtn, "close")
+        self.common_functions.set_icon(self.moreBtn, "more")
+        self.common_functions.set_icon(self.minimizeAppBtn, "minimize")
+        self.common_functions.set_icon(self.maximizeRestoreAppBtn, "maximize")
+        self.common_functions.set_icon(self.closeAppBtn, "close")
         
 
         # MAIN PAGE
@@ -1589,7 +1236,7 @@ class Ui_MainWindow(object):
         self.set_bg_image(self.btn_share, "home")
         self.set_bg_image(self.btn_adjustments, "home")
         self.set_bg_image(self.btn_more, "home")
-        self.set_icon(self.extraCloseColumnBtn, "close")
+        self.common_functions.set_icon(self.extraCloseColumnBtn, "close")
 
         # RIGHT MENU OPTIONS
         self.set_bg_image(self.btn_message, "home")
@@ -1610,12 +1257,3 @@ class Ui_MainWindow(object):
             f"background-image: url({self.constant.get_resources_path()}{path}/{name}.{ext});\
             {extra_style}"
         )
-
-
-    def set_icon(self, widget:QWidget, name:str, size=(18, 18)) -> str:
-
-        widget.setIcon(
-            QIcon(f"{self.constant.get_resources_path()}icons/{name}.svg") 
-        )
-
-        widget.setIconSize(QSize(*size))
