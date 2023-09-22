@@ -19,9 +19,9 @@ from PySide6.QtWidgets import *
 from . ui_main import Ui_MainWindow
 
 
+
 # IMPORT FUNCTIONS
 from . ui_functions import *
 
 # APP FUNCTIONS
 from . app_functions import *
-

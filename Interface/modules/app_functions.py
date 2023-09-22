@@ -1,3 +1,14 @@
+
+# MAIN FILE
+from main import MainWindow
+
+# APP SETTINGS
+from . app_settings import Settings
+
+# WITH ACCESS TO MAIN WINDOW WIDGETS
+class AppFunctions(MainWindow):
+    
+
 # ///////////////////////////////////////////////////////////////
 #
 # BY: WANDERSON M.PIMENTA
@@ -21,6 +32,7 @@ from main import *
 # WITH ACCESS TO MAIN WINDOW WIDGETS
 # ///////////////////////////////////////////////////////////////
 class AppFunctions(MainWindow):
+    
     def setThemeHack(self):
         Settings.BTN_LEFT_BOX_COLOR = "background-color: #495474;"
         Settings.BTN_RIGHT_BOX_COLOR = "background-color: #495474;"
