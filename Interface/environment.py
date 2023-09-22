@@ -2,6 +2,7 @@
     Parent class holds constant values 
     for the interface
 """
+
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
@@ -41,7 +42,6 @@ class Common:
 
         # return the directory path, otherwise return None
         return path if path else None
-
 
 
 
