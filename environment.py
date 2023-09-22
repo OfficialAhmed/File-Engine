@@ -27,11 +27,6 @@ class Common:
 
 
 if __name__ == "__main__":
-
-    """
-        Library testing
-        to be removed 
-    """
     
     remove_folder = Delete.Folder()
 

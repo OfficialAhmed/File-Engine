@@ -1,8 +1,11 @@
+# ////////////////////////////////////
+# UI Created BY: WANDERSON M.PIMENTA
+# ////////////////////////////////////
+
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 
-# UI Created BY: WANDERSON M.PIMENTA
 import sys
 import os
 import platform
@@ -89,7 +92,7 @@ class MainWindow(QMainWindow):
             AppFunctions.setThemeHack(self)
 
         # SET HOME PAGE AND SELECT MENU
-        widgets.stackedWidget.setCurrentWidget(widgets.home)
+        widgets.stackedWidget.setCurrentWidget(widgets.home_widgets)
         widgets.home_page.setStyleSheet(UIFunctions.selectMenu(widgets.home_page.styleSheet()))
 
 
@@ -107,13 +110,13 @@ class MainWindow(QMainWindow):
 
             # SHOW HOME PAGE
             case "home_page":
-                widgets.stackedWidget.setCurrentWidget(widgets.home)
+                widgets.stackedWidget.setCurrentWidget(widgets.home_widgets)
                 UIFunctions.resetStyle(self, btn_name)
                 btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet()))
 
             # SHOW DELETE PAGE
             case "delete_page":
-                widgets.stackedWidget.setCurrentWidget(widgets.widgets)
+                widgets.stackedWidget.setCurrentWidget(widgets.delete_widgets)
                 UIFunctions.resetStyle(self, btn_name)
                 btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet()))
 

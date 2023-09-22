@@ -2,7 +2,7 @@ from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 
-from ..environment import Constant, Common
+from ..environment import Constant, Common, Html
 
 
 class Ui:
@@ -10,6 +10,9 @@ class Ui:
     def __init__(self) -> None:
         self.constant = Constant()
         self.common_functions = Common()
+        self.html = Html()
+
+        self.user_path = ""
 
 
     def render(self):
@@ -38,7 +41,6 @@ class Ui:
         self.PageTitle_label = QLabel(self.frame_content_wid_3)
         self.PageTitle_label.setObjectName(u"PageTitle_label")
         self.PageTitle_label.setFont(font)
-        self.PageTitle_label.setStyleSheet(u"")
 
         self.first_layout.addWidget(self.PageTitle_label, 0, 0, 1, 1)
 
@@ -46,7 +48,7 @@ class Ui:
         self.LookupType_comboBox.setObjectName(u"LookupType_comboBox")
         self.LookupType_comboBox.setFont(font)
         self.LookupType_comboBox.setAutoFillBackground(False)
-        self.LookupType_comboBox.setStyleSheet(u"background-color: rgb(33, 37, 43);")
+        self.LookupType_comboBox.setStyleSheet(self.html.get_bg_color("dark blue"))
         self.LookupType_comboBox.setFrame(True)
 
         self.first_layout.addWidget(self.LookupType_comboBox, 1, 0, 1, 1)
@@ -78,7 +80,7 @@ class Ui:
         self.currentPath_lineEdit = QLineEdit(self.frame_content_wid_4)
         self.currentPath_lineEdit.setObjectName(u"currentPath_lineEdit")
         self.currentPath_lineEdit.setMinimumSize(QSize(0, 30))
-        self.currentPath_lineEdit.setStyleSheet(u"background-color: rgb(33, 37, 43);")
+        self.currentPath_lineEdit.setStyleSheet(self.html.get_bg_color("dark blue"))
 
         self.second_layout.addWidget(self.currentPath_lineEdit, 0, 1, 1, 1)
 
@@ -87,7 +89,7 @@ class Ui:
         self.browseCurrentPath_btn.setMinimumSize(QSize(150, 30))
         self.browseCurrentPath_btn.setFont(font)
         self.browseCurrentPath_btn.setCursor(QCursor(Qt.PointingHandCursor))
-        self.browseCurrentPath_btn.setStyleSheet(u"background-color: rgb(52, 59, 72);")
+        self.browseCurrentPath_btn.setStyleSheet(self.html.get_bg_color("lightblue"))
 
         self.second_layout.addWidget(self.browseCurrentPath_btn, 0, 2, 1, 1)
         self.horizontalLayout_13.addLayout(self.second_layout)
@@ -105,17 +107,16 @@ class Ui:
         self.currentLookupInput_lineEdit = QLineEdit(self.frame_content_wid_2)
         self.currentLookupInput_lineEdit.setObjectName(u"currentLookupInput_lineEdit")
         self.currentLookupInput_lineEdit.setMinimumSize(QSize(0, 30))
-        self.currentLookupInput_lineEdit.setStyleSheet(u"background-color: rgb(33, 37, 43);")
+        self.currentLookupInput_lineEdit.setStyleSheet(self.html.get_bg_color("dark blue"))
 
         self.third_layout.addWidget(self.currentLookupInput_lineEdit, 1, 1, 1, 1)
 
         self.startLookup_btn = QPushButton(self.frame_content_wid_2)
         self.startLookup_btn.setObjectName(u"startLookup_btn")
-        self.startLookup_btn.setEnabled(False)
         self.startLookup_btn.setMinimumSize(QSize(150, 30))
         self.startLookup_btn.setFont(font)
         self.startLookup_btn.setCursor(QCursor(Qt.PointingHandCursor))
-        self.startLookup_btn.setStyleSheet(u"background-color: rgb(52, 59, 72);")
+        self.startLookup_btn.setStyleSheet(self.html.get_bg_color("lightblue"))
 
         self.third_layout.addWidget(self.startLookup_btn, 1, 2, 1, 1)
 
@@ -123,23 +124,21 @@ class Ui:
         self.currentLookupBy_comboBox.setObjectName(u"currentLookupBy_comboBox")
         self.currentLookupBy_comboBox.setFont(font)
         self.currentLookupBy_comboBox.setAutoFillBackground(False)
-        self.currentLookupBy_comboBox.setStyleSheet(u"background-color: rgb(33, 37, 43);")
+        self.currentLookupBy_comboBox.setStyleSheet(self.html.get_bg_color("dark blue"))
         self.currentLookupBy_comboBox.setFrame(True)
 
         self.third_layout.addWidget(self.currentLookupBy_comboBox, 1, 0, 1, 1)
 
         self.isRecursive_checkBox = QCheckBox(self.frame_content_wid_2)
         self.isRecursive_checkBox.setObjectName(u"isRecursive_checkBox")
-        self.isRecursive_checkBox.setEnabled(True)
         self.isRecursive_checkBox.setAutoFillBackground(False)
-        self.isRecursive_checkBox.setStyleSheet(u"")
         self.isRecursive_checkBox.setChecked(True)
 
         self.third_layout.addWidget(self.isRecursive_checkBox, 2, 0, 1, 1)
 
         self.LookuByTitle_label = QLabel(self.frame_content_wid_2)
         self.LookuByTitle_label.setObjectName(u"LookuByTitle_label")
-        self.LookuByTitle_label.setStyleSheet(u"color: rgb(113, 126, 149);")
+        self.LookuByTitle_label.setStyleSheet(u"color: rgb(113, 126, 149)")
         self.LookuByTitle_label.setLineWidth(1)
         self.LookuByTitle_label.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
 
@@ -157,6 +156,7 @@ class Ui:
         self.horizontalLayout_12.setObjectName(u"horizontalLayout_12")
         self.horizontalLayout_12.setContentsMargins(0, 0, 0, 0)
         self.table_layout = QTableWidget(self.row_3)
+        
         if (self.table_layout.columnCount() < 4):
             self.table_layout.setColumnCount(4)
         __qtablewidgetitem = QTableWidgetItem()
@@ -172,7 +172,7 @@ class Ui:
         font4 = QFont()
         font4.setFamilies([u"Segoe UI"])
         __qtablewidgetitem4 = QTableWidgetItem()
-        __qtablewidgetitem4.setFont(font4);
+        __qtablewidgetitem4.setFont(font4)
         self.table_layout.setVerticalHeaderItem(0, __qtablewidgetitem4)
         __qtablewidgetitem5 = QTableWidgetItem()
         self.table_layout.setVerticalHeaderItem(1, __qtablewidgetitem5)
@@ -189,7 +189,7 @@ class Ui:
         __qtablewidgetitem11 = QTableWidgetItem()
         self.table_layout.setItem(0, 2, __qtablewidgetitem11)
         __qtablewidgetitem12 = QTableWidgetItem()
-        __qtablewidgetitem12.setCheckState(Qt.Checked);
+        __qtablewidgetitem12.setCheckState(Qt.Checked)
         self.table_layout.setItem(0, 3, __qtablewidgetitem12)
         __qtablewidgetitem13 = QTableWidgetItem()
         self.table_layout.setItem(1, 0, __qtablewidgetitem13)
@@ -198,7 +198,7 @@ class Ui:
         __qtablewidgetitem15 = QTableWidgetItem()
         self.table_layout.setItem(1, 2, __qtablewidgetitem15)
         __qtablewidgetitem16 = QTableWidgetItem()
-        __qtablewidgetitem16.setCheckState(Qt.Checked);
+        __qtablewidgetitem16.setCheckState(Qt.Checked)
         self.table_layout.setItem(1, 3, __qtablewidgetitem16)
         __qtablewidgetitem17 = QTableWidgetItem()
         self.table_layout.setItem(2, 0, __qtablewidgetitem17)
@@ -207,7 +207,7 @@ class Ui:
         __qtablewidgetitem19 = QTableWidgetItem()
         self.table_layout.setItem(2, 2, __qtablewidgetitem19)
         __qtablewidgetitem20 = QTableWidgetItem()
-        __qtablewidgetitem20.setCheckState(Qt.Checked);
+        __qtablewidgetitem20.setCheckState(Qt.Checked)
         self.table_layout.setItem(2, 3, __qtablewidgetitem20)
         __qtablewidgetitem21 = QTableWidgetItem()
         self.table_layout.setItem(3, 0, __qtablewidgetitem21)
@@ -216,7 +216,8 @@ class Ui:
         __qtablewidgetitem23 = QTableWidgetItem()
         self.table_layout.setItem(3, 2, __qtablewidgetitem23)
         __qtablewidgetitem24 = QTableWidgetItem()
-        __qtablewidgetitem24.setCheckState(Qt.Checked);
+        __qtablewidgetitem24.setCheckState(Qt.Checked)
+
         self.table_layout.setItem(3, 3, __qtablewidgetitem24)
         self.table_layout.setObjectName(u"table_layout")
         sizePolicy3 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -282,7 +283,7 @@ class Ui:
         self.delete_btn.setMinimumSize(QSize(150, 30))
         self.delete_btn.setFont(font)
         self.delete_btn.setCursor(QCursor(Qt.PointingHandCursor))
-        self.delete_btn.setStyleSheet(u"background-color: rgb(52, 59, 72);")
+        self.delete_btn.setStyleSheet(self.html.get_bg_color("lightblue"))
 
         self.optionBtns_layout.addWidget(self.delete_btn)
 
@@ -292,7 +293,7 @@ class Ui:
         self.restore_btn.setMinimumSize(QSize(150, 30))
         self.restore_btn.setFont(font)
         self.restore_btn.setCursor(QCursor(Qt.PointingHandCursor))
-        self.restore_btn.setStyleSheet(u"background-color: rgb(52, 59, 72);")
+        self.restore_btn.setStyleSheet(self.html.get_bg_color("lightblue"))
 
         self.optionBtns_layout.addWidget(self.restore_btn)
 
@@ -302,7 +303,7 @@ class Ui:
         self.save_btn.setMinimumSize(QSize(150, 30))
         self.save_btn.setFont(font)
         self.save_btn.setCursor(QCursor(Qt.PointingHandCursor))
-        self.save_btn.setStyleSheet(u"background-color: rgb(52, 59, 72);")
+        self.save_btn.setStyleSheet(self.html.get_bg_color("lightblue"))
 
         self.optionBtns_layout.addWidget(self.save_btn)
 
@@ -312,7 +313,7 @@ class Ui:
         self.load_btn.setMinimumSize(QSize(150, 30))
         self.load_btn.setFont(font)
         self.load_btn.setCursor(QCursor(Qt.PointingHandCursor))
-        self.load_btn.setStyleSheet(u"background-color: rgb(52, 59, 72);")
+        self.load_btn.setStyleSheet(self.html.get_bg_color("lightblue"))
 
         self.optionBtns_layout.addWidget(self.load_btn)
         self.horizontalLayout_12.addLayout(self.optionBtns_layout)
@@ -320,6 +321,17 @@ class Ui:
         
         self.retranslateUi()
         self.render_page_icons()
+
+        """
+        ////////////////////////////////////////////////
+                BUTTONS SIGNAL
+        ////////////////////////////////////////////////
+        """
+
+        self.browseCurrentPath_btn.clicked.connect(lambda: self.set_user_path())
+
+        self.LookupType_comboBox.currentTextChanged.connect(lambda: self.change_lookup_format())
+
 
         return self.widgets
     
@@ -356,12 +368,12 @@ class Ui:
         """
 
         data = {
-            self.delete_btn           :  ("DELETE"   ,"Delete all selected items"),
-            self.restore_btn          :  ("RESTORE"  ,"Restore last deleted process"),
-            self.save_btn             :  ("SAVE"     ,"Store current lookup"),
-            self.load_btn             :  ("LOAD"     ,"Load previous lookup"),
-            self.startLookup_btn      :  ("START"    ,"Start lookup process"),
-            self.isRecursive_checkBox :  ("RECURSIVE","Find files recursively through the selected path") 
+            self.delete_btn           :  ("DELETE"   ,"Delete All Selected Items"),
+            self.restore_btn          :  ("RESTORE"  ,"Restore Last Deleted Process"),
+            self.save_btn             :  ("SAVE"     ,"Store Current Lookup"),
+            self.load_btn             :  ("LOAD"     ,"Load Previous Lookup"),
+            self.startLookup_btn      :  ("START"    ,"Start Lookup Process"),
+            self.isRecursive_checkBox :  ("RECURSIVE","Find Files Recursively Through The Selected Path") 
         }
 
         for widget, info in data.items():
@@ -436,7 +448,6 @@ class Ui:
         self.table_layout.setSortingEnabled(__sortingEnabled)
 
 
-
     def render_page_icons(self):
         
         size = 20
@@ -446,3 +457,44 @@ class Ui:
         self.common_functions.set_icon(self.restore_btn, "restore file", (size, size))
         self.common_functions.set_icon(self.load_btn, "file upload", (size, size))
         self.common_functions.set_icon(self.save_btn, "file download", (size, size))
+
+
+class Model(Ui):
+
+    pass
+
+
+class Controller(Ui):
+
+    def set_user_path(self):
+        """
+            update user path input
+        """
+        
+        path = self.common_functions.get_user_path()
+
+        # RESET USER PATH
+        if not path:
+            self.user_path = ""
+            return 
+
+        self.user_path = path
+        self.currentPath_lineEdit.setText(path)
+
+
+    def change_lookup_format(self) -> None:
+        """
+            Change lookup format options according to the lookup type
+        """
+
+        current_type = self.LookupType_comboBox.currentText()
+        total_formats = self.currentLookupBy_comboBox.count()
+
+        # ADD THE OPTION 'EXTENSION' IF 'FILES' SELECTED
+        if current_type == "FILES":
+            if total_formats == 2:
+                self.currentLookupBy_comboBox.addItem("EXTENSION")
+                return
+            
+        if total_formats == 3:
+            self.currentLookupBy_comboBox.removeItem(2)

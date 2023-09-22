@@ -992,10 +992,10 @@ class Ui(object):
         """
 
         
-        self.home = QWidget()
-        self.home.setObjectName(u"home")
+        self.home_widgets = QWidget()
+        self.home_widgets.setObjectName(u"home")
         
-        self.stackedWidget.addWidget(self.home)
+        self.stackedWidget.addWidget(self.home_widgets)
 
 
         """
@@ -1004,9 +1004,10 @@ class Ui(object):
         ////////////////////////////////////////////////
         """
         
-        self.widgets = Ui_delete().render()
-
-        self.stackedWidget.addWidget(self.widgets)
+        self.delete_widgets = Ui_delete().render()
+        self.home_widgets.setObjectName(u"delete")
+        
+        self.stackedWidget.addWidget(self.delete_widgets)
 
 
         """
@@ -1217,7 +1218,7 @@ class Ui(object):
 
         # MAIN PAGE
         self.set_bg_image(
-            self.home, 
+            self.home_widgets, 
             "File Engine vertical", 
             False, 
             "background-position: center;\n" + "background-repeat: no-repeat;"
