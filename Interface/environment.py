@@ -28,7 +28,6 @@ class Common:
         Render a window to select the path
         """
         options = QFileDialog.Options()
-        # options |= QFileDialog.DontUseSheet
         dialog = QFileDialog()
         dialog.setOptions(options)
         # dialog.setDirectory()
@@ -36,7 +35,7 @@ class Common:
         path = QFileDialog.getExistingDirectory(
             None,
             "PICK A FOLDER TO CONTINUE",
-            "", # PATH ON WINDOW RENDER
+            "", # PATH ON-WINDOW RENDER
             options=options,
         )
 

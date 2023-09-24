@@ -12,7 +12,6 @@ Search for files or folders recursively by:
 - Full name
 - Pattern
 - File extention
-- Size
 
 ### TODO LIST
 
@@ -25,6 +24,7 @@ Search for files or folders recursively by:
 - [ ] **Automation:** Set up automated tasks to streamline your file management workflows.
 - [x] **Cross-Platform:** Works seamlessly on Windows, macOS, and Linux.
 - [x] **User-Friendly Interface:** A user-friendly interface makes it easy for both beginners and power users.
+- [x] **Detect hidden attribute** Read Files/Folders flagged as hidden
 
 
 # PREREQUISITES
