@@ -8,11 +8,12 @@
 
 import os, json
 import shutil
-from main import Common
 
 
+# TODO: REIMPLEMENT THE FOLLOWING CLASSES TO BE INDEPENDENT FROM CONTROLLER
+# FIXME: REMOVE ELEMENTS REQUIRED TO BE IMPORTED FROM CONTROLLER i.e. self.trash_content_file
     
-class Engine(Common):
+class Engine:
     """ 
         Parent class for removing. 
         Hold the common data processing between files and folders 
@@ -22,7 +23,7 @@ class Engine(Common):
         super().__init__()
 
         self.__removed_content_count = 0
-        self.create_trash()
+        self._create_trash()
 
         # Removed content tracker -> For restoring feature
         self.removed_content = {}
@@ -37,7 +38,7 @@ class Engine(Common):
                 pass
 
 
-    def create_trash(self) -> None:
+    def _create_trash(self) -> None:
         """
             Make trash if it doesnt exist
         """

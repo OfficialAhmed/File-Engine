@@ -1,18 +1,153 @@
+"""
+
+    PARENT CLASS: Model
+        CHILD CLASS: Controller
+            CHILD CLASS: Ui
+
+"""
+
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from PySide6.QtGui import *
-
 from ..environment import Constant, Common, Html
 
+from controller import Cache
 
-class Ui:
 
+class Model:
+    """
+        ### SHARABLE OBJECTS AND METHODS
+            ACCESSIBLE BY BOTH CONTROLLER & UI
+    """
+    
     def __init__(self) -> None:
+
+        self.html = Html()
+        self.controller = Cache()
         self.constant = Constant()
         self.common_functions = Common()
-        self.html = Html()
 
-        self.user_path = ""
+        self.path_input = ""
+
+
+class Controller(Model):
+    """
+        ### UI FUNCTIONALITY
+            ACCESSIBLE BY UI ONLY
+
+    """
+
+    def set_user_path(self, path:str, widget:QWidget | None = None):
+        """ 
+            Update user path input 
+        """
+        
+        # RESET USER PATH
+        if not path:
+            self.path_input = ""
+            return 
+
+        self.path_input = path
+
+        if widget:
+            widget.setText(path)
+
+
+    def change_lookup_format(self, lookup_type_widget:QWidget, lookup_format_widget:QWidget) -> None:
+        """
+            Change lookup format options according to the lookup type
+        """
+
+        current_type = lookup_type_widget.currentText()
+        total_formats = lookup_format_widget.count()
+
+        # ADD THE OPTION 'EXTENSION' IF 'FILES' SELECTED
+        if current_type == "FILES":
+
+            if total_formats == 2:
+                
+                lookup_format_widget.addItem("EXTENSION")
+                return
+            
+        if total_formats == 3:
+            lookup_format_widget.removeItem(2)
+
+
+    def start_lookup(self, start_widget: QWidget, format_input: QWidget, lookup_format_widget: QWidget, lookup_type_widget: QWidget, recursive_widget: QWidget):
+        """
+            Begin lookup process. Deactivate the btn and reactivate it after 
+        """
+
+        start_widget.setEnabled(False)
+
+        type        :str  = lookup_type_widget.currentText()
+        format      :str  = lookup_format_widget.currentText()
+        format_input:str  = format_input.text()
+        is_recursive:bool = recursive_widget.isChecked()
+        
+        # UPDATE THE FINDER PARAMETERS
+        self.controller.update_param(
+            self.path_input,
+            is_recursive,
+        )
+
+
+        try:
+
+            # BOTH INPUTS REQUIRED
+            if not format_input or not self.path_input:
+                print("Empty search input")
+                
+            else:
+
+                # SEARCH BY SELECTED FORMAT 
+                if type == "FILES":
+
+                    match format:
+
+                        case "NAME":
+                            self.controller.get_files_by_name(
+                                format_input
+                            )
+
+                        case "EXTENSION":
+                            self.controller.get_files_by_extension(
+                                format_input
+                            )
+                        
+                        case "PATTERN":
+                            self.controller.get_files_by_pattern(
+                                format_input
+                            )
+
+                elif type == "FOLDERS":
+
+                    match format:
+
+                        case "NAME":
+                            self.controller.get_folders_by_name(
+                                format_input
+                            )
+
+                        case "PATTERN":
+                            self.controller.get_folders_by_pattern(
+                                format_input
+                            )
+                
+        except Exception as e:
+
+            print(str(e))
+
+        finally:
+
+            start_widget.setEnabled(True)
+
+
+
+class Ui(Controller):
+
+    def __init__(self) -> None:
+        super().__init__()
 
 
     def render(self):
@@ -104,12 +239,12 @@ class Ui:
         self.third_layout = QGridLayout()
         self.third_layout.setObjectName(u"third_layout")
         self.third_layout.setContentsMargins(-1, -1, -1, 0)
-        self.currentLookupInput_lineEdit = QLineEdit(self.frame_content_wid_2)
-        self.currentLookupInput_lineEdit.setObjectName(u"currentLookupInput_lineEdit")
-        self.currentLookupInput_lineEdit.setMinimumSize(QSize(0, 30))
-        self.currentLookupInput_lineEdit.setStyleSheet(self.html.get_bg_color("dark blue"))
+        self.lookupInput_lineEdit = QLineEdit(self.frame_content_wid_2)
+        self.lookupInput_lineEdit.setObjectName(u"currentLookupInput_lineEdit")
+        self.lookupInput_lineEdit.setMinimumSize(QSize(0, 30))
+        self.lookupInput_lineEdit.setStyleSheet(self.html.get_bg_color("dark blue"))
 
-        self.third_layout.addWidget(self.currentLookupInput_lineEdit, 1, 1, 1, 1)
+        self.third_layout.addWidget(self.lookupInput_lineEdit, 1, 1, 1, 1)
 
         self.startLookup_btn = QPushButton(self.frame_content_wid_2)
         self.startLookup_btn.setObjectName(u"startLookup_btn")
@@ -120,14 +255,14 @@ class Ui:
 
         self.third_layout.addWidget(self.startLookup_btn, 1, 2, 1, 1)
 
-        self.currentLookupBy_comboBox = QComboBox(self.frame_content_wid_2)
-        self.currentLookupBy_comboBox.setObjectName(u"currentLookupBy_comboBox")
-        self.currentLookupBy_comboBox.setFont(font)
-        self.currentLookupBy_comboBox.setAutoFillBackground(False)
-        self.currentLookupBy_comboBox.setStyleSheet(self.html.get_bg_color("dark blue"))
-        self.currentLookupBy_comboBox.setFrame(True)
+        self.lookupFormat_comboBox = QComboBox(self.frame_content_wid_2)
+        self.lookupFormat_comboBox.setObjectName(u"currentLookupBy_comboBox")
+        self.lookupFormat_comboBox.setFont(font)
+        self.lookupFormat_comboBox.setAutoFillBackground(False)
+        self.lookupFormat_comboBox.setStyleSheet(self.html.get_bg_color("dark blue"))
+        self.lookupFormat_comboBox.setFrame(True)
 
-        self.third_layout.addWidget(self.currentLookupBy_comboBox, 1, 0, 1, 1)
+        self.third_layout.addWidget(self.lookupFormat_comboBox, 1, 0, 1, 1)
 
         self.isRecursive_checkBox = QCheckBox(self.frame_content_wid_2)
         self.isRecursive_checkBox.setObjectName(u"isRecursive_checkBox")
@@ -151,80 +286,56 @@ class Ui:
         self.row_3.setMinimumSize(QSize(0, 150))
         self.row_3.setFrameShape(QFrame.StyledPanel)
         self.row_3.setFrameShadow(QFrame.Raised)
+        
         self.horizontalLayout_12 = QHBoxLayout(self.row_3)
         self.horizontalLayout_12.setSpacing(0)
         self.horizontalLayout_12.setObjectName(u"horizontalLayout_12")
         self.horizontalLayout_12.setContentsMargins(0, 0, 0, 0)
-        self.table_layout = QTableWidget(self.row_3)
-        
-        if (self.table_layout.columnCount() < 4):
-            self.table_layout.setColumnCount(4)
-        __qtablewidgetitem = QTableWidgetItem()
-        self.table_layout.setHorizontalHeaderItem(0, __qtablewidgetitem)
-        __qtablewidgetitem1 = QTableWidgetItem()
-        self.table_layout.setHorizontalHeaderItem(1, __qtablewidgetitem1)
-        __qtablewidgetitem2 = QTableWidgetItem()
-        self.table_layout.setHorizontalHeaderItem(2, __qtablewidgetitem2)
-        __qtablewidgetitem3 = QTableWidgetItem()
-        self.table_layout.setHorizontalHeaderItem(3, __qtablewidgetitem3)
-        if (self.table_layout.rowCount() < 5):
-            self.table_layout.setRowCount(5)
-        font4 = QFont()
-        font4.setFamilies([u"Segoe UI"])
-        __qtablewidgetitem4 = QTableWidgetItem()
-        __qtablewidgetitem4.setFont(font4)
-        self.table_layout.setVerticalHeaderItem(0, __qtablewidgetitem4)
-        __qtablewidgetitem5 = QTableWidgetItem()
-        self.table_layout.setVerticalHeaderItem(1, __qtablewidgetitem5)
-        __qtablewidgetitem6 = QTableWidgetItem()
-        self.table_layout.setVerticalHeaderItem(2, __qtablewidgetitem6)
-        __qtablewidgetitem7 = QTableWidgetItem()
-        self.table_layout.setVerticalHeaderItem(3, __qtablewidgetitem7)
-        __qtablewidgetitem8 = QTableWidgetItem()
-        self.table_layout.setVerticalHeaderItem(4, __qtablewidgetitem8)
-        __qtablewidgetitem9 = QTableWidgetItem()
-        self.table_layout.setItem(0, 0, __qtablewidgetitem9)
-        __qtablewidgetitem10 = QTableWidgetItem()
-        self.table_layout.setItem(0, 1, __qtablewidgetitem10)
-        __qtablewidgetitem11 = QTableWidgetItem()
-        self.table_layout.setItem(0, 2, __qtablewidgetitem11)
-        __qtablewidgetitem12 = QTableWidgetItem()
-        __qtablewidgetitem12.setCheckState(Qt.Checked)
-        self.table_layout.setItem(0, 3, __qtablewidgetitem12)
-        __qtablewidgetitem13 = QTableWidgetItem()
-        self.table_layout.setItem(1, 0, __qtablewidgetitem13)
-        __qtablewidgetitem14 = QTableWidgetItem()
-        self.table_layout.setItem(1, 1, __qtablewidgetitem14)
-        __qtablewidgetitem15 = QTableWidgetItem()
-        self.table_layout.setItem(1, 2, __qtablewidgetitem15)
-        __qtablewidgetitem16 = QTableWidgetItem()
-        __qtablewidgetitem16.setCheckState(Qt.Checked)
-        self.table_layout.setItem(1, 3, __qtablewidgetitem16)
-        __qtablewidgetitem17 = QTableWidgetItem()
-        self.table_layout.setItem(2, 0, __qtablewidgetitem17)
-        __qtablewidgetitem18 = QTableWidgetItem()
-        self.table_layout.setItem(2, 1, __qtablewidgetitem18)
-        __qtablewidgetitem19 = QTableWidgetItem()
-        self.table_layout.setItem(2, 2, __qtablewidgetitem19)
-        __qtablewidgetitem20 = QTableWidgetItem()
-        __qtablewidgetitem20.setCheckState(Qt.Checked)
-        self.table_layout.setItem(2, 3, __qtablewidgetitem20)
-        __qtablewidgetitem21 = QTableWidgetItem()
-        self.table_layout.setItem(3, 0, __qtablewidgetitem21)
-        __qtablewidgetitem22 = QTableWidgetItem()
-        self.table_layout.setItem(3, 1, __qtablewidgetitem22)
-        __qtablewidgetitem23 = QTableWidgetItem()
-        self.table_layout.setItem(3, 2, __qtablewidgetitem23)
-        __qtablewidgetitem24 = QTableWidgetItem()
-        __qtablewidgetitem24.setCheckState(Qt.Checked)
 
-        self.table_layout.setItem(3, 3, __qtablewidgetitem24)
+
+        """
+        ////////////////////////////////////////////////
+                TABLE CONTENT
+        ////////////////////////////////////////////////
+        """
+
+        self.table_layout = QTableWidget(self.row_3)
+
+        total_rows = 7
+        total_columns = 4
+        self.table_layout.setRowCount(total_rows)
+        self.table_layout.setColumnCount(total_columns)
+        
+        # SET THE HEADERS
+        for header in range(total_columns):
+
+            tablewidgetitem = QTableWidgetItem()
+            self.table_layout.setItem(0, header, tablewidgetitem)
+
+
+        for row in range(1, total_rows +2):
+            
+            # EMPTY THE LAST ROW
+            if row == total_rows-1:
+                break
+
+            # FILL ROWS
+            for column in range(total_columns):
+
+                tablewidgetitem = QTableWidgetItem()
+                self.table_layout.setItem(row, column, tablewidgetitem)
+                tablewidgetitem.setText(f"{row, column}")
+
+            tablewidgetitem.setCheckState(Qt.Checked)
+        
+
         self.table_layout.setObjectName(u"table_layout")
         sizePolicy3 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         sizePolicy3.setHorizontalStretch(0)
         sizePolicy3.setVerticalStretch(0)
         sizePolicy3.setHeightForWidth(self.table_layout.sizePolicy().hasHeightForWidth())
         self.table_layout.setSizePolicy(sizePolicy3)
+
         palette = QPalette()
         brush = QBrush(QColor(221, 221, 221, 255))
         brush.setStyle(Qt.SolidPattern)
@@ -276,46 +387,35 @@ class Ui:
         self.horizontalLayout_12.addWidget(self.table_layout)
 
         self.optionBtns_layout = QVBoxLayout()
-        self.optionBtns_layout.setObjectName(u"optionBtns_layout")
-        self.delete_btn = QPushButton(self.row_3)
-        self.delete_btn.setObjectName(u"delete_btn")
-        self.delete_btn.setEnabled(False)
-        self.delete_btn.setMinimumSize(QSize(150, 30))
-        self.delete_btn.setFont(font)
-        self.delete_btn.setCursor(QCursor(Qt.PointingHandCursor))
-        self.delete_btn.setStyleSheet(self.html.get_bg_color("lightblue"))
+        self.optionBtns_layout.setObjectName("optionBtns_layout")
 
-        self.optionBtns_layout.addWidget(self.delete_btn)
-
+        self.delete_btn  = QPushButton(self.row_3)
         self.restore_btn = QPushButton(self.row_3)
-        self.restore_btn.setObjectName(u"restore_btn")
-        self.restore_btn.setEnabled(False)
-        self.restore_btn.setMinimumSize(QSize(150, 30))
-        self.restore_btn.setFont(font)
-        self.restore_btn.setCursor(QCursor(Qt.PointingHandCursor))
-        self.restore_btn.setStyleSheet(self.html.get_bg_color("lightblue"))
+        self.save_btn    = QPushButton(self.row_3)
+        self.load_btn    = QPushButton(self.row_3)
 
-        self.optionBtns_layout.addWidget(self.restore_btn)
+        self.delete_btn.setObjectName ( "delete_btn")
+        self.restore_btn.setObjectName("restore_btn")
+        self.save_btn.setObjectName   (   "save_btn")
+        self.load_btn.setObjectName   (   "load_btn")
 
-        self.save_btn = QPushButton(self.row_3)
-        self.save_btn.setObjectName(u"save_btn")
-        self.save_btn.setEnabled(False)
-        self.save_btn.setMinimumSize(QSize(150, 30))
-        self.save_btn.setFont(font)
-        self.save_btn.setCursor(QCursor(Qt.PointingHandCursor))
-        self.save_btn.setStyleSheet(self.html.get_bg_color("lightblue"))
+        btns = (
+            self.delete_btn,
+            self.restore_btn,
+            self.save_btn,
+            self.load_btn
+        )
 
-        self.optionBtns_layout.addWidget(self.save_btn)
+        for btn in btns:
+            btn.setEnabled(False)
+            btn.setMinimumSize(QSize(150, 30))
+            btn.setStyleSheet(self.html.get_bg_color("lightblue"))
+            btn.setCursor(QCursor(Qt.PointingHandCursor))
+            btn.setFont(font)
 
-        self.load_btn = QPushButton(self.row_3)
-        self.load_btn.setObjectName(u"load_btn")
-        self.load_btn.setEnabled(False)
-        self.load_btn.setMinimumSize(QSize(150, 30))
-        self.load_btn.setFont(font)
-        self.load_btn.setCursor(QCursor(Qt.PointingHandCursor))
-        self.load_btn.setStyleSheet(self.html.get_bg_color("lightblue"))
+            self.optionBtns_layout.addWidget(btn)
 
-        self.optionBtns_layout.addWidget(self.load_btn)
+
         self.horizontalLayout_12.addLayout(self.optionBtns_layout)
         self.verticalLayout.addWidget(self.row_3)
         
@@ -324,21 +424,48 @@ class Ui:
 
         """
         ////////////////////////////////////////////////
-                BUTTONS SIGNAL
+                BUTTONS  EVENTS/SIGNAL
         ////////////////////////////////////////////////
         """
 
-        self.browseCurrentPath_btn.clicked.connect(lambda: self.set_user_path())
+        self.browseCurrentPath_btn.clicked.connect(
+            lambda: self.set_user_path(
+                self.common_functions.get_user_path(),
+                self.currentPath_lineEdit
+            )
+        )
 
-        self.LookupType_comboBox.currentTextChanged.connect(lambda: self.change_lookup_format())
+        self.currentPath_lineEdit.textChanged.connect(
+            lambda: self.set_user_path(
+                self.currentPath_lineEdit.text()
+            )
+        )
 
+        self.startLookup_btn.clicked.connect(
+            lambda: self.start_lookup(
+                self.startLookup_btn,
+                self.lookupInput_lineEdit,
+                self.lookupFormat_comboBox,
+                self.LookupType_comboBox,
+                self.isRecursive_checkBox
+            )
+        )
+
+        self.isRecursive_checkBox.isChecked()
+
+        self.LookupType_comboBox.currentTextChanged.connect(
+            lambda: self.change_lookup_format(
+                self.LookupType_comboBox,
+                self.lookupFormat_comboBox
+            )
+        )
 
         return self.widgets
     
 
     def retranslateUi(self):
         """
-            Translate the ui text
+            Translate ui text
         """
 
 
@@ -350,7 +477,7 @@ class Ui:
 
         data = {
             self.LookupType_comboBox      : ("FILES", "FOLDERS"),
-            self.currentLookupBy_comboBox : ("NAME", "PATTERN", "EXTENSION")
+            self.lookupFormat_comboBox : ("NAME", "PATTERN", "EXTENSION")
         }
 
         for widget, info in data.items():
@@ -387,65 +514,28 @@ class Ui:
         self.currentPath_lineEdit.setToolTip(QCoreApplication.translate("MainWindow", u"Enter the path where should the lookup process begin", None))
         self.currentPath_lineEdit.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Enter the path here", None))
         self.browseCurrentPath_btn.setText(QCoreApplication.translate("MainWindow", u"OPEN", None))
-        self.currentLookupInput_lineEdit.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Enter your input", None))
+        self.lookupInput_lineEdit.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Enter your input", None))
         self.LookuByTitle_label.setText(QCoreApplication.translate("MainWindow", u"LOOKUP BY", None))
 
-        ___qtablewidgetitem = self.table_layout.horizontalHeaderItem(0)
-        ___qtablewidgetitem.setText(QCoreApplication.translate("MainWindow", u"0", None))
-        ___qtablewidgetitem1 = self.table_layout.horizontalHeaderItem(1)
-        ___qtablewidgetitem1.setText(QCoreApplication.translate("MainWindow", u"1", None))
-        ___qtablewidgetitem2 = self.table_layout.horizontalHeaderItem(2)
-        ___qtablewidgetitem2.setText(QCoreApplication.translate("MainWindow", u"2", None))
-        ___qtablewidgetitem3 = self.table_layout.horizontalHeaderItem(3)
-        ___qtablewidgetitem3.setText(QCoreApplication.translate("MainWindow", u"3", None))
-
-        ___qtablewidgetitem4 = self.table_layout.verticalHeaderItem(0)
-        ___qtablewidgetitem4.setText(QCoreApplication.translate("MainWindow", u"New Row", None))
-        ___qtablewidgetitem5 = self.table_layout.verticalHeaderItem(1)
-        ___qtablewidgetitem5.setText(QCoreApplication.translate("MainWindow", u"New Row", None))
-        ___qtablewidgetitem6 = self.table_layout.verticalHeaderItem(2)
-        ___qtablewidgetitem6.setText(QCoreApplication.translate("MainWindow", u"New Row", None))
-        ___qtablewidgetitem7 = self.table_layout.verticalHeaderItem(3)
-        ___qtablewidgetitem7.setText(QCoreApplication.translate("MainWindow", u"New Row", None))
-        ___qtablewidgetitem8 = self.table_layout.verticalHeaderItem(4)
-        ___qtablewidgetitem8.setText(QCoreApplication.translate("MainWindow", u"New Row", None))
-
-        __sortingEnabled = self.table_layout.isSortingEnabled()
-        self.table_layout.setSortingEnabled(True)
 
         """
         ////////////////////////////////////////////////
                 TABLE CONTENT
         ////////////////////////////////////////////////
         """
-        ___qtablewidgetitem9 = self.table_layout.item(0, 0)
-        ___qtablewidgetitem9.setText(QCoreApplication.translate("MainWindow", u"SOURCE", None))
-        ___qtablewidgetitem10 = self.table_layout.item(0, 1)
-        ___qtablewidgetitem10.setText(QCoreApplication.translate("MainWindow", u"FILE", None))
-        ___qtablewidgetitem11 = self.table_layout.item(0, 2)
-        ___qtablewidgetitem11.setText(QCoreApplication.translate("MainWindow", u"File", None))
-        ___qtablewidgetitem12 = self.table_layout.item(0, 3)
-        ___qtablewidgetitem12.setText(QCoreApplication.translate("MainWindow", u"SELECT", None))
-
-        ___qtablewidgetitem13 = self.table_layout.item(1, 0)
-        ___qtablewidgetitem13.setText(QCoreApplication.translate("MainWindow", u"test (c 0, r 0)", None))
-        ___qtablewidgetitem14 = self.table_layout.item(1, 1)
-        ___qtablewidgetitem14.setText(QCoreApplication.translate("MainWindow", u"test (c 1, r 0)", None))
-        ___qtablewidgetitem15 = self.table_layout.item(1, 2)
-        ___qtablewidgetitem15.setText(QCoreApplication.translate("MainWindow", u"test (c 2, r 0)", None))
-        ___qtablewidgetitem16 = self.table_layout.item(2, 0)
-        ___qtablewidgetitem16.setText(QCoreApplication.translate("MainWindow", u"test (c 0, r 1)", None))
-        ___qtablewidgetitem17 = self.table_layout.item(2, 1)
-        ___qtablewidgetitem17.setText(QCoreApplication.translate("MainWindow", u"test (c 1, r 1)", None))
-        ___qtablewidgetitem18 = self.table_layout.item(2, 2)
-        ___qtablewidgetitem18.setText(QCoreApplication.translate("MainWindow", u"test (c 2, r 1)", None))
-        ___qtablewidgetitem19 = self.table_layout.item(3, 0)
-        ___qtablewidgetitem19.setText(QCoreApplication.translate("MainWindow", u"test (c 0, r 2)", None))
-        ___qtablewidgetitem20 = self.table_layout.item(3, 1)
-        ___qtablewidgetitem20.setText(QCoreApplication.translate("MainWindow", u"test (c 1, r 2)", None))
-        ___qtablewidgetitem21 = self.table_layout.item(3, 2)
-        ___qtablewidgetitem21.setText(QCoreApplication.translate("MainWindow", u"test (c 2 r 2)", None))
-        self.table_layout.setSortingEnabled(__sortingEnabled)
+        self.table_layout.setSortingEnabled(True)
+        self.table_layout.item(0, 0).setText(
+            QCoreApplication.translate("MainWindow", u"SOURCE", None)
+        )
+        self.table_layout.item(0, 1).setText(
+            QCoreApplication.translate("MainWindow", u"FILE | FOLDER", None)
+        )
+        self.table_layout.item(0, 2).setText(
+            QCoreApplication.translate("MainWindow", u"SIZE", None)
+        )
+        self.table_layout.item(0, 3).setText(
+            QCoreApplication.translate("MainWindow", u"SELECT", None)
+        )
 
 
     def render_page_icons(self):
@@ -457,44 +547,3 @@ class Ui:
         self.common_functions.set_icon(self.restore_btn, "restore file", (size, size))
         self.common_functions.set_icon(self.load_btn, "file upload", (size, size))
         self.common_functions.set_icon(self.save_btn, "file download", (size, size))
-
-
-class Model(Ui):
-
-    pass
-
-
-class Controller(Ui):
-
-    def set_user_path(self):
-        """
-            update user path input
-        """
-        
-        path = self.common_functions.get_user_path()
-
-        # RESET USER PATH
-        if not path:
-            self.user_path = ""
-            return 
-
-        self.user_path = path
-        self.currentPath_lineEdit.setText(path)
-
-
-    def change_lookup_format(self) -> None:
-        """
-            Change lookup format options according to the lookup type
-        """
-
-        current_type = self.LookupType_comboBox.currentText()
-        total_formats = self.currentLookupBy_comboBox.count()
-
-        # ADD THE OPTION 'EXTENSION' IF 'FILES' SELECTED
-        if current_type == "FILES":
-            if total_formats == 2:
-                self.currentLookupBy_comboBox.addItem("EXTENSION")
-                return
-            
-        if total_formats == 3:
-            self.currentLookupBy_comboBox.removeItem(2)

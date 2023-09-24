@@ -8,15 +8,13 @@ import os
 
 class Finder:
 
-    def __init__(self, path:str, is_recursive:bool) -> None:
+    def __init__(self) -> None:
 
-        if not os.path.exists(path):
-            raise FileNotFoundError
+        self.path = ""
+        self.is_recursive = None
         
-        self.path = path
-        self.is_recursive = is_recursive
 
-
+    @classmethod
     def get_files(self) -> str:
         """
             Yield files in parent folder
@@ -25,7 +23,7 @@ class Finder:
         for file in os.listdir(self.path):
             yield file
 
-
+    @classmethod
     def get_files_recursive(self) -> tuple[str:str]:
         """
             Yields tuple (root, file) recursively thorugh all folders
@@ -38,12 +36,14 @@ class Finder:
                 yield (root, file)
 
 
+    @classmethod
     def get_folders(self):
 
         for file in os.listdir(self.path):
             yield file
 
 
+    @classmethod
     def get_folders_recursive(self):
         
         for root, folders, _ in os.walk(self.path):
@@ -55,10 +55,24 @@ class Finder:
 
 class File(Finder):
 
-    def __init__(self, path, is_recursive=True) -> None:
-        super().__init__(path, is_recursive)
+    def __init__(self) -> None:
+        super().__init__()
+
+    @classmethod
+    def set_path(self, path:str):
+
+        if not os.path.exists(path):
+            print("path error")
+        
+        self.path = path
+
+
+    @classmethod
+    def set_recursive(self, rec:bool):
+        self.is_recursive = rec
         
 
+    @classmethod
     def by_extention(self, extension:str) -> list:
         """
             Find files by extention
@@ -84,9 +98,10 @@ class File(Finder):
         return detected_files
 
 
+    @classmethod
     def by_name(self, name:str) -> list:
         """
-            Find files by name preciesly
+            Find files by exact name (CASE-SENSETIVE)
         """
         
         detected_files = []
@@ -105,13 +120,13 @@ class File(Finder):
                 if file[ : file.find(".")].strip() == name:
                     detected_files.append(file)
             
-
         return detected_files
     
     
-    def by_name_contains(self, name:str) -> list:
+    @classmethod
+    def by_pattern(self, name:str) -> list:
         """
-            Find files contain the given name
+            Find files by exact name (NOT CASE-SENSETIVE)
         """
         
         detected_files = []
@@ -130,17 +145,31 @@ class File(Finder):
                 if name in file:
                     detected_files.append(file)
             
-
         return detected_files       
 
 
 
 class Folder(Finder):
     
-    def __init__(self, path, is_recursive=True) -> None:
-        super().__init__(path, is_recursive)
+    def __init__(self) -> None:
+        super().__init__()
+
+
+    @classmethod
+    def set_path(self, path:str):
+
+        if not os.path.exists(path):
+            raise FileNotFoundError
+        
+        self.path = path
+
+
+    @classmethod
+    def set_recursive(self, rec:bool):
+        self.is_recursive = rec
     
     
+    @classmethod
     def by_name(self, name:str) -> list:
         """
             Find files by exact name
@@ -163,11 +192,11 @@ class Folder(Finder):
                 if folder == name:
                     detected_folders.append(folder)
 
-
         return detected_folders
     
 
-    def by_name_contains(self, name:str) -> list:
+    @classmethod
+    def pattern(self, name:str) -> list:
         """
             Find files contain the given name
         """
@@ -190,5 +219,4 @@ class Folder(Finder):
                 if name in folder:
                     detected_folders.append(folder)
             
-
         return detected_folders       
