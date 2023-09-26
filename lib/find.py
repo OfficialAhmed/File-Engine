@@ -14,7 +14,6 @@ class Finder:
         self.is_recursive = None
         
 
-    @classmethod
     def get_files(self) -> str:
         """
             Yield files in parent folder
@@ -23,7 +22,6 @@ class Finder:
         for file in os.listdir(self.path):
             yield file
 
-    @classmethod
     def get_files_recursive(self) -> tuple[str:str]:
         """
             Yields tuple (root, file) recursively thorugh all folders
@@ -36,14 +34,12 @@ class Finder:
                 yield (root, file)
 
 
-    @classmethod
     def get_folders(self):
 
         for file in os.listdir(self.path):
             yield file
 
 
-    @classmethod
     def get_folders_recursive(self):
         
         for root, folders, _ in os.walk(self.path):
@@ -58,8 +54,11 @@ class File(Finder):
     def __init__(self) -> None:
         super().__init__()
 
-    @classmethod
-    def set_path(self, path:str):
+        self.file_counter = 1
+        self.detected_files = {}
+
+
+    def set_path(self, path:str) -> None:
 
         if not os.path.exists(path):
             print("path error")
@@ -67,85 +66,83 @@ class File(Finder):
         self.path = path
 
 
-    @classmethod
-    def set_recursive(self, rec:bool):
+    def set_recursive(self, rec:bool) -> None:
         self.is_recursive = rec
         
 
-    @classmethod
-    def by_extention(self, extension:str) -> list:
+    def reset_detected_files(self) -> None:
+        self.file_counter = 1
+        self.detected_files = {}
+
+
+    def add_detected_file(self, file, root=''):
         """
-            Find files by extention
+            Store the detected file in a dict along its size and root
         """
 
-        detected_files = []
+        # SET DEFAULT PATH - FOR FOLDER DETECTION
+        if not root:
+            root = self.path
+
+        # CONVERT BYTES TO MB
+        size = os.path.getsize(f"{root}/{file}") / (1024*1024)
+
+        self.detected_files[self.file_counter] = {
+            "file": file,
+            "root": root,
+            "size": round(size, 3)
+        }
+        
+        self.file_counter += 1
+
+
+    def find(self, by:str, input:str):
+
+        # RESET FILES ON EVERY SEARCH
+        self.reset_detected_files()
 
         if self.is_recursive:
 
             for root, file in self.get_files_recursive():
 
-                if file.endswith(f".{extension}"):
-                    detected_files.append(f"{root}\{file}")
-        
+                match by:
+
+                    case "NAME":
+
+                        if file[ : file.find(".")].strip() == input:
+                            self.add_detected_file(file, root)
+
+                    case "EXTENSION":
+
+                        if file.endswith(f".{input}"):
+                            self.add_detected_file(file, root)
+
+                    case "PATTERN":
+
+                        if input.lower() in file.lower():
+                            self.add_detected_file(file, root)
+
         else:
 
             for file in self.get_files():
 
-                if file.endswith(f".{extension}"):
-                    detected_files.append(file)
+                match by:
 
+                    case "NAME":
+                        if file[ : file.find(".")].strip() == input:
+                            self.add_detected_file(file)
 
-        return detected_files
+                    case "EXTENSION":
 
+                        if file.endswith(f".{input}"):
+                            self.add_detected_file(file)
 
-    @classmethod
-    def by_name(self, name:str) -> list:
-        """
-            Find files by exact name (CASE-SENSETIVE)
-        """
-        
-        detected_files = []
+                    case "PATTERN":
 
-        if self.is_recursive:    
-
-            for root, file in self.get_files_recursive():
-
-                if file[ : file.find(".")].strip() == name:
-                    detected_files.append(f"{root}\{file}")
-        
-        else:
-
-            for file in self.get_files():
-
-                if file[ : file.find(".")].strip() == name:
-                    detected_files.append(file)
-            
-        return detected_files
-    
-    
-    @classmethod
-    def by_pattern(self, name:str) -> list:
-        """
-            Find files by exact name (NOT CASE-SENSETIVE)
-        """
-        
-        detected_files = []
-
-        if self.is_recursive:    
-
-            for root, file in self.get_files_recursive():
-
-                if name in file:
-                    detected_files.append(f"{root}\{file}")
-        
-        else:
-
-            for file in self.get_files():
-
-                if name in file:
-                    detected_files.append(file)
-            
-        return detected_files       
+                        if input.lower() in file.lower():
+                            self.add_detected_file(file)
+                
+        return self.detected_files
 
 
 
@@ -154,8 +151,10 @@ class Folder(Finder):
     def __init__(self) -> None:
         super().__init__()
 
+        self.folder_counter = 1
+        self.detected_folders = {}
 
-    @classmethod
+
     def set_path(self, path:str):
 
         if not os.path.exists(path):
@@ -164,59 +163,65 @@ class Folder(Finder):
         self.path = path
 
 
-    @classmethod
+    def reset_detected_folders(self) -> None:
+        self.folder_counter = 1
+        self.detected_folders = {}
+
+
     def set_recursive(self, rec:bool):
         self.is_recursive = rec
     
-    
-    @classmethod
-    def by_name(self, name:str) -> list:
-        """
-            Find files by exact name
-        """
-        
-        detected_folders = []
 
-            
-        if self.is_recursive:    
+    def add_detected_folder(self, folder, root=''):
+        """
+            Store the detected file in a dict along its size and root
+        """
+
+        # SET DEFAULT PATH - FOR FOLDER DETECTION
+        if not root:
+            root = self.path
+
+        self.detected_folders[self.folder_counter] = {
+            "folder": folder,
+            "root": root,
+            "size": "-"
+        }
+
+        self.folder_counter += 1
+
+
+    def find(self, by:str, input:str):
+
+        # RESET FILES ON EVERY SEARCH
+        self.reset_detected_folders()
+
+        if self.is_recursive:
 
             for root, folder in self.get_folders_recursive():
 
-                if folder == name:
-                    detected_folders.append(f"{root}\{folder}")
+                match by:
+
+                    case "NAME":
+                        if folder == input:
+                            self.add_detected_folder(folder, root)
+
+                    case "PATTERN":
+                        if input.lower() in folder.lower():
+                            self.add_detected_folder(folder, root)
 
         else:
-            
-            for folder in self.get_folders():
 
-                if folder == name:
-                    detected_folders.append(folder)
+            for folder in self.get_files():
 
-        return detected_folders
-    
+                match by:
 
-    @classmethod
-    def pattern(self, name:str) -> list:
-        """
-            Find files contain the given name
-        """
-        
-        detected_folders = []
+                    case "NAME":
+                        if folder == input:
+                            self.add_detected_folder(folder)
 
-        if self.is_recursive:    
+                    case "PATTERN":
 
-            for root, folder in self.get_folders_recursive():
-
-                if name in folder:
-
-                    # Add the root before to keep track of the full path
-                    detected_folders.append(f"{root}\{folder}")
-        
-        else:
-
-            for folder in self.get_folders():
-
-                if name in folder:
-                    detected_folders.append(folder)
-            
-        return detected_folders       
+                        if input.lower() in folder.lower():
+                            self.add_detected_folder(folder)
+                
+        return self.detected_folders
