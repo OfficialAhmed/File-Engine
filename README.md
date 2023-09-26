@@ -33,3 +33,8 @@ Search for files or folders recursively by:
 - [libraries](https://github.com/OfficialAhmed/File-Engine/blob/main/requirements.txt) 
 
 **NOTE: This project is actively under development and may not be fully functional or stable yet. It's included for testing and evaluation purposes. Use it at your own risk, and feel free to provide feedback or report issues to help improve its quality.
+
+# INTERFACE 
+
+- [HOME](https://github.com/OfficialAhmed/File-Engine/tree/main/Interface/images/home_page.png) 
+- [DELETE PAGE](https://github.com/OfficialAhmed/File-Engine/tree/main/Interface/images/delete_page.png) 
