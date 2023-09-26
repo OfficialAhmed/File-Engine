@@ -73,7 +73,7 @@ class Controller(Model):
             lookup_format_widget.removeItem(2)
 
 
-    def start_lookup(self, start_widget: QWidget, format_input: QWidget, lookup_format_widget: QWidget, lookup_type_widget: QWidget, recursive_widget: QWidget):
+    def get_data(self, start_widget: QWidget, format_input: QWidget, lookup_format_widget: QWidget, lookup_type_widget: QWidget, recursive_widget: QWidget):
         """
             Begin lookup process. Deactivate the btn and reactivate it after 
         """
@@ -111,9 +111,8 @@ class Controller(Model):
                             )
 
                         case "EXTENSION":
-                            self.controller.get_files_by_extension(
-                                format_input
-                            )
+                            return self.controller.get_files_by_extension(format_input)
+                            
                         
                         case "PATTERN":
                             self.controller.get_files_by_pattern(
@@ -294,40 +293,11 @@ class Ui(Controller):
 
 
         """
-        ////////////////////////////////////////////////
-                TABLE CONTENT
-        ////////////////////////////////////////////////
+            ////////////////////////////////////////////////
+                    TABLE CONTENT
+            ////////////////////////////////////////////////
         """
-
         self.table_layout = QTableWidget(self.row_3)
-
-        total_rows = 7
-        total_columns = 4
-        self.table_layout.setRowCount(total_rows)
-        self.table_layout.setColumnCount(total_columns)
-        
-        # SET THE HEADERS
-        for header in range(total_columns):
-
-            tablewidgetitem = QTableWidgetItem()
-            self.table_layout.setItem(0, header, tablewidgetitem)
-
-
-        for row in range(1, total_rows +2):
-            
-            # EMPTY THE LAST ROW
-            if row == total_rows-1:
-                break
-
-            # FILL ROWS
-            for column in range(total_columns):
-
-                tablewidgetitem = QTableWidgetItem()
-                self.table_layout.setItem(row, column, tablewidgetitem)
-                tablewidgetitem.setText(f"{row, column}")
-
-            tablewidgetitem.setCheckState(Qt.Checked)
-        
 
         self.table_layout.setObjectName(u"table_layout")
         sizePolicy3 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -336,6 +306,14 @@ class Ui(Controller):
         sizePolicy3.setHeightForWidth(self.table_layout.sizePolicy().hasHeightForWidth())
         self.table_layout.setSizePolicy(sizePolicy3)
 
+        self.init_table()
+
+
+        """
+            ////////////////////////////////////////////////
+                    PALLETE AND BRUSHES
+            ////////////////////////////////////////////////
+        """
         palette = QPalette()
         brush = QBrush(QColor(221, 221, 221, 255))
         brush.setStyle(Qt.SolidPattern)
@@ -442,13 +420,7 @@ class Ui(Controller):
         )
 
         self.startLookup_btn.clicked.connect(
-            lambda: self.start_lookup(
-                self.startLookup_btn,
-                self.lookupInput_lineEdit,
-                self.lookupFormat_comboBox,
-                self.LookupType_comboBox,
-                self.isRecursive_checkBox
-            )
+            lambda: self.start_lookup()
         )
 
         self.isRecursive_checkBox.isChecked()
@@ -463,9 +435,25 @@ class Ui(Controller):
         return self.widgets
     
 
+    def retranslateTable(self):
+
+        self.table_layout.item(0, 0).setText(
+            QCoreApplication.translate("MainWindow", u"FILE | FOLDER", None)
+        )
+        self.table_layout.item(0, 1).setText(
+            QCoreApplication.translate("MainWindow", u"SOURCE", None)
+        )
+        self.table_layout.item(0, 2).setText(
+            QCoreApplication.translate("MainWindow", u"SIZE (MB)", None)
+        )
+        self.table_layout.item(0, 3).setText(
+            QCoreApplication.translate("MainWindow", u"SELECT", None)
+        )
+
+
     def retranslateUi(self):
         """
-            Translate ui text
+            TRANSLATE UI TEXT
         """
 
 
@@ -524,18 +512,80 @@ class Ui(Controller):
         ////////////////////////////////////////////////
         """
         self.table_layout.setSortingEnabled(True)
-        self.table_layout.item(0, 0).setText(
-            QCoreApplication.translate("MainWindow", u"SOURCE", None)
+        self.retranslateTable()
+
+    
+    def start_lookup(self):
+        
+        data = self.get_data(
+            self.startLookup_btn,
+            self.lookupInput_lineEdit,
+            self.lookupFormat_comboBox,
+            self.LookupType_comboBox,
+            self.isRecursive_checkBox
         )
-        self.table_layout.item(0, 1).setText(
-            QCoreApplication.translate("MainWindow", u"FILE | FOLDER", None)
-        )
-        self.table_layout.item(0, 2).setText(
-            QCoreApplication.translate("MainWindow", u"SIZE", None)
-        )
-        self.table_layout.item(0, 3).setText(
-            QCoreApplication.translate("MainWindow", u"SELECT", None)
-        )
+
+        self.update_table(data)
+        
+
+    def init_table(self, rows=2, columns=4):
+
+        # Set the number of rows and columns
+        total_rows = rows
+        total_columns = columns
+
+        # Clear existing rows
+        self.table_layout.setRowCount(0)
+        
+        self.table_layout.setRowCount(total_rows)
+        self.table_layout.setColumnCount(total_columns)
+
+        # RENDER TABLE HEADERS
+        self.table_layout.setItem(0,0, QTableWidgetItem())
+        self.table_layout.setItem(0,1, QTableWidgetItem())
+        self.table_layout.setItem(0,2, QTableWidgetItem())
+        self.table_layout.setItem(0,3, QTableWidgetItem())
+
+        self.table_layout.item(0, 3).setCheckState(Qt.Checked)
+
+        # TRANSLATE TABLE HEADERS
+        self.retranslateTable()
+
+    
+    def update_table(self, data:dict) -> None:
+        """
+            Display new data on the table 
+        """
+
+        if not data:
+            print("no data has been found")
+            return 
+
+        data = data.values()
+
+        # Plus one for the headers
+        self.init_table(len(data) + 1)
+
+        # Populate the table with new data
+        for row_index, row_data in enumerate(data):
+            for col_index, (_, value) in enumerate(row_data.items()):
+                item = QTableWidgetItem(str(value))
+                self.table_layout.setItem(row_index + 1, col_index, item)
+
+        # Resize columns based on their contents
+        for col_index in range(self.table_layout.columnCount()):
+            self.table_layout.resizeColumnToContents(col_index)
+
+        # render check items for each table-row
+        self.generate_select_all()
+
+
+    def generate_select_all(self):
+
+        # Render an item then checkbox 
+        for i in range(1, self.table_layout.rowCount()):
+            self.table_layout.setItem(i, 3, QTableWidgetItem())
+            self.table_layout.item(i, 3).setCheckState(Qt.Checked)
 
 
     def render_page_icons(self):

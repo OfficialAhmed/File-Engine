@@ -51,9 +51,6 @@ class MainWindow(QMainWindow):
         # SET UI DEFINITIONS
         UIFunctions.uiDefinitions(self)
 
-        # QTableWidget PARAMETERS
-        # widgets.stackedWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-
         # BUTTONS CLICK
 
         # LEFT MENUS

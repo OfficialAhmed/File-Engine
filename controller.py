@@ -42,7 +42,7 @@ class Cache:
 
 
     def get_files_by_extension(self, extension:str) -> dict:
-        print(self.file_finder.find("EXTENSION", extension))
+        return self.file_finder.find("EXTENSION", extension)
 
 
     def get_files_by_pattern(self, pattern:str) -> dict:
