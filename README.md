@@ -36,5 +36,6 @@ Search for files or folders recursively by:
 
 # INTERFACE 
 
-- [HOME](https://github.com/OfficialAhmed/File-Engine/tree/main/Interface/images/home_page.png) 
-- [DELETE PAGE](https://github.com/OfficialAhmed/File-Engine/tree/main/Interface/images/delete_page.png) 
+![HOME](https://github.com/OfficialAhmed/File-Engine/tree/main/Interface/images/home_page.png) 
+![DELETE PAGE](https://github.com/OfficialAhmed/File-Engine/tree/main/Interface/images/delete_page.png) 
+
