@@ -73,7 +73,14 @@ class Controller(Model):
             lookup_format_widget.removeItem(2)
 
 
-    def get_data(self, start_widget: QWidget, format_input: QWidget, lookup_format_widget: QWidget, lookup_type_widget: QWidget, recursive_widget: QWidget):
+    def get_data(
+        self, start_widget: QWidget, 
+        format_input: QWidget, 
+        lookup_format_widget: QWidget, 
+        lookup_type_widget: QWidget, 
+        recursive_widget: QWidget
+    ) -> dict:
+        
         """
             Begin lookup process. Deactivate the btn and reactivate it after 
         """
@@ -106,40 +113,51 @@ class Controller(Model):
                     match format:
 
                         case "NAME":
-                            self.controller.get_files_by_name(
-                                format_input
-                            )
+                            return self.controller.get_files_by_name(format_input)
 
                         case "EXTENSION":
                             return self.controller.get_files_by_extension(format_input)
                             
                         
                         case "PATTERN":
-                            self.controller.get_files_by_pattern(
-                                format_input
-                            )
+                            return self.controller.get_files_by_pattern(format_input)
 
                 elif type == "FOLDERS":
 
                     match format:
 
                         case "NAME":
-                            self.controller.get_folders_by_name(
-                                format_input
-                            )
+                            return self.controller.get_folders_by_name(format_input)
 
                         case "PATTERN":
-                            self.controller.get_folders_by_pattern(
-                                format_input
-                            )
+                            return self.controller.get_folders_by_pattern(format_input)
                 
         except Exception as e:
 
             print(str(e))
+            return {}
 
         finally:
 
             start_widget.setEnabled(True)
+
+
+    def delete_files_clicked(self, checkboxes:list[QCheckBox], data:dict[dict]) -> None:
+
+        non_checked = True
+
+        for index, checkbox in enumerate(checkboxes):
+            
+            if checkbox.isChecked():
+
+                print(data.get(index + 1))
+
+                # TODO: DELETE FILE INPLEMENTATION HERE
+
+                non_checked = False
+
+        if non_checked:
+            print("No item has been selected")
 
 
 
@@ -148,8 +166,198 @@ class Ui(Controller):
     def __init__(self) -> None:
         super().__init__()
 
+        self.data = []
+        self.checkboxes = []
+        self.table_headers = ("FILE | FOLDER", "SOURCE", "SIZE (MB)", "SELECT ALL")
 
-    def render(self):
+        # SIGNAL TO LIMIT TO ONE CLICK AT A TIME 
+        self.is_select_all_checkboxes_signal = False
+
+
+    def start_lookup(self):
+        
+        self.checkboxes.clear()
+        self.data = self.get_data(
+            self.startLookup_btn,
+            self.lookupInput_lineEdit,
+            self.lookupFormat_comboBox,
+            self.LookupType_comboBox,
+            self.isRecursive_checkBox
+        )
+
+        self.update_table()
+        
+
+    def init_table(self, rows=1, columns=4):
+        """
+            Render a new table widget with headers
+        """
+
+        total_rows = rows
+        total_columns = columns
+
+        # CLEAR PREVIOUS ROWS
+        self.table_layout.setRowCount(0)
+        
+        self.table_layout.setRowCount(total_rows)
+        self.table_layout.setColumnCount(total_columns)
+
+        font = QFont()
+        font.setBold(True)
+
+
+        # RENDER TABLE HEADERS
+        self.table_layout.setHorizontalHeaderLabels(self.table_headers)
+
+        self.table_layout.horizontalHeader().sectionClicked.connect(
+            self.toggle_checkboxes
+        )
+
+        self.retranslateTableHeaders()
+
+
+    def update_table(self) -> None:
+        """
+            Display new data on the table 
+        """
+
+        if not self.data:
+            print("no data has been found")
+            return 
+
+        data = self.data.values()
+
+        self.init_table(len(data))
+
+        # Populate the table with new data
+        for row_index, row_data in enumerate(data):
+
+            for col_index, (_, value) in enumerate(row_data.items()):
+
+                item = QTableWidgetItem(str(value))
+                self.table_layout.setItem(row_index, col_index, item)
+
+                # render check items for each table-row
+                if col_index == 2:
+                    self.table_layout.setItem(row_index, col_index+1, QTableWidgetItem())
+                    checkbox = QCheckBox()
+                    checkbox.setChecked(True)
+                    self.table_layout.setCellWidget(row_index, col_index+1, checkbox)
+
+                    self.checkboxes.append(checkbox)
+
+
+        # Resize columns based on their contents
+        for col_index in range(self.table_layout.columnCount()):
+            self.table_layout.resizeColumnToContents(col_index)
+
+
+    def toggle_checkboxes(self, header_section:int) -> None:
+        """
+            ### TOGGLE THE CHECKBOXES FOR EACH TABLE ITEM
+                - ISSUE: The function is called twice on one click
+                - FIX: The signal is going to be checked twice on every click 
+                     and changes state to only allow one call to toggle the checkboxes
+                
+        """
+
+        if not self.is_select_all_checkboxes_signal:
+        
+            if header_section == 3:
+
+                for checkbox in self.checkboxes:
+                    checkbox.toggle()
+
+                self.is_select_all_checkboxes_signal = True
+        
+        else:
+            # TURN THE SIGNAL BACK OFF FOR NEXT CLICK
+            self.is_select_all_checkboxes_signal = False
+
+
+    def retranslateTableHeaders(self):
+        
+        for col, txt in enumerate(self.table_headers):
+            header_item = QTableWidgetItem(QCoreApplication.translate("MainWindow", txt))
+            self.table_layout.setHorizontalHeaderItem(col, header_item)
+
+
+    def retranslateUi(self):
+        """
+            TRANSLATE UI TEXT
+        """
+
+
+        """
+        ////////////////////////////////////////////////
+                COMOBOXES ITEMS
+        ////////////////////////////////////////////////
+        """
+
+        data = {
+            self.LookupType_comboBox      : ("FILES", "FOLDERS"),
+            self.lookupFormat_comboBox : ("NAME", "PATTERN", "EXTENSION")
+        }
+
+        for widget, info in data.items():
+
+            for indx, text in enumerate(info):
+
+                widget.addItem("")
+                widget.setItemText(indx, QCoreApplication.translate("MainWindow", text, None))
+
+
+        """
+        ////////////////////////////////////////////////
+                SET TEXT / TOOL TIPS
+        ////////////////////////////////////////////////
+        """
+
+        data = {
+            self.delete_btn           :  ("DELETE"   ,"Delete All Selected Items"),
+            self.restore_btn          :  ("RESTORE"  ,"Restore Last Deleted Process"),
+            self.save_btn             :  ("SAVE"     ,"Store Current Lookup"),
+            self.load_btn             :  ("LOAD"     ,"Load Previous Lookup"),
+            self.startLookup_btn      :  ("START"    ,"Start Lookup Process"),
+            self.isRecursive_checkBox :  ("RECURSIVE","Find Files Recursively Through The Selected Path") 
+        }
+
+        for widget, info in data.items():
+            
+            widget.setText(QCoreApplication.translate("MainWindow", info[0], None))
+            widget.setToolTip(QCoreApplication.translate("MainWindow", info[1], None))
+            
+
+        self.PageTitle_label.setText(QCoreApplication.translate("MainWindow", u"DELETE", None))
+
+        self.currentPath_lineEdit.setToolTip(QCoreApplication.translate("MainWindow", u"Enter the path where should the lookup process begin", None))
+        self.currentPath_lineEdit.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Enter the path here", None))
+        self.browseCurrentPath_btn.setText(QCoreApplication.translate("MainWindow", u"OPEN", None))
+        self.lookupInput_lineEdit.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Enter your input", None))
+        self.LookuByTitle_label.setText(QCoreApplication.translate("MainWindow", u"LOOKUP BY", None))
+
+
+        """
+        ////////////////////////////////////////////////
+                TABLE CONTENT
+        ////////////////////////////////////////////////
+        """
+        self.table_layout.setSortingEnabled(True)
+        self.retranslateTableHeaders()
+
+
+    def render_page_icons(self):
+        
+        size = 20
+        self.common_functions.set_icon(self.browseCurrentPath_btn, "folder_outline", (size, size))
+        self.common_functions.set_icon(self.startLookup_btn, "start", (size, size))
+        self.common_functions.set_icon(self.delete_btn, "delete sign", (size, size))
+        self.common_functions.set_icon(self.restore_btn, "restore file", (size, size))
+        self.common_functions.set_icon(self.load_btn, "file upload", (size, size))
+        self.common_functions.set_icon(self.save_btn, "file download", (size, size))
+
+
+    def render_page(self):
 
         self.widgets = QWidget()
 
@@ -341,9 +549,7 @@ class Ui(Controller):
         palette.setBrush(QPalette.Disabled, QPalette.ButtonText, brush)
         brush4 = QBrush(QColor(0, 0, 0, 255))
         brush4.setStyle(Qt.NoBrush)
-        palette.setBrush(QPalette.Disabled, QPalette.Base, brush4)
-        palette.setBrush(QPalette.Disabled, QPalette.Window, brush1)
-        self.table_layout.setPalette(palette)
+        
         self.table_layout.setFrameShape(QFrame.NoFrame)
         self.table_layout.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         self.table_layout.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
@@ -353,14 +559,14 @@ class Ui(Controller):
         self.table_layout.setShowGrid(True)
         self.table_layout.setGridStyle(Qt.SolidLine)
         self.table_layout.setSortingEnabled(True)
-        self.table_layout.horizontalHeader().setVisible(False)
+        self.table_layout.horizontalHeader().setVisible(True)
         self.table_layout.horizontalHeader().setCascadingSectionResizes(True)
         self.table_layout.horizontalHeader().setDefaultSectionSize(200)
         self.table_layout.horizontalHeader().setStretchLastSection(True)
         self.table_layout.verticalHeader().setVisible(False)
-        self.table_layout.verticalHeader().setCascadingSectionResizes(False)
+        self.table_layout.verticalHeader().setCascadingSectionResizes(True)
         self.table_layout.verticalHeader().setHighlightSections(False)
-        self.table_layout.verticalHeader().setStretchLastSection(True)
+        self.table_layout.verticalHeader().setStretchLastSection(False)
 
         self.horizontalLayout_12.addWidget(self.table_layout)
 
@@ -385,7 +591,6 @@ class Ui(Controller):
         )
 
         for btn in btns:
-            btn.setEnabled(False)
             btn.setMinimumSize(QSize(150, 30))
             btn.setStyleSheet(self.html.get_bg_color("lightblue"))
             btn.setCursor(QCursor(Qt.PointingHandCursor))
@@ -432,168 +637,12 @@ class Ui(Controller):
             )
         )
 
+        self.delete_btn.clicked.connect(
+            lambda: self.delete_files_clicked(
+                self.checkboxes,
+                self.data
+            )
+        )
+
         return self.widgets
     
-
-    def retranslateTable(self):
-
-        self.table_layout.item(0, 0).setText(
-            QCoreApplication.translate("MainWindow", u"FILE | FOLDER", None)
-        )
-        self.table_layout.item(0, 1).setText(
-            QCoreApplication.translate("MainWindow", u"SOURCE", None)
-        )
-        self.table_layout.item(0, 2).setText(
-            QCoreApplication.translate("MainWindow", u"SIZE (MB)", None)
-        )
-        self.table_layout.item(0, 3).setText(
-            QCoreApplication.translate("MainWindow", u"SELECT", None)
-        )
-
-
-    def retranslateUi(self):
-        """
-            TRANSLATE UI TEXT
-        """
-
-
-        """
-        ////////////////////////////////////////////////
-                COMOBOXES ITEMS
-        ////////////////////////////////////////////////
-        """
-
-        data = {
-            self.LookupType_comboBox      : ("FILES", "FOLDERS"),
-            self.lookupFormat_comboBox : ("NAME", "PATTERN", "EXTENSION")
-        }
-
-        for widget, info in data.items():
-
-            for indx, text in enumerate(info):
-
-                widget.addItem("")
-                widget.setItemText(indx, QCoreApplication.translate("MainWindow", text, None))
-
-
-        """
-        ////////////////////////////////////////////////
-                SET TEXT / TOOL TIPS
-        ////////////////////////////////////////////////
-        """
-
-        data = {
-            self.delete_btn           :  ("DELETE"   ,"Delete All Selected Items"),
-            self.restore_btn          :  ("RESTORE"  ,"Restore Last Deleted Process"),
-            self.save_btn             :  ("SAVE"     ,"Store Current Lookup"),
-            self.load_btn             :  ("LOAD"     ,"Load Previous Lookup"),
-            self.startLookup_btn      :  ("START"    ,"Start Lookup Process"),
-            self.isRecursive_checkBox :  ("RECURSIVE","Find Files Recursively Through The Selected Path") 
-        }
-
-        for widget, info in data.items():
-            
-            widget.setText(QCoreApplication.translate("MainWindow", info[0], None))
-            widget.setToolTip(QCoreApplication.translate("MainWindow", info[1], None))
-            
-
-        self.PageTitle_label.setText(QCoreApplication.translate("MainWindow", u"DELETE", None))
-
-        self.currentPath_lineEdit.setToolTip(QCoreApplication.translate("MainWindow", u"Enter the path where should the lookup process begin", None))
-        self.currentPath_lineEdit.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Enter the path here", None))
-        self.browseCurrentPath_btn.setText(QCoreApplication.translate("MainWindow", u"OPEN", None))
-        self.lookupInput_lineEdit.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Enter your input", None))
-        self.LookuByTitle_label.setText(QCoreApplication.translate("MainWindow", u"LOOKUP BY", None))
-
-
-        """
-        ////////////////////////////////////////////////
-                TABLE CONTENT
-        ////////////////////////////////////////////////
-        """
-        self.table_layout.setSortingEnabled(True)
-        self.retranslateTable()
-
-    
-    def start_lookup(self):
-        
-        data = self.get_data(
-            self.startLookup_btn,
-            self.lookupInput_lineEdit,
-            self.lookupFormat_comboBox,
-            self.LookupType_comboBox,
-            self.isRecursive_checkBox
-        )
-
-        self.update_table(data)
-        
-
-    def init_table(self, rows=2, columns=4):
-
-        # Set the number of rows and columns
-        total_rows = rows
-        total_columns = columns
-
-        # Clear existing rows
-        self.table_layout.setRowCount(0)
-        
-        self.table_layout.setRowCount(total_rows)
-        self.table_layout.setColumnCount(total_columns)
-
-        # RENDER TABLE HEADERS
-        self.table_layout.setItem(0,0, QTableWidgetItem())
-        self.table_layout.setItem(0,1, QTableWidgetItem())
-        self.table_layout.setItem(0,2, QTableWidgetItem())
-        self.table_layout.setItem(0,3, QTableWidgetItem())
-
-        self.table_layout.item(0, 3).setCheckState(Qt.Checked)
-
-        # TRANSLATE TABLE HEADERS
-        self.retranslateTable()
-
-    
-    def update_table(self, data:dict) -> None:
-        """
-            Display new data on the table 
-        """
-
-        if not data:
-            print("no data has been found")
-            return 
-
-        data = data.values()
-
-        # Plus one for the headers
-        self.init_table(len(data) + 1)
-
-        # Populate the table with new data
-        for row_index, row_data in enumerate(data):
-            for col_index, (_, value) in enumerate(row_data.items()):
-                item = QTableWidgetItem(str(value))
-                self.table_layout.setItem(row_index + 1, col_index, item)
-
-        # Resize columns based on their contents
-        for col_index in range(self.table_layout.columnCount()):
-            self.table_layout.resizeColumnToContents(col_index)
-
-        # render check items for each table-row
-        self.generate_select_all()
-
-
-    def generate_select_all(self):
-
-        # Render an item then checkbox 
-        for i in range(1, self.table_layout.rowCount()):
-            self.table_layout.setItem(i, 3, QTableWidgetItem())
-            self.table_layout.item(i, 3).setCheckState(Qt.Checked)
-
-
-    def render_page_icons(self):
-        
-        size = 20
-        self.common_functions.set_icon(self.browseCurrentPath_btn, "folder_outline", (size, size))
-        self.common_functions.set_icon(self.startLookup_btn, "start", (size, size))
-        self.common_functions.set_icon(self.delete_btn, "delete sign", (size, size))
-        self.common_functions.set_icon(self.restore_btn, "restore file", (size, size))
-        self.common_functions.set_icon(self.load_btn, "file upload", (size, size))
-        self.common_functions.set_icon(self.save_btn, "file download", (size, size))

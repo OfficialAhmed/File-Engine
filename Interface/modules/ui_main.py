@@ -1004,7 +1004,7 @@ class Ui(object):
         ////////////////////////////////////////////////
         """
         
-        self.delete_widgets = Ui_delete().render()
+        self.delete_widgets = Ui_delete().render_page()
         self.home_widgets.setObjectName(u"delete")
         
         self.stackedWidget.addWidget(self.delete_widgets)

@@ -38,7 +38,7 @@ class Cache:
 
 
     def get_files_by_name(self, name:str) -> dict:
-        print(self.file_finder.find("NAME", name))
+        return self.file_finder.find("NAME", name)
 
 
     def get_files_by_extension(self, extension:str) -> dict:
@@ -46,13 +46,13 @@ class Cache:
 
 
     def get_files_by_pattern(self, pattern:str) -> dict:
-        print(self.file_finder.find("PATTERN", pattern))
+        return self.file_finder.find("PATTERN", pattern)
 
 
     def get_folders_by_name(self, name:str) -> dict:
-        print(self.folder_finder.find("NAME", name))
+        return self.folder_finder.find("NAME", name)
 
 
     def get_folders_by_pattern(self, pattern:str) -> dict:
-        print(self.folder_finder.find("PATTERN", pattern))
+        return self.folder_finder.find("PATTERN", pattern)
 

@@ -248,13 +248,13 @@ class UIFunctions(MainWindow):
         self.sizegrip.setStyleSheet("width: 20px; height: 20px; margin 0px; padding: 0px;")
 
         # MINIMIZE
-        self.ui.minimizeAppBtn.clicked.connect(lambda: self.showMinimized())
+        self.ui.minimizeAppBtn.clicked.connect(lambda: UIFunctions.showMinimized(self))
 
         # MAXIMIZE/RESTORE
         self.ui.maximizeRestoreAppBtn.clicked.connect(lambda: UIFunctions.maximize_restore(self))
 
         # CLOSE APPLICATION
-        self.ui.closeAppBtn.clicked.connect(lambda: self.close())
+        self.ui.closeAppBtn.clicked.connect(lambda: UIFunctions.close(self))
 
     def resize_grips(self):
         if Settings.ENABLE_CUSTOM_TITLE_BAR:
