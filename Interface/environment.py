@@ -59,6 +59,8 @@ class Html:
     COLOR:dict = {
         "dark blue": "33, 37, 43",
         "light blue": "52, 59, 72",
+        "dracula pink": "255, 121, 198",
+        "dracula purple": "189, 147, 249"
     }
 
 
@@ -69,3 +71,6 @@ class Html:
 
     def get_bg_color(self, name:str) -> str:
         return f"background-color: rgb({self.color.get(name)})"
+    
+    def get_rgb_color(self, name:str) -> tuple[int, int, int]:
+        return tuple( int(x) for x in self.color.get(name).split(", ") )
