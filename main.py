@@ -15,6 +15,7 @@ from Interface.modules import *
 from Interface.widgets import *
 from Interface.modules.ui_main import Ui
 
+from controller import Environment
 
 os.environ["QT_FONT_DPI"] = "96" # FIX Problem for High DPI and Scale above 100%
 
@@ -165,6 +166,12 @@ class MainWindow(QMainWindow):
 
 
 if __name__ == "__main__":
+    
+    # CREATE DATA FOLDER IF NOT FOUND
+    if not os.path.exists("data"):
+        os.mkdir(Environment.DATA_PATH)
+
+
     app = QApplication(sys.argv)
     app.setWindowIcon(QIcon("icon.ico"))
     window = MainWindow()
