@@ -6,6 +6,7 @@
 
 """
 
+import json
 import os
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
@@ -28,6 +29,7 @@ class Model:
         self.common_functions = Common()
 
         self.path_input = ""
+        self.cache_file = self.environment.CACHE_FILE
 
 
 class Controller(Model):
@@ -37,15 +39,56 @@ class Controller(Model):
 
     """
 
-    def check_cached_data(
+    def import_cache(
         self,
-        LookupType_comboBox,
-        currentPath_lineEdit,
-        lookupFormat_comboBox,
-        lookupInput_lineEdit,
+        lookupType: QComboBox,
+        currentPath: QLineEdit,
+        lookupFormat: QComboBox,
+        lookupInput: QLineEdit,
+        isRecursive: QCheckBox,
     ) -> None:
+        # CACHE FOUND
         if os.path.exists(self.environment.CACHE_FILE):
-            pass
+            cache: dict = json.load(open(self.cache_file)).get("delete page")
+
+            lookupType.setCurrentText(cache.get("lookupType"))
+            lookupFormat.setCurrentText(cache.get("lookupFormat"))
+            currentPath.setText(cache.get("currentPath"))
+            lookupInput.setText(cache.get("lookupInput"))
+            isRecursive.setChecked(cache.get("IsRecursive"))
+
+            self.path_input = cache.get("currentPath")
+
+    def export_cache(
+        self,
+        lookupType: QComboBox,
+        currentPath: QLineEdit,
+        lookupFormat: QComboBox,
+        lookupInput: QLineEdit,
+        isRecursive: QCheckBox,
+    ) -> None:
+        cache: dict = {}
+
+        # CACHE FOUND
+        if os.path.exists(self.cache_file):
+            cache: dict = json.load(open(self.cache_file))
+
+        path = currentPath.text()
+        search = lookupInput.text()
+        lu_type = lookupType.currentText()
+        lu_frmt = lookupFormat.currentText()
+        recursive = isRecursive.isChecked()
+
+        cache["delete page"] = {
+            "lookupType": lu_type,
+            "currentPath": path,
+            "lookupFormat": lu_frmt,
+            "lookupInput": search,
+            "IsRecursive": recursive,
+        }
+
+        with open(self.cache_file, "w+") as file:
+            json.dump(cache, file)
 
     def set_user_path(self, path: str, widget: QWidget | None = None):
         """
@@ -168,7 +211,18 @@ class Ui(Controller):
         self.is_select_all_checkboxes_signal = False
 
     def start_lookup(self):
+        # CACHE INPUTS
+        self.export_cache(
+            self.LookupType_comboBox,
+            self.currentPath_lineEdit,
+            self.lookupFormat_comboBox,
+            self.lookupInput_lineEdit,
+            self.isRecursive_checkBox,
+        )
+
         self.checkboxes.clear()
+
+        # SEARCH PROCESS
         self.data = self.get_data(
             self.startLookup_btn,
             self.lookupInput_lineEdit,
@@ -342,6 +396,19 @@ class Ui(Controller):
         """
         self.table_layout.setSortingEnabled(True)
         self.retranslateTableHeaders()
+
+        """
+        ////////////////////////////////////////////////
+                SET CACHED DATA
+        ////////////////////////////////////////////////
+        """
+        self.import_cache(
+            self.LookupType_comboBox,
+            self.currentPath_lineEdit,
+            self.lookupFormat_comboBox,
+            self.lookupInput_lineEdit,
+            self.isRecursive_checkBox,
+        )
 
     def render_page_icons(self):
         size = 20
