@@ -1,5 +1,7 @@
 """
 
+    Delete page UI / logic
+
     PARENT CLASS: Model
         CHILD CLASS: Controller
             CHILD CLASS: Ui
@@ -11,7 +13,7 @@ import os
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from PySide6.QtGui import *
-from ..environment import Constant, Common, Html
+from Interface.environment import Constant, Common, Html
 
 from controller import Environment
 
@@ -39,58 +41,77 @@ class Controller(Model):
 
     """
 
-    def import_cache(
+    def __init__(self) -> None:
+        super().__init__()
+
+    def set_shared_widgets(
         self,
-        lookupType: QComboBox,
-        currentPath: QLineEdit,
-        lookupFormat: QComboBox,
-        lookupInput: QLineEdit,
-        isRecursive: QCheckBox,
-    ) -> None:
-        # CACHE FOUND
+        lookupType,
+        currentPath,
+        lookupFormat,
+        lookupInput,
+        isRecursive,
+        startBtn,
+        tableLayout
+    ):
+        """
+        SET CONTROLLER WIDGETS FROM 'UI' CLASS
+        """
+        self.startBtn: QWidget = startBtn
+        self.lookupType: QComboBox = lookupType
+        self.lookupInput: QLineEdit = lookupInput
+        self.isRecursive: QCheckBox = isRecursive
+        self.currentPathInput: QLineEdit = currentPath
+        self.lookupFormat: QComboBox = lookupFormat
+        self.tableLayout: QTableWidget = tableLayout
+
+    def import_cache(self) -> None:
+
+        # IF CACHE FOUND
         if os.path.exists(self.environment.CACHE_FILE):
             cache: dict = json.load(open(self.cache_file)).get("delete page")
 
-            lookupType.setCurrentText(cache.get("lookupType"))
-            lookupFormat.setCurrentText(cache.get("lookupFormat"))
-            currentPath.setText(cache.get("currentPath"))
-            lookupInput.setText(cache.get("lookupInput"))
-            isRecursive.setChecked(cache.get("IsRecursive"))
+            self.lookupInput.setText(cache.get("lookupInput"))
+            self.isRecursive.setChecked(cache.get("IsRecursive"))
+            self.currentPathInput.setText(cache.get("currentPath"))
+            self.lookupType.setCurrentText(cache.get("lookupType"))
 
             self.path_input = cache.get("currentPath")
 
-    def export_cache(
-        self,
-        lookupType: QComboBox,
-        currentPath: QLineEdit,
-        lookupFormat: QComboBox,
-        lookupInput: QLineEdit,
-        isRecursive: QCheckBox,
-    ) -> None:
+            # UPDATE LOOKUP FORMAT ACCORDING TO THE CACHED LOOKUP TYPE
+            self.change_lookup_format()
+
+            self.lookupFormat.setCurrentText(cache.get("lookupFormat"))
+
+    def export_cache(self) -> None:
+
         cache: dict = {}
 
-        # CACHE FOUND
+        # IF CACHE FOUND
         if os.path.exists(self.cache_file):
             cache: dict = json.load(open(self.cache_file))
 
-        path = currentPath.text()
-        search = lookupInput.text()
-        lu_type = lookupType.currentText()
-        lu_frmt = lookupFormat.currentText()
-        recursive = isRecursive.isChecked()
+        path = self.currentPathInput.text()
+        search = self.lookupInput.text()
+        lu_type = self.lookupType.currentText()
+        recursive = self.isRecursive.isChecked()
+        lu_frmt = self.lookupFormat.currentText()
 
         cache["delete page"] = {
-            "lookupType": lu_type,
-            "currentPath": path,
+            "lookupType":   lu_type,
+            "currentPath":  path,
             "lookupFormat": lu_frmt,
-            "lookupInput": search,
-            "IsRecursive": recursive,
+            "lookupInput":  search,
+            "IsRecursive":  recursive,
         }
 
         with open(self.cache_file, "w+") as file:
             json.dump(cache, file)
 
-    def set_user_path(self, path: str, widget: QWidget | None = None):
+    def set_user_path(
+        self, path: str,
+        is_changed_manually: bool
+    ) -> None:
         """
         Update user path input
         """
@@ -102,56 +123,58 @@ class Controller(Model):
 
         self.path_input = path
 
-        if widget:
-            widget.setText(path)
+        if not is_changed_manually:
+            self.currentPathInput.setText(path)
 
-    def change_lookup_format(
-        self, lookup_type_widget: QWidget, lookup_format_widget: QWidget
-    ) -> None:
+    def change_lookup_format(self) -> None:
         """
         Change lookup format options according to the lookup type
         """
 
-        current_type = lookup_type_widget.currentText()
-        total_formats = lookup_format_widget.count()
+        current_type = self.lookupType.currentText()
+
+        # REMOVE ALL TYPES
+        self.lookupFormat.clear()
+
+        # GENERATE NEW TYPES
+        new_formats = (
+            "NAME",
+            "PATTERN"
+        )
 
         # ADD THE OPTION 'EXTENSION' IF 'FILES' SELECTED
         if current_type == "FILES":
-            if total_formats == 2:
-                lookup_format_widget.addItem("EXTENSION")
-                return
+            new_formats = (
+                "NAME",
+                "PATTERN",
+                "EXTENSION"
+            )
 
-        if total_formats == 3:
-            lookup_format_widget.removeItem(2)
+        for format in new_formats:
+            self.lookupFormat.addItem(format)
 
-    def get_data(
-        self,
-        start_widget: QWidget,
-        format_input: QWidget,
-        lookup_format_widget: QWidget,
-        lookup_type_widget: QWidget,
-        recursive_widget: QWidget,
-    ) -> dict:
+    def get_data(self) -> dict:
         """
-        Begin lookup process. Deactivate the btn and reactivate it after
+        ### Begin lookup process. 
+            * Deactivate the btn and reactivate it afterwards
         """
 
-        start_widget.setEnabled(False)
+        self.startBtn.setEnabled(False)
 
-        type: str = lookup_type_widget.currentText()
-        format: str = lookup_format_widget.currentText()
-        format_input: str = format_input.text()
-        is_recursive: bool = recursive_widget.isChecked()
+        input: str = self.lookupInput.text()
+        type: str = self.lookupType.currentText()
+        format: str = self.lookupFormat.currentText()
+        is_recursive: bool = self.isRecursive.isChecked()
 
         # UPDATE THE FINDER PARAMETERS
-        self.environment.update_param(
+        self.environment.update_finder_param(
             self.path_input,
             is_recursive,
         )
 
         try:
             # BOTH INPUTS REQUIRED
-            if not format_input or not self.path_input:
+            if not input or not self.path_input:
                 print("Empty search input")
 
             else:
@@ -159,44 +182,28 @@ class Controller(Model):
                 if type == "FILES":
                     match format:
                         case "NAME":
-                            return self.environment.get_files_by_name(format_input)
+                            return self.environment.get_files_by_name(input)
 
                         case "EXTENSION":
-                            return self.environment.get_files_by_extension(format_input)
+                            return self.environment.get_files_by_extension(input)
 
                         case "PATTERN":
-                            return self.environment.get_files_by_pattern(format_input)
+                            return self.environment.get_files_by_pattern(input)
 
                 elif type == "FOLDERS":
                     match format:
                         case "NAME":
-                            return self.environment.get_folders_by_name(format_input)
+                            return self.environment.get_folders_by_name(input)
 
                         case "PATTERN":
-                            return self.environment.get_folders_by_pattern(format_input)
+                            return self.environment.get_folders_by_pattern(input)
 
         except Exception as e:
             print(str(e))
             return {}
 
         finally:
-            start_widget.setEnabled(True)
-
-    def delete_files_clicked(
-        self, checkboxes: list[QCheckBox], data: dict[dict]
-    ) -> None:
-        non_checked = True
-
-        for index, checkbox in enumerate(checkboxes):
-            if checkbox.isChecked():
-                print(data.get(index + 1))
-
-                # TODO: DELETE FILE INPLEMENTATION HERE
-
-                non_checked = False
-
-        if non_checked:
-            print("No item has been selected")
+            self.startBtn.setEnabled(True)
 
 
 class Ui(Controller):
@@ -205,33 +212,73 @@ class Ui(Controller):
 
         self.data = []
         self.checkboxes = []
-        self.table_headers = ("FILE | FOLDER", "SOURCE", "SIZE (MB)", "SELECT ALL")
+        self.table_headers = (
+            "FILE | FOLDER",
+            "SOURCE",
+            "SIZE (MB)",
+            "SELECT ALL"
+        )
 
         # SIGNAL TO LIMIT TO ONE CLICK AT A TIME
         self.is_select_all_checkboxes_signal = False
 
     def start_lookup(self):
-        # CACHE INPUTS
-        self.export_cache(
-            self.LookupType_comboBox,
-            self.currentPath_lineEdit,
-            self.lookupFormat_comboBox,
-            self.lookupInput_lineEdit,
-            self.isRecursive_checkBox,
-        )
 
+        # RESET THE TABLE DATA
+        self.init_table()
         self.checkboxes.clear()
 
-        # SEARCH PROCESS
-        self.data = self.get_data(
-            self.startLookup_btn,
-            self.lookupInput_lineEdit,
-            self.lookupFormat_comboBox,
-            self.LookupType_comboBox,
-            self.isRecursive_checkBox,
-        )
+        # CACHE INPUTS
+        self.export_cache()
 
+        # SEARCH PROCESS
+        self.data = self.get_data()
+
+        # SET FOUND DATA
         self.update_table()
+
+    def delete_files_clicked(self) -> None:
+
+        remove_rows = []
+        non_checked = True
+
+        for index, checkbox in enumerate(self.checkboxes):
+
+            if checkbox.isChecked():
+
+                data: dict = self.data.get(index)
+
+                file = data.get("file")
+                root = data.get("root")
+
+                self.environment.remove_file(
+                    f"{root}\\{file}"
+                )
+
+                remove_rows.append(index)
+                self.data.pop(index)
+                non_checked = False
+
+        # REMOVE SELECTED CHECKBOXES
+        for row in remove_rows:
+            self.checkboxes.pop(row)
+
+        # REMOVE ROWS CONTAIN FILES SELECTED
+        # START FROM LAST ROW TO AVOID ROW-SHIFTING ISSUE
+        for row in reversed(remove_rows):
+            self.tableLayout.removeRow(row)
+
+        if non_checked:
+            print("No item has been selected")
+
+    def restore_files_clicked(self) -> None:
+        pass
+
+    def save_process_clicked(self) -> None:
+        pass
+
+    def load_process_clicked(self) -> None:
+        pass
 
     def init_table(self, rows=1, columns=4):
         """
@@ -253,10 +300,6 @@ class Ui(Controller):
         # RENDER TABLE HEADERS
         self.table_layout.setHorizontalHeaderLabels(self.table_headers)
 
-        self.table_layout.horizontalHeader().sectionClicked.connect(
-            self.toggle_checkboxes
-        )
-
         self.retranslateTableHeaders()
 
     def update_table(self) -> None:
@@ -265,6 +308,7 @@ class Ui(Controller):
         """
 
         if not self.data:
+            self.init_table()
             print("no data has been found")
             return
 
@@ -285,7 +329,8 @@ class Ui(Controller):
                     )
                     checkbox = QCheckBox()
                     checkbox.setChecked(True)
-                    self.table_layout.setCellWidget(row_index, col_index + 1, checkbox)
+                    self.table_layout.setCellWidget(
+                        row_index, col_index + 1, checkbox)
 
                     self.checkboxes.append(checkbox)
 
@@ -296,22 +341,12 @@ class Ui(Controller):
     def toggle_checkboxes(self, header_section: int) -> None:
         """
         ### TOGGLE THE CHECKBOXES FOR EACH TABLE ITEM
-            - ISSUE: The function is called twice on one click
-            - FIX: The signal is going to be checked twice on every click
-                 and changes state to only allow one call to toggle the checkboxes
-
+            * Checkboxes column = 3 (zero-indexed)
         """
 
-        if not self.is_select_all_checkboxes_signal:
-            if header_section == 3:
-                for checkbox in self.checkboxes:
-                    checkbox.toggle()
-
-                self.is_select_all_checkboxes_signal = True
-
-        else:
-            # TURN THE SIGNAL BACK OFF FOR NEXT CLICK
-            self.is_select_all_checkboxes_signal = False
+        if header_section == 3:
+            for checkbox in self.checkboxes:
+                checkbox.toggle()
 
     def retranslateTableHeaders(self):
         for col, txt in enumerate(self.table_headers):
@@ -332,7 +367,7 @@ class Ui(Controller):
         """
 
         data = {
-            self.LookupType_comboBox: ("FILES", "FOLDERS"),
+            self.LookupType_comboBox:   ("FILES", "FOLDERS"),
             self.lookupFormat_comboBox: ("NAME", "PATTERN", "EXTENSION"),
         }
 
@@ -350,20 +385,19 @@ class Ui(Controller):
         """
 
         data = {
-            self.delete_btn: ("DELETE", "Delete All Selected Items"),
-            self.restore_btn: ("RESTORE", "Restore Last Deleted Process"),
-            self.save_btn: ("SAVE", "Store Current Lookup"),
-            self.load_btn: ("LOAD", "Load Previous Lookup"),
-            self.startLookup_btn: ("START", "Start Lookup Process"),
-            self.isRecursive_checkBox: (
-                "RECURSIVE",
-                "Find Files Recursively Through The Selected Path",
-            ),
+            self.delete_btn:           ("DELETE", "Delete All Selected Items"),
+            self.restore_btn:          ("RESTORE", "Restore Last Deleted Process"),
+            self.save_btn:             ("SAVE", "Store Current Lookup"),
+            self.load_btn:             ("LOAD", "Load Previous Lookup"),
+            self.startLookup_btn:      ("START", "Start Lookup Process"),
+            self.isRecursive_checkBox: ("RECURSIVE", "Find Files Recursively Through The Selected Path"),
         }
 
         for widget, info in data.items():
-            widget.setText(QCoreApplication.translate("MainWindow", info[0], None))
-            widget.setToolTip(QCoreApplication.translate("MainWindow", info[1], None))
+            widget.setText(QCoreApplication.translate(
+                "MainWindow", info[0], None))
+            widget.setToolTip(QCoreApplication.translate(
+                "MainWindow", info[1], None))
 
         self.PageTitle_label.setText(
             QCoreApplication.translate("MainWindow", "DELETE", None)
@@ -377,7 +411,8 @@ class Ui(Controller):
             )
         )
         self.currentPath_lineEdit.setPlaceholderText(
-            QCoreApplication.translate("MainWindow", "Enter the path here", None)
+            QCoreApplication.translate(
+                "MainWindow", "Enter the path here", None)
         )
         self.browseCurrentPath_btn.setText(
             QCoreApplication.translate("MainWindow", "OPEN", None)
@@ -402,24 +437,30 @@ class Ui(Controller):
                 SET CACHED DATA
         ////////////////////////////////////////////////
         """
-        self.import_cache(
-            self.LookupType_comboBox,
-            self.currentPath_lineEdit,
-            self.lookupFormat_comboBox,
-            self.lookupInput_lineEdit,
-            self.isRecursive_checkBox,
-        )
+        self.import_cache()
 
     def render_page_icons(self):
-        size = 20
+
+        size = (20, 20)
+
         self.common_functions.set_icon(
-            self.browseCurrentPath_btn, "folder_outline", (size, size)
+            self.browseCurrentPath_btn, "folder_outline", size
         )
-        self.common_functions.set_icon(self.startLookup_btn, "start", (size, size))
-        self.common_functions.set_icon(self.delete_btn, "delete sign", (size, size))
-        self.common_functions.set_icon(self.restore_btn, "restore file", (size, size))
-        self.common_functions.set_icon(self.load_btn, "file upload", (size, size))
-        self.common_functions.set_icon(self.save_btn, "file download", (size, size))
+        self.common_functions.set_icon(
+            self.startLookup_btn, "start", size
+        )
+        self.common_functions.set_icon(
+            self.delete_btn, "delete sign", size
+        )
+        self.common_functions.set_icon(
+            self.restore_btn, "restore file", size
+        )
+        self.common_functions.set_icon(
+            self.load_btn, "file upload", size
+        )
+        self.common_functions.set_icon(
+            self.save_btn, "file download", size
+        )
 
     def render_page(self):
         self.widgets = QWidget()
@@ -427,8 +468,6 @@ class Ui(Controller):
         font = QFont()
         font.setFamily("Segoe UI")
         font.setPointSize(10)
-        font.setBold(False)
-        font.setItalic(False)
 
         self.widgets.setObjectName("widgets")
         self.verticalLayout = QVBoxLayout(self.widgets)
@@ -453,7 +492,8 @@ class Ui(Controller):
         self.LookupType_comboBox.setObjectName("LookupType_comboBox")
         self.LookupType_comboBox.setFont(font)
         self.LookupType_comboBox.setAutoFillBackground(False)
-        self.LookupType_comboBox.setStyleSheet(self.html.get_bg_color("dark blue"))
+        self.LookupType_comboBox.setStyleSheet(
+            self.html.get_bg_color("dark blue"))
         self.LookupType_comboBox.setFrame(True)
 
         self.first_layout.addWidget(self.LookupType_comboBox, 1, 0, 1, 1)
@@ -487,7 +527,8 @@ class Ui(Controller):
         self.currentPath_lineEdit = QLineEdit(self.frame_content_wid_4)
         self.currentPath_lineEdit.setObjectName("currentPath_lineEdit")
         self.currentPath_lineEdit.setMinimumSize(QSize(0, 30))
-        self.currentPath_lineEdit.setStyleSheet(self.html.get_bg_color("dark blue"))
+        self.currentPath_lineEdit.setStyleSheet(
+            self.html.get_bg_color("dark blue"))
 
         self.second_layout.addWidget(self.currentPath_lineEdit, 0, 1, 1, 1)
 
@@ -496,7 +537,8 @@ class Ui(Controller):
         self.browseCurrentPath_btn.setMinimumSize(QSize(150, 30))
         self.browseCurrentPath_btn.setFont(font)
         self.browseCurrentPath_btn.setCursor(QCursor(Qt.PointingHandCursor))
-        self.browseCurrentPath_btn.setStyleSheet(self.html.get_bg_color("lightblue"))
+        self.browseCurrentPath_btn.setStyleSheet(
+            self.html.get_bg_color("lightblue"))
 
         self.second_layout.addWidget(self.browseCurrentPath_btn, 0, 2, 1, 1)
         self.horizontalLayout_13.addLayout(self.second_layout)
@@ -514,7 +556,8 @@ class Ui(Controller):
         self.lookupInput_lineEdit = QLineEdit(self.frame_content_wid_2)
         self.lookupInput_lineEdit.setObjectName("currentLookupInput_lineEdit")
         self.lookupInput_lineEdit.setMinimumSize(QSize(0, 30))
-        self.lookupInput_lineEdit.setStyleSheet(self.html.get_bg_color("dark blue"))
+        self.lookupInput_lineEdit.setStyleSheet(
+            self.html.get_bg_color("dark blue"))
 
         self.third_layout.addWidget(self.lookupInput_lineEdit, 1, 1, 1, 1)
 
@@ -531,7 +574,8 @@ class Ui(Controller):
         self.lookupFormat_comboBox.setObjectName("currentLookupBy_comboBox")
         self.lookupFormat_comboBox.setFont(font)
         self.lookupFormat_comboBox.setAutoFillBackground(False)
-        self.lookupFormat_comboBox.setStyleSheet(self.html.get_bg_color("dark blue"))
+        self.lookupFormat_comboBox.setStyleSheet(
+            self.html.get_bg_color("dark blue"))
         self.lookupFormat_comboBox.setFrame(True)
 
         self.third_layout.addWidget(self.lookupFormat_comboBox, 1, 0, 1, 1)
@@ -592,34 +636,35 @@ class Ui(Controller):
         palette = QPalette()
         brush = QBrush(QColor(221, 221, 221, 255))
         brush.setStyle(Qt.SolidPattern)
-        palette.setBrush(QPalette.Active, QPalette.WindowText, brush)
+
         brush1 = QBrush(QColor(0, 0, 0, 0))
         brush1.setStyle(Qt.SolidPattern)
-        palette.setBrush(QPalette.Active, QPalette.Button, brush1)
-        palette.setBrush(QPalette.Active, QPalette.Text, brush)
-        palette.setBrush(QPalette.Active, QPalette.ButtonText, brush)
+
         brush2 = QBrush(QColor(0, 0, 0, 255))
         brush2.setStyle(Qt.NoBrush)
+
+        palette.setBrush(QPalette.Active, QPalette.Text, brush)
+        palette.setBrush(QPalette.Active, QPalette.Button, brush1)
+        palette.setBrush(QPalette.Active, QPalette.WindowText, brush)
+        palette.setBrush(QPalette.Active, QPalette.ButtonText, brush)
+
         palette.setBrush(QPalette.Active, QPalette.Base, brush2)
-        palette.setBrush(QPalette.Active, QPalette.Window, brush1)
-        palette.setBrush(QPalette.Inactive, QPalette.WindowText, brush)
-        palette.setBrush(QPalette.Inactive, QPalette.Button, brush1)
         palette.setBrush(QPalette.Inactive, QPalette.Text, brush)
-        palette.setBrush(QPalette.Inactive, QPalette.ButtonText, brush)
-        brush3 = QBrush(QColor(0, 0, 0, 255))
-        brush3.setStyle(Qt.NoBrush)
-        palette.setBrush(QPalette.Inactive, QPalette.Base, brush3)
-        palette.setBrush(QPalette.Inactive, QPalette.Window, brush1)
-        palette.setBrush(QPalette.Disabled, QPalette.WindowText, brush)
-        palette.setBrush(QPalette.Disabled, QPalette.Button, brush1)
         palette.setBrush(QPalette.Disabled, QPalette.Text, brush)
+        palette.setBrush(QPalette.Active, QPalette.Window, brush1)
+        palette.setBrush(QPalette.Inactive, QPalette.Base, brush2)
+        palette.setBrush(QPalette.Inactive, QPalette.Button, brush1)
+        palette.setBrush(QPalette.Inactive, QPalette.Window, brush1)
+        palette.setBrush(QPalette.Disabled, QPalette.Button, brush1)
+        palette.setBrush(QPalette.Inactive, QPalette.WindowText, brush)
+        palette.setBrush(QPalette.Inactive, QPalette.ButtonText, brush)
+        palette.setBrush(QPalette.Disabled, QPalette.WindowText, brush)
         palette.setBrush(QPalette.Disabled, QPalette.ButtonText, brush)
-        brush4 = QBrush(QColor(0, 0, 0, 255))
-        brush4.setStyle(Qt.NoBrush)
 
         self.table_layout.setFrameShape(QFrame.NoFrame)
         self.table_layout.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
-        self.table_layout.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
+        self.table_layout.setSizeAdjustPolicy(
+            QAbstractScrollArea.AdjustToContents)
         self.table_layout.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.table_layout.setSelectionMode(QAbstractItemView.NoSelection)
         self.table_layout.setSelectionBehavior(QAbstractItemView.SelectRows)
@@ -645,14 +690,16 @@ class Ui(Controller):
         self.save_btn = QPushButton(self.row_3)
         self.load_btn = QPushButton(self.row_3)
 
-        self.delete_btn.setObjectName("delete_btn")
-        self.restore_btn.setObjectName("restore_btn")
-        self.save_btn.setObjectName("save_btn")
-        self.load_btn.setObjectName("load_btn")
+        # BUTTONS DESIGN
+        btns = {
+            "delete_btn": self.delete_btn,
+            "restore_btn": self.restore_btn,
+            "save_btn": self.save_btn,
+            "load_btn": self.load_btn
+        }
 
-        btns = (self.delete_btn, self.restore_btn, self.save_btn, self.load_btn)
-
-        for btn in btns:
+        for btn_name, btn in btns.items():
+            btn.setObjectName(btn_name)
             btn.setMinimumSize(QSize(150, 30))
             btn.setStyleSheet(self.html.get_bg_color("lightblue"))
             btn.setCursor(QCursor(Qt.PointingHandCursor))
@@ -662,6 +709,11 @@ class Ui(Controller):
 
         self.horizontalLayout_12.addLayout(self.optionBtns_layout)
         self.verticalLayout.addWidget(self.row_3)
+
+        # STORE WIDGETS IN CONTROLLER
+        # To eliminate the need of params in each func call from the controller
+        # Pass all widgets required for controller methods here
+        self._set_sharable_widgets()
 
         self.retranslateUi()
         self.render_page_icons()
@@ -674,26 +726,59 @@ class Ui(Controller):
 
         self.browseCurrentPath_btn.clicked.connect(
             lambda: self.set_user_path(
-                self.common_functions.get_user_path(), self.currentPath_lineEdit
+                self.common_functions.get_user_path(),
+                False
             )
         )
 
         self.currentPath_lineEdit.textChanged.connect(
-            lambda: self.set_user_path(self.currentPath_lineEdit.text())
+            lambda: self.set_user_path(
+                self.currentPath_lineEdit.text(),
+                True
+            )
         )
 
-        self.startLookup_btn.clicked.connect(lambda: self.start_lookup())
+        self.startLookup_btn.clicked.connect(
+            lambda: self.start_lookup()
+        )
 
         self.isRecursive_checkBox.isChecked()
 
         self.LookupType_comboBox.currentTextChanged.connect(
-            lambda: self.change_lookup_format(
-                self.LookupType_comboBox, self.lookupFormat_comboBox
-            )
+            lambda: self.change_lookup_format()
+        )
+        self.delete_btn.clicked.connect(
+            lambda: self.delete_files_clicked()
+        )
+        self.restore_btn.clicked.connect(
+            lambda: self.restore_files_clicked()
+        )
+        self.save_btn.clicked.connect(
+            lambda: self.save_process_clicked()
+        )
+        self.load_btn.clicked.connect(
+            lambda: self.load_process_clicked()
         )
 
-        self.delete_btn.clicked.connect(
-            lambda: self.delete_files_clicked(self.checkboxes, self.data)
+        # ON TABLE-HEADER CLICK
+        self.table_layout.horizontalHeader().sectionClicked.connect(
+            self.toggle_checkboxes
         )
 
         return self.widgets
+
+    def _set_sharable_widgets(self) -> None:
+        """
+        Share widgets to the controller
+        """
+
+        self.set_shared_widgets(
+            self.LookupType_comboBox,
+            self.currentPath_lineEdit,
+            self.lookupFormat_comboBox,
+            self.lookupInput_lineEdit,
+            self.isRecursive_checkBox,
+            self.startLookup_btn,
+
+            self.table_layout
+        )
