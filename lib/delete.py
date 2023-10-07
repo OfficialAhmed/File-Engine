@@ -23,7 +23,8 @@ class Remover:
         self.trash_folder_path = None
         self.trash_content_file = None
 
-        # Removed content tracker -> For restoring feature
+        # REMOVED CONTENT TRACKER - FOR RESTORE FEATURE
+        self.removed_counter = 0
         self.removed_content = {}
 
     def set_remover_param(self, content_file_path: str, trash_folder_path: str) -> None:
@@ -35,7 +36,9 @@ class Remover:
         self.trash_folder_path = trash_folder_path
         self.trash_content_file = content_file_path
 
-        self._create_trash()
+        # MAKE TRASH FOLDER IF IT DOESNT EXIST
+        if not os.path.exists(self.trash_folder_path):
+            os.mkdir(self.trash_folder_path)
 
         if os.path.exists(self.trash_content_file):
 
@@ -46,17 +49,9 @@ class Remover:
             except json.decoder.JSONDecodeError:
                 pass
 
-    def _create_trash(self) -> None:
-        """
-            Make trash if it doesnt exist
-        """
-
-        if not os.path.exists(self.trash_folder_path):
-            os.mkdir(self.trash_folder_path)
-
     def empty_trash(self) -> None:
         """
-            Delete all content in the "trash" folder
+            Delete all "trash" content
         """
 
         shutil.rmtree(self.trash_folder_path)
@@ -83,28 +78,27 @@ class Remover:
 
         try:
 
-            # File is selected to be moved
+            # REMOVE ':' FROM PATH
+            # CONCATENATE WITH '\\' WITHOUT THE FILE NAME
+            file_destination: str = self.trash_folder_path + \
+                "".join(source.replace(":", ""))
+
+            # FILE MOVE
             if not folder_name:
 
-                # REMOVE ':' FROM PATH
-                # CONCATENATE WITH '\\' WITHOUT THE FILE NAME
-                file_destination = self.trash_folder_path + \
-                    "\\".join(
-                        source.replace(
-                            ":", ""
-                        ).split("\\")[:-1]
-                    )
-
-                # Replicate the directory tree inside trash before moving the file
+                # REPLICATE THE DIR-TREE INSIDE TRASH BEFORE MOVING THE FILE
                 os.makedirs(file_destination, exist_ok=True)
                 shutil.move(source, file_destination)
 
-            # If folder is selected, check existence before moving
+            # FOLDER MOVE
             if not os.path.exists(f"{self.trash_folder_path}{folder_name}"):
-                shutil.move(source, f"{self.trash_folder_path}{source}")
+                shutil.move(source, file_destination)
 
-            # Keep track of the removed content
-            self.removed_content[len(self.removed_content) + 1] = source
+            # KEEP TRACK OF THE REMOVED CONTENT
+            if source not in self.removed_content.values():
+                self.removed_content[len(self.removed_content) + 1] = source
+
+            self.removed_counter += 1
 
         except Exception as e:
             print(str(e))
@@ -112,11 +106,10 @@ class Remover:
     def restore(self) -> int:
         """
             Redo moving from trash to original content's destination by reading the generated JSON
-            * return total content removed
+            * return total content restored
         """
 
         if not os.path.exists(self.trash_content_file):
-
             print("Restore not available. Content file not found")
             return
 
@@ -131,11 +124,15 @@ class Remover:
 
         # Reset JSON content by overwriting the file
         open(self.trash_content_file, "w+")
+        self.removed_content = {}
 
-        return self.get_removed_content_count()
+        return len(data)
 
     def get_removed_content_count(self) -> int:
-        return len(self.removed_content)
+        return self.removed_counter
+
+    def reset_removed_content_count(self) -> None:
+        self.removed_counter = 0
 
 
 class File(Remover):

@@ -85,14 +85,15 @@ class Controller(Model):
 
     def export_cache(self) -> None:
 
-        cache: dict = {}
+        # TODO: CHECK IF BOTH CACHES ARE THE SAME, SKIP EXPORTING - NO NEED TO WASTE TIME IN WRITING
+        cache = {}
 
         # IF CACHE FOUND
         if os.path.exists(self.cache_file):
             cache: dict = json.load(open(self.cache_file))
 
-        path = self.currentPathInput.text()
         search = self.lookupInput.text()
+        path = self.currentPathInput.text()
         lu_type = self.lookupType.currentText()
         recursive = self.isRecursive.isChecked()
         lu_frmt = self.lookupFormat.currentText()
@@ -228,7 +229,7 @@ class Ui(Controller):
         # RESET THE TABLE DATA
         self.init_table()
 
-        # CACHE INPUTS
+        # CACHE USER INPUTS
         self.export_cache()
 
         # SEARCH PROCESS
@@ -237,8 +238,9 @@ class Ui(Controller):
         # SET FOUND DATA
         self.update_table()
 
-    def delete_files_clicked(self) -> None:
+    def delete_content_clicked(self) -> None:
 
+        is_file = True
         remove_rows = []
         non_checked = True
 
@@ -247,17 +249,35 @@ class Ui(Controller):
             if checkbox.isChecked():
 
                 data: dict = self.data.get(index)
+                content_root = data.get("root")
 
-                file = data.get("file")
-                root = data.get("root")
+                match self.lookupType.currentText():
 
-                self.environment.remove_file(
-                    f"{root}\\{file}"
-                )
+                    case "FILES":
+
+                        file = data.get("file")
+
+                        self.environment.remove_file(
+                            f"{content_root}\\{file}"
+                        )
+
+                    case "FOLDERS":
+
+                        is_file = False
+                        folder = data.get("folder")
+
+                        self.environment.remove_folder(
+                            f"{content_root}\\{folder}",
+                            folder
+                        )
 
                 remove_rows.append(index)
                 self.data.pop(index)
                 non_checked = False
+
+        print(
+            f"Removed {self.environment.total_content_removed(is_file)} content."
+        )
 
         # REMOVE SELECTED CHECKBOXES
         for row in reversed(remove_rows):
@@ -303,9 +323,6 @@ class Ui(Controller):
         self.table_layout.setRowCount(total_rows)
         self.table_layout.setColumnCount(total_columns)
 
-        font = QFont()
-        font.setBold(True)
-
         # RENDER TABLE HEADERS
         self.table_layout.setHorizontalHeaderLabels(self.table_headers)
 
@@ -317,15 +334,17 @@ class Ui(Controller):
         """
 
         if not self.data:
+
+            # RENDER EMPTY TABLE
             self.init_table()
+
             print("no data has been found")
             return
 
         data = self.data.values()
-
         self.init_table(len(data))
 
-        # Populate the table with new data
+        # POPULATE THE TABLE WITH DATA
         for row_index, row_data in enumerate(data):
 
             for col_index, (_, value) in enumerate(row_data.items()):
@@ -333,15 +352,18 @@ class Ui(Controller):
                 item = QTableWidgetItem(str(value))
                 self.table_layout.setItem(row_index, col_index, item)
 
-                # render check items for each table-row
+                # RENDER CHECK ITEMS FOR EACH TABLE-ROW
                 if col_index == 2:
-
-                    self.table_layout.setItem(
-                        row_index, col_index + 1, QTableWidgetItem()
-                    )
 
                     checkbox = QCheckBox()
                     checkbox.setChecked(True)
+
+                    self.table_layout.setItem(
+                        row_index,
+                        col_index + 1,
+                        QTableWidgetItem()
+                    )
+
                     self.table_layout.setCellWidget(
                         row_index,
                         col_index + 1,
@@ -350,7 +372,7 @@ class Ui(Controller):
 
                     self.checkboxes.append(checkbox)
 
-        # Resize columns based on their contents
+        # RESIZE COLUMNS - BASED ON CONTENT SIZE
         for col_index in range(self.table_layout.columnCount()):
             self.table_layout.resizeColumnToContents(col_index)
 
@@ -365,10 +387,13 @@ class Ui(Controller):
                 checkbox.toggle()
 
     def retranslateTableHeaders(self):
+
         for col, txt in enumerate(self.table_headers):
+
             header_item = QTableWidgetItem(
                 QCoreApplication.translate("MainWindow", txt)
             )
+
             self.table_layout.setHorizontalHeaderItem(col, header_item)
 
     def retranslateUi(self):
@@ -448,11 +473,7 @@ class Ui(Controller):
         self.table_layout.setSortingEnabled(True)
         self.retranslateTableHeaders()
 
-        """
-        ////////////////////////////////////////////////
-                SET CACHED DATA
-        ////////////////////////////////////////////////
-        """
+        # SET CACHED DATA
         self.import_cache()
 
     def render_page_icons(self):
@@ -736,9 +757,17 @@ class Ui(Controller):
 
         """
         ////////////////////////////////////////////////
-                BUTTONS  EVENTS/SIGNAL
+                BUTTONS & EVENT/SIGNAL
         ////////////////////////////////////////////////
         """
+
+        # MANUALY ENTERED PATH
+        self.currentPath_lineEdit.textChanged.connect(
+            lambda: self.set_user_path(
+                self.currentPath_lineEdit.text(),
+                True
+            )
+        )
 
         self.browseCurrentPath_btn.clicked.connect(
             lambda: self.set_user_path(
@@ -747,33 +776,28 @@ class Ui(Controller):
             )
         )
 
-        self.currentPath_lineEdit.textChanged.connect(
-            lambda: self.set_user_path(
-                self.currentPath_lineEdit.text(),
-                True
-            )
-        )
-
         self.startLookup_btn.clicked.connect(
             lambda: self.start_lookup()
         )
 
-        self.isRecursive_checkBox.isChecked()
-
-        self.LookupType_comboBox.currentTextChanged.connect(
-            lambda: self.change_lookup_format()
-        )
         self.delete_btn.clicked.connect(
-            lambda: self.delete_files_clicked()
+            lambda: self.delete_content_clicked()
         )
-        self.restore_btn.clicked.connect(
-            lambda: self.restore_files_clicked()
-        )
+
         self.save_btn.clicked.connect(
             lambda: self.save_process_clicked()
         )
+
         self.load_btn.clicked.connect(
             lambda: self.load_process_clicked()
+        )
+
+        self.restore_btn.clicked.connect(
+            lambda: self.restore_files_clicked()
+        )
+
+        self.LookupType_comboBox.currentTextChanged.connect(
+            lambda: self.change_lookup_format()
         )
 
         # ON TABLE-HEADER CLICK
