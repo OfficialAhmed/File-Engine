@@ -87,6 +87,11 @@ class Environment:
 
     def remove_file(self, file_path: str) -> None:
         self.__file_remover.remove(file_path)
+        print(self.__file_remover.get_removed_content_count())
 
     def remove_folder(self, folder_path: str, folder_name: str) -> None:
         self.__folder_remover.remove(folder_path, folder_name)
+        print(self.__folder_remover.get_removed_content_count())
+
+    def restore_removed_content(self) -> int:
+        return self.__file_remover.restore()

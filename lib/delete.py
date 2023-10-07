@@ -23,8 +23,6 @@ class Remover:
         self.trash_folder_path = None
         self.trash_content_file = None
 
-        self.__removed_content_count = 0
-
         # Removed content tracker -> For restoring feature
         self.removed_content = {}
 
@@ -87,7 +85,7 @@ class Remover:
 
             # File is selected to be moved
             if not folder_name:
-                
+
                 # REMOVE ':' FROM PATH
                 # CONCATENATE WITH '\\' WITHOUT THE FILE NAME
                 file_destination = self.trash_folder_path + \
@@ -107,14 +105,14 @@ class Remover:
 
             # Keep track of the removed content
             self.removed_content[len(self.removed_content) + 1] = source
-            self.__removed_content_count += 1
 
         except Exception as e:
             print(str(e))
 
-    def restore(self) -> None:
+    def restore(self) -> int:
         """
             Redo moving from trash to original content's destination by reading the generated JSON
+            * return total content removed
         """
 
         if not os.path.exists(self.trash_content_file):
@@ -127,15 +125,17 @@ class Remover:
         for destination in data.values():
 
             shutil.move(
-                f"{self.trash_folder_path}{destination}",
+                f"{self.trash_folder_path}{destination.replace(':', '')}",
                 destination
             )
 
         # Reset JSON content by overwriting the file
         open(self.trash_content_file, "w+")
 
+        return self.get_removed_content_count()
+
     def get_removed_content_count(self) -> int:
-        return self.__removed_content_count
+        return len(self.removed_content)
 
 
 class File(Remover):
@@ -156,4 +156,3 @@ class Folder(Remover):
     def remove(self, folder_path: str, folder_name: str):
         self.move(folder_path, folder_name)
         self.dump_trash_content(self.removed_content)
-

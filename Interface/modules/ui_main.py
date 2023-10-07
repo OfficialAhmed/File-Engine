@@ -4,7 +4,7 @@ from PySide6.QtWidgets import *
 
 from . resources_rc import *
 from ..environment import Constant, Common
-from .delete import Ui as Ui_delete
+from .ui_delete import Ui as Ui_delete
 
 
 class Ui(object):

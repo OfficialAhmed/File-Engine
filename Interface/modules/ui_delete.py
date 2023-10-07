@@ -207,6 +207,7 @@ class Controller(Model):
 
 
 class Ui(Controller):
+
     def __init__(self) -> None:
         super().__init__()
 
@@ -226,7 +227,6 @@ class Ui(Controller):
 
         # RESET THE TABLE DATA
         self.init_table()
-        self.checkboxes.clear()
 
         # CACHE INPUTS
         self.export_cache()
@@ -260,7 +260,7 @@ class Ui(Controller):
                 non_checked = False
 
         # REMOVE SELECTED CHECKBOXES
-        for row in remove_rows:
+        for row in reversed(remove_rows):
             self.checkboxes.pop(row)
 
         # REMOVE ROWS CONTAIN FILES SELECTED
@@ -268,11 +268,19 @@ class Ui(Controller):
         for row in reversed(remove_rows):
             self.tableLayout.removeRow(row)
 
+        # REINDEX DATA - TO RETRIEVE DATA FROM DICT BY INDEX
+        new_data = {}
+        for index, value in enumerate(self.data.values()):
+            new_data[index] = value
+        self.data = new_data
+
         if non_checked:
             print("No item has been selected")
 
     def restore_files_clicked(self) -> None:
-        pass
+
+        result = self.environment.restore_removed_content()
+        print(f"Restored: {result} files")
 
     def save_process_clicked(self) -> None:
         pass
@@ -289,6 +297,7 @@ class Ui(Controller):
         total_columns = columns
 
         # CLEAR PREVIOUS ROWS
+        self.checkboxes = []
         self.table_layout.setRowCount(0)
 
         self.table_layout.setRowCount(total_rows)
@@ -318,19 +327,26 @@ class Ui(Controller):
 
         # Populate the table with new data
         for row_index, row_data in enumerate(data):
+
             for col_index, (_, value) in enumerate(row_data.items()):
+
                 item = QTableWidgetItem(str(value))
                 self.table_layout.setItem(row_index, col_index, item)
 
                 # render check items for each table-row
                 if col_index == 2:
+
                     self.table_layout.setItem(
                         row_index, col_index + 1, QTableWidgetItem()
                     )
+
                     checkbox = QCheckBox()
                     checkbox.setChecked(True)
                     self.table_layout.setCellWidget(
-                        row_index, col_index + 1, checkbox)
+                        row_index,
+                        col_index + 1,
+                        checkbox
+                    )
 
                     self.checkboxes.append(checkbox)
 
