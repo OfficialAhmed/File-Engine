@@ -44,6 +44,10 @@ class Controller(Model):
     def __init__(self) -> None:
         super().__init__()
 
+        # CREATE DATA FOLDER IF NOT FOUND
+        if not os.path.exists("data"):
+            os.mkdir(self.environment.DATA_PATH)
+
     def set_shared_widgets(
         self,
         lookupType,
@@ -221,13 +225,7 @@ class Ui(Controller):
             "SELECT ALL"
         )
 
-        # SIGNAL TO LIMIT TO ONE CLICK AT A TIME
-        self.is_select_all_checkboxes_signal = False
-
-    def start_lookup(self):
-
-        # RESET THE TABLE DATA
-        self.init_table()
+    def start_lookup_clicked(self):
 
         # CACHE USER INPUTS
         self.export_cache()
@@ -333,15 +331,15 @@ class Ui(Controller):
         Display new data on the table
         """
 
+        # RENDER EMPTY TABLE, IF NOTHING FOUND
         if not self.data:
-
-            # RENDER EMPTY TABLE
             self.init_table()
-
             print("no data has been found")
             return
 
         data = self.data.values()
+
+        # RENDER TABLE HEADERS
         self.init_table(len(data))
 
         # POPULATE THE TABLE WITH DATA
@@ -357,12 +355,6 @@ class Ui(Controller):
 
                     checkbox = QCheckBox()
                     checkbox.setChecked(True)
-
-                    self.table_layout.setItem(
-                        row_index,
-                        col_index + 1,
-                        QTableWidgetItem()
-                    )
 
                     self.table_layout.setCellWidget(
                         row_index,
@@ -777,7 +769,7 @@ class Ui(Controller):
         )
 
         self.startLookup_btn.clicked.connect(
-            lambda: self.start_lookup()
+            lambda: self.start_lookup_clicked()
         )
 
         self.delete_btn.clicked.connect(

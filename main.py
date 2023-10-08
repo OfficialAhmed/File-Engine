@@ -15,12 +15,13 @@ from Interface.modules import *
 from Interface.widgets import *
 from Interface.modules.ui_main import Ui
 
-from controller import Environment
 
-os.environ["QT_FONT_DPI"] = "96" # FIX Problem for High DPI and Scale above 100%
+# FIX Problem for High DPI and Scale above 100%
+os.environ["QT_FONT_DPI"] = "96"
 
 # SET AS GLOBAL WIDGETS
 widgets = None
+
 
 class MainWindow(QMainWindow):
 
@@ -91,8 +92,8 @@ class MainWindow(QMainWindow):
 
         # SET HOME PAGE AND SELECT MENU
         widgets.stackedWidget.setCurrentWidget(widgets.home_widgets)
-        widgets.home_page.setStyleSheet(UIFunctions.selectMenu(widgets.home_page.styleSheet()))
-
+        widgets.home_page.setStyleSheet(
+            UIFunctions.selectMenu(widgets.home_page.styleSheet()))
 
     def buttonClick(self):
         """
@@ -102,7 +103,6 @@ class MainWindow(QMainWindow):
         # GET BUTTON CLICKED
         btn = self.sender()
         btn_name = btn.objectName()
-
 
         match btn_name:
 
@@ -120,23 +120,26 @@ class MainWindow(QMainWindow):
 
             # SHOW NEW PAGE
             case "move_page":
-                widgets.stackedWidget.setCurrentWidget(widgets.new_page) # SET PAGE
-                UIFunctions.resetStyle(self, btn_name) # RESET ANOTHERS BUTTONS SELECTED
-                btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet())) # SELECT MENU
+                widgets.stackedWidget.setCurrentWidget(
+                    widgets.new_page)  # SET PAGE
+                # RESET ANOTHERS BUTTONS SELECTED
+                UIFunctions.resetStyle(self, btn_name)
+                btn.setStyleSheet(UIFunctions.selectMenu(
+                    btn.styleSheet()))  # SELECT MENU
 
             case "rename_page":
-                widgets.stackedWidget.setCurrentWidget(widgets.new_page) # SET PAGE
-                UIFunctions.resetStyle(self, btn_name) 
+                widgets.stackedWidget.setCurrentWidget(
+                    widgets.new_page)  # SET PAGE
+                UIFunctions.resetStyle(self, btn_name)
                 btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet()))
 
             case "lookup_page":
-                widgets.stackedWidget.setCurrentWidget(widgets.new_page) 
-                UIFunctions.resetStyle(self, btn_name) 
+                widgets.stackedWidget.setCurrentWidget(widgets.new_page)
+                UIFunctions.resetStyle(self, btn_name)
                 btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet()))
 
         # PRINT BTN NAME
         print(f'Button "{btn_name}" pressed!')
-
 
     def resizeEvent(self, event):
         """
@@ -145,7 +148,6 @@ class MainWindow(QMainWindow):
 
         # Update Size Grips
         UIFunctions.resize_grips(self)
-
 
     def mousePressEvent(self, event):
         """
@@ -166,11 +168,6 @@ class MainWindow(QMainWindow):
 
 
 if __name__ == "__main__":
-    
-    # CREATE DATA FOLDER IF NOT FOUND
-    if not os.path.exists("data"):
-        os.mkdir(Environment.DATA_PATH)
-
 
     app = QApplication(sys.argv)
     app.setWindowIcon(QIcon("icon.ico"))

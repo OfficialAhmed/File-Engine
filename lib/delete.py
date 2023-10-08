@@ -70,7 +70,7 @@ class Remover:
             ### Store content in trash folder
 
             * Files:
-                param 'folder_name' should be empty
+                param 'folder_name' must be empty
 
             * Folders:
                 Both params required
@@ -79,20 +79,29 @@ class Remover:
         try:
 
             # REMOVE ':' FROM PATH
-            # CONCATENATE WITH '\\' WITHOUT THE FILE NAME
-            file_destination: str = self.trash_folder_path + \
-                "".join(source.replace(":", ""))
+            # CONCATENATION WITHOUT FILE NOR FOLDER NAME
+            dest_with_filename = self.trash_folder_path + \
+                source.replace(":", "")
+            dest_only = dest_with_filename[: dest_with_filename.rfind("\\")]
 
-            # FILE MOVE
+            # REPLICATE THE DIR-TREE INSIDE TRASH
+            os.makedirs(dest_only, exist_ok=True)
+
             if not folder_name:
+                shutil.move(source, dest_with_filename)
 
-                # REPLICATE THE DIR-TREE INSIDE TRASH BEFORE MOVING THE FILE
-                os.makedirs(file_destination, exist_ok=True)
-                shutil.move(source, file_destination)
+            else:
 
-            # FOLDER MOVE
-            if not os.path.exists(f"{self.trash_folder_path}{folder_name}"):
-                shutil.move(source, file_destination)
+                # IF FOLDER EXIST COPY FILES MANUALLY,
+                # ELSE MOVE THE ENTIRE FOLDER
+                if os.path.exists(f"{dest_only}\\{folder_name}"):
+
+                    for file in os.listdir(source):
+                        shutil.move(f"{source}\\{file}", f"{dest_with_filename}")
+                    shutil.rmtree(source)
+
+                else:
+                    shutil.move(source, dest_with_filename)
 
             # KEEP TRACK OF THE REMOVED CONTENT
             if source not in self.removed_content.values():
