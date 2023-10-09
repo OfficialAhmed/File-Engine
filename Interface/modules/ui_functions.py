@@ -22,8 +22,8 @@ class UIFunctions(MainWindow):
             self.showMaximized()
             GLOBAL_STATE = True
             self.ui.appMargins.setContentsMargins(0, 0, 0, 0)
-            self.ui.maximizeRestoreAppBtn.setToolTip("Restore")
-            self.ui.maximizeRestoreAppBtn.setIcon(QIcon(u":/icons/images/icons/icon_restore.png"))
+            self.ui.maximizeAppBtn.setToolTip("Restore")
+            self.ui.maximizeAppBtn.setIcon(QIcon(u":/icons/images/icons/icon_restore.png"))
             self.ui.frame_size_grip.hide()
             self.left_grip.hide()
             self.right_grip.hide()
@@ -34,8 +34,8 @@ class UIFunctions(MainWindow):
             self.showNormal()
             self.resize(self.width()+1, self.height()+1)
             self.ui.appMargins.setContentsMargins(10, 10, 10, 10)
-            self.ui.maximizeRestoreAppBtn.setToolTip("Maximize")
-            self.ui.maximizeRestoreAppBtn.setIcon(QIcon(u":/icons/images/icons/icon_maximize.png"))
+            self.ui.maximizeAppBtn.setToolTip("Maximize")
+            self.ui.maximizeAppBtn.setIcon(QIcon(u":/icons/images/icons/icon_maximize.png"))
             self.ui.frame_size_grip.show()
             self.left_grip.show()
             self.right_grip.show()
@@ -229,7 +229,7 @@ class UIFunctions(MainWindow):
         else:
             self.ui.appMargins.setContentsMargins(0, 0, 0, 0)
             self.ui.minimizeAppBtn.hide()
-            self.ui.maximizeRestoreAppBtn.hide()
+            self.ui.maximizeAppBtn.hide()
             self.ui.closeAppBtn.hide()
             self.ui.frame_size_grip.hide()
 
@@ -249,7 +249,7 @@ class UIFunctions(MainWindow):
         self.ui.minimizeAppBtn.clicked.connect(lambda: UIFunctions.showMinimized(self))
 
         # MAXIMIZE/RESTORE
-        self.ui.maximizeRestoreAppBtn.clicked.connect(lambda: UIFunctions.maximize_restore(self))
+        self.ui.maximizeAppBtn.clicked.connect(lambda: UIFunctions.maximize_restore(self))
 
         # CLOSE APPLICATION
         self.ui.closeAppBtn.clicked.connect(lambda: UIFunctions.close(self))
