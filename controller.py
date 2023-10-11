@@ -26,17 +26,13 @@ class Environment:
 
     TRASH_PATH: str = DATA_PATH + "trash\\"
     CACHE_FILE: str = DATA_PATH + "Cache.json"
+    TRASH_CONTENT_FILE = f"{TRASH_PATH}content.json"
 
-    def __init__(self) -> None:
-        self.__file_finder = Finder.File()
-        self.__folder_finder = Finder.Folder()
+    FILE_FINDER = Finder.File()
+    FOLDER_FINDER = Finder.Folder()
 
-        self.__file_remover = Delete.File()
-        self.__folder_remover = Delete.Folder()
-
-        self.trash_content_file = f"{self.TRASH_PATH}content.json"
-
-        self.__update_remover_param()
+    FILE_REMOVER = Delete.File()
+    FOLDER_REMOVER = Delete.Folder()
 
     """
     /////////////////////////////////////////////////
@@ -49,26 +45,26 @@ class Environment:
             Variables set from UI after rendering
         """
 
-        self.__file_finder.set_path(path)
-        self.__file_finder.set_recursive(is_recursive)
+        self.FILE_FINDER.set_path(path)
+        self.FILE_FINDER.set_recursive(is_recursive)
 
-        self.__folder_finder.set_path(path)
-        self.__folder_finder.set_recursive(is_recursive)
+        self.FOLDER_FINDER.set_path(path)
+        self.FOLDER_FINDER.set_recursive(is_recursive)
 
     def get_files_by_name(self, name: str) -> dict:
-        return self.__file_finder.find("NAME", name)
+        return self.FILE_FINDER.find("NAME", name)
 
     def get_folders_by_name(self, name: str) -> dict:
-        return self.__folder_finder.find("NAME", name)
+        return self.FOLDER_FINDER.find("NAME", name)
 
     def get_files_by_pattern(self, pattern: str) -> dict:
-        return self.__file_finder.find("PATTERN", pattern)
+        return self.FILE_FINDER.find("PATTERN", pattern)
 
     def get_folders_by_pattern(self, pattern: str) -> dict:
-        return self.__folder_finder.find("PATTERN", pattern)
+        return self.FOLDER_FINDER.find("PATTERN", pattern)
 
     def get_files_by_extension(self, extension: str) -> dict:
-        return self.__file_finder.find("EXTENSION", extension)
+        return self.FILE_FINDER.find("EXTENSION", extension)
 
     """
     /////////////////////////////////////////////////////
@@ -76,28 +72,28 @@ class Environment:
     ///////////////////////////////////////////
     """
 
-    def __update_remover_param(self) -> None:
+    def update_remover_param(self) -> None:
         """
             Set when remover object init
         """
 
-        self.__file_remover.set_remover_param(
-            self.trash_content_file,
+        self.FILE_REMOVER.set_remover_param(
+            self.TRASH_CONTENT_FILE,
             self.TRASH_PATH
         )
-        self.__folder_remover.set_remover_param(
-            self.trash_content_file,
+        self.FOLDER_REMOVER.set_remover_param(
+            self.TRASH_CONTENT_FILE,
             self.TRASH_PATH
         )
 
     def remove_file(self, file_path: str) -> None:
-        self.__file_remover.remove(file_path)
+        self.FILE_REMOVER.remove(file_path)
 
     def remove_folder(self, folder_path: str, folder_name: str) -> None:
-        self.__folder_remover.remove(folder_path, folder_name)
+        self.FOLDER_REMOVER.remove(folder_path, folder_name)
 
     def restore_removed_content(self) -> int:
-        return self.__file_remover.restore()
+        return self.FILE_REMOVER.restore()
 
     def total_content_removed(self, is_file=True) -> int:
         """
@@ -106,12 +102,11 @@ class Environment:
         """
 
         if is_file:
-            total = self.__file_remover.get_removed_content_count()
-            self.__file_remover.reset_removed_content_count()
+            total = self.FILE_REMOVER.get_removed_content_count()
+            self.FILE_REMOVER.reset_removed_content_count()
 
         else:
-            total = self.__folder_remover.get_removed_content_count()
-            self.__folder_remover.reset_removed_content_count()
+            total = self.FOLDER_REMOVER.get_removed_content_count()
+            self.FOLDER_REMOVER.reset_removed_content_count()
 
         return total
-    
