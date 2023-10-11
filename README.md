@@ -39,3 +39,8 @@ Search for files or folders recursively by:
 ![HOME](Interface/images//home_page.png) 
 ![DELETE PAGE](Interface/images/delete_page.png) 
 
+# LICENSE
+
+File Engine - Copyright (C) 2023 OfficialAhmed
+
+This software is free to use, distribute and/or modify it under the terms of the MIT License & Apache [READ](LICENSE)
