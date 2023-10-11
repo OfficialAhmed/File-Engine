@@ -3,9 +3,11 @@
     for the interface
 """
 
+from typing import Optional
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
+import PySide6.QtWidgets
 
 
 class Common:
@@ -39,6 +41,17 @@ class Common:
 
         # RETURN THE DIRECTORY PATH, OTHERWISE RETURN NONE
         return path if path else None
+    
+    def get_progress_unit(
+            self,
+            total_files: int,
+        ) -> float:
+
+        """
+            Calculates the shunk to progress in percentage
+        """
+
+        return 100 / total_files
 
 
 class Constant:
@@ -68,3 +81,34 @@ class Html:
 
     def get_rgb_color(self, name: str) -> tuple[int, int, int]:
         return tuple(int(x) for x in self.color.get(name).split(", "))
+
+
+class ProgressBar:
+
+    # STORE GLOABLY FOR ALL CHILDREN
+    unit = None
+    percentage = None
+    progressBar = None
+
+    def __init__(self) -> None:
+        super().__init__()
+
+        # Reference from globals
+        self.unit = ProgressBar.unit
+        self.percentage = ProgressBar.percentage
+        self.progressBar = ProgressBar.progressBar
+
+    def set_widget(self, widget: QProgressBar):
+        """
+            #### Called after the progressbar widget rendered 
+            * ONE TIME CALL METHOD
+            * Widget will be stored in class for reference
+        """
+        self.progressBar = widget
+        ProgressBar.progressBar = widget # Reference
+
+    def _calculate_unit(self, total_files: int):
+        pass
+
+        
+        
