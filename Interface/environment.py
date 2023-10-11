@@ -7,7 +7,7 @@ from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 
-from controller import Environment
+from controller import Controller
 
 class Common:
 
@@ -106,6 +106,7 @@ class DeleteWorker(QThread):
     """
 
     # SIGNALS TO COMMUNICATE TO THE MAIN THREAD
+    is_file_signal = Signal(bool)
     removed_rows_signal = Signal(list)
     update_progress_signal = Signal(float)
 
@@ -116,13 +117,14 @@ class DeleteWorker(QThread):
         self.checkboxes = checkboxes
         self.lookup_type = lookup_type
 
-        self.environment = Environment()
+        self.controller = Controller()
 
     def run(self):
         """
             AUTOMATICALLY INVOKED WHEN thread.start() IS CALLED        
         """
 
+        is_file = True
         removed_rows = []
         total_items = len(self.data)
         completed_items = 0
@@ -140,15 +142,16 @@ class DeleteWorker(QThread):
 
                         file = data.get("file")
 
-                        self.environment.remove_file(
+                        self.controller.remove_file(
                             f"{content_root}\\{file}"
                         )
 
                     case "FOLDERS":
 
+                        is_file = False
                         folder = data.get("folder")
 
-                        self.environment.remove_folder(
+                        self.controller.remove_folder(
                             f"{content_root}\\{folder}",
                             folder
                         )
@@ -161,6 +164,7 @@ class DeleteWorker(QThread):
             self.update_progress_signal.emit(progress)
 
         self.removed_rows_signal.emit(removed_rows)
+        self.is_file_signal.emit(is_file)
 
         
         

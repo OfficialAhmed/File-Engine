@@ -7,6 +7,7 @@
 
 """
 
+from PySide6.QtWidgets import QDialog, QLabel, QVBoxLayout, QDialogButtonBox, QMessageBox
 
 import os
 import lib.move as Move
@@ -14,7 +15,7 @@ import lib.find as Finder
 import lib.delete as Delete
 
 
-class Environment:
+class Controller:
     """
         ### UI Common methods and static variables
         Called by the `ui_delete`
@@ -33,6 +34,26 @@ class Environment:
 
     FILE_REMOVER = Delete.File()
     FOLDER_REMOVER = Delete.Folder()
+
+    def show_dialog(self, msg: str,  mode: str = "I", is_dialog: bool = True):
+        """
+        #### RENDER A WINDOW FOR INFO/PERMISSION
+            PARAMS:
+            * `msg`        : MESSAGE TO DISPLAY
+            * `mode`       : ONE CHAR TO DISPLAY THE CORRECT ICON & FOR WINDOW TITLE
+                - `I`nformation 
+                - `W`arning
+                - `C`ritical 
+                - `Q`uestion
+            * `is_dialog`  : TYPE OF THE DIALOG
+                - `FALSE`  : OK        DIALOG
+                - `TRUE`   : OK/CANCEL DIALOG
+            RETURNS BOOL 
+        """
+
+        return DialogWindow().is_accepted(
+            msg, mode, is_dialog
+        )
 
     """
     /////////////////////////////////////////////////
@@ -110,3 +131,59 @@ class Environment:
             self.FOLDER_REMOVER.reset_removed_content_count()
 
         return total
+
+
+class DialogWindow(QDialog):
+
+    def __init__(self):
+        super().__init__()
+
+        self.layout = QVBoxLayout()
+        self.label = QLabel()
+
+    def is_accepted(self, msg: str,  mode: str = "I", is_dialog: bool = True):
+
+        self.setLayout(self.layout)
+
+        match mode.upper():
+            case "I":
+                title = "INFORMATION"
+                icon = QMessageBox.Information
+
+            case "W":
+                title = "WARNING"
+                icon = QMessageBox.Warning
+
+            case "C":
+                title = "CRITICAL"
+                icon = QMessageBox.Critical
+
+            case "Q":
+                title = "QUESTION"
+                icon = QMessageBox.Question
+
+            case _:
+                icon = QMessageBox.Information
+                title = mode.upper()
+                
+        if is_dialog:
+
+            self.options = QDialogButtonBox(
+                QDialogButtonBox.Ok | QDialogButtonBox.Cancel
+            )
+            self.options.rejected.connect(self.reject)
+            self.options.accepted.connect(self.accept)
+            self.layout.addWidget(self.label)
+            self.layout.addWidget(self.options)
+            self.label.setText(msg.upper())
+            self.setWindowTitle(title)
+
+            return True if self.exec() else False
+
+
+        msg_box = QMessageBox()
+        msg_box.setIcon(icon)
+        msg_box.setWindowTitle(title)
+        msg_box.setText(msg.upper())
+
+        return True if msg_box.exec() else False
