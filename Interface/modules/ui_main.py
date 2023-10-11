@@ -5,11 +5,14 @@ from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 
 from . resources_rc import *
-from ..environment import Constant, Common
+from ..environment import Constant, Common, ProgressBar
 from .ui_delete import Ui as Ui_delete
 
 
 class Ui(object):
+
+    # SHARED WIDGETS
+    progressBar = None
 
     def __init__(self) -> None:
         super().__init__()
@@ -239,8 +242,15 @@ class Ui(object):
                 DELETE PAGE CONTENT
         ////////////////////////////////////////////////
         """
+        # SET SHARED WIDGETS AFTER RENDERING
+        _UiDelete = Ui_delete()
+        self.delete_widgets = _UiDelete.render_page()
 
-        self.delete_widgets = Ui_delete().render_page()
+        progressBar = ProgressBar()
+        progressBar.set_widget(self.progressBar)
+        # _UiDelete.set_main_window_widgets(
+        #     self.progressBar
+        # )
 
         """
         ////////////////////////////////////////////////
@@ -726,6 +736,9 @@ class Ui(object):
         self.verticalMenuLayout.addWidget(self.toggleBox)
         self.verticalMenuLayout.addWidget(self.topMenu, 0, Qt.AlignTop)
         self.verticalMenuLayout.addWidget(self.bottomMenu, 0, Qt.AlignBottom)
+   
+        # SET SHARABLE WIDGETS
+        Ui.progressBar = self.progressBar
 
         self.retranslateUi(MainWindow)
         self.render_images()

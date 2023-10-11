@@ -13,7 +13,7 @@ import os
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from PySide6.QtGui import *
-from Interface.environment import Constant, Common, Html
+from Interface.environment import Constant, Common, Html, ProgressBar
 
 from controller import Environment
 
@@ -25,10 +25,15 @@ class Model:
     """
 
     def __init__(self) -> None:
+
+        # TO BE UPDATED BY SETTERS FROM CONTROLLER
+        # self.progressBar = None
+
         self.html = Html()
         self.constant = Constant()
         self.environment = Environment()
         self.common_functions = Common()
+        self.progressBar = ProgressBar()
 
         self.path_input = ""
         self.cache_file = self.environment.CACHE_FILE
@@ -43,31 +48,43 @@ class Controller(Model):
 
     def __init__(self) -> None:
         super().__init__()
+        
 
         # CREATE DATA FOLDER IF NOT FOUND
         if not os.path.exists("data"):
             os.mkdir(self.environment.DATA_PATH)
 
-    def set_shared_widgets(
+    def set_controller_widgets(
         self,
-        lookupType,
-        currentPath,
-        lookupFormat,
-        lookupInput,
-        isRecursive,
-        startBtn,
-        tableLayout
+        lookupType:   QPushButton,
+        currentPath:  QComboBox,
+        lookupFormat: QLineEdit,
+        lookupInput:  QCheckBox,
+        isRecursive:  QLineEdit,
+        startBtn:     QComboBox,
+        tableLayout:  QTableWidget
     ):
         """
-        SET CONTROLLER WIDGETS FROM 'UI' CLASS
+        Set current window widgets from 'UI' class
         """
-        self.startBtn: QWidget = startBtn
-        self.lookupType: QComboBox = lookupType
-        self.lookupInput: QLineEdit = lookupInput
-        self.isRecursive: QCheckBox = isRecursive
-        self.currentPathInput: QLineEdit = currentPath
+        self.startBtn:     QPushButton = startBtn
+        self.lookupType:   QComboBox = lookupType
+        self.lookupInput:  QLineEdit = lookupInput
+        self.isRecursive:  QCheckBox = isRecursive
         self.lookupFormat: QComboBox = lookupFormat
-        self.tableLayout: QTableWidget = tableLayout
+        self.tableLayout:  QTableWidget = tableLayout
+        self.currentPathInput: QLineEdit = currentPath
+
+    # def set_main_window_widgets(
+    #     self,
+    #     progressBar: QProgressBar
+    # ):
+    #     """
+    #     Set widgets shared from main window 
+    #     """
+
+    #     # UPDATE LOCAL
+    #     self.progressBar = progressBar
 
     def import_cache(self) -> None:
 
@@ -228,13 +245,17 @@ class Ui(Controller):
     def start_lookup_clicked(self):
 
         # CACHE USER INPUTS
+        # self.progressBar.setValue(5)
         self.export_cache()
+        # self.progressBar.setValue(10)
 
         # SEARCH PROCESS
         self.data = self.get_data()
+        # self.progressBar.setValue(70)
 
         # SET FOUND DATA
         self.update_table()
+        # self.progressBar.setValue(100)
 
     def delete_content_clicked(self) -> None:
 
@@ -242,6 +263,12 @@ class Ui(Controller):
         remove_rows = []
         non_checked = True
 
+        self.progressBar.update()
+        total_units = 0
+        unit = self.common_functions.get_progress_unit(
+            len(self.checkboxes)
+        )
+        
         for index, checkbox in enumerate(self.checkboxes):
 
             if checkbox.isChecked():
@@ -273,6 +300,9 @@ class Ui(Controller):
                 self.data.pop(index)
                 non_checked = False
 
+            # total_units += unit
+            # self.progressBar.setValue(total_units)
+
         print(
             f"Removed {self.environment.total_content_removed(is_file)} content."
         )
@@ -301,9 +331,11 @@ class Ui(Controller):
         print(f"Restored: {result} files")
 
     def save_process_clicked(self) -> None:
+        # TODO: IMPLEMENT FUNCTION
         pass
 
     def load_process_clicked(self) -> None:
+        # TODO: IMPLEMENT FUNCTION
         pass
 
     def init_table(self, rows=1, columns=4):
@@ -742,7 +774,15 @@ class Ui(Controller):
         # STORE WIDGETS IN CONTROLLER
         # To eliminate the need of params in each func call from the controller
         # Pass all widgets required for controller methods here
-        self._set_sharable_widgets()
+        self.set_controller_widgets(
+            self.LookupType_comboBox,
+            self.currentPath_lineEdit,
+            self.lookupFormat_comboBox,
+            self.lookupInput_lineEdit,
+            self.isRecursive_checkBox,
+            self.startLookup_btn,
+            self.table_layout
+        )
 
         self.retranslateUi()
         self.render_page_icons()
@@ -798,19 +838,3 @@ class Ui(Controller):
         )
 
         return self.widgets
-
-    def _set_sharable_widgets(self) -> None:
-        """
-        Share widgets to the controller
-        """
-
-        self.set_shared_widgets(
-            self.LookupType_comboBox,
-            self.currentPath_lineEdit,
-            self.lookupFormat_comboBox,
-            self.lookupInput_lineEdit,
-            self.isRecursive_checkBox,
-            self.startLookup_btn,
-
-            self.table_layout
-        )
