@@ -11,9 +11,6 @@ from .ui_delete import Ui as Ui_delete
 
 class Ui(object):
 
-    # SHARED WIDGETS
-    progressBar = None
-
     def __init__(self) -> None:
         super().__init__()
 
@@ -182,7 +179,6 @@ class Ui(object):
 
         self.extraTopLayout.setVerticalSpacing(0)
         self.extraTopLayout.setHorizontalSpacing(10)
-        
 
         self.textEdit.setReadOnly(True)
         self.textEdit.setStyleSheet(u"background: transparent;")
@@ -245,12 +241,6 @@ class Ui(object):
         # SET SHARED WIDGETS AFTER RENDERING
         _UiDelete = Ui_delete()
         self.delete_widgets = _UiDelete.render_page()
-
-        progressBar = ProgressBar()
-        progressBar.set_widget(self.progressBar)
-        # _UiDelete.set_main_window_widgets(
-        #     self.progressBar
-        # )
 
         """
         ////////////////////////////////////////////////
@@ -736,11 +726,14 @@ class Ui(object):
         self.verticalMenuLayout.addWidget(self.toggleBox)
         self.verticalMenuLayout.addWidget(self.topMenu, 0, Qt.AlignTop)
         self.verticalMenuLayout.addWidget(self.bottomMenu, 0, Qt.AlignBottom)
-   
-        # SET SHARABLE WIDGETS
-        Ui.progressBar = self.progressBar
 
+        # SET SHARABLE WIDGETS
+        pb = ProgressBar()
+        pb.set_widget(self.progressBar)
+
+        # SET TRASLATIONS
         self.retranslateUi(MainWindow)
+
         self.render_images()
         self.stackedWidget.setCurrentIndex(1)
 

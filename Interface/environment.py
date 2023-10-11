@@ -3,12 +3,11 @@
     for the interface
 """
 
-from typing import Optional
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
-import PySide6.QtWidgets
 
+from controller import Environment
 
 class Common:
 
@@ -86,17 +85,10 @@ class Html:
 class ProgressBar:
 
     # STORE GLOABLY FOR ALL CHILDREN
-    unit = None
-    percentage = None
     progressBar = None
 
-    def __init__(self) -> None:
-        super().__init__()
-
-        # Reference from globals
-        self.unit = ProgressBar.unit
-        self.percentage = ProgressBar.percentage
-        self.progressBar = ProgressBar.progressBar
+    def update(self, progress: int):
+        self.progressBar.setValue(int(progress * 100))
 
     def set_widget(self, widget: QProgressBar):
         """
@@ -107,8 +99,68 @@ class ProgressBar:
         self.progressBar = widget
         ProgressBar.progressBar = widget # Reference
 
-    def _calculate_unit(self, total_files: int):
-        pass
+
+class DeleteWorker(QThread):
+    """
+        DELETE FILES IN A SEPERATE THREAD FROM THE UI
+    """
+
+    # SIGNALS TO COMMUNICATE TO THE MAIN THREAD
+    removed_rows_signal = Signal(list)
+    update_progress_signal = Signal(float)
+
+    def __init__(self, data: dict, checkboxes: list, lookup_type: str):
+        super().__init__()
+
+        self.data = data
+        self.checkboxes = checkboxes
+        self.lookup_type = lookup_type
+
+        self.environment = Environment()
+
+    def run(self):
+        """
+            AUTOMATICALLY INVOKED WHEN thread.start() IS CALLED        
+        """
+
+        removed_rows = []
+        total_items = len(self.data)
+        completed_items = 0
+
+        for index, checkbox in enumerate(self.checkboxes):
+
+            if checkbox.isChecked():
+
+                data: dict = self.data.get(index)
+                content_root = data.get("root")
+
+                match self.lookup_type:
+
+                    case "FILES":
+
+                        file = data.get("file")
+
+                        self.environment.remove_file(
+                            f"{content_root}\\{file}"
+                        )
+
+                    case "FOLDERS":
+
+                        folder = data.get("folder")
+
+                        self.environment.remove_folder(
+                            f"{content_root}\\{folder}",
+                            folder
+                        )
+
+                removed_rows.append(index)
+                self.data.pop(index)
+
+            completed_items += 1
+            progress = completed_items / total_items
+            self.update_progress_signal.emit(progress)
+
+        self.removed_rows_signal.emit(removed_rows)
 
         
         

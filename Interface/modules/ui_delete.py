@@ -13,8 +13,8 @@ import os
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from PySide6.QtGui import *
-from Interface.environment import Constant, Common, Html, ProgressBar
 
+from Interface.environment import *
 from controller import Environment
 
 
@@ -26,12 +26,11 @@ class Model:
 
     def __init__(self) -> None:
 
-        # TO BE UPDATED BY SETTERS FROM CONTROLLER
-        # self.progressBar = None
-
         self.html = Html()
         self.constant = Constant()
         self.environment = Environment()
+        self.environment.update_remover_param()
+
         self.common_functions = Common()
         self.progressBar = ProgressBar()
 
@@ -48,7 +47,6 @@ class Controller(Model):
 
     def __init__(self) -> None:
         super().__init__()
-        
 
         # CREATE DATA FOLDER IF NOT FOUND
         if not os.path.exists("data"):
@@ -74,17 +72,6 @@ class Controller(Model):
         self.lookupFormat: QComboBox = lookupFormat
         self.tableLayout:  QTableWidget = tableLayout
         self.currentPathInput: QLineEdit = currentPath
-
-    # def set_main_window_widgets(
-    #     self,
-    #     progressBar: QProgressBar
-    # ):
-    #     """
-    #     Set widgets shared from main window 
-    #     """
-
-    #     # UPDATE LOCAL
-    #     self.progressBar = progressBar
 
     def import_cache(self) -> None:
 
@@ -242,78 +229,65 @@ class Ui(Controller):
             "SELECT ALL"
         )
 
+        self.worker_thread = None
+
     def start_lookup_clicked(self):
 
         # CACHE USER INPUTS
-        # self.progressBar.setValue(5)
         self.export_cache()
-        # self.progressBar.setValue(10)
 
         # SEARCH PROCESS
         self.data = self.get_data()
-        # self.progressBar.setValue(70)
 
         # SET FOUND DATA
         self.update_table()
-        # self.progressBar.setValue(100)
 
-    def delete_content_clicked(self) -> None:
+    def delete_content_clicked(self):
 
-        is_file = True
-        remove_rows = []
-        non_checked = True
+        if self.worker_thread is None or not self.worker_thread.isRunning():
 
-        self.progressBar.update()
-        total_units = 0
-        unit = self.common_functions.get_progress_unit(
-            len(self.checkboxes)
-        )
+            # RESET PROGRESS BAR
+            self.progressBar.update(0)
+
+            # DELETE FILES WITH THREADS
+            self.worker_thread = DeleteWorker(
+                self.data,
+                self.checkboxes,
+                self.lookupType.currentText()
+            )
+
+            # UPDATE PROGRESS BAR
+            self.worker_thread.update_progress_signal.connect(
+                self.progressBar.update
+            )
+
+            # DELETE ROWS FROM THE UI
+            self.worker_thread.removed_rows_signal.connect(
+                self.remove_deleted_rows
+            )
+
+            self.worker_thread.start()
+
+    def remove_deleted_rows(self, data:list) -> None:
+        """
+            DELETE ALL ROWS CHECKED AFTER REMOVING THE FILES
+        """
         
-        for index, checkbox in enumerate(self.checkboxes):
+        if not data:
+            print("No item has been selected")
 
-            if checkbox.isChecked():
-
-                data: dict = self.data.get(index)
-                content_root = data.get("root")
-
-                match self.lookupType.currentText():
-
-                    case "FILES":
-
-                        file = data.get("file")
-
-                        self.environment.remove_file(
-                            f"{content_root}\\{file}"
-                        )
-
-                    case "FOLDERS":
-
-                        is_file = False
-                        folder = data.get("folder")
-
-                        self.environment.remove_folder(
-                            f"{content_root}\\{folder}",
-                            folder
-                        )
-
-                remove_rows.append(index)
-                self.data.pop(index)
-                non_checked = False
-
-            # total_units += unit
-            # self.progressBar.setValue(total_units)
-
-        print(
-            f"Removed {self.environment.total_content_removed(is_file)} content."
-        )
+        # is_file = True
+        # print(
+        #     f"Removed {self.environment.total_content_removed(is_file)} content."
+        # )
 
         # REMOVE SELECTED CHECKBOXES
-        for row in reversed(remove_rows):
+        for row in reversed(data):
             self.checkboxes.pop(row)
 
         # REMOVE ROWS CONTAIN FILES SELECTED
         # START FROM LAST ROW TO AVOID ROW-SHIFTING ISSUE
-        for row in reversed(remove_rows):
+        for row in reversed(data):
             self.tableLayout.removeRow(row)
 
         # REINDEX DATA - TO RETRIEVE DATA FROM DICT BY INDEX
@@ -322,8 +296,6 @@ class Ui(Controller):
             new_data[index] = value
         self.data = new_data
 
-        if non_checked:
-            print("No item has been selected")
 
     def restore_files_clicked(self) -> None:
 
@@ -838,3 +810,4 @@ class Ui(Controller):
         )
 
         return self.widgets
+

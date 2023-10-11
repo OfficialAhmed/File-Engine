@@ -25,6 +25,25 @@ QWidget {
     color: rgb(221, 221, 221);
     font: 10pt "Segoe UI";
 }
+/*
+/////////////////////////////////////////////////////
+               ProgressBar 
+/////////////////////////////////////////////////////
+*/
+
+QProgressBar {
+    background-color: rgb(33, 37, 43);
+    border: 1px solid rgb(44, 49, 58);
+    border-radius: 6px;
+    text-align: center;
+    font-weight: bold;
+    color: rgb(33, 37, 43)
+}
+
+QProgressBar::chunk {
+    background-color: rgb(189, 147, 249);
+    border-radius: 6px;
+}
 
 /*
 /////////////////////////////////////////////////////
@@ -638,22 +657,4 @@ QCommandLinkButton:pressed {
 #pagesContainer QPushButton:pressed {
     background-color: rgb(35, 40, 49);
     border: 2px solid rgb(43, 50, 61);
-}
-
-/*
-/////////////////////////////////////////////////////
-               ProgressBar 
-/////////////////////////////////////////////////////
-*/
-
-QProgressBar {
-    background-color: rgb(33, 37, 43);
-    border: 1px solid rgb(44, 49, 58);
-    border-radius: 6px;
-    text-align: center;
-}
-
-QProgressBar::chunk {
-    background-color: rgb(189, 147, 249);
-    border-radius: 6px;
 }
