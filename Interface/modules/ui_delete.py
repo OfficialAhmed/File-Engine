@@ -183,7 +183,12 @@ class Mediator(Model):
         try:
             # BOTH INPUTS REQUIRED
             if not input or not self.path_input:
-                print("Empty search input")
+                self.controller.show_dialog(
+                    "SEARCH INPUT IS EMPTY!", 
+                    "w",
+                    is_dialog=False
+                )
+            
 
             else:
                 # SEARCH BY SELECTED FORMAT
@@ -207,7 +212,11 @@ class Mediator(Model):
                             return self.controller.get_folders_by_pattern(input)
 
         except Exception as e:
-            print(str(e))
+            self.controller.show_dialog(
+                f"UNKNOWN ERROR OCCURED | {str(e)}", 
+                "c",
+                is_dialog=False
+            )
             return {}
 
         finally:
@@ -366,8 +375,13 @@ class Ui(Mediator):
         # RENDER EMPTY TABLE, IF NOTHING FOUND
         if not self.data:
             self.init_table()
-            print("no data has been found")
-            return
+
+            self.controller.show_dialog(
+                "NO DATA HAS BEEN FOUND!", 
+                "ITEMS CANNOT BE FOUND!",
+                is_dialog=False
+            )
+            return None
 
         data = self.data.values()
 
