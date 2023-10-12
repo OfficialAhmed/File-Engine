@@ -51,7 +51,7 @@ class Controller:
             RETURNS BOOL 
         """
 
-        return DialogWindow().is_accepted(
+        return DialogWindow().get_response(
             msg, mode, is_dialog
         )
 
@@ -141,7 +141,7 @@ class DialogWindow(QDialog):
         self.layout = QVBoxLayout()
         self.label = QLabel()
 
-    def is_accepted(self, msg: str,  mode: str = "I", is_dialog: bool = True):
+    def get_response(self, msg: str,  mode: str = "I", is_dialog: bool = True) -> bool:
 
         self.setLayout(self.layout)
 
@@ -165,12 +165,14 @@ class DialogWindow(QDialog):
             case _:
                 icon = QMessageBox.Information
                 title = mode.upper()
-                
+
         if is_dialog:
 
+            # RENDER A DIALOG WINDOW WITH OK|CANCEL OPTIONS
             self.options = QDialogButtonBox(
                 QDialogButtonBox.Ok | QDialogButtonBox.Cancel
             )
+
             self.options.rejected.connect(self.reject)
             self.options.accepted.connect(self.accept)
             self.layout.addWidget(self.label)
@@ -178,9 +180,10 @@ class DialogWindow(QDialog):
             self.label.setText(msg.upper())
             self.setWindowTitle(title)
 
+            # RETURN USER PERMISSION
             return True if self.exec() else False
 
-
+        # INFORMATIONAL BASED DIALOG. NO OPTIONS OTHER THAN ACCEPT
         msg_box = QMessageBox()
         msg_box.setIcon(icon)
         msg_box.setWindowTitle(title)
