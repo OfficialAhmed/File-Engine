@@ -15,7 +15,7 @@ from PySide6.QtCore import *
 from PySide6.QtGui import *
 
 from Interface.environment import *
-from controller import Environment
+from controller import Controller
 
 
 class Model:
@@ -28,21 +28,20 @@ class Model:
 
         self.html = Html()
         self.constant = Constant()
-        self.environment = Environment()
-        self.environment.update_remover_param()
+        self.controller = Controller()
+        self.controller.update_remover_param()
 
         self.common_functions = Common()
         self.progressBar = ProgressBar()
 
         self.path_input = ""
-        self.cache_file = self.environment.CACHE_FILE
+        self.cache_file = self.controller.CACHE_FILE
 
 
-class Controller(Model):
+class Mediator(Model):
     """
-    ### UI FUNCTIONALITY
+    ### MAINLY UI FUNCTIONALITY/INTERACTIONS
         ACCESSIBLE BY UI ONLY
-
     """
 
     def __init__(self) -> None:
@@ -50,7 +49,7 @@ class Controller(Model):
 
         # CREATE DATA FOLDER IF NOT FOUND
         if not os.path.exists("data"):
-            os.mkdir(self.environment.DATA_PATH)
+            os.mkdir(self.controller.DATA_PATH)
 
     def set_controller_widgets(
         self,
@@ -76,7 +75,7 @@ class Controller(Model):
     def import_cache(self) -> None:
 
         # IF CACHE FOUND
-        if os.path.exists(self.environment.CACHE_FILE):
+        if os.path.exists(self.controller.CACHE_FILE):
             cache: dict = json.load(open(self.cache_file)).get("delete page")
 
             self.lookupInput.setText(cache.get("lookupInput"))
@@ -176,7 +175,7 @@ class Controller(Model):
         is_recursive: bool = self.isRecursive.isChecked()
 
         # UPDATE THE FINDER PARAMETERS
-        self.environment.update_finder_param(
+        self.controller.update_finder_param(
             self.path_input,
             is_recursive,
         )
@@ -184,38 +183,47 @@ class Controller(Model):
         try:
             # BOTH INPUTS REQUIRED
             if not input or not self.path_input:
-                print("Empty search input")
+                self.controller.show_dialog(
+                    "SEARCH INPUT IS EMPTY!", 
+                    "w",
+                    is_dialog=False
+                )
+            
 
             else:
                 # SEARCH BY SELECTED FORMAT
                 if type == "FILES":
                     match format:
                         case "NAME":
-                            return self.environment.get_files_by_name(input)
+                            return self.controller.get_files_by_name(input)
 
                         case "EXTENSION":
-                            return self.environment.get_files_by_extension(input)
+                            return self.controller.get_files_by_extension(input)
 
                         case "PATTERN":
-                            return self.environment.get_files_by_pattern(input)
+                            return self.controller.get_files_by_pattern(input)
 
                 elif type == "FOLDERS":
                     match format:
                         case "NAME":
-                            return self.environment.get_folders_by_name(input)
+                            return self.controller.get_folders_by_name(input)
 
                         case "PATTERN":
-                            return self.environment.get_folders_by_pattern(input)
+                            return self.controller.get_folders_by_pattern(input)
 
         except Exception as e:
-            print(str(e))
+            self.controller.show_dialog(
+                f"UNKNOWN ERROR OCCURED | {str(e)}", 
+                "c",
+                is_dialog=False
+            )
             return {}
 
         finally:
             self.startBtn.setEnabled(True)
 
 
-class Ui(Controller):
+class Ui(Mediator):
 
     def __init__(self) -> None:
         super().__init__()
@@ -229,57 +237,76 @@ class Ui(Controller):
             "SELECT ALL"
         )
 
-        self.worker_thread = None
+        self.thread = None
 
     def start_lookup_clicked(self):
 
-        # CACHE USER INPUTS
-        self.export_cache()
+        if self.controller.show_dialog(
+            "WOULD YOU LIKE TO START THE SEARCHING PROCESS?",
+            "ARE YOU SURE?"
+        ):
 
-        # SEARCH PROCESS
-        self.data = self.get_data()
+            # CACHE USER INPUTS
+            self.export_cache()
 
-        # SET FOUND DATA
-        self.update_table()
+            # SEARCH PROCESS
+            self.data = self.get_data()
+
+            # SET FOUND DATA
+            self.update_table()
 
     def delete_content_clicked(self):
 
-        if self.worker_thread is None or not self.worker_thread.isRunning():
+        # IF USER DID NOT ACCEPT DELETE PROCESS, TERMINATE
+        if not self.controller.show_dialog(
+            "ARE YOU SURE YOU WANT TO *REMOVE* THE SELECTED FILES?",
+            "ARE YOU SURE?"
+        ):
+            return None
+
+        if self.thread is None or not self.thread.isRunning():
 
             # RESET PROGRESS BAR
             self.progressBar.update(0)
 
             # DELETE FILES WITH THREADS
-            self.worker_thread = DeleteWorker(
+            self.thread = DeleteWorker(
                 self.data,
                 self.checkboxes,
                 self.lookupType.currentText()
             )
 
             # UPDATE PROGRESS BAR
-            self.worker_thread.update_progress_signal.connect(
+            self.thread.update_progress_signal.connect(
                 self.progressBar.update
             )
 
             # DELETE ROWS FROM THE UI
-            self.worker_thread.removed_rows_signal.connect(
+            self.thread.removed_rows_signal.connect(
                 self.remove_deleted_rows
             )
 
-            self.worker_thread.start()
+            # SUCCESSFULL REMOVAL ITEMS MESSAGE
+            self.thread.is_file_signal.connect(
+                lambda is_file: self.controller.show_dialog(
+                    f"SUCCESSFULY REMOVED <{self.controller.total_content_removed(is_file)}> ITEM(S)",
+                    "OPERATION SUCCESSFULL",
+                    is_dialog=False
+                )
+            )
 
-    def remove_deleted_rows(self, data:list) -> None:
+            self.thread.start()
+
+    def remove_deleted_rows(self, data: list) -> None:
         """
             DELETE ALL ROWS CHECKED AFTER REMOVING THE FILES
         """
-        
-        if not data:
-            print("No item has been selected")
 
-        # is_file = True
-        # print(
-        #     f"Removed {self.environment.total_content_removed(is_file)} content."
-        # )
+        if not data:
+            self.controller.show_dialog(
+                "NO DATA HAS BEEN SELECTED", is_dialog=False
+            )
+            return None
 
         # REMOVE SELECTED CHECKBOXES
         for row in reversed(data):
@@ -296,11 +323,21 @@ class Ui(Controller):
             new_data[index] = value
         self.data = new_data
 
-
     def restore_files_clicked(self) -> None:
 
-        result = self.environment.restore_removed_content()
-        print(f"Restored: {result} files")
+        # PROMPT USER
+        if not self.controller.show_dialog(
+            "ARE YOU SURE YOU WANT TO *RESTORE* PREVIOUSLY REMOVED ITEMS?",
+            "ARE YOU SURE?"
+        ):
+            return None
+        
+        # SUCCESSFULL RESTORATION
+        self.controller.show_dialog(
+            f"SUCCESSFULLY RESTORED <{self.controller.restore_removed_content()}> ITEM(S)", 
+            "OPERATION SUCCESSFULL",
+            is_dialog=False
+        )
 
     def save_process_clicked(self) -> None:
         # TODO: IMPLEMENT FUNCTION
@@ -338,8 +375,13 @@ class Ui(Controller):
         # RENDER EMPTY TABLE, IF NOTHING FOUND
         if not self.data:
             self.init_table()
-            print("no data has been found")
-            return
+
+            self.controller.show_dialog(
+                "NO DATA HAS BEEN FOUND!", 
+                "ITEMS CANNOT BE FOUND!",
+                is_dialog=False
+            )
+            return None
 
         data = self.data.values()
 
@@ -810,4 +852,3 @@ class Ui(Controller):
         )
 
         return self.widgets
-
