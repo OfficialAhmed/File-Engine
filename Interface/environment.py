@@ -1,6 +1,26 @@
 """
-    Parent class holds constant values 
-    for the interface
+
+============================================================
+                SHARED UI CLASSES 
+============================================================
+
+    - COMMON USED UI FUNCTIONS
+        
+        * CLASS `Common`       ->  CONTAIN COMMON UI METHODS
+        * CLASS `Constant`     ->  CONTAIN UI CONSTANTS 
+        * CLASS `Html`         ->  CONTAIN UI HTML
+    ________________________________________________________
+    
+    - SHARED UI WIDGETS BETWEEN DIFFERENT PAGES
+    
+        * CLASS `ProgressBar`  ->  SHARED PROGRESSBAR WIDGET
+        
+    ________________________________________________________
+    
+    - MULTI THREADING TASKS
+    
+        * CLASS `DeleteWorker` ->  DELETES A LIST OF FILES IN PARALLEL
+    
 """
 
 from PySide6.QtCore import *
@@ -98,6 +118,22 @@ class ProgressBar:
         """
         self.progressBar = widget
         ProgressBar.progressBar = widget  # Reference
+
+
+"""
+
+============================================================
+    MULTI-THREADING TECHNIQUES HANDELED BY QT FRAMEWORK
+============================================================
+
+    MEMORY SHARED BETWEEN THREADS USING SIGNALS AND EMITTED UPON SET / READY
+    
+    * ALL CLASSES INHERIT 'QThread'
+    * ALL CLASSES HAS 'Run' METHOD -> AUTO INVOKED
+    
+    * USE SIGNALS TO SHARE MEM BY EMITTING IT 
+
+"""
 
 
 class DeleteWorker(QThread):

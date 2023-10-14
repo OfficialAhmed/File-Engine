@@ -71,7 +71,7 @@ class Mediator(Model):
         self.lookupFormat: QComboBox = lookupFormat
         self.tableLayout:  QTableWidget = tableLayout
         self.currentPathInput: QLineEdit = currentPath
-
+        
     def import_cache(self) -> None:
 
         # IF CACHE FOUND
@@ -164,7 +164,7 @@ class Mediator(Model):
     def get_data(self) -> dict:
         """
         ### Begin lookup process. 
-            * Deactivate the btn and reactivate it afterwards
+            * Deactivate all btns and reactivate upon end of process 
         """
 
         self.startBtn.setEnabled(False)
@@ -181,46 +181,49 @@ class Mediator(Model):
         )
 
         try:
+
+            data = {}
+
             # BOTH INPUTS REQUIRED
             if not input or not self.path_input:
                 self.controller.show_dialog(
-                    "SEARCH INPUT IS EMPTY!", 
+                    "SEARCH INPUT IS EMPTY!",
                     "w",
                     is_dialog=False
                 )
-            
 
             else:
                 # SEARCH BY SELECTED FORMAT
                 if type == "FILES":
                     match format:
                         case "NAME":
-                            return self.controller.get_files_by_name(input)
+                            data = self.controller.get_files_by_name(input)
 
                         case "EXTENSION":
-                            return self.controller.get_files_by_extension(input)
+                            data = self.controller.get_files_by_extension(
+                                input)
 
                         case "PATTERN":
-                            return self.controller.get_files_by_pattern(input)
+                            data = self.controller.get_files_by_pattern(input)
 
                 elif type == "FOLDERS":
                     match format:
                         case "NAME":
-                            return self.controller.get_folders_by_name(input)
+                            data = self.controller.get_folders_by_name(input)
 
                         case "PATTERN":
-                            return self.controller.get_folders_by_pattern(input)
+                            data = self.controller.get_folders_by_pattern(input)
 
         except Exception as e:
             self.controller.show_dialog(
-                f"UNKNOWN ERROR OCCURED | {str(e)}", 
+                f"UNKNOWN ERROR OCCURED | {str(e)}",
                 "c",
                 is_dialog=False
             )
-            return {}
 
         finally:
             self.startBtn.setEnabled(True)
+            return data
 
 
 class Ui(Mediator):
@@ -331,10 +334,10 @@ class Ui(Mediator):
             "ARE YOU SURE?"
         ):
             return None
-        
+
         # SUCCESSFULL RESTORATION
         self.controller.show_dialog(
-            f"SUCCESSFULLY RESTORED <{self.controller.restore_removed_content()}> ITEM(S)", 
+            f"SUCCESSFULLY RESTORED <{self.controller.restore_removed_content()}> ITEM(S)",
             "OPERATION SUCCESSFULL",
             is_dialog=False
         )
@@ -377,7 +380,7 @@ class Ui(Mediator):
             self.init_table()
 
             self.controller.show_dialog(
-                "NO DATA HAS BEEN FOUND!", 
+                "NO DATA HAS BEEN FOUND!",
                 "ITEMS CANNOT BE FOUND!",
                 is_dialog=False
             )
