@@ -23,6 +23,8 @@
     
 """
 
+import concurrent.futures
+
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
@@ -136,69 +138,162 @@ class ProgressBar:
 """
 
 
-class DeleteWorker(QThread):
-    """
-        DELETE FILES IN A SEPERATE THREAD FROM THE UI
-    """
+# class DeleteWorker(QThread):
+#     """
+#         DELETE FILES IN A SEPERATE THREAD FROM THE UI
+#     """
 
-    # SIGNALS TO COMMUNICATE TO THE MAIN THREAD
-    is_file_signal = Signal(bool)
+# SIGNALS TO COMMUNICATE TO THE MAIN THREAD
+# is_file_signal = Signal()
+# removed_rows_signal = Signal(list)
+# update_progress_signal = Signal(float)
+
+# def __init__(self, data: dict, checkboxes: list, lookup_type: str):
+#     super().__init__()
+
+#     self.data = data
+#     self.checkboxes = checkboxes
+#     self.lookup_type = lookup_type
+
+#     self.controller = Controller()
+
+#     print(f"Files: {self.data}")
+
+# def run(self):
+#     """
+#         AUTOMATICALLY INVOKED WHEN thread.start() IS CALLED
+#     """
+
+#     removed_rows = []
+#     total_items = len(self.data)
+#     completed_items = 0
+
+#     for index, checkbox in enumerate(self.checkboxes):
+
+#         # REMOVE CHECKED ITEMS FROM THE TABLE
+#         if checkbox.isChecked():
+
+#             data: dict = self.data.get(index)
+#             content_root = data.get("root")
+
+#             if self.lookup_type == "FOLDERS":
+
+#                 folder = data.get("folder")
+
+#                 self.controller.remove_folder(
+#                     f"{content_root}\\{folder}",
+#                     folder
+#                 )
+
+#             else:
+
+#                 file = data.get("file")
+
+#                 self.controller.remove_file(
+#                     f"{content_root}\\{file}"
+#                 )
+
+#             print(f"Deleted...{data}")
+#             removed_rows.append(index)
+#             self.data.pop(index)
+
+#         # UPDATE PROGRESS BAR BY EMITING THE SIGNAL IN THE MAIN THREAD
+#         completed_items += 1
+#         progress = completed_items / total_items
+#         self.update_progress_signal.emit(progress)
+
+#     # SIGNAL A LIST OF REMOVED ROWS TO REMOVE THEM FROM THE UI
+#     self.removed_rows_signal.emit(removed_rows)
+#     self.is_file_signal.emit()
+
+class DeleteWorker(QObject):
+
+    is_file_signal = Signal()
+    progress_signal = Signal(float)
     removed_rows_signal = Signal(list)
-    update_progress_signal = Signal(float)
 
-    def __init__(self, data: dict, checkboxes: list, lookup_type: str):
+    def __init__(self, data: dict, checkboxes: list, lookup_type: str, max_threads=2):
         super().__init__()
-
         self.data = data
         self.checkboxes = checkboxes
+        self.max_threads = max_threads
         self.lookup_type = lookup_type
 
         self.controller = Controller()
 
+    def process(self, path: str):
+
+        if self.lookup_type == "FOLDERS":
+            self.controller.remove_folder(path, path[:path.rfind("\\")])
+            print(f"Deleting {path}")
+
+        else:
+            self.controller.remove_file(path)
+            print(f"Deleting {path}")
+
     def run(self):
-        """
-            AUTOMATICALLY INVOKED WHEN thread.start() IS CALLED        
-        """
 
-        is_file = True
+        self.files = []
         removed_rows = []
-        total_items = len(self.data)
-        completed_items = 0
+        self.progress_signal.emit(0)
 
-        for index, checkbox in enumerate(self.checkboxes):
+        # GET SELECTED ITEMS FROM THE TABLE
+        for indx, checkbox in enumerate(self.checkboxes):
 
-            # REMOVE CHECKED ITEMS FROM THE TABLE
             if checkbox.isChecked():
 
-                data: dict = self.data.get(index)
-                content_root = data.get("root")
+                file = self.data.get(indx).get("file")
+                content_root = self.data.get(indx).get("root")
+                self.files.append(f"{content_root}//{file}")
+                removed_rows.append(indx)
 
-                if self.lookup_type == "FOLDERS":
+        # RUN THE DELETING PROCESS IN PARALLEL
+        # 'max_workers' SET TO MAX CPU CORES
+        with concurrent.futures.ThreadPoolExecutor(max_workers=None) as executor:
+            futures = [
+                executor.submit(self.process, file)
+                for file in self.files
+            ]
 
-                    is_file = False
-                    folder = data.get("folder")
+            # PROGRESS BAR CALCULATIONS
+            progress = 0
+            completed = 0
 
-                    self.controller.remove_folder(
-                        f"{content_root}\\{folder}",
-                        folder
-                    )
+            # UPDATE THE PROGRESS BAR, UPON EACH FINISHED PROCESS
+            for _ in concurrent.futures.as_completed(futures):
+                completed += 1
+                progress += completed / len(self.files)
+                self.progress_signal.emit(progress)
 
-                else:
-
-                    file = data.get("file")
-
-                    self.controller.remove_file(
-                        f"{content_root}\\{file}"
-                    )
-
-                removed_rows.append(index)
-                self.data.pop(index)
-
-            # UPDATE PROGRESS BAR BY EMITING THE SIGNAL IN THE MAIN THREAD
-            completed_items += 1
-            progress = completed_items / total_items
-            self.update_progress_signal.emit(progress)
-
-        # SIGNAL A LIST OF REMOVED ROWS TO REMOVE THEM FROM THE UI
+            self.progress_signal.emit(100)
         self.removed_rows_signal.emit(removed_rows)
-        self.is_file_signal.emit(is_file)
+
+
+class RestoreWorker(QThread):
+
+    update_progress_signal = Signal(float)
+
+    def __init__(self, data: dict) -> None:
+        super().__init__()
+
+        self.data = data
+        self.controller = Controller()
+
+    def run(self):
+
+        completed = 0
+        total_data = len(self.data)
+
+        for (_, dest_with_filename) in self.data.items():
+
+            self.controller.restore_removed_content(
+                self.controller.TRASH_PATH,
+                dest_with_filename
+            )
+
+            print(f"restored...{dest_with_filename}")
+
+            # UPDATE PROGRESS BAR
+            completed += 1
+            progress = completed / total_data
+            self.update_progress_signal.emit(progress)

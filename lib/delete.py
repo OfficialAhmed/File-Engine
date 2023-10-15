@@ -40,14 +40,8 @@ class Remover:
         if not os.path.exists(self.trash_folder_path):
             os.mkdir(self.trash_folder_path)
 
-        if os.path.exists(self.trash_content_file):
-
-            try:
-                self.removed_content = json.load(open(self.trash_content_file))
-
-            # JSON exists but empty
-            except json.decoder.JSONDecodeError:
-                pass
+        if os.path.exists(self.trash_content_file) and os.path.getsize(self.trash_content_file) > 0:
+            self.removed_content = json.load(open(self.trash_content_file))
 
     def empty_trash(self) -> None:
         """
@@ -97,7 +91,8 @@ class Remover:
                 if os.path.exists(f"{dest_only}\\{folder_name}"):
 
                     for file in os.listdir(source):
-                        shutil.move(f"{source}\\{file}", f"{dest_with_filename}")
+                        shutil.move(f"{source}\\{file}",
+                                    f"{dest_with_filename}")
                     shutil.rmtree(source)
 
                 else:
@@ -112,7 +107,7 @@ class Remover:
         except Exception as e:
             print(str(e))
 
-    def restore(self) -> int:
+    def restore(self, content_name: str, dest: str) -> None:
         """
             Redo moving from trash to original content's destination by reading the generated JSON
             * return total content restored
@@ -122,20 +117,23 @@ class Remover:
             print("Restore not available. Content file not found")
             return
 
-        data: dict = json.load(open(self.trash_content_file))
+        # data: dict = json.load(open(self.trash_content_file))
 
-        for destination in data.values():
+        # for destination in data.values():
 
-            shutil.move(
-                f"{self.trash_folder_path}{destination.replace(':', '')}",
-                destination
-            )
+            # shutil.move(
+            #     f"{self.trash_folder_path}{destination.replace(':', '')}",
+            #     destination
+            # )
+        shutil.move(
+            f"{self.trash_folder_path}{dest.replace(':', '')}",
+            dest
+        )
 
         # Reset JSON content by overwriting the file
         open(self.trash_content_file, "w+")
         self.removed_content = {}
 
-        return len(data)
 
     def get_removed_content_count(self) -> int:
         return self.removed_counter

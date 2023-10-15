@@ -71,7 +71,7 @@ class Mediator(Model):
         self.lookupFormat: QComboBox = lookupFormat
         self.tableLayout:  QTableWidget = tableLayout
         self.currentPathInput: QLineEdit = currentPath
-        
+
     def import_cache(self) -> None:
 
         # IF CACHE FOUND
@@ -212,7 +212,8 @@ class Mediator(Model):
                             data = self.controller.get_folders_by_name(input)
 
                         case "PATTERN":
-                            data = self.controller.get_folders_by_pattern(input)
+                            data = self.controller.get_folders_by_pattern(
+                                input)
 
         except Exception as e:
             self.controller.show_dialog(
@@ -240,7 +241,6 @@ class Ui(Mediator):
             "SELECT ALL"
         )
 
-        self.thread = None
 
     def start_lookup_clicked(self):
 
@@ -267,38 +267,37 @@ class Ui(Mediator):
         ):
             return None
 
-        if self.thread is None or not self.thread.isRunning():
 
-            # RESET PROGRESS BAR
-            self.progressBar.update(0)
+        # RESET PROGRESS BAR
+        self.progressBar.update(0)
 
-            # DELETE FILES WITH THREADS
-            self.thread = DeleteWorker(
-                self.data,
-                self.checkboxes,
-                self.lookupType.currentText()
+        # DELETE FILES WITH THREADS
+        future_process = DeleteWorker(
+            self.data,
+            self.checkboxes,
+            self.lookupType.currentText()
+        )
+        
+        # UPDATE PROGRESS BAR
+        future_process.progress_signal.connect(
+            self.progressBar.update
+        )
+
+        # DELETE ROWS FROM THE UI
+        future_process.removed_rows_signal.connect(
+            self.remove_deleted_rows
+        )
+
+        # SUCCESSFULL REMOVAL ITEMS MESSAGE
+        future_process.is_file_signal.connect(
+            lambda: self.controller.show_dialog(
+                f"SUCCESSFULY REMOVED <{self.controller.total_content_removed()}> ITEM(S)",
+                "OPERATION SUCCESSFULL",
+                is_dialog=False
             )
+        )
 
-            # UPDATE PROGRESS BAR
-            self.thread.update_progress_signal.connect(
-                self.progressBar.update
-            )
-
-            # DELETE ROWS FROM THE UI
-            self.thread.removed_rows_signal.connect(
-                self.remove_deleted_rows
-            )
-
-            # SUCCESSFULL REMOVAL ITEMS MESSAGE
-            self.thread.is_file_signal.connect(
-                lambda is_file: self.controller.show_dialog(
-                    f"SUCCESSFULY REMOVED <{self.controller.total_content_removed(is_file)}> ITEM(S)",
-                    "OPERATION SUCCESSFULL",
-                    is_dialog=False
-                )
-            )
-
-            self.thread.start()
+        future_process.run()
 
     def remove_deleted_rows(self, data: list) -> None:
         """
@@ -335,12 +334,53 @@ class Ui(Mediator):
         ):
             return None
 
-        # SUCCESSFULL RESTORATION
-        self.controller.show_dialog(
-            f"SUCCESSFULLY RESTORED <{self.controller.restore_removed_content()}> ITEM(S)",
-            "OPERATION SUCCESSFULL",
-            is_dialog=False
-        )
+        try:
+            trash_file = self.controller.TRASH_CONTENT_FILE
+
+            # FILE MUST EXIST AND NOT EMPTY, ELSE TERMINATE PROCESS
+            if not os.path.exists(trash_file) or not os.path.getsize(trash_file) > 0:
+
+                self.controller.show_dialog(
+                    f"CANNOT FIND DELETED FILES.",
+                    "I",
+                    False
+                )
+
+                return None
+
+            # FETCH CONTENT RESTORE DATA
+            data: dict = json.load(open(trash_file))
+
+            if self.thread is None or not self.thread.isRunning():
+
+                # RESET PROGRESS BAR
+                self.progressBar.update(0)
+
+                # RESTORE FILES WITH THREADS
+                self.thread = RestoreWorker(data)
+
+                # UPDATE PROGRESS BAR
+                self.thread.update_progress_signal.connect(
+                    self.progressBar.update
+                )
+
+                self.thread.start()
+
+            # SUCCESSFULL RESTORATION
+            self.controller.show_dialog(
+                f"SUCCESSFULLY RESTORED <{self.controller.total_content_removed()}> ITEM(S)",
+                "OPERATION SUCCESSFULL",
+                is_dialog=False
+            )
+
+        except Exception as e:
+
+            self.controller.show_dialog(
+                f"CANNOT READ RESTORE FILE. ERROR| {e}",
+                "C",
+                is_dialog=False
+            )
+            return None
 
     def save_process_clicked(self) -> None:
         # TODO: IMPLEMENT FUNCTION

@@ -113,22 +113,20 @@ class Controller:
     def remove_folder(self, folder_path: str, folder_name: str) -> None:
         self.FOLDER_REMOVER.remove(folder_path, folder_name)
 
-    def restore_removed_content(self) -> int:
-        return self.FILE_REMOVER.restore()
+    def restore_removed_content(self, src: str, dest: str) -> int:
+        return self.FILE_REMOVER.restore(src, dest)
 
-    def total_content_removed(self, is_file=True) -> int:
+    def total_content_removed(self) -> int:
         """
             Get total num files/folders removed and reset it to `0`
             for the next iteration
         """
 
-        if is_file:
-            total = self.FILE_REMOVER.get_removed_content_count()
-            self.FILE_REMOVER.reset_removed_content_count()
+        total = self.FILE_REMOVER.get_removed_content_count() + \
+            self.FOLDER_REMOVER.get_removed_content_count()
 
-        else:
-            total = self.FOLDER_REMOVER.get_removed_content_count()
-            self.FOLDER_REMOVER.reset_removed_content_count()
+        self.FILE_REMOVER.reset_removed_content_count()
+        self.FOLDER_REMOVER.reset_removed_content_count()
 
         return total
 
