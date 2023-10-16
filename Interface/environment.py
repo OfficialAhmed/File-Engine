@@ -6,20 +6,22 @@
 
     - COMMON USED UI FUNCTIONS
         
-        * CLASS `Common`       ->  CONTAIN COMMON UI METHODS
-        * CLASS `Constant`     ->  CONTAIN UI CONSTANTS 
-        * CLASS `Html`         ->  CONTAIN UI HTML
+        * CLASS `Common`        ->  CONTAIN COMMON UI METHODS
+        * CLASS `Constant`      ->  CONTAIN UI CONSTANTS 
+        * CLASS `Html`          ->  CONTAIN UI HTML
     ________________________________________________________
     
     - SHARED UI WIDGETS BETWEEN DIFFERENT PAGES
     
-        * CLASS `ProgressBar`  ->  SHARED PROGRESSBAR WIDGET
+        * CLASS `ProgressBar`   ->  SHARED PROGRESSBAR WIDGET
         
     ________________________________________________________
     
     - MULTI THREADING TASKS
     
-        * CLASS `DeleteWorker` ->  DELETES A LIST OF FILES IN PARALLEL
+        * (PARENT) CLASS `Worker`           ->  WORKERS PARENT - HOLD SIGNALS AND COMMON METHODS
+            * (CHILD) CLASS `DeleteWorker`  ->  DELETES A LIST OF ITEMS IN PARALLEL
+            * (CHILD) CLASS `RestoreWorker` ->  RESTORE A LIST OF ITEMS IN PARALLEL
     
 """
 
@@ -124,154 +126,100 @@ class ProgressBar:
 
 """
 
-============================================================
-    MULTI-THREADING TECHNIQUES HANDELED BY QT FRAMEWORK
-============================================================
+====================================================================
+        CONCURRENT TECHNIQUES HANDELED IN SEPERATE THREADS
+====================================================================
 
     MEMORY SHARED BETWEEN THREADS USING SIGNALS AND EMITTED UPON SET / READY
     
-    * ALL CLASSES INHERIT 'QThread'
-    * ALL CLASSES HAS 'Run' METHOD -> AUTO INVOKED
-    
-    * USE SIGNALS TO SHARE MEM BY EMITTING IT 
+    * USE SIGNALS TO SHARE DATA BETWEEN THREADS
 
 """
 
 
-# class DeleteWorker(QThread):
-#     """
-#         DELETE FILES IN A SEPERATE THREAD FROM THE UI
-#     """
+class Worker(QObject):
 
-# SIGNALS TO COMMUNICATE TO THE MAIN THREAD
-# is_file_signal = Signal()
-# removed_rows_signal = Signal(list)
-# update_progress_signal = Signal(float)
-
-# def __init__(self, data: dict, checkboxes: list, lookup_type: str):
-#     super().__init__()
-
-#     self.data = data
-#     self.checkboxes = checkboxes
-#     self.lookup_type = lookup_type
-
-#     self.controller = Controller()
-
-#     print(f"Files: {self.data}")
-
-# def run(self):
-#     """
-#         AUTOMATICALLY INVOKED WHEN thread.start() IS CALLED
-#     """
-
-#     removed_rows = []
-#     total_items = len(self.data)
-#     completed_items = 0
-
-#     for index, checkbox in enumerate(self.checkboxes):
-
-#         # REMOVE CHECKED ITEMS FROM THE TABLE
-#         if checkbox.isChecked():
-
-#             data: dict = self.data.get(index)
-#             content_root = data.get("root")
-
-#             if self.lookup_type == "FOLDERS":
-
-#                 folder = data.get("folder")
-
-#                 self.controller.remove_folder(
-#                     f"{content_root}\\{folder}",
-#                     folder
-#                 )
-
-#             else:
-
-#                 file = data.get("file")
-
-#                 self.controller.remove_file(
-#                     f"{content_root}\\{file}"
-#                 )
-
-#             print(f"Deleted...{data}")
-#             removed_rows.append(index)
-#             self.data.pop(index)
-
-#         # UPDATE PROGRESS BAR BY EMITING THE SIGNAL IN THE MAIN THREAD
-#         completed_items += 1
-#         progress = completed_items / total_items
-#         self.update_progress_signal.emit(progress)
-
-#     # SIGNAL A LIST OF REMOVED ROWS TO REMOVE THEM FROM THE UI
-#     self.removed_rows_signal.emit(removed_rows)
-#     self.is_file_signal.emit()
-
-class DeleteWorker(QObject):
-
-    is_file_signal = Signal()
+    # SIGNALS TO COMMUNICATE TO THE MAIN THREAD
+    is_fail = Signal(str)
+    is_success = Signal()
     progress_signal = Signal(float)
-    removed_rows_signal = Signal(list)
 
-    def __init__(self, data: dict, checkboxes: list, lookup_type: str, max_threads=2):
+
+class DeleteWorker(Worker):
+    """
+        DELETE FILES IN SEPERATE THREADs FROM THE UI CONCURRENTLY
+
+        - Inherits `QObject` for a thread-safe communicate with the main thread
+        through signals with Qt framework
+    """
+
+    remove_rows_signal = Signal(list)
+
+    def __init__(self, data: dict, checkboxes: list, lookup_type: str) -> None:
         super().__init__()
         self.data = data
         self.checkboxes = checkboxes
-        self.max_threads = max_threads
         self.lookup_type = lookup_type
 
         self.controller = Controller()
 
-    def process(self, path: str):
+    def process(self, path: str) -> None:
 
         if self.lookup_type == "FOLDERS":
             self.controller.remove_folder(path, path[:path.rfind("\\")])
-            print(f"Deleting {path}")
 
         else:
             self.controller.remove_file(path)
-            print(f"Deleting {path}")
 
-    def run(self):
+    def run(self) -> None:
+        """
+            WORK DECOMPOSITION - SUBTASKS
+        """
 
         self.files = []
         removed_rows = []
         self.progress_signal.emit(0)
 
-        # GET SELECTED ITEMS FROM THE TABLE
-        for indx, checkbox in enumerate(self.checkboxes):
+        try:
+            # GET SELECTED ITEMS FROM THE TABLE
+            for indx, checkbox in enumerate(self.checkboxes):
 
-            if checkbox.isChecked():
+                if checkbox.isChecked():
 
-                file = self.data.get(indx).get("file")
-                content_root = self.data.get(indx).get("root")
-                self.files.append(f"{content_root}//{file}")
-                removed_rows.append(indx)
+                    file = self.data.get(indx).get("file")
+                    content_root = self.data.get(indx).get("root")
+                    self.files.append(f"{content_root}//{file}")
+                    removed_rows.append(indx)
+                    
 
-        # RUN THE DELETING PROCESS IN PARALLEL
-        # 'max_workers' SET TO MAX CPU CORES
-        with concurrent.futures.ThreadPoolExecutor(max_workers=None) as executor:
-            futures = [
-                executor.submit(self.process, file)
-                for file in self.files
-            ]
+            # RUN THE DELETING PROCESS IN PARALLEL
+            # 'max_workers' SET TO MAX AVAILABLE CPU CORES
+            with concurrent.futures.ThreadPoolExecutor(max_workers=None) as executor:
+                futures = [
+                    executor.submit(self.process, file)
+                    for file in self.files
+                ]
 
-            # PROGRESS BAR CALCULATIONS
-            progress = 0
-            completed = 0
+                # PROGRESS BAR CALCULATIONS
+                completed = 0
+                total_files = len(self.files)
 
-            # UPDATE THE PROGRESS BAR, UPON EACH FINISHED PROCESS
-            for _ in concurrent.futures.as_completed(futures):
-                completed += 1
-                progress += completed / len(self.files)
-                self.progress_signal.emit(progress)
+                # UPDATE THE PROGRESS BAR, UPON EACH FINISHED PROCESS
+                for _ in concurrent.futures.as_completed(futures):
 
-            self.progress_signal.emit(100)
-        self.removed_rows_signal.emit(removed_rows)
+                    completed += 1
+                    progress = completed / total_files
+                    self.progress_signal.emit(progress)
+
+            # REMOVE ROWS & INVOKE PROCESS SUCESSFUL METHOD
+            self.remove_rows_signal.emit(removed_rows)
+            self.is_success.emit()
+
+        except Exception as e:
+            self.is_fail.emit(str(e))
 
 
-class RestoreWorker(QThread):
-
-    update_progress_signal = Signal(float)
+class RestoreWorker(Worker):
 
     def __init__(self, data: dict) -> None:
         super().__init__()
@@ -279,21 +227,35 @@ class RestoreWorker(QThread):
         self.data = data
         self.controller = Controller()
 
-    def run(self):
+    def process(self, dest_with_filename: str) -> None:
+
+        self.controller.restore_removed_content(
+            dest_with_filename
+        )
+
+    def run(self) -> None:
 
         completed = 0
-        total_data = len(self.data)
+        self.progress_signal.emit(0)
 
-        for (_, dest_with_filename) in self.data.items():
+        try:
+            with concurrent.futures.ThreadPoolExecutor(max_workers=None) as executor:
+                futures = [
+                    executor.submit(self.process, file)
+                    for file in self.data.values()
+                ]
 
-            self.controller.restore_removed_content(
-                self.controller.TRASH_PATH,
-                dest_with_filename
-            )
+                # PROGRESS BAR CALCULATIONS
+                completed = 0
+                total_data = len(self.data)
 
-            print(f"restored...{dest_with_filename}")
+                # UPDATE THE PROGRESS BAR, UPON EACH FINISHED PROCESS
+                for _ in concurrent.futures.as_completed(futures):
+                    completed += 1
+                    progress = completed / total_data
+                    self.progress_signal.emit(progress)
 
-            # UPDATE PROGRESS BAR
-            completed += 1
-            progress = completed / total_data
-            self.update_progress_signal.emit(progress)
+            self.is_success.emit()
+
+        except Exception as error:
+            self.is_fail.emit(str(error))

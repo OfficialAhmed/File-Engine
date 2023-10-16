@@ -113,8 +113,8 @@ class Controller:
     def remove_folder(self, folder_path: str, folder_name: str) -> None:
         self.FOLDER_REMOVER.remove(folder_path, folder_name)
 
-    def restore_removed_content(self, src: str, dest: str) -> int:
-        return self.FILE_REMOVER.restore(src, dest)
+    def restore_removed_content(self, destination: str) -> int:
+        return self.FILE_REMOVER.restore(destination)
 
     def total_content_removed(self) -> int:
         """

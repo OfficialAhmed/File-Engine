@@ -238,9 +238,34 @@ class Ui(Mediator):
             "FILE | FOLDER",
             "SOURCE",
             "SIZE (MB)",
-            "SELECT ALL"
+            "SELECT / DESELECT"
         )
 
+    def remove_table_rows(self, data: list) -> None:
+        """
+            DELETE ALL CHECKED ROWS AFTER REMOVING THE FILES
+        """
+
+        if not data:
+            self.controller.show_dialog(
+                "NO DATA HAS BEEN SELECTED", is_dialog=False
+            )
+            return None
+
+        # REMOVE SELECTED CHECKBOXES
+        for row in reversed(data):
+            self.checkboxes.pop(row)
+
+        # REMOVE ROWS CONTAIN FILES SELECTED
+        # START FROM LAST ROW TO AVOID ROW-SHIFTING ISSUE
+        for row in reversed(data):
+            self.tableLayout.removeRow(row)
+
+        # REINDEX DATA - TO RETRIEVE DATA FROM DICT BY INDEX
+        new_data = {}
+        for index, value in enumerate(self.data.values()):
+            new_data[index] = value
+        self.data = new_data
 
     def start_lookup_clicked(self):
 
@@ -267,7 +292,6 @@ class Ui(Mediator):
         ):
             return None
 
-
         # RESET PROGRESS BAR
         self.progressBar.update(0)
 
@@ -277,53 +301,36 @@ class Ui(Mediator):
             self.checkboxes,
             self.lookupType.currentText()
         )
-        
+
         # UPDATE PROGRESS BAR
         future_process.progress_signal.connect(
             self.progressBar.update
         )
 
         # DELETE ROWS FROM THE UI
-        future_process.removed_rows_signal.connect(
-            self.remove_deleted_rows
+        future_process.remove_rows_signal.connect(
+            self.remove_table_rows
         )
 
-        # SUCCESSFULL REMOVAL ITEMS MESSAGE
-        future_process.is_file_signal.connect(
+        # SUCCESSFULL ITEMS REMOVAL MESSAGE
+        future_process.is_success.connect(
             lambda: self.controller.show_dialog(
                 f"SUCCESSFULY REMOVED <{self.controller.total_content_removed()}> ITEM(S)",
                 "OPERATION SUCCESSFULL",
-                is_dialog=False
+                False
+            )
+        )
+
+        # UNSUCCESSFULL ITEMS REMOVAL MESSAGE
+        future_process.is_fail.connect(
+            lambda error: self.controller.show_dialog(
+                f"SOMTHING WENT WRONG WHILE REMOVING | ERROR <{error}>",
+                "C",
+                False
             )
         )
 
         future_process.run()
-
-    def remove_deleted_rows(self, data: list) -> None:
-        """
-            DELETE ALL ROWS CHECKED AFTER REMOVING THE FILES
-        """
-
-        if not data:
-            self.controller.show_dialog(
-                "NO DATA HAS BEEN SELECTED", is_dialog=False
-            )
-            return None
-
-        # REMOVE SELECTED CHECKBOXES
-        for row in reversed(data):
-            self.checkboxes.pop(row)
-
-        # REMOVE ROWS CONTAIN FILES SELECTED
-        # START FROM LAST ROW TO AVOID ROW-SHIFTING ISSUE
-        for row in reversed(data):
-            self.tableLayout.removeRow(row)
-
-        # REINDEX DATA - TO RETRIEVE DATA FROM DICT BY INDEX
-        new_data = {}
-        for index, value in enumerate(self.data.values()):
-            new_data[index] = value
-        self.data = new_data
 
     def restore_files_clicked(self) -> None:
 
@@ -335,6 +342,7 @@ class Ui(Mediator):
             return None
 
         try:
+
             trash_file = self.controller.TRASH_CONTENT_FILE
 
             # FILE MUST EXIST AND NOT EMPTY, ELSE TERMINATE PROCESS
@@ -351,27 +359,33 @@ class Ui(Mediator):
             # FETCH CONTENT RESTORE DATA
             data: dict = json.load(open(trash_file))
 
-            if self.thread is None or not self.thread.isRunning():
+            # RESTORE FILES WITH THREADS
+            future_process = RestoreWorker(data)
 
-                # RESET PROGRESS BAR
-                self.progressBar.update(0)
-
-                # RESTORE FILES WITH THREADS
-                self.thread = RestoreWorker(data)
-
-                # UPDATE PROGRESS BAR
-                self.thread.update_progress_signal.connect(
-                    self.progressBar.update
-                )
-
-                self.thread.start()
-
-            # SUCCESSFULL RESTORATION
-            self.controller.show_dialog(
-                f"SUCCESSFULLY RESTORED <{self.controller.total_content_removed()}> ITEM(S)",
-                "OPERATION SUCCESSFULL",
-                is_dialog=False
+            # UPDATE PROGRESS BAR WITH THE VALUE RETURNED BY THE SIGNAL
+            future_process.progress_signal.connect(
+                self.progressBar.update
             )
+
+            # SUCCESSFULL ITEMS REMOVAL MESSAGE
+            future_process.is_success.connect(
+                lambda: self.controller.show_dialog(
+                    f"SUCCESSFULY RESTORED ALL ITEM(S)",
+                    "OPERATION SUCCESSFULL",
+                    False
+                )
+            )
+
+            # UNSUCCESSFULL ITEMS REMOVAL MESSAGE
+            future_process.is_fail.connect(
+                lambda error: self.controller.show_dialog(
+                    f"SOMTHING WENT WRONG WHILE RESTORING | ERROR <{error}>",
+                    "C",
+                    False
+                )
+            )
+
+            future_process.run()
 
         except Exception as e:
 
