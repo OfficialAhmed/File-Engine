@@ -107,7 +107,7 @@ class Remover:
         except Exception as e:
             print(str(e))
 
-    def restore(self, content_name: str, dest: str) -> None:
+    def restore(self, destination: str) -> None:
         """
             Redo moving from trash to original content's destination by reading the generated JSON
             * return total content restored
@@ -117,17 +117,9 @@ class Remover:
             print("Restore not available. Content file not found")
             return
 
-        # data: dict = json.load(open(self.trash_content_file))
-
-        # for destination in data.values():
-
-            # shutil.move(
-            #     f"{self.trash_folder_path}{destination.replace(':', '')}",
-            #     destination
-            # )
         shutil.move(
-            f"{self.trash_folder_path}{dest.replace(':', '')}",
-            dest
+            f"{self.trash_folder_path}{destination.replace(':', '')}",
+            destination
         )
 
         # Reset JSON content by overwriting the file
