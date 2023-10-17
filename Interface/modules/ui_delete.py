@@ -58,8 +58,7 @@ class Mediator(Model):
         lookupFormat: QLineEdit,
         lookupInput:  QCheckBox,
         isRecursive:  QLineEdit,
-        startBtn:     QComboBox,
-        tableLayout:  QTableWidget
+        startBtn:     QComboBox
     ):
         """
         Set current window widgets from 'UI' class
@@ -69,7 +68,6 @@ class Mediator(Model):
         self.lookupInput:  QLineEdit = lookupInput
         self.isRecursive:  QCheckBox = isRecursive
         self.lookupFormat: QComboBox = lookupFormat
-        self.tableLayout:  QTableWidget = tableLayout
         self.currentPathInput: QLineEdit = currentPath
 
     def import_cache(self) -> None:
@@ -241,32 +239,6 @@ class Ui(Mediator):
             "SELECT / DESELECT"
         )
 
-    def remove_table_rows(self, data: list) -> None:
-        """
-            DELETE ALL CHECKED ROWS AFTER REMOVING THE FILES
-        """
-
-        if not data:
-            self.controller.show_dialog(
-                "NO DATA HAS BEEN SELECTED", is_dialog=False
-            )
-            return None
-
-        # REMOVE SELECTED CHECKBOXES
-        for row in reversed(data):
-            self.checkboxes.pop(row)
-
-        # REMOVE ROWS CONTAIN FILES SELECTED
-        # START FROM LAST ROW TO AVOID ROW-SHIFTING ISSUE
-        for row in reversed(data):
-            self.tableLayout.removeRow(row)
-
-        # REINDEX DATA - TO RETRIEVE DATA FROM DICT BY INDEX
-        new_data = {}
-        for index, value in enumerate(self.data.values()):
-            new_data[index] = value
-        self.data = new_data
-
     def start_lookup_clicked(self):
 
         if self.controller.show_dialog(
@@ -295,10 +267,25 @@ class Ui(Mediator):
         # RESET PROGRESS BAR
         self.progressBar.update(0)
 
+        files_to_remove = []
+        self.rows_to_remove = []
+
+        # FLAG SELECTED TABLE ITEMS
+        for indx, cb in enumerate(self.checkboxes):
+
+            # IF CHECKBOX SELECTED
+            if cb.isChecked():
+                
+                # FETCH DATA FROM TABLE 
+                file = self.table_layout.item(indx, 0).text()           # EACH ROW, 1ST COLUMN
+                root = self.table_layout.item(indx, 1).text()           # EACH ROW, 2ND COLUMN
+
+                files_to_remove.append(f"{root}//{file}")
+                self.rows_to_remove.append(indx)
+
         # DELETE FILES WITH THREADS
         future_process = DeleteWorker(
-            self.data,
-            self.checkboxes,
+            files_to_remove,
             self.lookupType.currentText()
         )
 
@@ -315,7 +302,7 @@ class Ui(Mediator):
         # SUCCESSFULL ITEMS REMOVAL MESSAGE
         future_process.is_success.connect(
             lambda: self.controller.show_dialog(
-                f"SUCCESSFULY REMOVED <{self.controller.total_content_removed()}> ITEM(S)",
+                f"SUCCESSFULY REMOVED <{len(files_to_remove)}> ITEM(S)",
                 "OPERATION SUCCESSFULL",
                 False
             )
@@ -413,7 +400,7 @@ class Ui(Mediator):
         total_columns = columns
 
         # CLEAR PREVIOUS ROWS
-        self.checkboxes = []
+        self.checkboxes.clear()
         self.table_layout.setRowCount(0)
 
         self.table_layout.setRowCount(total_rows)
@@ -434,9 +421,9 @@ class Ui(Mediator):
             self.init_table()
 
             self.controller.show_dialog(
-                "NO DATA HAS BEEN FOUND!",
-                "ITEMS CANNOT BE FOUND!",
-                is_dialog=False
+                "NO DATA HAS BEEN FOUND!",          # MESSAGE
+                "ITEMS CANNOT BE FOUND!",           # WINDOW TITLE
+                is_dialog=False                     # FALSE = INFORMATIONAL
             )
             return None
 
@@ -460,9 +447,9 @@ class Ui(Mediator):
                     checkbox.setChecked(True)
 
                     self.table_layout.setCellWidget(
-                        row_index,
-                        col_index + 1,
-                        checkbox
+                        row_index,                      # ROW INDEX
+                        3,                              # LAST COLUMN
+                        checkbox                        # ITEM
                     )
 
                     self.checkboxes.append(checkbox)
@@ -471,15 +458,55 @@ class Ui(Mediator):
         for col_index in range(self.table_layout.columnCount()):
             self.table_layout.resizeColumnToContents(col_index)
 
-    def toggle_checkboxes(self, header_section: int) -> None:
+    def table_header_clicked(self, header_section: int) -> None:
         """
-        ### TOGGLE THE CHECKBOXES FOR EACH TABLE ITEM
-            * Checkboxes column = 3 (zero-indexed)
+        ### ON TABLE HEADER CLICK 
+
+            Zero-indexed header
+            * On click header `0` `1` `2` -> re-render checkboxes
+            * On click header `3`         -> (De)Select Checkboxes
         """
 
         if header_section == 3:
+
+            # SELECT/DESELCT ALL CHECKBOXES
             for checkbox in self.checkboxes:
                 checkbox.toggle()
+
+        else:
+
+            # RE-RENDER TABLE CHECKBOXES TO REARRANGE THEM BASED ON THE NEW SORT
+            total_checkboxes = len(self.checkboxes)
+            self.checkboxes.clear()
+
+            for row_indx in range(total_checkboxes):
+
+                checkbox = QCheckBox()
+                checkbox.setChecked(False)
+
+                self.table_layout.setCellWidget(
+                    row_indx,                            # ROW INDEX
+                    3,                                   # LAST COLUMN
+                    checkbox                             # ITEM
+                )
+
+                self.checkboxes.append(checkbox)
+                
+    def remove_table_rows(self) -> None:
+        """
+            DELETE ALL CHECKED ROWS AFTER REMOVING THE FILES
+        """
+
+        if not self.rows_to_remove:
+            self.controller.show_dialog(
+                "NO DATA HAS BEEN SELECTED", is_dialog=False
+            )
+            return None
+
+        # REMOVE SELECTED CHECKBOXES
+        for row in reversed(self.rows_to_remove):
+            self.table_layout.removeRow(row)
+            self.checkboxes.pop(row)
 
     def retranslateTableHeaders(self):
 
@@ -851,8 +878,7 @@ class Ui(Mediator):
             self.lookupFormat_comboBox,
             self.lookupInput_lineEdit,
             self.isRecursive_checkBox,
-            self.startLookup_btn,
-            self.table_layout
+            self.startLookup_btn
         )
 
         self.retranslateUi()
@@ -905,7 +931,7 @@ class Ui(Mediator):
 
         # ON TABLE-HEADER CLICK
         self.table_layout.horizontalHeader().sectionClicked.connect(
-            self.toggle_checkboxes
+            self.table_header_clicked
         )
 
         return self.widgets
