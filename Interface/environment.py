@@ -121,7 +121,6 @@ class ProgressBar:
             * Widget will be stored in class for reference
         """
         self.progressBar = widget
-        ProgressBar.progressBar = widget  # Reference
 
 
 """
@@ -153,14 +152,13 @@ class DeleteWorker(Worker):
         through signals with Qt framework
     """
 
-    remove_rows_signal = Signal(list)
+    remove_rows_signal = Signal()
 
-    def __init__(self, data: dict, checkboxes: list, lookup_type: str) -> None:
+    def __init__(self, files: list, lookup_type: str) -> None:
         super().__init__()
-        self.data = data
-        self.checkboxes = checkboxes
+        self.files = files
         self.lookup_type = lookup_type
-
+        
         self.controller = Controller()
 
     def process(self, path: str) -> None:
@@ -176,23 +174,8 @@ class DeleteWorker(Worker):
             WORK DECOMPOSITION - SUBTASKS
         """
 
-        self.files = []
-        removed_rows = []
-        self.progress_signal.emit(0)
-
         try:
-            # GET SELECTED ITEMS FROM THE TABLE
-            for indx, checkbox in enumerate(self.checkboxes):
-
-                if checkbox.isChecked():
-
-                    file = self.data.get(indx).get("file")
-                    content_root = self.data.get(indx).get("root")
-                    self.files.append(f"{content_root}//{file}")
-                    removed_rows.append(indx)
-                    
-
-            # RUN THE DELETING PROCESS IN PARALLEL
+            
             # 'max_workers' SET TO MAX AVAILABLE CPU CORES
             with concurrent.futures.ThreadPoolExecutor(max_workers=None) as executor:
                 futures = [
@@ -212,7 +195,7 @@ class DeleteWorker(Worker):
                     self.progress_signal.emit(progress)
 
             # REMOVE ROWS & INVOKE PROCESS SUCESSFUL METHOD
-            self.remove_rows_signal.emit(removed_rows)
+            self.remove_rows_signal.emit()
             self.is_success.emit()
 
         except Exception as e:
@@ -255,6 +238,7 @@ class RestoreWorker(Worker):
                     progress = completed / total_data
                     self.progress_signal.emit(progress)
 
+            self.controller.empty_trash()
             self.is_success.emit()
 
         except Exception as error:

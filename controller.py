@@ -107,6 +107,9 @@ class Controller:
             self.TRASH_PATH
         )
 
+    def empty_trash(self) -> None:
+        self.FILE_REMOVER.empty_trash()
+        
     def remove_file(self, file_path: str) -> None:
         self.FILE_REMOVER.remove(file_path)
 
