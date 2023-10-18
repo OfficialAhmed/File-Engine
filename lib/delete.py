@@ -76,19 +76,20 @@ class Remover:
             # CONCATENATION WITHOUT FILE NOR FOLDER NAME
             dest_with_filename = self.trash_folder_path + \
                 source.replace(":", "")
-            dest_only = dest_with_filename[: dest_with_filename.rfind("\\")]
+            dest = os.path.dirname(dest_with_filename)
 
             # REPLICATE THE DIR-TREE INSIDE TRASH
-            os.makedirs(dest_only, exist_ok=True)
+            os.makedirs(dest, exist_ok=True)
 
             if not folder_name:
+
                 shutil.move(source, dest_with_filename)
 
             else:
 
                 # IF FOLDER EXIST COPY FILES MANUALLY,
                 # ELSE MOVE THE ENTIRE FOLDER
-                if os.path.exists(f"{dest_only}\\{folder_name}"):
+                if os.path.exists(f"{dest}\\{folder_name}"):
 
                     for file in os.listdir(source):
                         shutil.move(f"{source}\\{file}",
@@ -125,7 +126,6 @@ class Remover:
         # Reset JSON content by overwriting the file
         open(self.trash_content_file, "w+")
         self.removed_content = {}
-
 
     def get_removed_content_count(self) -> int:
         return self.removed_counter
