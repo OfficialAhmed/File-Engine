@@ -1,32 +1,71 @@
-/* /////////////////////////////////////////////////////////////////////////////////////////////////
+/* 
+    
+    === UI STYLE - DRACULA THEME ===
 
-SET APP STYLESHEET - FULL STYLES HERE
-DARK THEME - DRACULA COLOR BASED
+    THEME BY             : Wanderson M. Pimenta (https://github.com/Wanderson-Magalhaes)
+    EDITED & ENHANCED BY : OfficialAhmed        (https://github.com/OfficialAhmed)
 
-# BY: WANDERSON M.PIMENTA
-# PROJECT MADE WITH: Qt Designer and PySide6
-# V: 1.0.0
-#
-# This project can be used freely for all uses, as long as they maintain the
-# respective credits only in the Python scripts, any information in the visual
-# interface (GUI) can be modified without any implication.
-#
-# There are limitations on Qt licenses if you want to use your products
-# commercially, I recommend reading them on the official website:
-# https://doc.qt.io/qtforpython/licenses.html
+    MIT LICENSE:
+    Copyright (c) 2023 OfficialAhmed
 
-///////////////////////////////////////////////////////////////////////////////////////////////// */
+    There are limitations on Qt licenses if you want to use your products
+    commercially, I recommend reading them on the official website:
+    https://doc.qt.io/qtforpython/licenses.html
 
+    =======================================================================================================
+    =======================================================================================================
+
+ THEME COLORS{
+    rgb(42, 44, 89)
+    rgb(33, 37, 43)
+    rgb(44, 49, 58)
+    rgb(124, 57, 191)
+    rgb(189, 147, 249)
+    rgb(242, 80, 231)
+    rgb(255, 121, 198)
+    rgb(242, 174, 48)
+    rgb(84, 90, 191)
+} 
+
+/*
+/////////////////////////////////////////////////////
+               General styling 
+/////////////////////////////////////////////////////
+*/
 QWidget {
-	color: #333;
+	color: rgb(33, 37, 43);
 	font: 10pt "Segoe UI";
 }
 
-/* /////////////////////////////////////////////////////////////////////////////////////////////////
-Tooltip */
+
+/*
+/////////////////////////////////////////////////////
+               ProgressBar 
+/////////////////////////////////////////////////////
+*/
+
+QProgressBar {
+	background-color: rgb(33, 37, 43);
+	border: 1px solid rgb(44, 49, 58);
+	border-radius: 6px;
+	text-align: center;
+	font-weight: bold;
+	color: rgb(33, 37, 43)
+}
+
+QProgressBar::chunk {
+	background-color: rgb(189, 147, 249);
+	border-radius: 6px;
+}
+
+/*
+/////////////////////////////////////////////////////
+               Tooltip 
+/////////////////////////////////////////////////////
+*/
 QToolTip {
-	color: #333;
-	background-color: #f8f8f2;
+	color: rgb(33, 37, 43);
+	background-color: rgb(200, 200, 200);
 	border: 1px solid #CCC;
 	background-image: none;
 	background-position: left center;
@@ -38,30 +77,36 @@ QToolTip {
 	margin: 0px;
 }
 
-/* /////////////////////////////////////////////////////////////////////////////////////////////////
-Bg App */
+/*
+/////////////////////////////////////////////////////
+               Background App 
+/////////////////////////////////////////////////////
+*/
 #bgApp {
-	background-color: #f8f8f2;
-	border: 1px solid #CCC;
+	background-color: rgb(200, 200, 200);
+	border: 0px solid #CCC;
 	color: #44475a;
 }
 
-/* /////////////////////////////////////////////////////////////////////////////////////////////////
-Left Menu */
+/*
+/////////////////////////////////////////////////////
+               Left Menu 
+/////////////////////////////////////////////////////
+*/
 #leftMenuBg {
 	background-color: #6272a4;
 }
 
 #topLogo {
 	background-color: #6272a4;
-	background-image: url(:/images/images/images/PyDracula.png);
-	background-position: centered;
+	background-image: url('Interface/images/images/File Engine logo.png');
+	background-position: center;
 	background-repeat: no-repeat;
 }
 
 #titleLeftApp {
 	font: 63 12pt "Segoe UI Semibold";
-	color: #f8f8f2;
+	color: rgb(200, 200, 200);
 }
 
 #titleLeftDescription {
@@ -69,7 +114,11 @@ Left Menu */
 	color: #bd93f9;
 }
 
-/* MENUS */
+/*
+/////////////////////////////////////////////////////
+               Menus 
+/////////////////////////////////////////////////////
+*/
 #topMenu .QPushButton {
 	background-position: left center;
 	background-repeat: no-repeat;
@@ -78,7 +127,7 @@ Left Menu */
 	background-color: transparent;
 	text-align: left;
 	padding-left: 44px;
-	color: #f8f8f2;
+	color: rgb(200, 200, 200);
 }
 
 #topMenu .QPushButton:hover {
@@ -87,7 +136,7 @@ Left Menu */
 
 #topMenu .QPushButton:pressed {
 	background-color: #ff79c6;
-	color: rgb(255, 255, 255);
+	color: rgb(200, 200, 200);
 }
 
 #bottomMenu .QPushButton {
@@ -98,7 +147,7 @@ Left Menu */
 	background-color: transparent;
 	text-align: left;
 	padding-left: 44px;
-	color: #f8f8f2;
+	color: rgb(200, 200, 200);
 }
 
 #bottomMenu .QPushButton:hover {
@@ -107,7 +156,7 @@ Left Menu */
 
 #bottomMenu .QPushButton:pressed {
 	background-color: #ff79c6;
-	color: rgb(255, 255, 255);
+	color: rgb(200, 200, 200);
 }
 
 #leftMenuFrame {
@@ -123,7 +172,7 @@ Left Menu */
 	background-color: #5b6996;
 	text-align: left;
 	padding-left: 44px;
-	color: #f8f8f2;
+	color: rgb(200, 200, 200);
 }
 
 #toggleButton:hover {
@@ -132,7 +181,7 @@ Left Menu */
 
 #toggleButton:pressed {
 	background-color: #ff79c6;
-	color: rgb(255, 255, 255);
+	color: rgb(200, 200, 200);
 }
 
 /* Title Menu */
@@ -145,7 +194,7 @@ Left Menu */
 Extra Tab */
 #extraLeftBox {
 	background-color: #495474;
-	color: #f8f8f2;
+	color: rgb(200, 200, 200);
 }
 
 #extraTopBg {
@@ -156,12 +205,12 @@ Extra Tab */
 #extraIcon {
 	background-position: center;
 	background-repeat: no-repeat;
-	background-image: url(:/icons/images/icons/icon_settings.png);
+	background-image: url(:images/images/icons/settings.svg);
 }
 
 /* Label */
 #extraLabel {
-	color: rgb(255, 255, 255);
+	color: rgb(200, 200, 200);
 }
 
 /* Btn Close */
@@ -197,7 +246,7 @@ Extra Tab */
 	background-color: transparent;
 	text-align: left;
 	padding-left: 44px;
-	color: #f8f8f2;
+	color: rgb(200, 200, 200);
 }
 
 #extraTopMenu .QPushButton:hover {
@@ -206,7 +255,7 @@ Extra Tab */
 
 #extraTopMenu .QPushButton:pressed {
 	background-color: rgb(189, 147, 249);
-	color: rgb(255, 255, 255);
+	color: rgb(200, 200, 200);
 }
 
 /* /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -220,12 +269,12 @@ Content App */
 }
 
 #titleRightInfo {
-	color: #f8f8f2;
+	color: rgb(200, 200, 200);
 }
 
 /* Top Buttons */
 #rightButtons .QPushButton {
-	background-color: rgba(255, 255, 255, 0);
+	background-color: rgba(119, 5, 5, 0);
 	border: none;
 	border-radius: 5px;
 }
@@ -258,7 +307,7 @@ Content App */
 
 #bottomBar QLabel {
 	font-size: 11px;
-	color: #f8f8f2;
+	color: rgb(200, 200, 200);
 	padding-left: 10px;
 	padding-right: 10px;
 	padding-bottom: 2px;
@@ -274,7 +323,7 @@ Content App */
 	background-color: transparent;
 	text-align: left;
 	padding-left: 44px;
-	color: #f8f8f2;
+	color: rgb(200, 200, 200);
 }
 
 #contentSettings .QPushButton:hover {
@@ -283,65 +332,72 @@ Content App */
 
 #contentSettings .QPushButton:pressed {
 	background-color: rgb(189, 147, 249);
-	color: rgb(255, 255, 255);
+	color: rgb(200, 200, 200);
 }
 
-/* /////////////////////////////////////////////////////////////////////////////////////////////////
-QTableWidget */
+/*
+/////////////////////////////////////////////////////
+               QTableWidget 
+/////////////////////////////////////////////////////
+*/
 QTableWidget {
 	background-color: transparent;
 	padding: 10px;
 	border-radius: 5px;
-	gridline-color: #9faeda;
-	outline: none;
+	gridline-color: rgb(44, 49, 58);
+	border-bottom: 1px solid rgb(44, 49, 60);
 }
 
 QTableWidget::item {
-	border-color: #9faeda;
+	border-color: rgb(44, 49, 60);
 	padding-left: 5px;
 	padding-right: 5px;
-	gridline-color: #9faeda;
+	gridline-color: rgb(44, 49, 60);
 }
 
 QTableWidget::item:selected {
 	background-color: rgb(189, 147, 249);
-	color: #f8f8f2;
 }
 
 QHeaderView::section {
-	background-color: #6272a4;
+	color: rgb(200, 200, 200);
+	background-color: rgb(33, 37, 43);
 	max-width: 30px;
-	border: none;
+	border: 1px solid rgb(44, 49, 58);
 	border-style: none;
+	border-bottom: 1px solid rgb(44, 49, 60);
+	border-right: 1px solid rgb(44, 49, 60);
 }
 
 QTableWidget::horizontalHeader {
-	background-color: #6272a4;
+	background-color: rgb(33, 37, 43);
 }
 
 QHeaderView::section:horizontal {
-	border: 1px solid #6272a4;
-	background-color: #6272a4;
+	border: 1px solid rgb(33, 37, 43);
+	background-color: rgb(33, 37, 43);
 	padding: 3px;
 	border-top-left-radius: 7px;
 	border-top-right-radius: 7px;
-	color: #f8f8f2;
 }
 
 QHeaderView::section:vertical {
-	border: 1px solid #6272a4;
+	border: 1px solid rgb(44, 49, 60);
 }
 
-/* /////////////////////////////////////////////////////////////////////////////////////////////////
-LineEdit */
+/*
+/////////////////////////////////////////////////////
+               Line Edit
+/////////////////////////////////////////////////////
+*/
 QLineEdit {
 	background-color: #6272a4;
 	border-radius: 5px;
 	border: 2px solid #6272a4;
 	padding-left: 10px;
-	selection-color: rgb(255, 255, 255);
+	selection-color: rgb(200, 200, 200);
 	selection-background-color: rgb(255, 121, 198);
-	color: #f8f8f2;
+	color: rgb(200, 200, 200);
 }
 
 QLineEdit:hover {
@@ -358,9 +414,9 @@ QPlainTextEdit {
 	background-color: #6272a4;
 	border-radius: 5px;
 	padding: 10px;
-	selection-color: rgb(255, 255, 255);
+	selection-color: rgb(200, 200, 200);
 	selection-background-color: rgb(255, 121, 198);
-	color: #f8f8f2;
+	color: rgb(200, 200, 200);
 }
 
 QPlainTextEdit QScrollBar:vertical {
@@ -469,8 +525,11 @@ QScrollBar::sub-page:vertical {
 	background: none;
 }
 
-/* /////////////////////////////////////////////////////////////////////////////////////////////////
-CheckBox */
+/*
+/////////////////////////////////////////////////////
+               Check box
+/////////////////////////////////////////////////////
+*/
 QCheckBox::indicator {
 	border: 3px solid #6272a4;
 	width: 15px;
@@ -486,11 +545,14 @@ QCheckBox::indicator:hover {
 QCheckBox::indicator:checked {
 	background: 3px solid #bd93f9;
 	border: 3px solid #bd93f9;
-	background-image: url(:/icons/images/icons/cil-check-alt.png);
+	background-image: url('Interface/images/icons/tick-outline.svg');
 }
 
-/* /////////////////////////////////////////////////////////////////////////////////////////////////
-RadioButton */
+/*
+/////////////////////////////////////////////////////
+               Radio button
+/////////////////////////////////////////////////////
+*/
 QRadioButton::indicator {
 	border: 3px solid #6272a4;
 	width: 15px;
@@ -508,19 +570,22 @@ QRadioButton::indicator:checked {
 	border: 3px solid #bd93f9;
 }
 
-/* /////////////////////////////////////////////////////////////////////////////////////////////////
-ComboBox */
+/*
+/////////////////////////////////////////////////////
+               Combo box
+/////////////////////////////////////////////////////
+*/
 QComboBox {
 	background-color: #6272a4;
 	border-radius: 5px;
 	border: 2px solid #6272a4;
 	padding: 5px;
 	padding-left: 10px;
-	color: #f8f8f2;
+	color: rgb(200, 200, 200);
 }
 
 QComboBox:hover {
-	border: 2px solid #7284b9;
+	border: 2px solid rgb(84, 90, 191);
 }
 
 QComboBox::drop-down {
@@ -532,7 +597,7 @@ QComboBox::drop-down {
 	border-left-style: solid;
 	border-top-right-radius: 3px;
 	border-bottom-right-radius: 3px;
-	background-image: url(:/icons/images/icons/cil-arrow-bottom.png);
+	background-image: url(:images/images/icons/arrow down.svg);
 	background-position: center;
 	background-repeat: no-reperat;
 }
@@ -544,8 +609,11 @@ QComboBox QAbstractItemView {
 	selection-background-color: #6272a4;
 }
 
-/* /////////////////////////////////////////////////////////////////////////////////////////////////
-Sliders */
+/*
+/////////////////////////////////////////////////////
+               Slider
+/////////////////////////////////////////////////////
+*/
 QSlider::groove:horizontal {
 	border-radius: 5px;
 	height: 10px;
@@ -602,8 +670,11 @@ QSlider::handle:vertical:pressed {
 	background-color: rgb(255, 121, 198);
 }
 
-/* /////////////////////////////////////////////////////////////////////////////////////////////////
-CommandLinkButton */
+/*
+/////////////////////////////////////////////////////
+               Command line
+/////////////////////////////////////////////////////
+*/
 #pagesContainer QCommandLinkButton {
 	color: rgb(255, 121, 198);
 	border-radius: 5px;
@@ -622,21 +693,24 @@ CommandLinkButton */
 	background-color: #586796;
 }
 
-/* /////////////////////////////////////////////////////////////////////////////////////////////////
-Button */
+/*
+/////////////////////////////////////////////////////
+               Buttons
+/////////////////////////////////////////////////////
+*/
 #pagesContainer QPushButton {
 	border: 2px solid #6272a4;
 	border-radius: 5px;
 	background-color: #6272a4;
-	color: #f8f8f2;
+	color: rgb(33, 37, 43);
 }
 
 #pagesContainer QPushButton:hover {
 	background-color: #7082b6;
-	border: 2px solid #7082b6;
+	border: 2px solid rgb(242, 80, 231);
 }
 
 #pagesContainer QPushButton:pressed {
 	background-color: #546391;
-	border: 2px solid #ff79c6;
+	border: 2px solid rgb(242, 80, 231);
 }

@@ -24,7 +24,6 @@ class Remover:
         self.trash_content_file = None
 
         # REMOVED CONTENT TRACKER - FOR RESTORE FEATURE
-        self.removed_counter = 0
         self.removed_content = {}
 
     def set_remover_param(self, content_file_path: str, trash_folder_path: str) -> None:
@@ -92,8 +91,10 @@ class Remover:
                 if os.path.exists(f"{dest}\\{folder_name}"):
 
                     for file in os.listdir(source):
-                        shutil.move(f"{source}\\{file}",
-                                    f"{dest_with_filename}")
+                        shutil.move(
+                            f"{source}\\{file}",
+                            f"{dest_with_filename}"
+                        )
                     shutil.rmtree(source)
 
                 else:
@@ -102,8 +103,6 @@ class Remover:
             # KEEP TRACK OF THE REMOVED CONTENT
             if source not in self.removed_content.values():
                 self.removed_content[len(self.removed_content) + 1] = source
-
-            self.removed_counter += 1
 
         except Exception as e:
             print(str(e))
@@ -125,13 +124,7 @@ class Remover:
 
         # Reset JSON content by overwriting the file
         open(self.trash_content_file, "w+")
-        self.removed_content = {}
-
-    def get_removed_content_count(self) -> int:
-        return self.removed_counter
-
-    def reset_removed_content_count(self) -> None:
-        self.removed_counter = 0
+        self.removed_content.clear()
 
 
 class File(Remover):

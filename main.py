@@ -1,29 +1,32 @@
-# ////////////////////////////////////
-# UI Created BY: WANDERSON M.PIMENTA
-# ////////////////////////////////////
+"""
+====================================================================================================
+    MAIN UI CREATED BY   : WANDERSON M.PIMENTA  (https://github.com/Wanderson-Magalhaes)
+    EDITED/ENHANCED BY   : OFFICIALAHMED        (https://github.com/OfficialAhmed)
+====================================================================================================
+"""
 
+# BUILT-INS
+import os
+import sys
+import platform
+
+# QT / PYSIDE FRAMEWORK
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 
-import sys
-import os
-import platform
-
-# IMPORT / GUI AND MODULES AND WIDGETS
-from Interface.modules import *
-from Interface.widgets import *
-from Interface.modules.ui_main import Ui
+# CUSTOME WIDGETS STYLING
+from Interface.modules.ui_main import *
+from Interface.modules.ui_settings import *
 
 
 # FIX Problem for High DPI and Scale above 100%
 os.environ["QT_FONT_DPI"] = "96"
 
-# SET AS GLOBAL WIDGETS
-widgets = None
-
 
 class MainWindow(QMainWindow):
+
+    widgets = None
 
     def __init__(self):
         QMainWindow.__init__(self)
@@ -31,11 +34,11 @@ class MainWindow(QMainWindow):
         # SET AS GLOBAL WIDGETS
         self.ui = Ui()
         self.ui.setupUi(self)
-        global widgets
-        widgets = self.ui
-        
+        # global widgets
+        self.widgets = self.ui
+
         # USE CUSTOM TITLE BAR | USE AS "False" FOR MAC OR LINUX
-        Settings.ENABLE_CUSTOM_TITLE_BAR = True if platform.system() == "Windows" else False
+        self.ui.EENABLE_CUSTOM_TITLE_BAR = True if platform.system() == "Windows" else False
 
         # APP NAME
         title = "File Engine"
@@ -43,57 +46,61 @@ class MainWindow(QMainWindow):
 
         # APPLY TEXTS
         self.setWindowTitle(title)
-        widgets.titleRightInfo.setText(description)
+        self.widgets.titleRightInfo.setText(description)
 
         # TOGGLE MENU
-        widgets.toggleButton.clicked.connect(
-            lambda: UIFunctions.toggleMenu(self, True)
+        self.widgets.toggleButton.clicked.connect(
+            lambda: UiSettings.toggleMenu(self, True)
         )
 
         # SET UI DEFINITIONS
-        UIFunctions.uiDefinitions(self)
+        UiSettings.uiDefinitions(self)
 
         # BUTTONS CLICK
 
         # LEFT MENUS
-        widgets.home_page.clicked.connect(self.buttonClick)
-        widgets.delete_page.clicked.connect(self.buttonClick)
-        widgets.move_page.clicked.connect(self.buttonClick)
-        widgets.rename_page.clicked.connect(self.buttonClick)
-        widgets.lookup_page.clicked.connect(self.buttonClick)
+        self.widgets.home_page.clicked.connect(self.buttonClick)
+        self.widgets.delete_page.clicked.connect(self.buttonClick)
+        self.widgets.move_page.clicked.connect(self.buttonClick)
+        self.widgets.rename_page.clicked.connect(self.buttonClick)
+        self.widgets.lookup_page.clicked.connect(self.buttonClick)
 
         # EXTRA LEFT MENU
-        widgets.toggleLeftBox.clicked.connect(
-            lambda: UIFunctions.toggleLeftBox(self, True)
+        self.widgets.toggleLeftBox.clicked.connect(
+            lambda: UiSettings.toggleLeftBox(self, True)
         )
-        widgets.extraCloseColumnBtn.clicked.connect(
-            lambda: UIFunctions.toggleLeftBox(self, True)
+        
+        self.widgets.extraCloseColumnBtn.clicked.connect(
+            lambda: UiSettings.toggleLeftBox(self, True)
         )
 
         # EXTRA RIGHT MENU
-        widgets.moreBtn.clicked.connect(
-            lambda: UIFunctions.toggleRightBox(self, True)
+        self.widgets.moreBtn.clicked.connect(
+            lambda: UiSettings.toggleRightBox(self, True)
         )
 
         # SHOW APP
         self.show()
 
-        # SET CUSTOM THEME
-        useCustomTheme = False
-        themeFile = "themes\py_dracula_light.qss"
+        # DEFAULT THEME = DARK
+        # SET LIGHT THEME IF SETTING CHANGED
+        is_light_theme = False
+        light_theme = "Interface\\themes\\py_dracula_light.qss"
 
-        # SET THEME AND HACKS
-        if useCustomTheme:
+        # SET THEME
+        if is_light_theme:
             # LOAD AND APPLY STYLE
-            UIFunctions.theme(self, themeFile, True)
-
-            # SET HACKS
-            AppFunctions.setThemeHack(self)
+            UiSettings.theme(self, light_theme, True)
 
         # SET HOME PAGE AND SELECT MENU
-        widgets.stackedWidget.setCurrentWidget(widgets.home_widgets)
-        widgets.home_page.setStyleSheet(
-            UIFunctions.selectMenu(widgets.home_page.styleSheet()))
+        self.widgets.stackedWidget.setCurrentWidget(
+            self.widgets.home_widgets
+        )
+        self.widgets.home_page.setStyleSheet(
+            UiSettings.selectMenu(
+                self.widgets.home_page.styleSheet()
+            )
+        )
 
     def buttonClick(self):
         """
@@ -108,38 +115,46 @@ class MainWindow(QMainWindow):
 
             # SHOW HOME PAGE
             case "home_page":
-                widgets.stackedWidget.setCurrentWidget(widgets.home_widgets)
-                UIFunctions.resetStyle(self, btn_name)
-                btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet()))
+                self.widgets.stackedWidget.setCurrentWidget(
+                    self.widgets.home_widgets
+                )
+                UiSettings.resetStyle(self, btn_name)
+                btn.setStyleSheet(UiSettings.selectMenu(btn.styleSheet()))
 
             # SHOW DELETE PAGE
             case "delete_page":
-                widgets.stackedWidget.setCurrentWidget(widgets.delete_widgets)
-                UIFunctions.resetStyle(self, btn_name)
-                btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet()))
+                self.widgets.stackedWidget.setCurrentWidget(
+                    self.widgets.delete_widgets
+                )
+                UiSettings.resetStyle(self, btn_name)
+                btn.setStyleSheet(UiSettings.selectMenu(btn.styleSheet()))
 
             # SHOW NEW PAGE
             case "move_page":
-                widgets.stackedWidget.setCurrentWidget(
-                    widgets.new_page)  # SET PAGE
-                # RESET ANOTHERS BUTTONS SELECTED
-                UIFunctions.resetStyle(self, btn_name)
-                btn.setStyleSheet(UIFunctions.selectMenu(
-                    btn.styleSheet()))  # SELECT MENU
+                self.widgets.stackedWidget.setCurrentWidget(
+                    self.widgets.new_page
+                )
+
+                UiSettings.resetStyle(self, btn_name)
+                btn.setStyleSheet(
+                    UiSettings.selectMenu(
+                        btn.styleSheet()
+                    )
+                )
 
             case "rename_page":
-                widgets.stackedWidget.setCurrentWidget(
-                    widgets.new_page)  # SET PAGE
-                UIFunctions.resetStyle(self, btn_name)
-                btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet()))
+                self.widgets.stackedWidget.setCurrentWidget(
+                    self.widgets.new_page
+                )
+                UiSettings.resetStyle(self, btn_name)
+                btn.setStyleSheet(UiSettings.selectMenu(btn.styleSheet()))
 
             case "lookup_page":
-                widgets.stackedWidget.setCurrentWidget(widgets.new_page)
-                UIFunctions.resetStyle(self, btn_name)
-                btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet()))
-
-        # PRINT BTN NAME
-        print(f'Button "{btn_name}" pressed!')
+                self.widgets.stackedWidget.setCurrentWidget(
+                    self.widgets.new_page
+                )
+                UiSettings.resetStyle(self, btn_name)
+                btn.setStyleSheet(UiSettings.selectMenu(btn.styleSheet()))
 
     def resizeEvent(self, event):
         """
@@ -147,7 +162,7 @@ class MainWindow(QMainWindow):
         """
 
         # Update Size Grips
-        UIFunctions.resize_grips(self)
+        UiSettings.resize_grips(self)
 
     def mousePressEvent(self, event):
         """
@@ -155,16 +170,23 @@ class MainWindow(QMainWindow):
         """
 
         # SET DRAG POS WINDOW
-        self.dragPos = event.globalPos()
+
+        # GET CURRENT POSITION AS QPointF
+        qpointf = event.globalPosition()
+
+        # CONVERT QPointF TO QPoint
+        self.dragPos = QPoint(
+            int(qpointf.x()),
+            int(qpointf.y())
+        )
 
         # PRINT MOUSE EVENTS
-        match event.buttons():
+        # match event.buttons():
 
-            case Qt.LeftButton:
-                print('Mouse click: LEFT CLICK')
-
-            case Qt.RightButton:
-                print('Mouse click: RIGHT CLICK')
+        #     case Qt.LeftButton:
+        #         print('Mouse click: LEFT CLICK')
+        #     case Qt.RightButton:
+        #         print('Mouse click: RIGHT CLICK')
 
 
 if __name__ == "__main__":
