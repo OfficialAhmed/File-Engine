@@ -119,20 +119,6 @@ class Controller:
     def restore_removed_content(self, destination: str) -> int:
         return self.FILE_REMOVER.restore(destination)
 
-    def total_content_removed(self) -> int:
-        """
-            Get total num files/folders removed and reset it to `0`
-            for the next iteration
-        """
-
-        total = self.FILE_REMOVER.get_removed_content_count() + \
-            self.FOLDER_REMOVER.get_removed_content_count()
-
-        self.FILE_REMOVER.reset_removed_content_count()
-        self.FOLDER_REMOVER.reset_removed_content_count()
-
-        return total
-
 
 class DialogWindow(QDialog):
 
