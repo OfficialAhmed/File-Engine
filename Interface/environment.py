@@ -121,7 +121,6 @@ class ProgressBar:
             * Widget will be stored in class for reference
         """
         self.progressBar = widget
-        ProgressBar.progressBar = widget
 
 
 """
