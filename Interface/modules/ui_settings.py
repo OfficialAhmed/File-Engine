@@ -7,9 +7,6 @@ from PySide6.QtWidgets import *
 from Interface.widgets.custom_grips import *
 
 
-
-
-
 class UiStyle:
 
     ENABLE_CUSTOM_TITLE_BAR = True
@@ -32,7 +29,7 @@ class UiStyle:
 class UiSettings(MainWindow):
     GLOBAL_STATE = False
     GLOBAL_TITLE_BAR = True
-    
+
     # RETURN STATUS
     def get_state(self):
         return UiSettings.GLOBAL_STATE
@@ -82,7 +79,6 @@ class UiSettings(MainWindow):
             self.left_grip.show()
             self.right_grip.show()
             self.bottom_grip.show()
-
 
     def toggleMenu(self, is_enabled: bool) -> None:
 

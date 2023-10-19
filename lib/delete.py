@@ -58,7 +58,7 @@ class Remover:
             with open(self.trash_content_file, "w+") as file:
                 json.dump(content, file)
 
-    def move(self, source: str, folder_name: str = "") -> None:
+    def move(self, source: str, folder_name: str = "") -> None | str:
         """
             ### Store content in trash folder
 
@@ -104,18 +104,17 @@ class Remover:
             if source not in self.removed_content.values():
                 self.removed_content[len(self.removed_content) + 1] = source
 
+        except FileNotFoundError:
+            return f"{source} -> DOESNT EXIST"
+        
         except Exception as e:
-            print(str(e))
+            return str(e)
 
     def restore(self, destination: str) -> None:
         """
             Redo moving from trash to original content's destination by reading the generated JSON
             * return total content restored
         """
-
-        if not os.path.exists(self.trash_content_file):
-            print("Restore not available. Content file not found")
-            return
 
         shutil.move(
             f"{self.trash_folder_path}{destination.replace(':', '')}",
@@ -132,7 +131,7 @@ class File(Remover):
     def __init__(self) -> None:
         super().__init__()
 
-    def remove(self, file_path: str):
+    def remove(self, file_path: str) -> None | str:
         self.move(file_path)
         self.dump_trash_content(self.removed_content)
 
@@ -142,6 +141,6 @@ class Folder(Remover):
     def __init__(self) -> None:
         super().__init__()
 
-    def remove(self, folder_path: str, folder_name: str):
+    def remove(self, folder_path: str, folder_name: str) -> None | str:
         self.move(folder_path, folder_name)
         self.dump_trash_content(self.removed_content)

@@ -53,21 +53,21 @@ class Mediator(Model):
 
     def set_controller_widgets(
         self,
-        lookupType:   QPushButton,
-        currentPath:  QComboBox,
-        lookupFormat: QLineEdit,
-        lookupInput:  QCheckBox,
-        isRecursive:  QLineEdit,
-        startBtn:     QComboBox
+        lookupType:            QPushButton,
+        currentPath:           QLineEdit,
+        lookupFormat:          QLineEdit,
+        lookupInput:           QCheckBox,
+        isRecursive:           QLineEdit,
+        startBtn:              QComboBox
     ):
         """
         Set current window widgets from 'UI' class
         """
-        self.startBtn:     QPushButton = startBtn
-        self.lookupType:   QComboBox = lookupType
-        self.lookupInput:  QLineEdit = lookupInput
-        self.isRecursive:  QCheckBox = isRecursive
-        self.lookupFormat: QComboBox = lookupFormat
+        self.startBtn:         QPushButton = startBtn
+        self.lookupType:       QComboBox = lookupType
+        self.lookupInput:      QLineEdit = lookupInput
+        self.isRecursive:      QCheckBox = isRecursive
+        self.lookupFormat:     QComboBox = lookupFormat
         self.currentPathInput: QLineEdit = currentPath
 
     def import_cache(self) -> None:
@@ -159,13 +159,11 @@ class Mediator(Model):
         for format in new_formats:
             self.lookupFormat.addItem(format)
 
-    def get_data(self) -> dict:
+    def get_data(self) -> (dict, bool):
         """
         ### Begin lookup process. 
             * Deactivate all btns and reactivate upon end of process 
         """
-
-        self.startBtn.setEnabled(False)
 
         input: str = self.lookupInput.text()
         type: str = self.lookupType.currentText()
@@ -178,40 +176,50 @@ class Mediator(Model):
             is_recursive,
         )
 
+        data = {}
+
+        # TERMINATE IF EITHER INPUTS ARE EMPTY
+        if not input or not self.path_input:
+            self.controller.show_dialog(
+                "SEARCH INPUT IS EMPTY!",
+                "w",
+                is_dialog=False
+            )
+
+            return (data, True)                 # FAILED = True
+
+        # TERMINATE IF ENTERED PATH CANNOT BE FOUND
+        if not os.path.exists(self.currentPathInput.text()):
+            self.controller.show_dialog(
+                "FOLDER DOESN'T EXIST. DOUBLE CHECK THE ENTERED PATH",
+                "w",
+                is_dialog=False
+            )
+
+            return (data, True)                 # FAILED = True
+
         try:
+            # SEARCH BY SELECTED FORMAT
+            if type == "FILES":
+                match format:
+                    case "NAME":
+                        data = self.controller.get_files_by_name(input)
 
-            data = {}
+                    case "EXTENSION":
+                        data = self.controller.get_files_by_extension(input)
 
-            # BOTH INPUTS REQUIRED
-            if not input or not self.path_input:
-                self.controller.show_dialog(
-                    "SEARCH INPUT IS EMPTY!",
-                    "w",
-                    is_dialog=False
-                )
+                    case "PATTERN":
+                        data = self.controller.get_files_by_pattern(input)
 
-            else:
-                # SEARCH BY SELECTED FORMAT
-                if type == "FILES":
-                    match format:
-                        case "NAME":
-                            data = self.controller.get_files_by_name(input)
+            elif type == "FOLDERS":
+                match format:
+                    case "NAME":
+                        data = self.controller.get_folders_by_name(input)
 
-                        case "EXTENSION":
-                            data = self.controller.get_files_by_extension(
-                                input)
+                    case "PATTERN":
+                        data = self.controller.get_folders_by_pattern(input)
 
-                        case "PATTERN":
-                            data = self.controller.get_files_by_pattern(input)
-
-                elif type == "FOLDERS":
-                    match format:
-                        case "NAME":
-                            data = self.controller.get_folders_by_name(input)
-
-                        case "PATTERN":
-                            data = self.controller.get_folders_by_pattern(
-                                input)
+            return (data, False)
 
         except Exception as e:
             self.controller.show_dialog(
@@ -220,9 +228,7 @@ class Mediator(Model):
                 is_dialog=False
             )
 
-        finally:
-            self.startBtn.setEnabled(True)
-            return data
+            return (data, True)                 # FAILED = True
 
 
 class Ui(Mediator):
@@ -230,7 +236,7 @@ class Ui(Mediator):
     def __init__(self) -> None:
         super().__init__()
 
-        self.data = []
+        self.data = {}
         self.checkboxes = []
         self.table_headers = (
             "FILE | FOLDER",
@@ -238,6 +244,42 @@ class Ui(Mediator):
             "SIZE (MB)",
             "SELECT / DESELECT"
         )
+
+    def generate_table(self):
+        """
+            GENERATE THE TABLE USING THE SELF.DATA
+        """
+
+        data = self.data.values()
+
+        # RENDER TABLE HEADERS
+        self.init_table(len(data))
+
+        # POPULATE THE TABLE WITH DATA
+        for row_index, row_data in enumerate(data):
+
+            for col_index, (_, value) in enumerate(row_data.items()):
+
+                item = QTableWidgetItem(str(value))
+                self.table_layout.setItem(row_index, col_index, item)
+
+                # RENDER CHECK ITEMS FOR EACH TABLE-ROW
+                if col_index == 2:
+
+                    checkbox = QCheckBox()
+                    checkbox.setChecked(True)
+
+                    self.table_layout.setCellWidget(
+                        row_index,                      # ROW INDEX
+                        3,                              # LAST COLUMN
+                        checkbox                        # ITEM
+                    )
+
+                    self.checkboxes.append(checkbox)
+
+        # RESIZE COLUMNS - BASED ON CONTENT SIZE
+        for col_index in range(self.table_layout.columnCount()):
+            self.table_layout.resizeColumnToContents(col_index)
 
     def start_lookup_clicked(self):
 
@@ -250,9 +292,15 @@ class Ui(Mediator):
             self.export_cache()
 
             # SEARCH PROCESS
-            self.data = self.get_data()
+            self.startBtn.setEnabled(False)
+            self.data, is_failed = self.get_data()
+            self.startBtn.setEnabled(True)
 
-            # UPDATE TABLE DATA
+            # THE PROCESS FAILED TO FETCH DATA. A MESSAGE HAS BEEN SHOWN TO THE USER.
+            if is_failed:
+                return None
+
+            # PATH EXISTED BUT NO FILES HAVE BEEN FOUND
             if not self.data:
                 self.init_table()
 
@@ -263,36 +311,7 @@ class Ui(Mediator):
                 )
                 return None
 
-            data = self.data.values()
-
-            # RENDER TABLE HEADERS
-            self.init_table(len(data))
-
-            # POPULATE THE TABLE WITH DATA
-            for row_index, row_data in enumerate(data):
-
-                for col_index, (_, value) in enumerate(row_data.items()):
-
-                    item = QTableWidgetItem(str(value))
-                    self.table_layout.setItem(row_index, col_index, item)
-
-                    # RENDER CHECK ITEMS FOR EACH TABLE-ROW
-                    if col_index == 2:
-
-                        checkbox = QCheckBox()
-                        checkbox.setChecked(True)
-
-                        self.table_layout.setCellWidget(
-                            row_index,                      # ROW INDEX
-                            3,                              # LAST COLUMN
-                            checkbox                        # ITEM
-                        )
-
-                        self.checkboxes.append(checkbox)
-
-            # RESIZE COLUMNS - BASED ON CONTENT SIZE
-            for col_index in range(self.table_layout.columnCount()):
-                self.table_layout.resizeColumnToContents(col_index)
+            self.generate_table()
 
     def delete_content_clicked(self):
 
@@ -345,11 +364,7 @@ class Ui(Mediator):
 
         # SUCCESSFULL ITEMS REMOVAL MESSAGE
         future_process.is_success.connect(
-            lambda: self.controller.show_dialog(
-                f"SUCCESSFULY REMOVED <{len(files_to_remove)}> ITEM(S)",
-                "OPERATION SUCCESSFULL",
-                False
-            )
+            self.removing_process_state
         )
 
         # UNSUCCESSFULL ITEMS REMOVAL MESSAGE
@@ -400,11 +415,7 @@ class Ui(Mediator):
 
             # SUCCESSFULL ITEMS REMOVAL MESSAGE
             future_process.is_success.connect(
-                lambda: self.controller.show_dialog(
-                    f"SUCCESSFULY RESTORED ALL ITEM(S)",
-                    "OPERATION SUCCESSFULL",
-                    False
-                )
+                self.removing_process_state
             )
 
             # UNSUCCESSFULL ITEMS REMOVAL MESSAGE
@@ -427,13 +438,68 @@ class Ui(Mediator):
             )
             return None
 
-    def save_process_clicked(self) -> None:
-        # TODO: IMPLEMENT FUNCTION
-        pass
+    def export_process_clicked(self) -> None:
+        """
+        EXPORT CURRENT DATA FOR LATER USE (FOR THE LOADING PROCESS)
+        """
 
-    def load_process_clicked(self) -> None:
-        # TODO: IMPLEMENT FUNCTION
-        pass
+        # IF NO DATA HAS BEEN FOUND, RETURN
+        if not self.data:
+            self.controller.show_dialog(
+                f"TO EXPORT THE CURRENT PROCESS, YOU NEED TO START THE PROCESS FIRST!",
+                "I",
+                is_dialog=False
+            )
+
+            return None
+
+        # GET FILE DESTINATION
+        folder_path = self.common_functions.get_path()
+        path = f"{folder_path}\\{self.common_functions.get_timestamp()}.json"
+
+        if folder_path:
+
+            with open(path, "w") as file:
+                json.dump(self.data, file)
+
+            # CHECK IF FILE EXPORTED SUCCESSFULLY
+            if os.path.exists(path) and os.path.getsize(path) > 0:
+                self.controller.show_dialog(
+                    f"PROCESS EXPORTED SUCCESSFULLY!",
+                    "I",
+                    is_dialog=False
+                )
+
+            else:
+                self.controller.show_dialog(
+                    f"SOMETHING WENT WRONG! PROCESS WASN'T EXPORTED. PLEASE TRY AGAIN!",
+                    "C",
+                    is_dialog=False
+                )
+
+    def import_process_clicked(self) -> None:
+        """
+            OVERWRITE THE DATA FROM A JSON FILE GENERATED BY THE SAVE PROCESS
+            THEN POPULATE THE DATA ONTO A NEW GENERATED TABLE
+        """
+        self.data = json.load(open(self.common_functions.get_path("json")))
+        self.generate_table()
+
+    def removing_process_state(self, state: bool):
+
+        if state:
+            self.controller.show_dialog(
+                f"SUCCESSFULY REMOVED ALL ITEM(S)",
+                "OPERATION SUCCESSFULL",
+                False
+            )
+
+        else:
+            self.controller.show_dialog(
+                f"SOME FILE(S) WEREN'T REMOVED SUCCESSFULY",
+                "OPERATION NOT FULLY SUCCESSFULL",
+                False
+            )
 
     def init_table(self, rows=1, columns=4):
         """
@@ -547,8 +613,8 @@ class Ui(Mediator):
         data = {
             self.delete_btn:           ("DELETE", "Delete All Selected Items"),
             self.restore_btn:          ("RESTORE", "Restore Last Deleted Process"),
-            self.save_btn:             ("SAVE", "Store Current Lookup"),
-            self.load_btn:             ("LOAD", "Load Previous Lookup"),
+            self.export_btn:           ("EXPORT", "Store Current Lookup"),
+            self.import_btn:           ("IMPORT", "Load Previous Lookup"),
             self.startLookup_btn:      ("START", "Start Lookup Process"),
             self.isRecursive_checkBox: ("RECURSIVE", "Find Files Recursively Through The Selected Path"),
         }
@@ -812,15 +878,15 @@ class Ui(Mediator):
 
         self.delete_btn = QPushButton(self.row_3)
         self.restore_btn = QPushButton(self.row_3)
-        self.save_btn = QPushButton(self.row_3)
-        self.load_btn = QPushButton(self.row_3)
+        self.export_btn = QPushButton(self.row_3)
+        self.import_btn = QPushButton(self.row_3)
 
         # BUTTONS DESIGN
         btns = {
             "delete_btn": self.delete_btn,
             "restore_btn": self.restore_btn,
-            "save_btn": self.save_btn,
-            "load_btn": self.load_btn
+            "export_btn": self.export_btn,
+            "import_btn": self.import_btn
         }
 
         for btn_name, btn in btns.items():
@@ -929,10 +995,10 @@ class Ui(Mediator):
             self.restore_btn, "restore file", size
         )
         self.common_functions.set_icon(
-            self.load_btn, "file upload", size
+            self.import_btn, "file upload", size
         )
         self.common_functions.set_icon(
-            self.save_btn, "file download", size
+            self.export_btn, "file download", size
         )
 
         """
@@ -951,7 +1017,7 @@ class Ui(Mediator):
 
         self.browseCurrentPath_btn.clicked.connect(
             lambda: self.set_user_path(
-                self.common_functions.get_user_path(),
+                self.common_functions.get_path(),
                 False
             )
         )
@@ -964,12 +1030,12 @@ class Ui(Mediator):
             lambda: self.delete_content_clicked()
         )
 
-        self.save_btn.clicked.connect(
-            lambda: self.save_process_clicked()
+        self.export_btn.clicked.connect(
+            lambda: self.export_process_clicked()
         )
 
-        self.load_btn.clicked.connect(
-            lambda: self.load_process_clicked()
+        self.import_btn.clicked.connect(
+            lambda: self.import_process_clicked()
         )
 
         self.restore_btn.clicked.connect(

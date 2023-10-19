@@ -180,14 +180,6 @@ class MainWindow(QMainWindow):
             int(qpointf.y())
         )
 
-        # PRINT MOUSE EVENTS
-        # match event.buttons():
-
-        #     case Qt.LeftButton:
-        #         print('Mouse click: LEFT CLICK')
-        #     case Qt.RightButton:
-        #         print('Mouse click: RIGHT CLICK')
-
 
 if __name__ == "__main__":
 

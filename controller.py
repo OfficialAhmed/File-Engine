@@ -35,7 +35,7 @@ class Controller:
     FILE_REMOVER = Delete.File()
     FOLDER_REMOVER = Delete.Folder()
 
-    def show_dialog(self, msg: str,  mode: str = "I", is_dialog: bool = True):
+    def show_dialog(self, msg: str,  mode: str = "I", is_dialog: bool = True) -> bool:
         """
         #### RENDER A WINDOW FOR INFO/PERMISSION
             PARAMS:
@@ -110,13 +110,13 @@ class Controller:
     def empty_trash(self) -> None:
         self.FILE_REMOVER.empty_trash()
         
-    def remove_file(self, file_path: str) -> None:
+    def remove_file(self, file_path: str) -> None | str:
         self.FILE_REMOVER.remove(file_path)
 
-    def remove_folder(self, folder_path: str, folder_name: str) -> None:
+    def remove_folder(self, folder_path: str, folder_name: str) -> None | str:
         self.FOLDER_REMOVER.remove(folder_path, folder_name)
 
-    def restore_removed_content(self, destination: str) -> int:
+    def restore_removed_content(self, destination: str) -> None:
         return self.FILE_REMOVER.restore(destination)
 
 

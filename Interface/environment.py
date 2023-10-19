@@ -31,6 +31,7 @@ from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 
+from datetime import datetime
 from controller import Controller
 
 
@@ -47,23 +48,32 @@ class Common:
 
         widget.setIconSize(QSize(*size))
 
-    def get_user_path(self) -> str | None:
+    def get_path(self, file_extension="") -> str | None:
         """
-        Render a window to select the path
+            ### RENDER A WINDOW TO GET FILE/FOLDER PATH 
+
+            - IF EXTENSION PROVIDED GET `FILE`, ELSE GET `FOLDER` PATH 
         """
 
-        options = QFileDialog.Options()
-        dialog = QFileDialog()
-        dialog.setOptions(options)
+        # ALLOW ONE FILE OF THE GIVEN EXTENSION
+        if file_extension:
+            path, _ = QFileDialog.getOpenFileName(
+                None,
+                "PICK A FILE TO CONTINUE",
+                "",                                     # PATH ON-WINDOW RENDER
+                f"*.{file_extension}",
+                options=QFileDialog.Options(),
+            )
 
-        path = QFileDialog.getExistingDirectory(
-            None,
-            "PICK A FOLDER TO CONTINUE",
-            "",  # PATH ON-WINDOW RENDER
-            options=options,
-        )
+        # ALLOW FOLDER PATH ONLY
+        else:
+            path = QFileDialog.getExistingDirectory(
+                None,
+                "PICK A FOLDER TO CONTINUE",
+                "",                                     # PATH ON-WINDOW RENDER
+                options=QFileDialog.Options(),
+            )
 
-        # RETURN THE DIRECTORY PATH, OTHERWISE RETURN NONE
         return path if path else None
 
     def get_progress_unit(
@@ -75,6 +85,9 @@ class Common:
         """
 
         return 100 / total_files
+
+    def get_timestamp(self):
+        return datetime.now().strftime("%d-%m-%Y %H_%M_%S")
 
 
 class Constant:
@@ -112,7 +125,8 @@ class ProgressBar:
     progressBar = None
 
     def update(self, progress: int):
-        self.progressBar.setValue(int(progress * 100))
+        num = int(progress * 100)
+        ProgressBar.progressBar.setValue(num)
 
     def set_widget(self, widget: QProgressBar):
         """
@@ -120,7 +134,7 @@ class ProgressBar:
             * ONE TIME CALL METHOD
             * Widget will be stored in class for reference
         """
-        self.progressBar = widget
+        ProgressBar.progressBar = widget
 
 
 """
@@ -140,7 +154,7 @@ class Worker(QObject):
 
     # SIGNALS TO COMMUNICATE TO THE MAIN THREAD
     is_fail = Signal(str)
-    is_success = Signal()
+    is_success = Signal(bool)
     progress_signal = Signal(float)
 
 
@@ -158,16 +172,22 @@ class DeleteWorker(Worker):
         super().__init__()
         self.files = files
         self.lookup_type = lookup_type
-        
+
         self.controller = Controller()
 
     def process(self, path: str) -> None:
 
         if self.lookup_type == "FOLDERS":
-            self.controller.remove_folder(path, path[:path.rfind("\\")])
+            # IF NOT EMPTY, ERROR HAS OCCURED
+            if self.controller.remove_folder(path, path[:path.rfind("\\")]):
+                return False
+            return True
 
         else:
-            self.controller.remove_file(path)
+            # IF NOT EMPTY, ERROR HAS OCCURED
+            if self.controller.remove_file(path):
+                return False
+            return True
 
     def run(self) -> None:
         """
@@ -175,7 +195,9 @@ class DeleteWorker(Worker):
         """
 
         try:
-            
+
+            is_all_removed = True
+
             # 'max_workers' SET TO MAX AVAILABLE CPU CORES
             with concurrent.futures.ThreadPoolExecutor(max_workers=None) as executor:
                 futures = [
@@ -188,7 +210,9 @@ class DeleteWorker(Worker):
                 total_files = len(self.files)
 
                 # UPDATE THE PROGRESS BAR, UPON EACH FINISHED PROCESS
-                for _ in concurrent.futures.as_completed(futures):
+                for future in concurrent.futures.as_completed(futures):
+                    if future.result():
+                        is_all_removed = False
 
                     completed += 1
                     progress = completed / total_files
@@ -196,7 +220,7 @@ class DeleteWorker(Worker):
 
             # REMOVE ROWS & INVOKE PROCESS SUCESSFUL METHOD
             self.remove_rows_signal.emit()
-            self.is_success.emit()
+            self.is_success.emit(is_all_removed)
 
         except Exception as e:
             self.is_fail.emit(str(e))
@@ -222,6 +246,9 @@ class RestoreWorker(Worker):
         self.progress_signal.emit(0)
 
         try:
+
+            is_all_removed = True
+
             with concurrent.futures.ThreadPoolExecutor(max_workers=None) as executor:
                 futures = [
                     executor.submit(self.process, file)
@@ -233,13 +260,17 @@ class RestoreWorker(Worker):
                 total_data = len(self.data)
 
                 # UPDATE THE PROGRESS BAR, UPON EACH FINISHED PROCESS
-                for _ in concurrent.futures.as_completed(futures):
+                for future in concurrent.futures.as_completed(futures):
+
+                    if future.result():
+                        is_all_removed = False
+
                     completed += 1
                     progress = completed / total_data
                     self.progress_signal.emit(progress)
 
             self.controller.empty_trash()
-            self.is_success.emit()
+            self.is_success.emit(is_all_removed)
 
         except Exception as error:
             self.is_fail.emit(str(error))

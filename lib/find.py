@@ -54,10 +54,6 @@ class File(Finder):
         self.detected_files = {}
 
     def set_path(self, path: str) -> None:
-
-        if not os.path.exists(path):
-            print("path error")
-
         self.path = path
 
     def set_recursive(self, rec: bool) -> None:
@@ -145,11 +141,6 @@ class Folder(Finder):
         self.detected_folders = {}
 
     def set_path(self, path: str):
-
-        if not os.path.exists(path):
-            print("Error path: not found")
-            return
-
         self.path = path
 
     def reset_detected_folders(self) -> None:
