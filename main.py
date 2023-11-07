@@ -6,6 +6,7 @@
 """
 
 # BUILT-INS
+import json
 import os
 import sys
 import platform
@@ -31,6 +32,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
 
+
         # SET AS GLOBAL WIDGETS
         self.ui = Ui()
         self.ui.setupUi(self)
@@ -39,37 +41,36 @@ class MainWindow(QMainWindow):
 
         # USE CUSTOM TITLE BAR | USE AS "False" FOR MAC OR LINUX
         self.ui.EENABLE_CUSTOM_TITLE_BAR = True if platform.system() == "Windows" else False
+        
 
-        # APP NAME
-        title = "File Engine"
-        description = "File management & automation tool"
+        self.setWindowTitle(
+            "File Engine"
+        )
 
-        # APPLY TEXTS
-        self.setWindowTitle(title)
-        self.widgets.titleRightInfo.setText(description)
+        self.widgets.titleRightInfo.setText(
+            "File Management & Automation Tool"
+        )
+
+        # SET UI DEFINITIONS
+        UiSettings.uiDefinitions(self)
+
+        # LEFT MENUS
+        self.widgets.home_page.clicked.connect(self.change_page)
+        self.widgets.delete_page.clicked.connect(self.change_page)
+        self.widgets.move_page.clicked.connect(self.change_page)
+        self.widgets.rename_page.clicked.connect(self.change_page)
+        self.widgets.lookup_page.clicked.connect(self.change_page)
 
         # TOGGLE MENU
         self.widgets.toggleButton.clicked.connect(
             lambda: UiSettings.toggleMenu(self, True)
         )
 
-        # SET UI DEFINITIONS
-        UiSettings.uiDefinitions(self)
-
-        # BUTTONS CLICK
-
-        # LEFT MENUS
-        self.widgets.home_page.clicked.connect(self.buttonClick)
-        self.widgets.delete_page.clicked.connect(self.buttonClick)
-        self.widgets.move_page.clicked.connect(self.buttonClick)
-        self.widgets.rename_page.clicked.connect(self.buttonClick)
-        self.widgets.lookup_page.clicked.connect(self.buttonClick)
-
         # EXTRA LEFT MENU
         self.widgets.toggleLeftBox.clicked.connect(
             lambda: UiSettings.toggleLeftBox(self, True)
         )
-        
+
         self.widgets.extraCloseColumnBtn.clicked.connect(
             lambda: UiSettings.toggleLeftBox(self, True)
         )
@@ -79,18 +80,13 @@ class MainWindow(QMainWindow):
             lambda: UiSettings.toggleRightBox(self, True)
         )
 
-        # SHOW APP
         self.show()
 
-        # DEFAULT THEME = DARK
-        # SET LIGHT THEME IF SETTING CHANGED
-        is_light_theme = False
-        light_theme = "Interface\\themes\\py_dracula_light.qss"
-
-        # SET THEME
-        if is_light_theme:
-            # LOAD AND APPLY STYLE
-            UiSettings.theme(self, light_theme, True)
+        default_settings = self.get_settings()
+        
+        # APPLY THEME - DARK IS THE DEFAULT
+        if default_settings.get("is_light_theme"):
+            UiSettings.theme(self, True)
 
         # SET HOME PAGE AND SELECT MENU
         self.widgets.stackedWidget.setCurrentWidget(
@@ -102,59 +98,25 @@ class MainWindow(QMainWindow):
             )
         )
 
-    def buttonClick(self):
+    def change_page(self):
         """
             BUTTONS CLICK
         """
 
-        # GET BUTTON CLICKED
         btn = self.sender()
         btn_name = btn.objectName()
 
+        UiSettings.resetStyle(self, btn_name)
+        btn.setStyleSheet(UiSettings.selectMenu(btn.styleSheet()))
+
         match btn_name:
+            case "home_page":      page = self.widgets.home_widgets
+            case "delete_page":    page = self.widgets.delete_widgets
+            case "move_page":      page = self.widgets.new_page
+            case "rename_page":    page = self.widgets.new_page
+            case "lookup_page":    page = self.widgets.new_page
 
-            # SHOW HOME PAGE
-            case "home_page":
-                self.widgets.stackedWidget.setCurrentWidget(
-                    self.widgets.home_widgets
-                )
-                UiSettings.resetStyle(self, btn_name)
-                btn.setStyleSheet(UiSettings.selectMenu(btn.styleSheet()))
-
-            # SHOW DELETE PAGE
-            case "delete_page":
-                self.widgets.stackedWidget.setCurrentWidget(
-                    self.widgets.delete_widgets
-                )
-                UiSettings.resetStyle(self, btn_name)
-                btn.setStyleSheet(UiSettings.selectMenu(btn.styleSheet()))
-
-            # SHOW NEW PAGE
-            case "move_page":
-                self.widgets.stackedWidget.setCurrentWidget(
-                    self.widgets.new_page
-                )
-
-                UiSettings.resetStyle(self, btn_name)
-                btn.setStyleSheet(
-                    UiSettings.selectMenu(
-                        btn.styleSheet()
-                    )
-                )
-
-            case "rename_page":
-                self.widgets.stackedWidget.setCurrentWidget(
-                    self.widgets.new_page
-                )
-                UiSettings.resetStyle(self, btn_name)
-                btn.setStyleSheet(UiSettings.selectMenu(btn.styleSheet()))
-
-            case "lookup_page":
-                self.widgets.stackedWidget.setCurrentWidget(
-                    self.widgets.new_page
-                )
-                UiSettings.resetStyle(self, btn_name)
-                btn.setStyleSheet(UiSettings.selectMenu(btn.styleSheet()))
+        self.widgets.stackedWidget.setCurrentWidget(page)
 
     def resizeEvent(self, event):
         """
@@ -169,8 +131,6 @@ class MainWindow(QMainWindow):
             MOUSE CLICK EVENTS
         """
 
-        # SET DRAG POS WINDOW
-
         # GET CURRENT POSITION AS QPointF
         qpointf = event.globalPosition()
 
@@ -179,6 +139,27 @@ class MainWindow(QMainWindow):
             int(qpointf.x()),
             int(qpointf.y())
         )
+
+    def get_settings(self) -> dict:
+
+        path = "data/settings/"
+        file = "default.json"
+
+        if not os.path.exists(path):
+            os.makedirs(path)
+
+        # MAKE SURE FILE EXISTS BEFORE MOVING ON
+        if os.path.exists(path + file):
+            return json.load(open(path + file))
+
+        # DEFAULT SETTINGS ON CREATE
+        data = {
+            "is_light_theme": False,
+        }
+
+        json.dump(data, open(path + file, "w+"))
+
+        return data
 
 
 if __name__ == "__main__":

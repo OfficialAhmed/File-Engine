@@ -86,13 +86,13 @@ class UiSettings(MainWindow):
 
             # GET WIDTH
             width = self.ui.leftMenuBg.width()
-            maxExtend = UiStyle.MENU_WIDTH
+            max_extended = UiStyle.MENU_WIDTH
             standard = 60
 
             # SET MAX WIDTH
-            widthExtended = standard
+            width_extended = standard
             if width == 60:
-                widthExtended = maxExtend
+                width_extended = max_extended
 
             # ANIMATION
             self.animation = QPropertyAnimation(
@@ -101,7 +101,7 @@ class UiSettings(MainWindow):
             )
             self.animation.setDuration(UiStyle.TIME_ANIMATION)
             self.animation.setStartValue(width)
-            self.animation.setEndValue(widthExtended)
+            self.animation.setEndValue(width_extended)
             self.animation.setEasingCurve(QEasingCurve.InOutQuart)
             self.animation.start()
 
@@ -229,11 +229,11 @@ class UiSettings(MainWindow):
                 w.setStyleSheet(UiSettings.deselectMenu(w.styleSheet()))
 
     # IMPORT THEMES FILES QSS/CSS
-    def theme(self, file, is_light_theme):
-
+    def theme(self, is_light_theme):
+        
         if is_light_theme:
 
-            str = open(file, 'r').read()
+            str = open("Interface\\themes\\py_dracula_light.qss").read()
             self.ui.styleSheet.setStyleSheet(str)
 
     # START - GUI DEFINITIONS
@@ -310,9 +310,15 @@ class UiSettings(MainWindow):
 
     def resize_grips(self):
         if UiStyle.ENABLE_CUSTOM_TITLE_BAR:
-            self.left_grip.setGeometry(0, 10, 10, self.height())
+            self.left_grip.setGeometry(
+                0, 10, 10, self.height()
+            )
             self.right_grip.setGeometry(
-                self.width() - 10, 10, 10, self.height())
-            self.top_grip.setGeometry(0, 0, self.width(), 10)
+                self.width() - 10, 10, 10, self.height()
+            )
+            self.top_grip.setGeometry(
+                0, 0, self.width(), 10
+            )
             self.bottom_grip.setGeometry(
-                0, self.height() - 10, self.width(), 10)
+                0, self.height() - 10, self.width(), 10
+            )

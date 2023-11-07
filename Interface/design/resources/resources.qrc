@@ -1,30 +1,31 @@
 <!DOCTYPE RCC>
 <RCC>
   <qresource prefix="images">
-    <file>../images/images/File Engine logo.png</file>
-    <file>../images/images/File Engine vertical.png</file>
+    <file>..\..\images\images\File Engine logo.png</file>
+    <file>..\..\images\images\File Engine vertical.png</file>
 
-    <file>../images/icons/menu.svg</file>
-    <file>../images/icons/close.svg</file>
-    <file>../images/icons/copy-outline.svg</file>
-    <file>../images/icons/delete sign.svg</file>
-    <file>../images/icons/file download.svg</file>
-    <file>../images/icons/file upload.svg</file>
-    <file>../images/icons/file move.svg</file>
-    <file>../images/icons/folder_outline.svg</file>
-    <file>../images/icons/home.svg</file>
-    <file>../images/icons/maximize.svg</file>
-    <file>../images/icons/minimize.svg</file>
-    <file>../images/icons/more.svg</file>
-    <file>../images/icons/remove-from-trash.svg</file>
-    <file>../images/icons/rename-outline.svg</file>
-    <file>../images/icons/restore file.svg</file>
-    <file>../images/icons/save-outline.svg</file>
-    <file>../images/icons/search-outline.svg</file>
-    <file>../images/icons/settings.svg</file>
-    <file>../images/icons/start.svg</file>
-    <file>../images/icons/tick-outline.svg</file>
-    <file>../images/icons/trash-can.svg</file>
-    <file>../images/icons/arrow down.svg</file>
-  </qresource>
-</RCC>
+    <file>..\..\images\icons\menu.svg</file>
+    <file>..\..\images\icons\close.svg</file>
+    <file>..\..\images\icons\copy-outline.svg</file>
+    <file>..\..\images\icons\delete sign.svg</file>
+    <file>..\..\images\icons\file download.svg</file>
+    <file>..\..\images\icons\file upload.svg</file>
+    <file>..\..\images\icons\file move.svg</file>
+    <file>..\..\images\icons\folder_outline.svg</file>
+    <file>..\..\images\icons\home.svg</file>
+    <file>..\..\images\icons\maximize.svg</file>
+    <file>..\..\images\icons\minimize.svg</file>
+    <file>..\..\images\icons\more.svg</file>
+    <file>..\..\images\icons\remove-from-trash.svg</file>
+    <file>..\..\images\icons\rename-outline.svg</file>
+    <file>..\..\images\icons\restore file.svg</file>
+    <file>..\..\images\icons\save-outline.svg</file>
+    <file>..\..\images\icons\search-outline.svg</file>
+    <file>..\..\images\icons\settings.svg</file>
+    <file>..\..\images\icons\start.svg</file>
+    <file>..\..\images\icons\tick-outline.svg</file>
+    <file>..\..\images\icons\trash-can.svg</file>
+    <file>..\..\images\icons\arrow down.svg</file>
+    <file>..\..\images\icons\display-mode-outline.svg</file>
+    </qresource>
+  </RCC>

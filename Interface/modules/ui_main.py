@@ -1,3 +1,4 @@
+import json
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
@@ -5,6 +6,7 @@ from PySide6.QtWidgets import *
 from . resources_rc import *
 from ..environment import Constant, Common, ProgressBar
 from .ui_delete import Ui as Ui_delete
+from controller import Controller
 
 
 class Ui(object):
@@ -14,6 +16,7 @@ class Ui(object):
 
         self.constant = Constant()
         self.common_functions = Common()
+        self.controller = Controller()
 
     def setupUi(self, MainWindow):
 
@@ -85,10 +88,10 @@ class Ui(object):
         self.btn_message = QPushButton(self.topMenus)
         self.moreBtn = QPushButton(self.rightButtons)
         self.btn_more = QPushButton(self.extraTopMenu)
-        self.btn_share = QPushButton(self.extraTopMenu)
         self.toggleButton = QPushButton(self.toggleBox)
         self.toggleLeftBox = QPushButton(self.bottomMenu)
         self.closeAppBtn = QPushButton(self.rightButtons)
+        self.btn_display_mode = QPushButton(self.extraTopMenu)
         self.minimizeAppBtn = QPushButton(self.rightButtons)
         self.maximizeAppBtn = QPushButton(self.rightButtons)
         self.btn_adjustments = QPushButton(self.extraTopMenu)
@@ -206,7 +209,6 @@ class Ui(object):
         self.btn_more.setFont(font)
         self.home_page.setFont(font)
         self.move_page.setFont(font)
-        self.btn_share.setFont(font)
         self.btn_print.setFont(font)
         self.styleSheet.setFont(font)
         self.btn_logout.setFont(font)
@@ -214,6 +216,7 @@ class Ui(object):
         self.rename_page.setFont(font)
         self.lookup_page.setFont(font)
         self.btn_message.setFont(font)
+        self.btn_display_mode.setFont(font)
         self.toggleButton.setFont(font)
         self.titleLeftApp.setFont(font1)
         self.toggleLeftBox.setFont(font)
@@ -308,7 +311,6 @@ class Ui(object):
 
         self.btn_more.setLayoutDirection(l_2_r)
         self.btn_print.setLayoutDirection(l_2_r)
-        self.btn_share.setLayoutDirection(l_2_r)
         self.move_page.setLayoutDirection(l_2_r)
         self.home_page.setLayoutDirection(l_2_r)
         self.btn_logout.setLayoutDirection(l_2_r)
@@ -316,6 +318,7 @@ class Ui(object):
         self.lookup_page.setLayoutDirection(l_2_r)
         self.rename_page.setLayoutDirection(l_2_r)
         self.delete_page.setLayoutDirection(l_2_r)
+        self.btn_display_mode.setLayoutDirection(l_2_r)
         self.toggleButton.setLayoutDirection(l_2_r)
         self.toggleLeftBox.setLayoutDirection(l_2_r)
         self.btn_adjustments.setLayoutDirection(l_2_r)
@@ -330,7 +333,7 @@ class Ui(object):
 
         self.btn_more.setMinimumSize(_0_45)
         self.btn_print.setMinimumSize(_0_45)
-        self.btn_share.setMinimumSize(_0_45)
+        self.btn_display_mode.setMinimumSize(_0_45)
         self.move_page.setMinimumSize(_0_45)
         self.home_page.setMinimumSize(_0_45)
         self.btn_logout.setMinimumSize(_0_45)
@@ -392,7 +395,7 @@ class Ui(object):
         self.move_page.setSizePolicy(sizePolicy)
         self.lookup_page.setSizePolicy(sizePolicy)
         self.toggleLeftBox.setSizePolicy(sizePolicy)
-        self.btn_share.setSizePolicy(sizePolicy)
+        self.btn_display_mode.setSizePolicy(sizePolicy)
         self.btn_adjustments.setSizePolicy(sizePolicy)
         self.btn_more.setSizePolicy(sizePolicy)
         self.leftBox.setSizePolicy(sizePolicy1)
@@ -434,7 +437,7 @@ class Ui(object):
             self.toggleLeftBox.sizePolicy().hasHeightForWidth()
         )
         sizePolicy.setHeightForWidth(
-            self.btn_share.sizePolicy().hasHeightForWidth()
+            self.btn_display_mode.sizePolicy().hasHeightForWidth()
         )
         sizePolicy.setHeightForWidth(
             self.btn_adjustments.sizePolicy().hasHeightForWidth()
@@ -470,7 +473,6 @@ class Ui(object):
         pointing_hand = QCursor(Qt.PointingHandCursor)
         self.moreBtn.setCursor(pointing_hand)
         self.btn_more.setCursor(pointing_hand)
-        self.btn_share.setCursor(pointing_hand)
         self.btn_print.setCursor(pointing_hand)
         self.move_page.setCursor(pointing_hand)
         self.home_page.setCursor(pointing_hand)
@@ -480,6 +482,7 @@ class Ui(object):
         self.delete_page.setCursor(pointing_hand)
         self.btn_message.setCursor(pointing_hand)
         self.closeAppBtn.setCursor(pointing_hand)
+        self.btn_display_mode.setCursor(pointing_hand)
         self.toggleButton.setCursor(pointing_hand)
         self.toggleLeftBox.setCursor(pointing_hand)
         self.maximizeAppBtn.setCursor(pointing_hand)
@@ -574,7 +577,6 @@ class Ui(object):
         self.topMenus.setObjectName(u"topMenus")
         self.new_page.setObjectName(u"new_page")
         self.home_widgets.setObjectName(u"delete")
-        self.btn_share.setObjectName(u"btn_share")
         self.appLayout.setObjectName(u"appLayout")
         self.extraIcon.setObjectName(u"extraIcon")
         self.move_page.setObjectName(u"move_page")
@@ -599,6 +601,7 @@ class Ui(object):
         self.delete_page.setObjectName(u"delete_page")
         self.topLogoInfo.setObjectName(u"topLogoInfo")
         self.extraCenter.setObjectName(u"extraCenter")
+        self.btn_display_mode.setObjectName(u"display_mode")
         self.extraTopMenu.setObjectName(u"extraTopMenu")
         self.extraContent.setObjectName(u"extraContent")
         self.titleLeftApp.setObjectName(u"titleLeftApp")
@@ -669,7 +672,7 @@ class Ui(object):
         self.extraTopLayout.addWidget(self.extraLabel, 0, 1, 1, 1)
         self.extraTopLayout.addWidget(self.extraCloseColumnBtn, 0, 2, 1, 1)
         self.extraColumLayout.addWidget(self.extraTopBg)
-        self.verticalLayout_11.addWidget(self.btn_share)
+        self.verticalLayout_11.addWidget(self.btn_display_mode)
         self.verticalLayout_11.addWidget(self.btn_adjustments)
         self.verticalLayout_11.addWidget(self.btn_more)
         self.verticalLayout_12.addWidget(self.extraTopMenu, 0, Qt.AlignTop)
@@ -732,7 +735,7 @@ class Ui(object):
         # SET TRASLATIONS
         self.retranslateUi(MainWindow)
 
-        self.render_images()
+        self.set_images()
         self.stackedWidget.setCurrentIndex(1)
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -747,12 +750,12 @@ class Ui(object):
 
         objs = {
             # OBJECT:                  (TEXT, TOOLTIP)
-            self.btn_share:            ("...", ""),
-            self.btn_adjustments:      ("...", ""),
-            self.btn_more:             ("...", ""),
-            self.btn_message:          ("...", ""),
-            self.btn_print:            ("...", ""),
-            self.btn_logout:           ("...", ""),
+            self.btn_display_mode:         ("LIGHT/DARK MODE", ""),
+            self.btn_adjustments:      ("NOT IMPLEMENTED", ""),
+            self.btn_more:             ("NOT IMPLEMENTED", ""),
+            self.btn_message:          ("NOT IMPLEMENTED", ""),
+            self.btn_print:            ("NOT IMPLEMENTED", ""),
+            self.btn_logout:           ("NOT IMPLEMENTED", ""),
             self.toggleButton:         ("HIDE", ""),
             self.home_page:            ("HOME", ""),
             self.move_page:            ("MOVE", ""),
@@ -811,7 +814,7 @@ class Ui(object):
             )
         )
 
-    def render_images(self) -> None:
+    def set_images(self) -> None:
 
         # WINDOW
         self.common_functions.set_icon(self.moreBtn, "more")
@@ -821,10 +824,10 @@ class Ui(object):
 
         # MAIN PAGE
         self.set_bg_image(
-            self.home_widgets,
-            "File Engine vertical",
-            False,
-            "background-position: center;\n" + "background-repeat: no-repeat;"
+            is_icon=False,
+            widget=self.home_widgets,
+            name="File Engine vertical",
+            extra_style="background-position: center;\n" + "background-repeat: no-repeat;"
         )
 
         # MAIN OPTIONS
@@ -837,9 +840,11 @@ class Ui(object):
         self.set_bg_image(self.lookup_page, "search-outline")
 
         # LEFT MENU OPTIONS
-        self.set_bg_image(self.btn_more, "home")
-        self.set_bg_image(self.btn_share, "home")
-        self.set_bg_image(self.btn_adjustments, "home")
+        # self.set_bg_image(self.btn_more, "")
+        # self.set_bg_image(self.btn_adjustments, "")
+        self.set_bg_image(self.btn_display_mode, "display-mode-outline")
+        
+        self.btn_display_mode.pressed.connect(self.set_display_mode)
         self.common_functions.set_icon(self.extraCloseColumnBtn, "close")
 
         # RIGHT MENU OPTIONS
@@ -847,9 +852,9 @@ class Ui(object):
         self.set_bg_image(self.btn_logout, "home")
         self.set_bg_image(self.btn_message, "home")
 
-    def set_bg_image(self, widget: QWidget, name: str, is_icon=True, extra_style="") -> str:
+    def set_bg_image(self, widget: QWidget, name: str, is_icon=True, extra_style="") -> None:
         """
-            return images from resources.rc
+            SET IMAGES FROM GENERATED RESOURCES.RC
         """
 
         # Determine path and extension
@@ -860,3 +865,23 @@ class Ui(object):
             f"background-image: url({self.constant.get_resources_path()}{path}/{name}.{ext});\
             {extra_style}"
         )
+
+    def set_display_mode(self):
+        """
+            CHANGE DISPLAY MODE FROM DARK/LIGHT OR LIGHT/DARK
+            STORE THE BOOL VALUE IN THE DEFAULT SETTINGS
+        """
+        
+        if self.controller.show_dialog(
+            "THEME WILL BE CHANGED AFTER RESTARTING",
+            "Q"
+        ):
+            path = "data/settings/default.json"
+            settings: dict = json.load(open(path))
+
+            # INVERSE THE SAVED THEME MODE
+            is_light_theme = False if settings.get("is_light_theme") else True
+
+            settings["is_light_theme"] = is_light_theme
+
+            json.dump(settings, open(path, "w"))
