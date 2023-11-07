@@ -4,7 +4,7 @@ from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 
 from . resources_rc import *
-from ..environment import Constant, Common, ProgressBar
+from ..environment import Constant, Common, ProgressBar, Html
 from .ui_delete import Ui as Ui_delete
 from controller import Controller
 
@@ -17,6 +17,7 @@ class Ui(object):
         self.constant = Constant()
         self.common_functions = Common()
         self.controller = Controller()
+        self.html = Html()
 
     def setupUi(self, MainWindow):
 
@@ -794,22 +795,11 @@ class Ui(object):
                     )
                 )
 
+        
         self.textEdit.setHtml(
             QCoreApplication.translate(
                 "MainWindow",
-                u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-                "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-                "p, li { white-space: pre-wrap; }\n"
-                "</style></head><body style=\" font-family:'Segoe UI'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
-                "<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600; color:#ff79c6;\">CREDITS</span></p>\n"
-                "<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" color:#ffffff;\">UI design by: Wanderson M. Pimenta</span></p>\n"
-                "<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" color:#ffffff;\">Dracula theme by: Zeno Rocha</span></p>\n"
-                "<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600; color:#ff79c6;\">LICENSE</span></p>\n"
-                "<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" color:#bd93f9;\">https://github.com/OfficialAhmed/File-Engine/blob/main/LICENSE</span></p>\n"
-                "<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600; color:#ff79c6;\">DEVELOPER</span></p>\n"
-                "<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:9pt; color:#ffffff;\">@OfficialAhmed0</span></p>\n"
-                "<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600; color:#ff79c6;\">GitHub</span></p>\n"
-                "<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" color:#bd93f9;\">https://github.com/OfficialAhmed/File-Engine/blob/main/LICENSE</span></p></body></html>",
+                self.html.get_credits_page(),
                 None
             )
         )
@@ -843,7 +833,7 @@ class Ui(object):
         # self.set_bg_image(self.btn_more, "")
         # self.set_bg_image(self.btn_adjustments, "")
         self.set_bg_image(self.btn_display_mode, "display-mode-outline")
-        
+
         self.btn_display_mode.pressed.connect(self.set_display_mode)
         self.common_functions.set_icon(self.extraCloseColumnBtn, "close")
 
@@ -871,7 +861,7 @@ class Ui(object):
             CHANGE DISPLAY MODE FROM DARK/LIGHT OR LIGHT/DARK
             STORE THE BOOL VALUE IN THE DEFAULT SETTINGS
         """
-        
+
         if self.controller.show_dialog(
             "THEME WILL BE CHANGED AFTER RESTARTING",
             "Q"

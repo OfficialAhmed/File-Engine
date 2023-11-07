@@ -111,12 +111,49 @@ class Html:
     def __init__(self) -> None:
 
         self.color = self.COLOR
+        self.p_start = '<p align="center" style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">'
+        self.p_end = f"</p>{self.p_start}"
 
     def get_bg_color(self, name: str) -> str:
         return f"background-color: rgb({self.color.get(name)})"
 
     def get_rgb_color(self, name: str) -> tuple[int, int, int]:
         return tuple(int(x) for x in self.color.get(name).split(", "))
+
+    def title_span_tag(self, text: str, clr: str = "#ff79c6", f_size: str = "12") -> str:
+        return f'<span style="font-size:{f_size}pt; font-weight:600; color:{clr}">{text}</span>'
+
+    def get_credits_page(self) -> str:
+        return \
+            '<body style="font-family:"Segoe UI"; font-size:10pt; font-weight:400; font-style:normal">\n' +\
+            self.p_start +\
+            self.title_span_tag(
+                "CREDITS"
+            ) + self.p_end +\
+            self.title_span_tag(
+                "MAIN UI DESIGN : Wanderson M. Pimenta", "#ffffff", "9"
+            ) + self.p_end +\
+            self.title_span_tag(
+                "DRACULA THEME: Zeno Rocha", "#ffffff", "9"
+            ) + self.p_end +\
+            self.title_span_tag(
+                "LICENSE"
+            ) + self.p_end +\
+            self.title_span_tag(
+                "https://github.com/OfficialAhmed/File-Engine/blob/main/LICENSE", "#bd93f9", "9"
+            ) + self.p_end +\
+            self.title_span_tag(
+                "DEVELOPER"
+            ) + self.p_end +\
+            self.title_span_tag(
+                "@OfficialAhmed0", "#ffffff", "9"
+            ) + self.p_end +\
+            self.title_span_tag(
+                "GitHub"
+            ) + self.p_end +\
+            self.title_span_tag(
+                "https://github.com/OfficialAhmed/File-Engine", "#bd93f9", "9"
+            )+"</p>"
 
 
 class ProgressBar:

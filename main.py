@@ -6,10 +6,10 @@
 """
 
 # BUILT-INS
-import json
-import os
-import sys
-import platform
+from json import load, dump
+from os import environ, path, makedirs
+from sys import argv, exit
+from platform import system
 
 # QT / PYSIDE FRAMEWORK
 from PySide6.QtWidgets import *
@@ -22,7 +22,7 @@ from Interface.modules.ui_settings import *
 
 
 # FIX Problem for High DPI and Scale above 100%
-os.environ["QT_FONT_DPI"] = "96"
+environ["QT_FONT_DPI"] = "96"
 
 
 class MainWindow(QMainWindow):
@@ -32,7 +32,6 @@ class MainWindow(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
 
-
         # SET AS GLOBAL WIDGETS
         self.ui = Ui()
         self.ui.setupUi(self)
@@ -40,8 +39,7 @@ class MainWindow(QMainWindow):
         self.widgets = self.ui
 
         # USE CUSTOM TITLE BAR | USE AS "False" FOR MAC OR LINUX
-        self.ui.EENABLE_CUSTOM_TITLE_BAR = True if platform.system() == "Windows" else False
-        
+        self.ui.EENABLE_CUSTOM_TITLE_BAR = True if system() == "Windows" else False
 
         self.setWindowTitle(
             "File Engine"
@@ -83,7 +81,7 @@ class MainWindow(QMainWindow):
         self.show()
 
         default_settings = self.get_settings()
-        
+
         # APPLY THEME - DARK IS THE DEFAULT
         if default_settings.get("is_light_theme"):
             UiSettings.theme(self, True)
@@ -142,29 +140,29 @@ class MainWindow(QMainWindow):
 
     def get_settings(self) -> dict:
 
-        path = "data/settings/"
+        dir = "data/settings/"
         file = "default.json"
 
-        if not os.path.exists(path):
-            os.makedirs(path)
+        if not path.exists(dir):
+            makedirs(dir)
 
         # MAKE SURE FILE EXISTS BEFORE MOVING ON
-        if os.path.exists(path + file):
-            return json.load(open(path + file))
+        if path.exists(dir + file):
+            return load(open(dir + file))
 
         # DEFAULT SETTINGS ON CREATE
         data = {
             "is_light_theme": False,
         }
 
-        json.dump(data, open(path + file, "w+"))
+        dump(data, open(dir + file, "w+"))
 
         return data
 
 
 if __name__ == "__main__":
 
-    app = QApplication(sys.argv)
+    app = QApplication(argv)
     app.setWindowIcon(QIcon("icon.ico"))
     window = MainWindow()
-    sys.exit(app.exec())
+    exit(app.exec())
