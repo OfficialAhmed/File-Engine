@@ -2086,41 +2086,25 @@ background-repeat: no-repeat;</string>
                               </property>
                              </widget>
                             </item>
-                            <item row="1" column="4">
-                             <widget class="QPushButton" name="startLookup_btn">
+                            <item row="2" column="0">
+                             <widget class="QCheckBox" name="isRecursive_checkBox">
                               <property name="enabled">
-                               <bool>false</bool>
-                              </property>
-                              <property name="minimumSize">
-                               <size>
-                                <width>150</width>
-                                <height>30</height>
-                               </size>
-                              </property>
-                              <property name="font">
-                               <font>
-                                <family>Segoe UI</family>
-                                <pointsize>10</pointsize>
-                                <weight>50</weight>
-                                <italic>false</italic>
-                                <bold>false</bold>
-                               </font>
-                              </property>
-                              <property name="cursor">
-                               <cursorShape>PointingHandCursor</cursorShape>
+                               <bool>true</bool>
                               </property>
                               <property name="toolTip">
-                               <string>Start lookup process</string>
+                               <string>Find files recursively through the selected path</string>
+                              </property>
+                              <property name="autoFillBackground">
+                               <bool>false</bool>
                               </property>
                               <property name="styleSheet">
-                               <string notr="true">background-color: rgb(52, 59, 72);</string>
+                               <string notr="true"/>
                               </property>
                               <property name="text">
-                               <string>START</string>
+                               <string>RECURSIVE</string>
                               </property>
-                              <property name="icon">
-                               <iconset>
-                                <normaloff>../images/icons/start.svg</normaloff>../images/icons/start.svg</iconset>
+                              <property name="checked">
+                               <bool>true</bool>
                               </property>
                              </widget>
                             </item>
@@ -2160,28 +2144,6 @@ background-repeat: no-repeat;</string>
                                 <string>EXTENSION</string>
                                </property>
                               </item>
-                             </widget>
-                            </item>
-                            <item row="2" column="0">
-                             <widget class="QCheckBox" name="isRecursive_checkBox">
-                              <property name="enabled">
-                               <bool>true</bool>
-                              </property>
-                              <property name="toolTip">
-                               <string>Find files recursively through the selected path</string>
-                              </property>
-                              <property name="autoFillBackground">
-                               <bool>false</bool>
-                              </property>
-                              <property name="styleSheet">
-                               <string notr="true"/>
-                              </property>
-                              <property name="text">
-                               <string>RECURSIVE</string>
-                              </property>
-                              <property name="checked">
-                               <bool>true</bool>
-                              </property>
                              </widget>
                             </item>
                             <item row="0" column="0">
@@ -2328,6 +2290,44 @@ background-repeat: no-repeat;</string>
                                </size>
                               </property>
                              </spacer>
+                            </item>
+                            <item row="1" column="4">
+                             <widget class="QPushButton" name="startLookup_btn">
+                              <property name="enabled">
+                               <bool>false</bool>
+                              </property>
+                              <property name="minimumSize">
+                               <size>
+                                <width>150</width>
+                                <height>30</height>
+                               </size>
+                              </property>
+                              <property name="font">
+                               <font>
+                                <family>Segoe UI</family>
+                                <pointsize>10</pointsize>
+                                <weight>50</weight>
+                                <italic>false</italic>
+                                <bold>false</bold>
+                               </font>
+                              </property>
+                              <property name="cursor">
+                               <cursorShape>PointingHandCursor</cursorShape>
+                              </property>
+                              <property name="toolTip">
+                               <string>Start lookup process</string>
+                              </property>
+                              <property name="styleSheet">
+                               <string notr="true">background-color: rgb(52, 59, 72);</string>
+                              </property>
+                              <property name="text">
+                               <string>START</string>
+                              </property>
+                              <property name="icon">
+                               <iconset>
+                                <normaloff>../images/icons/start.svg</normaloff>../images/icons/start.svg</iconset>
+                              </property>
+                             </widget>
                             </item>
                            </layout>
                           </item>
@@ -2908,7 +2908,7 @@ background-repeat: no-repeat;</string>
                           <item>
                            <layout class="QVBoxLayout" name="optionBtns_layout">
                             <item>
-                             <widget class="QPushButton" name="delete_btn">
+                             <widget class="QPushButton" name="rename_btn">
                               <property name="enabled">
                                <bool>false</bool>
                               </property>
@@ -2996,7 +2996,7 @@ background-repeat: no-repeat;</string>
                              </widget>
                             </item>
                             <item>
-                             <widget class="QPushButton" name="save_btn">
+                             <widget class="QPushButton" name="export_btn">
                               <property name="enabled">
                                <bool>false</bool>
                               </property>
@@ -3025,7 +3025,7 @@ background-repeat: no-repeat;</string>
                                <string notr="true">background-color: rgb(52, 59, 72);</string>
                               </property>
                               <property name="text">
-                               <string>SAVE</string>
+                               <string>EXPORT</string>
                               </property>
                               <property name="icon">
                                <iconset>
@@ -3040,7 +3040,7 @@ background-repeat: no-repeat;</string>
                              </widget>
                             </item>
                             <item>
-                             <widget class="QPushButton" name="load_btn">
+                             <widget class="QPushButton" name="import_btn">
                               <property name="enabled">
                                <bool>false</bool>
                               </property>
@@ -3069,7 +3069,7 @@ background-repeat: no-repeat;</string>
                                <string notr="true">background-color: rgb(52, 59, 72);</string>
                               </property>
                               <property name="text">
-                               <string>LOAD</string>
+                               <string>IMPORT</string>
                               </property>
                               <property name="icon">
                                <iconset>
