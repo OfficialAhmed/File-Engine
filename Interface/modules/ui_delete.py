@@ -1,237 +1,17 @@
-"""
+from PySide6.QtCore import QCoreApplication, QSize, Qt
+from PySide6.QtGui import QBrush, QColor, QCursor, QPalette
+from PySide6.QtWidgets import (
+    QAbstractItemView, QAbstractScrollArea, QCheckBox, QComboBox, QFrame,
+    QGridLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QSizePolicy,
+    QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget
+)
 
-    Delete page UI / logic
-
-    PARENT CLASS: Model
-        CHILD CLASS: Controller
-            CHILD CLASS: Ui
-
-"""
-
-import json
 import os
-from PySide6.QtWidgets import *
-from PySide6.QtCore import *
-from PySide6.QtGui import *
-
-from Interface.environment import *
-from controller import Controller
+import json
+from Interface.environment import Common
 
 
-class Model:
-    """
-    ### SHARABLE OBJECTS AND METHODS
-        ACCESSIBLE BY BOTH CONTROLLER & UI
-    """
-
-    def __init__(self) -> None:
-
-        self.html = Html()
-        self.constant = Constant()
-        self.controller = Controller()
-        self.controller.update_remover_param()
-
-        self.common_functions = Common()
-        self.progressBar = ProgressBar()
-
-        self.path_input = ""
-        self.cache_file = self.controller.CACHE_FILE
-
-
-class Mediator(Model):
-    """
-    ### MAINLY UI FUNCTIONALITY/INTERACTIONS
-        ACCESSIBLE BY UI ONLY
-    """
-
-    def __init__(self) -> None:
-        super().__init__()
-
-        # CREATE DATA FOLDER IF NOT FOUND
-        if not os.path.exists("data"):
-            os.mkdir(self.controller.DATA_PATH)
-
-    def set_controller_widgets(
-        self,
-        lookupType:            QPushButton,
-        currentPath:           QLineEdit,
-        lookupFormat:          QLineEdit,
-        lookupInput:           QCheckBox,
-        isRecursive:           QLineEdit,
-        startBtn:              QComboBox
-    ):
-        """
-        Set current window widgets from 'UI' class
-        """
-        self.startBtn:         QPushButton = startBtn
-        self.lookupType:       QComboBox = lookupType
-        self.lookupInput:      QLineEdit = lookupInput
-        self.isRecursive:      QCheckBox = isRecursive
-        self.lookupFormat:     QComboBox = lookupFormat
-        self.currentPathInput: QLineEdit = currentPath
-
-    def import_cache(self) -> None:
-
-        # IF CACHE FOUND
-        if os.path.exists(self.controller.CACHE_FILE):
-            cache: dict = json.load(open(self.cache_file)).get("delete page")
-
-            self.lookupInput.setText(cache.get("lookupInput"))
-            self.isRecursive.setChecked(cache.get("IsRecursive"))
-            self.currentPathInput.setText(cache.get("currentPath"))
-            self.lookupType.setCurrentText(cache.get("lookupType"))
-
-            self.path_input = cache.get("currentPath")
-
-            # UPDATE LOOKUP FORMAT ACCORDING TO THE CACHED LOOKUP TYPE
-            self.change_lookup_format()
-
-            self.lookupFormat.setCurrentText(cache.get("lookupFormat"))
-
-    def export_cache(self) -> None:
-
-        # TODO: CHECK IF BOTH CACHES ARE THE SAME, SKIP EXPORTING - NO NEED TO WASTE TIME IN WRITING
-        cache = {}
-
-        # IF CACHE FOUND
-        if os.path.exists(self.cache_file):
-            cache: dict = json.load(open(self.cache_file))
-
-        search = self.lookupInput.text()
-        path = self.currentPathInput.text()
-        lu_type = self.lookupType.currentText()
-        recursive = self.isRecursive.isChecked()
-        lu_frmt = self.lookupFormat.currentText()
-
-        cache["delete page"] = {
-            "lookupType":   lu_type,
-            "currentPath":  path,
-            "lookupFormat": lu_frmt,
-            "lookupInput":  search,
-            "IsRecursive":  recursive,
-        }
-
-        with open(self.cache_file, "w+") as file:
-            json.dump(cache, file)
-
-    def set_user_path(
-        self, path: str,
-        is_changed_manually: bool
-    ) -> None:
-        """
-        Update user path input
-        """
-
-        # RESET USER PATH
-        if not path:
-            self.path_input = ""
-            return
-
-        self.path_input = path
-
-        if not is_changed_manually:
-            self.currentPathInput.setText(path)
-
-    def change_lookup_format(self) -> None:
-        """
-        Change lookup format options according to the lookup type
-        """
-
-        current_type = self.lookupType.currentText()
-
-        # REMOVE ALL TYPES
-        self.lookupFormat.clear()
-
-        # GENERATE NEW TYPES
-        new_formats = (
-            "NAME",
-            "PATTERN"
-        )
-
-        # ADD THE OPTION 'EXTENSION' IF 'FILES' SELECTED
-        if current_type == "FILES":
-            new_formats = (
-                "NAME",
-                "PATTERN",
-                "EXTENSION"
-            )
-
-        for format in new_formats:
-            self.lookupFormat.addItem(format)
-
-    def get_data(self) -> (dict, bool):
-        """
-        ### Begin lookup process. 
-            * Deactivate all btns and reactivate upon end of process 
-        """
-
-        input: str = self.lookupInput.text()
-        type: str = self.lookupType.currentText()
-        format: str = self.lookupFormat.currentText()
-        is_recursive: bool = self.isRecursive.isChecked()
-
-        # UPDATE THE FINDER PARAMETERS
-        self.controller.update_finder_param(
-            self.path_input,
-            is_recursive,
-        )
-
-        data = {}
-
-        # TERMINATE IF EITHER INPUTS ARE EMPTY
-        if not input or not self.path_input:
-            self.controller.show_dialog(
-                "SEARCH INPUT IS EMPTY!",
-                "w",
-                is_dialog=False
-            )
-
-            return (data, True)                 # FAILED = True
-
-        # TERMINATE IF ENTERED PATH CANNOT BE FOUND
-        if not os.path.exists(self.currentPathInput.text()):
-            self.controller.show_dialog(
-                "FOLDER DOESN'T EXIST. DOUBLE CHECK THE ENTERED PATH",
-                "w",
-                is_dialog=False
-            )
-
-            return (data, True)                 # FAILED = True
-
-        try:
-            # SEARCH BY SELECTED FORMAT
-            if type == "FILES":
-                match format:
-                    case "NAME":
-                        data = self.controller.get_files_by_name(input)
-
-                    case "EXTENSION":
-                        data = self.controller.get_files_by_extension(input)
-
-                    case "PATTERN":
-                        data = self.controller.get_files_by_pattern(input)
-
-            elif type == "FOLDERS":
-                match format:
-                    case "NAME":
-                        data = self.controller.get_folders_by_name(input)
-
-                    case "PATTERN":
-                        data = self.controller.get_folders_by_pattern(input)
-
-            return (data, False)
-
-        except Exception as e:
-            self.controller.show_dialog(
-                f"UNKNOWN ERROR OCCURED | {str(e)}",
-                "c",
-                is_dialog=False
-            )
-
-            return (data, True)                 # FAILED = True
-
-
-class Ui(Mediator):
+class Ui(Common):
 
     def __init__(self) -> None:
         super().__init__()
@@ -454,8 +234,8 @@ class Ui(Mediator):
             return None
 
         # GET FILE DESTINATION
-        folder_path = self.common_functions.get_path()
-        path = f"{folder_path}\\{self.common_functions.get_timestamp()}.json"
+        folder_path = self.get_path()
+        path = f"{folder_path}\\{self.get_timestamp()}.json"
 
         if folder_path:
 
@@ -482,7 +262,7 @@ class Ui(Mediator):
             OVERWRITE THE DATA FROM A JSON FILE GENERATED BY THE SAVE PROCESS
             THEN POPULATE THE DATA ONTO A NEW GENERATED TABLE
         """
-        self.data = json.load(open(self.common_functions.get_path("json")))
+        self.data = json.load(open(self.get_path("json")))
         self.generate_table()
 
     def removing_process_state(self, state: bool):
@@ -855,22 +635,22 @@ class Ui(Mediator):
         """
         size = (20, 20)
 
-        self.common_functions.set_icon(
+        self.set_icon(
             self.browseCurrentPath_btn, "folder_outline", size
         )
-        self.common_functions.set_icon(
+        self.set_icon(
             self.startLookup_btn, "start", size
         )
-        self.common_functions.set_icon(
+        self.set_icon(
             self.delete_btn, "delete sign", size
         )
-        self.common_functions.set_icon(
+        self.set_icon(
             self.restore_btn, "restore file", size
         )
-        self.common_functions.set_icon(
+        self.set_icon(
             self.import_btn, "file upload", size
         )
-        self.common_functions.set_icon(
+        self.set_icon(
             self.export_btn, "file download", size
         )
 
@@ -890,7 +670,7 @@ class Ui(Mediator):
 
         self.browseCurrentPath_btn.clicked.connect(
             lambda: self.set_user_path(
-                self.common_functions.get_path(),
+                self.get_path(),
                 False
             )
         )
