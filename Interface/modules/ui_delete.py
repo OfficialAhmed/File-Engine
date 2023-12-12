@@ -590,10 +590,9 @@ class Ui(Mediator):
         ===================================================================
         """
         self.first_layout = QGridLayout()
-        self.third_layout = QGridLayout()
         self.second_layout = QGridLayout()
 
-        self.verticalLayout = QVBoxLayout(self.widgets)
+        self.main_frame_verticalLayout = QVBoxLayout(self.widgets)
         self.frame_content_wid_3 = QFrame(self.widgets)
 
         self.PageTitle_label = QLabel(self.frame_content_wid_3)
@@ -613,30 +612,20 @@ class Ui(Mediator):
         self.horizontalLayout_10 = QHBoxLayout(self.frame_content_wid_2)
         self.lookupFormat_comboBox = QComboBox(self.frame_content_wid_2)
 
-        self.row_1 = QFrame(self.widgets)
-        self.verticalLayout_16 = QVBoxLayout(self.row_1)
-
         self.row_3 = QFrame(self.widgets)
         self.horizontalLayout_12 = QHBoxLayout(self.row_3)
 
+        self.main_frame_verticalLayout.setContentsMargins(10, 10, 10, 10)
+        self.main_frame_verticalLayout.addWidget(self.frame_content_wid_3)
         self.first_layout.addWidget(self.PageTitle_label, 0, 0, 1, 1)
         self.first_layout.addWidget(self.LookupType_comboBox, 1, 0, 1, 1)
-        self.horizontalSpacer = QSpacerItem(
-            40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum
-        )
-        self.verticalLayout.setContentsMargins(10, 10, 10, 10)
-        self.first_layout.addItem(self.horizontalSpacer, 1, 1, 1, 1)
-        self.horizontalLayout_11.addLayout(self.first_layout)
-        self.verticalLayout.addWidget(self.frame_content_wid_3)
-        self.verticalLayout.addWidget(self.row_1)
-        self.second_layout.addWidget(self.currentPath_lineEdit, 0, 1, 1, 1)
-        self.second_layout.addWidget(self.browseCurrentPath_btn, 0, 2, 1, 1)
-        self.horizontalLayout_13.addLayout(self.second_layout)
-        self.verticalLayout.addWidget(self.frame_content_wid_4)
-        self.third_layout.addWidget(self.lookupInput_lineEdit, 1, 1, 1, 1)
-        self.third_layout.addWidget(self.startLookup_btn, 1, 2, 1, 1)
-        self.third_layout.addWidget(self.lookupFormat_comboBox, 1, 0, 1, 1)
-        self.third_layout.addWidget(self.isRecursive_checkBox, 2, 0, 1, 1)
+        self.first_layout.addWidget(self.currentPath_lineEdit, 1, 1, 1, 1)
+        self.first_layout.addWidget(self.browseCurrentPath_btn, 1, 2, 1, 1)
+        self.second_layout.addWidget(self.LookuByTitle_label, 0, 0, 1, 1)
+        self.second_layout.addWidget(self.lookupInput_lineEdit, 1, 1, 1, 1)
+        self.second_layout.addWidget(self.startLookup_btn, 1, 2, 1, 1)
+        self.second_layout.addWidget(self.lookupFormat_comboBox, 1, 0, 1, 1)
+        self.second_layout.addWidget(self.isRecursive_checkBox, 2, 0, 1, 1)
 
         self.LookuByTitle_label.setLineWidth(1)
         self.LookuByTitle_label.setAlignment(
@@ -651,12 +640,11 @@ class Ui(Mediator):
         self.startLookup_btn.setCursor(QCursor(Qt.PointingHandCursor))
         self.browseCurrentPath_btn.setCursor(QCursor(Qt.PointingHandCursor))
 
-        self.third_layout.addWidget(self.LookuByTitle_label, 0, 0, 1, 1)
-        self.horizontalLayout_10.addLayout(self.third_layout)
-        self.verticalLayout.addWidget(self.frame_content_wid_2)
+        self.horizontalLayout_10.addLayout(self.second_layout)
+        self.main_frame_verticalLayout.addWidget(self.frame_content_wid_2)
 
-        self.verticalLayout.setSpacing(10)
-        self.verticalLayout_16.setSpacing(0)
+        self.horizontalLayout_11.addLayout(self.first_layout)
+        self.main_frame_verticalLayout.setSpacing(10)
         self.horizontalLayout_12.setSpacing(0)
 
         """
@@ -671,12 +659,10 @@ class Ui(Mediator):
         self.browseCurrentPath_btn.setMinimumSize(QSize(150, 30))
 
         self.row_3.setFrameShadow(QFrame.Raised)
-        self.row_1.setFrameShadow(QFrame.Raised)
         self.frame_content_wid_2.setFrameShadow(QFrame.Raised)
         self.frame_content_wid_3.setFrameShadow(QFrame.Raised)
         self.frame_content_wid_4.setFrameShadow(QFrame.Raised)
 
-        self.row_1.setFrameShape(QFrame.StyledPanel)
         self.row_3.setFrameShape(QFrame.StyledPanel)
         self.frame_content_wid_3.setFrameShape(QFrame.NoFrame)
         self.frame_content_wid_4.setFrameShape(QFrame.NoFrame)
@@ -691,25 +677,8 @@ class Ui(Mediator):
                                 SET MARGINS
         ===================================================================
         """
-        self.third_layout.setContentsMargins(-1, -1, -1, 0)
         self.second_layout.setContentsMargins(-1, -1, -1, 0)
-        self.verticalLayout_16.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_12.setContentsMargins(0, 0, 0, 0)
-
-        """
-        ===================================================================
-                                SET FONTS
-        ===================================================================
-        """
-        font = QFont()
-        font.setFamily("Segoe UI")
-        font.setPointSize(10)
-
-        self.startLookup_btn.setFont(font)
-        self.PageTitle_label.setFont(font)
-        self.LookupType_comboBox.setFont(font)
-        self.browseCurrentPath_btn.setFont(font)
-        self.lookupFormat_comboBox.setFont(font)
 
         """
         ===================================================================
@@ -727,6 +696,87 @@ class Ui(Mediator):
         self.table_layout.setSizePolicy(sizePolicy3)
 
         self.init_table()
+
+        self.horizontalLayout_12.addWidget(self.table_layout)
+
+        self.optionBtns_layout = QVBoxLayout()
+
+        self.delete_btn = QPushButton(self.row_3)
+        self.restore_btn = QPushButton(self.row_3)
+        self.export_btn = QPushButton(self.row_3)
+        self.import_btn = QPushButton(self.row_3)
+
+        self.horizontalLayout_12.addLayout(self.optionBtns_layout)
+        self.main_frame_verticalLayout.addWidget(self.row_3)
+
+        # STORE WIDGETS IN CONTROLLER
+        # To eliminate the need of params in each func call from the controller
+        # Pass all widgets required for controller methods here
+        self.set_controller_widgets(
+            self.LookupType_comboBox,
+            self.currentPath_lineEdit,
+            self.lookupFormat_comboBox,
+            self.lookupInput_lineEdit,
+            self.isRecursive_checkBox,
+            self.startLookup_btn
+        )
+
+        """
+        ===================================================================
+                            SET STYLESHEET
+        ===================================================================
+        """
+
+        self.LookupType_comboBox.setStyleSheet(
+            self.html.get_bg_color("dark blue")
+        )
+        self.currentPath_lineEdit.setStyleSheet(
+            self.html.get_bg_color("dark blue")
+        )
+        self.browseCurrentPath_btn.setStyleSheet(
+            self.html.get_bg_color("light blue")
+        )
+        self.lookupInput_lineEdit.setStyleSheet(
+            self.html.get_bg_color("dark blue")
+        )
+        self.startLookup_btn.setStyleSheet(
+            self.html.get_bg_color("light blue")
+        )
+        self.lookupFormat_comboBox.setStyleSheet(
+            self.html.get_bg_color("dark blue")
+        )
+        self.LookuByTitle_label.setStyleSheet(
+            "color: rgb(113, 126, 149)"
+        )
+
+        """
+        ===================================================================
+                           SET OBJECT NAMES
+        ===================================================================
+        """
+        self.row_3.setObjectName("row_3")
+        self.widgets.setObjectName("widgets")
+        self.table_layout.setObjectName("table_layout")
+        self.first_layout.setObjectName("first_layout")
+        self.second_layout.setObjectName("second_layout")
+        self.main_frame_verticalLayout.setObjectName("verticalLayout")
+        self.startLookup_btn.setObjectName("startLookup_btn")
+        self.PageTitle_label.setObjectName("PageTitle_label")
+        self.optionBtns_layout.setObjectName("optionBtns_layout")
+        self.LookuByTitle_label.setObjectName("LookuByTitle_label")
+        self.horizontalLayout_12.setObjectName("horizontalLayout_12")
+        self.frame_content_wid_2.setObjectName("frame_content_wid_2")
+        self.horizontalLayout_10.setObjectName("horizontalLayout_10")
+        self.frame_content_wid_3.setObjectName("frame_content_wid_3")
+        self.horizontalLayout_11.setObjectName("horizontalLayout_11")
+        self.LookupType_comboBox.setObjectName("LookupType_comboBox")
+        self.frame_content_wid_4.setObjectName("frame_content_wid_4")
+        self.horizontalLayout_13.setObjectName("horizontalLayout_13")
+        self.isRecursive_checkBox.setObjectName("isRecursive_checkBox")
+        self.currentPath_lineEdit.setObjectName("currentPath_lineEdit")
+        self.browseCurrentPath_btn.setObjectName("browseCurrentPath_btn")
+        self.lookupFormat_comboBox.setObjectName("currentLookupBy_comboBox")
+        self.lookupInput_lineEdit.setObjectName("currentLookupInput_lineEdit")
 
         """
         ===================================================================
@@ -780,16 +830,6 @@ class Ui(Mediator):
         self.table_layout.verticalHeader().setCascadingSectionResizes(True)
         self.table_layout.verticalHeader().setHighlightSections(False)
         self.table_layout.verticalHeader().setStretchLastSection(False)
-
-        self.horizontalLayout_12.addWidget(self.table_layout)
-
-        self.optionBtns_layout = QVBoxLayout()
-
-        self.delete_btn = QPushButton(self.row_3)
-        self.restore_btn = QPushButton(self.row_3)
-        self.export_btn = QPushButton(self.row_3)
-        self.import_btn = QPushButton(self.row_3)
-
         # BUTTONS DESIGN
         btns = {
             "delete_btn": self.delete_btn,
@@ -801,86 +841,10 @@ class Ui(Mediator):
         for btn_name, btn in btns.items():
             btn.setObjectName(btn_name)
             btn.setMinimumSize(QSize(150, 30))
-            btn.setStyleSheet(self.html.get_bg_color("lightblue"))
+            btn.setStyleSheet(self.html.get_bg_color("light blue"))
             btn.setCursor(QCursor(Qt.PointingHandCursor))
-            btn.setFont(font)
 
             self.optionBtns_layout.addWidget(btn)
-
-        self.horizontalLayout_12.addLayout(self.optionBtns_layout)
-        self.verticalLayout.addWidget(self.row_3)
-
-        # STORE WIDGETS IN CONTROLLER
-        # To eliminate the need of params in each func call from the controller
-        # Pass all widgets required for controller methods here
-        self.set_controller_widgets(
-            self.LookupType_comboBox,
-            self.currentPath_lineEdit,
-            self.lookupFormat_comboBox,
-            self.lookupInput_lineEdit,
-            self.isRecursive_checkBox,
-            self.startLookup_btn
-        )
-
-        """
-        ===================================================================
-                            SET STYLESHEET
-        ===================================================================
-        """
-
-        self.LookupType_comboBox.setStyleSheet(
-            self.html.get_bg_color("dark blue")
-        )
-        self.currentPath_lineEdit.setStyleSheet(
-            self.html.get_bg_color("dark blue")
-        )
-        self.browseCurrentPath_btn.setStyleSheet(
-            self.html.get_bg_color("lightblue")
-        )
-        self.lookupInput_lineEdit.setStyleSheet(
-            self.html.get_bg_color("dark blue")
-        )
-        self.startLookup_btn.setStyleSheet(
-            self.html.get_bg_color("lightblue")
-        )
-        self.lookupFormat_comboBox.setStyleSheet(
-            self.html.get_bg_color("dark blue")
-        )
-        self.LookuByTitle_label.setStyleSheet(
-            "color: rgb(113, 126, 149)"
-        )
-
-        """
-        ===================================================================
-                           SET OBJECT NAMES
-        ===================================================================
-        """
-        self.row_1.setObjectName("row_1")
-        self.row_3.setObjectName("row_3")
-        self.widgets.setObjectName("widgets")
-        self.table_layout.setObjectName("table_layout")
-        self.first_layout.setObjectName("first_layout")
-        self.third_layout.setObjectName("third_layout")
-        self.second_layout.setObjectName("second_layout")
-        self.verticalLayout.setObjectName("verticalLayout")
-        self.startLookup_btn.setObjectName("startLookup_btn")
-        self.PageTitle_label.setObjectName("PageTitle_label")
-        self.optionBtns_layout.setObjectName("optionBtns_layout")
-        self.verticalLayout_16.setObjectName("verticalLayout_16")
-        self.LookuByTitle_label.setObjectName("LookuByTitle_label")
-        self.horizontalLayout_12.setObjectName("horizontalLayout_12")
-        self.frame_content_wid_2.setObjectName("frame_content_wid_2")
-        self.horizontalLayout_10.setObjectName("horizontalLayout_10")
-        self.frame_content_wid_3.setObjectName("frame_content_wid_3")
-        self.horizontalLayout_11.setObjectName("horizontalLayout_11")
-        self.LookupType_comboBox.setObjectName("LookupType_comboBox")
-        self.frame_content_wid_4.setObjectName("frame_content_wid_4")
-        self.horizontalLayout_13.setObjectName("horizontalLayout_13")
-        self.isRecursive_checkBox.setObjectName("isRecursive_checkBox")
-        self.currentPath_lineEdit.setObjectName("currentPath_lineEdit")
-        self.browseCurrentPath_btn.setObjectName("browseCurrentPath_btn")
-        self.lookupFormat_comboBox.setObjectName("currentLookupBy_comboBox")
-        self.lookupInput_lineEdit.setObjectName("currentLookupInput_lineEdit")
 
         self.retranslateUi()
 
@@ -961,7 +925,6 @@ class Ui(Mediator):
         )
 
         return self.widgets
-
 
     def retranslateUi(self):
         """
