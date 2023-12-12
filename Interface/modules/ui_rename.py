@@ -803,6 +803,7 @@ class Ui(Mediator):
         self.horizontalLayout_12.setSpacing(0)
         self.horizontalLayout_12.setObjectName(u"horizontalLayout_12")
         self.horizontalLayout_12.setContentsMargins(0, 0, 0, 0)
+
         """
         ===================================================================
                                 TABLE CONTENT
@@ -819,7 +820,7 @@ class Ui(Mediator):
         self.table_layout.setSizePolicy(sizePolicy3)
 
         self.init_table()
-        
+
         """
         ===================================================================
                            PALLETE AND BRUSHES
@@ -875,39 +876,6 @@ class Ui(Mediator):
 
         self.horizontalLayout_12.addWidget(self.table_layout)
 
-        sizePolicy3 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        sizePolicy3.setHorizontalStretch(0)
-        sizePolicy3.setVerticalStretch(0)
-        palette = QPalette()
-        brush = QBrush(QColor(221, 221, 221, 255))
-        brush.setStyle(Qt.SolidPattern)
-        palette.setBrush(QPalette.Active, QPalette.WindowText, brush)
-        brush1 = QBrush(QColor(0, 0, 0, 0))
-        brush1.setStyle(Qt.SolidPattern)
-        palette.setBrush(QPalette.Active, QPalette.Button, brush1)
-        palette.setBrush(QPalette.Active, QPalette.Text, brush)
-        palette.setBrush(QPalette.Active, QPalette.ButtonText, brush)
-        brush2 = QBrush(QColor(0, 0, 0, 255))
-        brush2.setStyle(Qt.NoBrush)
-        palette.setBrush(QPalette.Active, QPalette.Base, brush2)
-        palette.setBrush(QPalette.Active, QPalette.Window, brush1)
-        palette.setBrush(QPalette.Inactive, QPalette.WindowText, brush)
-        palette.setBrush(QPalette.Inactive, QPalette.Button, brush1)
-        palette.setBrush(QPalette.Inactive, QPalette.Text, brush)
-        palette.setBrush(QPalette.Inactive, QPalette.ButtonText, brush)
-        brush3 = QBrush(QColor(0, 0, 0, 255))
-        brush3.setStyle(Qt.NoBrush)
-        palette.setBrush(QPalette.Inactive, QPalette.Base, brush3)
-        palette.setBrush(QPalette.Inactive, QPalette.Window, brush1)
-        palette.setBrush(QPalette.Disabled, QPalette.WindowText, brush)
-        palette.setBrush(QPalette.Disabled, QPalette.Button, brush1)
-        palette.setBrush(QPalette.Disabled, QPalette.Text, brush)
-        palette.setBrush(QPalette.Disabled, QPalette.ButtonText, brush)
-        brush4 = QBrush(QColor(0, 0, 0, 255))
-        brush4.setStyle(Qt.NoBrush)
-        palette.setBrush(QPalette.Disabled, QPalette.Base, brush4)
-        palette.setBrush(QPalette.Disabled, QPalette.Window, brush1)
-
         self.optionBtns_layout = QVBoxLayout()
         self.optionBtns_layout.setObjectName(u"optionBtns_layout")
         self.rename_btn = QPushButton(self.row_3)
@@ -955,7 +923,6 @@ class Ui(Mediator):
         sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        
 
         self.retranslateUi()
 
@@ -971,8 +938,6 @@ class Ui(Mediator):
                         COMBOBOXES ITEMS
         ===================================================================
         """
-
-        # 1ST DROPDOWN LIST
 
         data = {
             self.LookupType_comboBox:   (
@@ -1061,7 +1026,6 @@ class Ui(Mediator):
                 "MainWindow", "LOOKUP BY", None
             )
         )
-        
 
         """
         ////////////////////////////////////////////////
