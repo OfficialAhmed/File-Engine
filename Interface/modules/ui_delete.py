@@ -581,97 +581,6 @@ class Ui(Mediator):
 
             self.table_layout.setHorizontalHeaderItem(col, header_item)
 
-    def retranslateUi(self):
-        """
-        TRANSLATE UI TEXT
-        """
-
-        """
-        ===================================================================
-                        COMOBOXES ITEMS
-        ===================================================================
-        """
-
-        data = {
-            self.LookupType_comboBox:   ("FILES", "FOLDERS"),
-            self.lookupFormat_comboBox: ("NAME", "PATTERN", "EXTENSION"),
-        }
-
-        for widget, info in data.items():
-            for indx, text in enumerate(info):
-                widget.addItem("")
-                widget.setItemText(
-                    indx, QCoreApplication.translate("MainWindow", text, None)
-                )
-
-        """
-        ===================================================================
-                        SET TEXT / TOOL TIPS
-        ===================================================================
-        """
-
-        data = {
-            self.delete_btn:           ("DELETE", "Delete All Selected Items"),
-            self.restore_btn:          ("RESTORE", "Restore Last Deleted Process"),
-            self.export_btn:           ("EXPORT", "Store Current Lookup"),
-            self.import_btn:           ("IMPORT", "Load Previous Lookup"),
-            self.startLookup_btn:      ("START", "Start Lookup Process"),
-            self.isRecursive_checkBox: ("RECURSIVE", "Find Files Recursively Through The Selected Path"),
-        }
-
-        for widget, info in data.items():
-            widget.setText(QCoreApplication.translate(
-                "MainWindow", info[0], None
-            )
-            )
-            widget.setToolTip(QCoreApplication.translate(
-                "MainWindow", info[1], None
-            )
-            )
-
-        self.PageTitle_label.setText(
-            QCoreApplication.translate("MainWindow", "DELETE", None)
-        )
-
-        self.currentPath_lineEdit.setToolTip(
-            QCoreApplication.translate(
-                "MainWindow",
-                "Enter the path where should the lookup process begin",
-                None,
-            )
-        )
-        self.currentPath_lineEdit.setPlaceholderText(
-            QCoreApplication.translate(
-                "MainWindow", "Enter the path here", None
-            )
-        )
-        self.browseCurrentPath_btn.setText(
-            QCoreApplication.translate(
-                "MainWindow", "OPEN", None
-            )
-        )
-        self.lookupInput_lineEdit.setPlaceholderText(
-            QCoreApplication.translate(
-                "MainWindow", "Enter your input", None
-            )
-        )
-        self.LookuByTitle_label.setText(
-            QCoreApplication.translate(
-                "MainWindow", "LOOKUP BY", None
-            )
-        )
-
-        """
-        ////////////////////////////////////////////////
-                TABLE CONTENT
-        ////////////////////////////////////////////////
-        """
-        self.table_layout.setSortingEnabled(True)
-        self.retranslateTableHeaders()
-
-        # SET CACHED DATA
-        self.import_cache()
-
     def render_page(self):
         self.widgets = QWidget()
 
@@ -1052,3 +961,95 @@ class Ui(Mediator):
         )
 
         return self.widgets
+
+
+    def retranslateUi(self):
+        """
+        TRANSLATE UI TEXT
+        """
+
+        """
+        ===================================================================
+                        COMOBOXES ITEMS
+        ===================================================================
+        """
+
+        data = {
+            self.LookupType_comboBox:   ("FILES", "FOLDERS"),
+            self.lookupFormat_comboBox: ("NAME", "PATTERN", "EXTENSION"),
+        }
+
+        for widget, info in data.items():
+            for indx, text in enumerate(info):
+                widget.addItem("")
+                widget.setItemText(
+                    indx, QCoreApplication.translate("MainWindow", text, None)
+                )
+
+        """
+        ===================================================================
+                        SET TEXT / TOOL TIPS
+        ===================================================================
+        """
+
+        data = {
+            self.delete_btn:           ("DELETE", "Delete All Selected Items"),
+            self.restore_btn:          ("RESTORE", "Restore Last Deleted Process"),
+            self.export_btn:           ("EXPORT", "Store Current Lookup"),
+            self.import_btn:           ("IMPORT", "Load Previous Lookup"),
+            self.startLookup_btn:      ("START", "Start Lookup Process"),
+            self.isRecursive_checkBox: ("RECURSIVE", "Find Files Recursively Through The Selected Path"),
+        }
+
+        for widget, info in data.items():
+            widget.setText(QCoreApplication.translate(
+                "MainWindow", info[0], None
+            )
+            )
+            widget.setToolTip(QCoreApplication.translate(
+                "MainWindow", info[1], None
+            )
+            )
+
+        self.PageTitle_label.setText(
+            QCoreApplication.translate("MainWindow", "DELETE", None)
+        )
+
+        self.currentPath_lineEdit.setToolTip(
+            QCoreApplication.translate(
+                "MainWindow",
+                "Enter the path where should the lookup process begin",
+                None,
+            )
+        )
+        self.currentPath_lineEdit.setPlaceholderText(
+            QCoreApplication.translate(
+                "MainWindow", "Enter the path here", None
+            )
+        )
+        self.browseCurrentPath_btn.setText(
+            QCoreApplication.translate(
+                "MainWindow", "OPEN", None
+            )
+        )
+        self.lookupInput_lineEdit.setPlaceholderText(
+            QCoreApplication.translate(
+                "MainWindow", "Enter your input", None
+            )
+        )
+        self.LookuByTitle_label.setText(
+            QCoreApplication.translate(
+                "MainWindow", "LOOKUP BY", None
+            )
+        )
+
+        """
+        ////////////////////////////////////////////////
+                TABLE CONTENT
+        ////////////////////////////////////////////////
+        """
+        self.table_layout.setSortingEnabled(True)
+        self.retranslateTableHeaders()
+
+        # SET CACHED DATA
+        self.import_cache()

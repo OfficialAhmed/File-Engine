@@ -70,7 +70,7 @@ class Mediator(Model):
 
         # IF CACHE FOUND
         if os.path.exists(self.controller.CACHE_FILE):
-            
+
             cache: dict = json.load(open(self.cache_file)).get("rename page")
 
             if cache:
@@ -581,6 +581,386 @@ class Ui(Mediator):
 
             self.table_layout.setHorizontalHeaderItem(col, header_item)
 
+    def render_page(self):
+
+        self.widgets = QWidget()
+
+        """
+        ===================================================================
+                        SET WIDGETS (SENSITIVE LAYOUT)
+        ===================================================================
+        """
+        font = QFont()
+        font.setFamilies([u"Segoe UI"])
+        font.setPointSize(10)
+        font.setBold(False)
+        font.setItalic(False)
+
+        self.widgets = QWidget()
+        self.widgets.setObjectName(u"widgets")
+        self.widgets.setStyleSheet(u"b")
+        self.verticalLayout = QVBoxLayout(self.widgets)
+        self.verticalLayout.setSpacing(10)
+        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.verticalLayout.setContentsMargins(10, 10, 10, 10)
+        self.frame_content_wid_3 = QFrame(self.widgets)
+        self.frame_content_wid_3.setObjectName(u"frame_content_wid_3")
+        self.frame_content_wid_3.setFrameShape(QFrame.NoFrame)
+        self.frame_content_wid_3.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_11 = QHBoxLayout(self.frame_content_wid_3)
+        self.horizontalLayout_11.setObjectName(u"horizontalLayout_11")
+        self.horizontalLayout_11.setContentsMargins(-1, 5, -1, 5)
+        self.first_layout = QGridLayout()
+        self.first_layout.setObjectName(u"first_layout")
+        self.LookupType_comboBox = QComboBox(self.frame_content_wid_3)
+        self.LookupType_comboBox.setObjectName(u"LookupType_comboBox")
+        self.LookupType_comboBox.setFont(font)
+        self.LookupType_comboBox.setAutoFillBackground(False)
+        self.LookupType_comboBox.setStyleSheet(
+            u"background-color: rgb(33, 37, 43);")
+        self.LookupType_comboBox.setIconSize(QSize(16, 16))
+        self.LookupType_comboBox.setFrame(True)
+
+        self.first_layout.addWidget(self.LookupType_comboBox, 1, 0, 1, 1)
+
+        self.PageTitle_label = QLabel(self.frame_content_wid_3)
+        self.PageTitle_label.setObjectName(u"PageTitle_label")
+        self.PageTitle_label.setFont(font)
+        self.PageTitle_label.setStyleSheet(u"")
+
+        self.first_layout.addWidget(self.PageTitle_label, 0, 0, 1, 1)
+
+        self.currentPath_lineEdit = QLineEdit(self.frame_content_wid_3)
+        self.currentPath_lineEdit.setObjectName(u"currentPath_lineEdit")
+        self.currentPath_lineEdit.setMinimumSize(QSize(0, 30))
+        self.currentPath_lineEdit.setStyleSheet(
+            u"background-color: rgb(33, 37, 43);")
+
+        self.first_layout.addWidget(self.currentPath_lineEdit, 1, 1, 1, 1)
+
+        self.browseCurrentPath_btn = QPushButton(self.frame_content_wid_3)
+        self.browseCurrentPath_btn.setObjectName(u"browseCurrentPath_btn")
+        self.browseCurrentPath_btn.setMinimumSize(QSize(150, 30))
+        self.browseCurrentPath_btn.setFont(font)
+        self.browseCurrentPath_btn.setCursor(QCursor(Qt.PointingHandCursor))
+        self.browseCurrentPath_btn.setStyleSheet(
+            u"background-color: rgb(52, 59, 72);")
+
+        self.first_layout.addWidget(self.browseCurrentPath_btn, 1, 2, 1, 1)
+        self.horizontalLayout_11.addLayout(self.first_layout)
+        self.verticalLayout.addWidget(self.frame_content_wid_3)
+
+        self.frame_content_wid_2 = QFrame(self.widgets)
+        self.frame_content_wid_2.setObjectName(u"frame_content_wid_2")
+        self.frame_content_wid_2.setFrameShape(QFrame.NoFrame)
+        self.frame_content_wid_2.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_10 = QHBoxLayout(self.frame_content_wid_2)
+        self.horizontalLayout_10.setObjectName(u"horizontalLayout_10")
+        self.horizontalLayout_10.setContentsMargins(-1, 5, -1, 5)
+        self.third_layout = QGridLayout()
+        self.third_layout.setObjectName(u"third_layout")
+        self.third_layout.setContentsMargins(-1, -1, -1, 0)
+        self.lookupInput_lineEdit = QLineEdit(self.frame_content_wid_2)
+        self.lookupInput_lineEdit.setObjectName(u"lookupInput_lineEdit")
+        self.lookupInput_lineEdit.setMinimumSize(QSize(0, 30))
+        self.lookupInput_lineEdit.setStyleSheet(
+            u"background-color: rgb(33, 37, 43);")
+        self.lookupInput_lineEdit.setMaxLength(100)
+
+        self.third_layout.addWidget(self.lookupInput_lineEdit, 1, 3, 1, 1)
+
+        self.startLookup_btn = QPushButton(self.frame_content_wid_2)
+        self.startLookup_btn.setObjectName(u"startLookup_btn")
+        self.startLookup_btn.setEnabled(False)
+        self.startLookup_btn.setMinimumSize(QSize(150, 30))
+        self.startLookup_btn.setFont(font)
+        self.startLookup_btn.setCursor(QCursor(Qt.PointingHandCursor))
+        self.startLookup_btn.setStyleSheet(
+            u"background-color: rgb(52, 59, 72);")
+
+        self.third_layout.addWidget(self.startLookup_btn, 1, 4, 1, 1)
+
+        self.lookupFormat_comboBox = QComboBox(self.frame_content_wid_2)
+        self.lookupFormat_comboBox.setObjectName(u"lookupFormat_comboBox")
+        self.lookupFormat_comboBox.setFont(font)
+        self.lookupFormat_comboBox.setAutoFillBackground(False)
+        self.lookupFormat_comboBox.setStyleSheet(
+            u"background-color: rgb(33, 37, 43);")
+        self.lookupFormat_comboBox.setIconSize(QSize(16, 16))
+        self.lookupFormat_comboBox.setFrame(True)
+
+        self.third_layout.addWidget(self.lookupFormat_comboBox, 1, 0, 1, 1)
+
+        self.isRecursive_checkBox = QCheckBox(self.frame_content_wid_2)
+        self.isRecursive_checkBox.setObjectName(u"isRecursive_checkBox")
+        self.isRecursive_checkBox.setEnabled(True)
+        self.isRecursive_checkBox.setAutoFillBackground(False)
+        self.isRecursive_checkBox.setStyleSheet(u"")
+        self.isRecursive_checkBox.setChecked(True)
+
+        self.third_layout.addWidget(self.isRecursive_checkBox, 2, 0, 1, 1)
+
+        self.LookuByTitle_label = QLabel(self.frame_content_wid_2)
+        self.LookuByTitle_label.setObjectName(u"LookuByTitle_label")
+        self.LookuByTitle_label.setStyleSheet(u"color: rgb(113, 126, 149);")
+        self.LookuByTitle_label.setLineWidth(1)
+        self.LookuByTitle_label.setAlignment(
+            Qt.AlignLeading | Qt.AlignLeft | Qt.AlignVCenter)
+
+        self.third_layout.addWidget(self.LookuByTitle_label, 0, 0, 1, 1)
+
+        self.lookupFormat2_comboBox = QComboBox(self.frame_content_wid_2)
+        self.lookupFormat2_comboBox.setObjectName(u"lookupFormat2_comboBox")
+        self.lookupFormat2_comboBox.setFont(font)
+        self.lookupFormat2_comboBox.setAutoFillBackground(False)
+        self.lookupFormat2_comboBox.setStyleSheet(
+            u"background-color: rgb(33, 37, 43);")
+        self.lookupFormat2_comboBox.setIconSize(QSize(16, 16))
+        self.lookupFormat2_comboBox.setFrame(True)
+
+        self.third_layout.addWidget(self.lookupFormat2_comboBox, 1, 1, 1, 1)
+
+        self.lookupFormat3_comboBox = QComboBox(self.frame_content_wid_2)
+        self.lookupFormat3_comboBox.setObjectName(u"lookupFormat3_comboBox")
+        self.lookupFormat3_comboBox.setFont(font)
+        self.lookupFormat3_comboBox.setAutoFillBackground(False)
+        self.lookupFormat3_comboBox.setStyleSheet(
+            u"background-color: rgb(33, 37, 43);")
+        self.lookupFormat3_comboBox.setIconSize(QSize(16, 16))
+        self.lookupFormat3_comboBox.setFrame(True)
+
+        self.third_layout.addWidget(self.lookupFormat3_comboBox, 1, 2, 1, 1)
+
+        self.horizontalSpacer_2 = QSpacerItem(
+            40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.third_layout.addItem(self.horizontalSpacer_2, 2, 2, 1, 1)
+        self.horizontalLayout_10.addLayout(self.third_layout)
+        self.verticalLayout.addWidget(self.frame_content_wid_2)
+
+        self.frame_content_wid_4 = QFrame(self.widgets)
+        self.frame_content_wid_4.setObjectName(u"frame_content_wid_4")
+        self.frame_content_wid_4.setFrameShape(QFrame.NoFrame)
+        self.frame_content_wid_4.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_13 = QHBoxLayout(self.frame_content_wid_4)
+        self.horizontalLayout_13.setObjectName(u"horizontalLayout_13")
+        self.third_layout_2 = QGridLayout()
+        self.third_layout_2.setObjectName(u"third_layout_2")
+        self.third_layout_2.setContentsMargins(-1, -1, -1, 0)
+        self.renameValue_lineEdit = QLineEdit(self.frame_content_wid_4)
+        self.renameValue_lineEdit.setObjectName(u"renameValue_lineEdit")
+        self.renameValue_lineEdit.setMinimumSize(QSize(0, 30))
+        self.renameValue_lineEdit.setStyleSheet(
+            u"background-color: rgb(33, 37, 43);")
+        self.renameValue_lineEdit.setMaxLength(50)
+
+        self.third_layout_2.addWidget(self.renameValue_lineEdit, 1, 2, 1, 1)
+
+        self.LookuByTitle_label_2 = QLabel(self.frame_content_wid_4)
+        self.LookuByTitle_label_2.setObjectName(u"LookuByTitle_label_2")
+        self.LookuByTitle_label_2.setStyleSheet(u"color: rgb(113, 126, 149);")
+        self.LookuByTitle_label_2.setLineWidth(1)
+        self.LookuByTitle_label_2.setAlignment(
+            Qt.AlignLeading | Qt.AlignLeft | Qt.AlignVCenter)
+
+        self.third_layout_2.addWidget(self.LookuByTitle_label_2, 0, 0, 1, 1)
+
+        self.renameBy_comboBox = QComboBox(self.frame_content_wid_4)
+        self.renameBy_comboBox.setObjectName(u"renameBy_comboBox")
+        self.renameBy_comboBox.setFont(font)
+        self.renameBy_comboBox.setAutoFillBackground(False)
+        self.renameBy_comboBox.setStyleSheet(
+            u"background-color: rgb(33, 37, 43);")
+        self.renameBy_comboBox.setIconSize(QSize(16, 16))
+        self.renameBy_comboBox.setFrame(True)
+
+        self.third_layout_2.addWidget(self.renameBy_comboBox, 1, 0, 1, 1)
+
+        self.renameBy2_comboBox = QComboBox(self.frame_content_wid_4)
+        self.renameBy2_comboBox.setObjectName(u"renameBy2_comboBox")
+        self.renameBy2_comboBox.setFont(font)
+        self.renameBy2_comboBox.setAutoFillBackground(False)
+        self.renameBy2_comboBox.setStyleSheet(
+            u"background-color: rgb(33, 37, 43);")
+        self.renameBy2_comboBox.setIconSize(QSize(16, 16))
+        self.renameBy2_comboBox.setFrame(True)
+
+        self.third_layout_2.addWidget(self.renameBy2_comboBox, 1, 1, 1, 1)
+
+        self.horizontalSpacer_3 = QSpacerItem(
+            20, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.third_layout_2.addItem(self.horizontalSpacer_3, 2, 1, 1, 1)
+        self.horizontalLayout_13.addLayout(self.third_layout_2)
+        self.verticalLayout.addWidget(self.frame_content_wid_4)
+
+        self.row_3 = QFrame(self.widgets)
+        self.row_3.setObjectName(u"row_3")
+        self.row_3.setMinimumSize(QSize(0, 150))
+        self.row_3.setFrameShape(QFrame.StyledPanel)
+        self.row_3.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_12 = QHBoxLayout(self.row_3)
+        self.horizontalLayout_12.setSpacing(0)
+        self.horizontalLayout_12.setObjectName(u"horizontalLayout_12")
+        self.horizontalLayout_12.setContentsMargins(0, 0, 0, 0)
+        """
+        ===================================================================
+                                TABLE CONTENT
+        ===================================================================
+        """
+        self.table_layout = QTableWidget(self.row_3)
+
+        sizePolicy3 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        sizePolicy3.setHorizontalStretch(0)
+        sizePolicy3.setVerticalStretch(0)
+        sizePolicy3.setHeightForWidth(
+            self.table_layout.sizePolicy().hasHeightForWidth()
+        )
+        self.table_layout.setSizePolicy(sizePolicy3)
+
+        self.init_table()
+        
+        """
+        ===================================================================
+                           PALLETE AND BRUSHES
+        ===================================================================
+        """
+
+        palette = QPalette()
+        brush = QBrush(QColor(221, 221, 221, 255))
+        brush.setStyle(Qt.SolidPattern)
+
+        brush1 = QBrush(QColor(0, 0, 0, 0))
+        brush1.setStyle(Qt.SolidPattern)
+
+        brush2 = QBrush(QColor(0, 0, 0, 255))
+        brush2.setStyle(Qt.NoBrush)
+
+        palette.setBrush(QPalette.Active, QPalette.Text, brush)
+        palette.setBrush(QPalette.Active, QPalette.Button, brush1)
+        palette.setBrush(QPalette.Active, QPalette.WindowText, brush)
+        palette.setBrush(QPalette.Active, QPalette.ButtonText, brush)
+
+        palette.setBrush(QPalette.Active, QPalette.Base, brush2)
+        palette.setBrush(QPalette.Inactive, QPalette.Text, brush)
+        palette.setBrush(QPalette.Disabled, QPalette.Text, brush)
+        palette.setBrush(QPalette.Active, QPalette.Window, brush1)
+        palette.setBrush(QPalette.Inactive, QPalette.Base, brush2)
+        palette.setBrush(QPalette.Inactive, QPalette.Button, brush1)
+        palette.setBrush(QPalette.Inactive, QPalette.Window, brush1)
+        palette.setBrush(QPalette.Disabled, QPalette.Button, brush1)
+        palette.setBrush(QPalette.Inactive, QPalette.WindowText, brush)
+        palette.setBrush(QPalette.Inactive, QPalette.ButtonText, brush)
+        palette.setBrush(QPalette.Disabled, QPalette.WindowText, brush)
+        palette.setBrush(QPalette.Disabled, QPalette.ButtonText, brush)
+
+        self.table_layout.setFrameShape(QFrame.NoFrame)
+        self.table_layout.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        self.table_layout.setSizeAdjustPolicy(
+            QAbstractScrollArea.AdjustToContents)
+        self.table_layout.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.table_layout.setSelectionMode(QAbstractItemView.NoSelection)
+        self.table_layout.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.table_layout.setShowGrid(True)
+        self.table_layout.setGridStyle(Qt.SolidLine)
+        self.table_layout.setSortingEnabled(True)
+        self.table_layout.horizontalHeader().setVisible(True)
+        self.table_layout.horizontalHeader().setCascadingSectionResizes(True)
+        self.table_layout.horizontalHeader().setDefaultSectionSize(200)
+        self.table_layout.horizontalHeader().setStretchLastSection(True)
+        self.table_layout.verticalHeader().setVisible(False)
+        self.table_layout.verticalHeader().setCascadingSectionResizes(True)
+        self.table_layout.verticalHeader().setHighlightSections(False)
+        self.table_layout.verticalHeader().setStretchLastSection(False)
+
+        self.horizontalLayout_12.addWidget(self.table_layout)
+
+        sizePolicy3 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        sizePolicy3.setHorizontalStretch(0)
+        sizePolicy3.setVerticalStretch(0)
+        palette = QPalette()
+        brush = QBrush(QColor(221, 221, 221, 255))
+        brush.setStyle(Qt.SolidPattern)
+        palette.setBrush(QPalette.Active, QPalette.WindowText, brush)
+        brush1 = QBrush(QColor(0, 0, 0, 0))
+        brush1.setStyle(Qt.SolidPattern)
+        palette.setBrush(QPalette.Active, QPalette.Button, brush1)
+        palette.setBrush(QPalette.Active, QPalette.Text, brush)
+        palette.setBrush(QPalette.Active, QPalette.ButtonText, brush)
+        brush2 = QBrush(QColor(0, 0, 0, 255))
+        brush2.setStyle(Qt.NoBrush)
+        palette.setBrush(QPalette.Active, QPalette.Base, brush2)
+        palette.setBrush(QPalette.Active, QPalette.Window, brush1)
+        palette.setBrush(QPalette.Inactive, QPalette.WindowText, brush)
+        palette.setBrush(QPalette.Inactive, QPalette.Button, brush1)
+        palette.setBrush(QPalette.Inactive, QPalette.Text, brush)
+        palette.setBrush(QPalette.Inactive, QPalette.ButtonText, brush)
+        brush3 = QBrush(QColor(0, 0, 0, 255))
+        brush3.setStyle(Qt.NoBrush)
+        palette.setBrush(QPalette.Inactive, QPalette.Base, brush3)
+        palette.setBrush(QPalette.Inactive, QPalette.Window, brush1)
+        palette.setBrush(QPalette.Disabled, QPalette.WindowText, brush)
+        palette.setBrush(QPalette.Disabled, QPalette.Button, brush1)
+        palette.setBrush(QPalette.Disabled, QPalette.Text, brush)
+        palette.setBrush(QPalette.Disabled, QPalette.ButtonText, brush)
+        brush4 = QBrush(QColor(0, 0, 0, 255))
+        brush4.setStyle(Qt.NoBrush)
+        palette.setBrush(QPalette.Disabled, QPalette.Base, brush4)
+        palette.setBrush(QPalette.Disabled, QPalette.Window, brush1)
+
+        self.optionBtns_layout = QVBoxLayout()
+        self.optionBtns_layout.setObjectName(u"optionBtns_layout")
+        self.rename_btn = QPushButton(self.row_3)
+        self.rename_btn.setObjectName(u"rename_btn")
+        self.rename_btn.setEnabled(False)
+        self.rename_btn.setMinimumSize(QSize(150, 30))
+        self.rename_btn.setFont(font)
+        self.rename_btn.setCursor(QCursor(Qt.PointingHandCursor))
+        self.rename_btn.setStyleSheet(u"background-color: rgb(52, 59, 72);")
+
+        self.optionBtns_layout.addWidget(self.rename_btn)
+
+        self.restore_btn = QPushButton(self.row_3)
+        self.restore_btn.setObjectName(u"restore_btn")
+        self.restore_btn.setEnabled(False)
+        self.restore_btn.setMinimumSize(QSize(150, 30))
+        self.restore_btn.setFont(font)
+        self.restore_btn.setCursor(QCursor(Qt.PointingHandCursor))
+        self.restore_btn.setStyleSheet(u"background-color: rgb(52, 59, 72);")
+
+        self.optionBtns_layout.addWidget(self.restore_btn)
+
+        self.export_btn = QPushButton(self.row_3)
+        self.export_btn.setObjectName(u"export_btn")
+        self.export_btn.setEnabled(False)
+        self.export_btn.setMinimumSize(QSize(150, 30))
+        self.export_btn.setFont(font)
+        self.export_btn.setCursor(QCursor(Qt.PointingHandCursor))
+        self.export_btn.setStyleSheet(u"background-color: rgb(52, 59, 72);")
+
+        self.optionBtns_layout.addWidget(self.export_btn)
+
+        self.import_btn = QPushButton(self.row_3)
+        self.import_btn.setObjectName(u"import_btn")
+        self.import_btn.setEnabled(False)
+        self.import_btn.setMinimumSize(QSize(150, 30))
+        self.import_btn.setFont(font)
+        self.import_btn.setCursor(QCursor(Qt.PointingHandCursor))
+        self.import_btn.setStyleSheet(u"background-color: rgb(52, 59, 72);")
+
+        self.optionBtns_layout.addWidget(self.import_btn)
+        self.horizontalLayout_12.addLayout(self.optionBtns_layout)
+        self.verticalLayout.addWidget(self.row_3)
+
+        sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        
+
+        self.retranslateUi()
+
+        return self.widgets
+
     def retranslateUi(self):
         """
         TRANSLATE UI TEXT
@@ -595,24 +975,27 @@ class Ui(Mediator):
         # 1ST DROPDOWN LIST
 
         data = {
-            self.LookupType_comboBox:       ("FILES", "FOLDERS"),
-            self.lookupFormat_comboBox:     ("NAME", "EXTENSION"),
-            # self.lookupFormat2_comboBox: ("CONTAIN", "EQUAL TO"),
-            # self.lookupFormat3_comboBox: ("Alphabets only",
-            #                                 "Alphabets & Symbols",
-            #                                 "Alphabets & Numbers",
-            #                                 "Alphabets Excluding",
-            #                                 "Numbers only",
-            #                                 "Numbers & Symbols",
-            #                                 "Numbers Excluding",
-            #                                 "Symbols only",
-            #                                 "Symbols Excluding",
-            #                                 "Custom"),
-            # self.renameBy_combobox:         ("START",
-            #                                 "BULK",
-            #                                 "TIMESTAMP",
-            #                                 "NUMBERING",
-            #                                 "CUSTOM"),
+            self.LookupType_comboBox:   (
+                "FILES", "FOLDERS"
+            ),
+            self.lookupFormat_comboBox: (
+                "NAME", "EXTENSION"
+            ),
+            self.lookupFormat2_comboBox: (
+                "CONTAIN", "EQUAL TO"
+            ),
+            self.lookupFormat3_comboBox: (
+                "Alphabets only", "Alphabets & Symbols", "Alphabets & Numbers", "Alphabets Excluding",
+                "Numbers only", "Numbers & Symbols", "Numbers Excluding",
+                "Symbols only", "Symbols Excluding",
+                "Custom"
+            ),
+            self.renameBy_comboBox:     (
+                "START", "BULK", "TIMESTAMP", "NUMBERING", "CUSTOM"
+            ),
+            self.renameBy2_comboBox:    (
+                "PREFIX NUMBERS", "SUFFIX NUMBERS", "CUSTOM PREFIX", "CUSTOM SUFFIX"
+            )
         }
 
         for widget, info in data.items():
@@ -678,6 +1061,7 @@ class Ui(Mediator):
                 "MainWindow", "LOOKUP BY", None
             )
         )
+        
 
         """
         ////////////////////////////////////////////////
@@ -689,412 +1073,3 @@ class Ui(Mediator):
 
         # SET CACHED DATA
         self.import_cache()
-
-    def render_page(self):
-        
-        self.widgets = QWidget()
-
-        """
-        ===================================================================
-                        SET WIDGETS (SENSITIVE LAYOUT)
-        ===================================================================
-        """
-        font = QFont()
-        font.setFamilies([u"Segoe UI"])
-        font.setPointSize(10)
-        font.setBold(False)
-        font.setItalic(False)
-        
-        self.widgets = QWidget()
-        self.widgets.setObjectName(u"widgets")
-        self.widgets.setStyleSheet(u"b")
-        self.verticalLayout = QVBoxLayout(self.widgets)
-        self.verticalLayout.setSpacing(10)
-        self.verticalLayout.setObjectName(u"verticalLayout")
-        self.verticalLayout.setContentsMargins(10, 10, 10, 10)
-        self.frame_content_wid_3 = QFrame(self.widgets)
-        self.frame_content_wid_3.setObjectName(u"frame_content_wid_3")
-        self.frame_content_wid_3.setFrameShape(QFrame.NoFrame)
-        self.frame_content_wid_3.setFrameShadow(QFrame.Raised)
-        self.horizontalLayout_11 = QHBoxLayout(self.frame_content_wid_3)
-        self.horizontalLayout_11.setObjectName(u"horizontalLayout_11")
-        self.horizontalLayout_11.setContentsMargins(-1, 5, -1, 5)
-        self.first_layout = QGridLayout()
-        self.first_layout.setObjectName(u"first_layout")
-        self.LookupType_comboBox = QComboBox(self.frame_content_wid_3)
-        self.LookupType_comboBox.addItem("")
-        self.LookupType_comboBox.addItem("")
-        self.LookupType_comboBox.setObjectName(u"LookupType_comboBox")
-        self.LookupType_comboBox.setFont(font)
-        self.LookupType_comboBox.setAutoFillBackground(False)
-        self.LookupType_comboBox.setStyleSheet(u"background-color: rgb(33, 37, 43);")
-        self.LookupType_comboBox.setIconSize(QSize(16, 16))
-        self.LookupType_comboBox.setFrame(True)
-
-        self.first_layout.addWidget(self.LookupType_comboBox, 1, 0, 1, 1)
-
-        self.PageTitle_label = QLabel(self.frame_content_wid_3)
-        self.PageTitle_label.setObjectName(u"PageTitle_label")
-        self.PageTitle_label.setFont(font)
-        self.PageTitle_label.setStyleSheet(u"")
-
-        self.first_layout.addWidget(self.PageTitle_label, 0, 0, 1, 1)
-
-        self.currentPath_lineEdit = QLineEdit(self.frame_content_wid_3)
-        self.currentPath_lineEdit.setObjectName(u"currentPath_lineEdit")
-        self.currentPath_lineEdit.setMinimumSize(QSize(0, 30))
-        self.currentPath_lineEdit.setStyleSheet(u"background-color: rgb(33, 37, 43);")
-
-        self.first_layout.addWidget(self.currentPath_lineEdit, 1, 1, 1, 1)
-
-        self.browseCurrentPath_btn = QPushButton(self.frame_content_wid_3)
-        self.browseCurrentPath_btn.setObjectName(u"browseCurrentPath_btn")
-        self.browseCurrentPath_btn.setMinimumSize(QSize(150, 30))
-        self.browseCurrentPath_btn.setFont(font)
-        self.browseCurrentPath_btn.setCursor(QCursor(Qt.PointingHandCursor))
-        self.browseCurrentPath_btn.setStyleSheet(u"background-color: rgb(52, 59, 72);")
-
-        self.first_layout.addWidget(self.browseCurrentPath_btn, 1, 2, 1, 1)
-        self.horizontalLayout_11.addLayout(self.first_layout)
-        self.verticalLayout.addWidget(self.frame_content_wid_3)
-
-        self.frame_content_wid_2 = QFrame(self.widgets)
-        self.frame_content_wid_2.setObjectName(u"frame_content_wid_2")
-        self.frame_content_wid_2.setFrameShape(QFrame.NoFrame)
-        self.frame_content_wid_2.setFrameShadow(QFrame.Raised)
-        self.horizontalLayout_10 = QHBoxLayout(self.frame_content_wid_2)
-        self.horizontalLayout_10.setObjectName(u"horizontalLayout_10")
-        self.horizontalLayout_10.setContentsMargins(-1, 5, -1, 5)
-        self.third_layout = QGridLayout()
-        self.third_layout.setObjectName(u"third_layout")
-        self.third_layout.setContentsMargins(-1, -1, -1, 0)
-        self.lookupInput_lineEdit = QLineEdit(self.frame_content_wid_2)
-        self.lookupInput_lineEdit.setObjectName(u"lookupInput_lineEdit")
-        self.lookupInput_lineEdit.setMinimumSize(QSize(0, 30))
-        self.lookupInput_lineEdit.setStyleSheet(u"background-color: rgb(33, 37, 43);")
-        self.lookupInput_lineEdit.setMaxLength(100)
-
-        self.third_layout.addWidget(self.lookupInput_lineEdit, 1, 3, 1, 1)
-
-        self.startLookup_btn = QPushButton(self.frame_content_wid_2)
-        self.startLookup_btn.setObjectName(u"startLookup_btn")
-        self.startLookup_btn.setEnabled(False)
-        self.startLookup_btn.setMinimumSize(QSize(150, 30))
-        self.startLookup_btn.setFont(font)
-        self.startLookup_btn.setCursor(QCursor(Qt.PointingHandCursor))
-        self.startLookup_btn.setStyleSheet(u"background-color: rgb(52, 59, 72);")
-
-        self.third_layout.addWidget(self.startLookup_btn, 1, 4, 1, 1)
-
-        self.lookupFormat_comboBox = QComboBox(self.frame_content_wid_2)
-        self.lookupFormat_comboBox.addItem("")
-        self.lookupFormat_comboBox.addItem("")
-        self.lookupFormat_comboBox.setObjectName(u"lookupFormat_comboBox")
-        self.lookupFormat_comboBox.setFont(font)
-        self.lookupFormat_comboBox.setAutoFillBackground(False)
-        self.lookupFormat_comboBox.setStyleSheet(u"background-color: rgb(33, 37, 43);")
-        self.lookupFormat_comboBox.setIconSize(QSize(16, 16))
-        self.lookupFormat_comboBox.setFrame(True)
-
-        self.third_layout.addWidget(self.lookupFormat_comboBox, 1, 0, 1, 1)
-
-        self.isRecursive_checkBox = QCheckBox(self.frame_content_wid_2)
-        self.isRecursive_checkBox.setObjectName(u"isRecursive_checkBox")
-        self.isRecursive_checkBox.setEnabled(True)
-        self.isRecursive_checkBox.setAutoFillBackground(False)
-        self.isRecursive_checkBox.setStyleSheet(u"")
-        self.isRecursive_checkBox.setChecked(True)
-
-        self.third_layout.addWidget(self.isRecursive_checkBox, 2, 0, 1, 1)
-
-        self.LookuByTitle_label = QLabel(self.frame_content_wid_2)
-        self.LookuByTitle_label.setObjectName(u"LookuByTitle_label")
-        self.LookuByTitle_label.setStyleSheet(u"color: rgb(113, 126, 149);")
-        self.LookuByTitle_label.setLineWidth(1)
-        self.LookuByTitle_label.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
-
-        self.third_layout.addWidget(self.LookuByTitle_label, 0, 0, 1, 1)
-
-        self.lookupFormat2_comboBox = QComboBox(self.frame_content_wid_2)
-        self.lookupFormat2_comboBox.addItem("")
-        self.lookupFormat2_comboBox.addItem("")
-        self.lookupFormat2_comboBox.setObjectName(u"lookupFormat2_comboBox")
-        self.lookupFormat2_comboBox.setFont(font)
-        self.lookupFormat2_comboBox.setAutoFillBackground(False)
-        self.lookupFormat2_comboBox.setStyleSheet(u"background-color: rgb(33, 37, 43);")
-        self.lookupFormat2_comboBox.setIconSize(QSize(16, 16))
-        self.lookupFormat2_comboBox.setFrame(True)
-
-        self.third_layout.addWidget(self.lookupFormat2_comboBox, 1, 1, 1, 1)
-
-        self.lookupFormat3_comboBox = QComboBox(self.frame_content_wid_2)
-        self.lookupFormat3_comboBox.addItem("")
-        self.lookupFormat3_comboBox.addItem("")
-        self.lookupFormat3_comboBox.addItem("")
-        self.lookupFormat3_comboBox.addItem("")
-        self.lookupFormat3_comboBox.addItem("")
-        self.lookupFormat3_comboBox.addItem("")
-        self.lookupFormat3_comboBox.addItem("")
-        self.lookupFormat3_comboBox.addItem("")
-        self.lookupFormat3_comboBox.addItem("")
-        self.lookupFormat3_comboBox.addItem("")
-        self.lookupFormat3_comboBox.setObjectName(u"lookupFormat3_comboBox")
-        self.lookupFormat3_comboBox.setFont(font)
-        self.lookupFormat3_comboBox.setAutoFillBackground(False)
-        self.lookupFormat3_comboBox.setStyleSheet(u"background-color: rgb(33, 37, 43);")
-        self.lookupFormat3_comboBox.setIconSize(QSize(16, 16))
-        self.lookupFormat3_comboBox.setFrame(True)
-
-        self.third_layout.addWidget(self.lookupFormat3_comboBox, 1, 2, 1, 1)
-
-        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.third_layout.addItem(self.horizontalSpacer_2, 2, 2, 1, 1)
-
-
-        self.horizontalLayout_10.addLayout(self.third_layout)
-
-
-        self.verticalLayout.addWidget(self.frame_content_wid_2)
-
-        self.frame_content_wid_4 = QFrame(self.widgets)
-        self.frame_content_wid_4.setObjectName(u"frame_content_wid_4")
-        self.frame_content_wid_4.setFrameShape(QFrame.NoFrame)
-        self.frame_content_wid_4.setFrameShadow(QFrame.Raised)
-        self.horizontalLayout_13 = QHBoxLayout(self.frame_content_wid_4)
-        self.horizontalLayout_13.setObjectName(u"horizontalLayout_13")
-        self.third_layout_2 = QGridLayout()
-        self.third_layout_2.setObjectName(u"third_layout_2")
-        self.third_layout_2.setContentsMargins(-1, -1, -1, 0)
-        self.renameValue_lineEdit = QLineEdit(self.frame_content_wid_4)
-        self.renameValue_lineEdit.setObjectName(u"renameValue_lineEdit")
-        self.renameValue_lineEdit.setMinimumSize(QSize(0, 30))
-        self.renameValue_lineEdit.setStyleSheet(u"background-color: rgb(33, 37, 43);")
-        self.renameValue_lineEdit.setMaxLength(50)
-
-        self.third_layout_2.addWidget(self.renameValue_lineEdit, 1, 2, 1, 1)
-
-        self.LookuByTitle_label_2 = QLabel(self.frame_content_wid_4)
-        self.LookuByTitle_label_2.setObjectName(u"LookuByTitle_label_2")
-        self.LookuByTitle_label_2.setStyleSheet(u"color: rgb(113, 126, 149);")
-        self.LookuByTitle_label_2.setLineWidth(1)
-        self.LookuByTitle_label_2.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
-
-        self.third_layout_2.addWidget(self.LookuByTitle_label_2, 0, 0, 1, 1)
-
-        self.renameBy_comboBox = QComboBox(self.frame_content_wid_4)
-        self.renameBy_comboBox.addItem("")
-        self.renameBy_comboBox.addItem("")
-        self.renameBy_comboBox.addItem("")
-        self.renameBy_comboBox.addItem("")
-        self.renameBy_comboBox.setObjectName(u"renameBy_comboBox")
-        self.renameBy_comboBox.setFont(font)
-        self.renameBy_comboBox.setAutoFillBackground(False)
-        self.renameBy_comboBox.setStyleSheet(u"background-color: rgb(33, 37, 43);")
-        self.renameBy_comboBox.setIconSize(QSize(16, 16))
-        self.renameBy_comboBox.setFrame(True)
-
-        self.third_layout_2.addWidget(self.renameBy_comboBox, 1, 0, 1, 1)
-
-        self.renameBy2_comboBox = QComboBox(self.frame_content_wid_4)
-        self.renameBy2_comboBox.addItem("")
-        self.renameBy2_comboBox.addItem("")
-        self.renameBy2_comboBox.addItem("")
-        self.renameBy2_comboBox.addItem("")
-        self.renameBy2_comboBox.setObjectName(u"renameBy2_comboBox")
-        self.renameBy2_comboBox.setFont(font)
-        self.renameBy2_comboBox.setAutoFillBackground(False)
-        self.renameBy2_comboBox.setStyleSheet(u"background-color: rgb(33, 37, 43);")
-        self.renameBy2_comboBox.setIconSize(QSize(16, 16))
-        self.renameBy2_comboBox.setFrame(True)
-
-        self.third_layout_2.addWidget(self.renameBy2_comboBox, 1, 1, 1, 1)
-
-        self.horizontalSpacer_3 = QSpacerItem(20, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.third_layout_2.addItem(self.horizontalSpacer_3, 2, 1, 1, 1)
-
-
-        self.horizontalLayout_13.addLayout(self.third_layout_2)
-
-
-        self.verticalLayout.addWidget(self.frame_content_wid_4)
-
-        self.row_3 = QFrame(self.widgets)
-        self.row_3.setObjectName(u"row_3")
-        self.row_3.setMinimumSize(QSize(0, 150))
-        self.row_3.setFrameShape(QFrame.StyledPanel)
-        self.row_3.setFrameShadow(QFrame.Raised)
-        self.horizontalLayout_12 = QHBoxLayout(self.row_3)
-        self.horizontalLayout_12.setSpacing(0)
-        self.horizontalLayout_12.setObjectName(u"horizontalLayout_12")
-        self.horizontalLayout_12.setContentsMargins(0, 0, 0, 0)
-        self.table_layout = QTableWidget(self.row_3)
-        if (self.table_layout.columnCount() < 4):
-            self.table_layout.setColumnCount(4)
-        __qtablewidgetitem = QTableWidgetItem()
-        self.table_layout.setHorizontalHeaderItem(0, __qtablewidgetitem)
-        __qtablewidgetitem1 = QTableWidgetItem()
-        self.table_layout.setHorizontalHeaderItem(1, __qtablewidgetitem1)
-        __qtablewidgetitem2 = QTableWidgetItem()
-        self.table_layout.setHorizontalHeaderItem(2, __qtablewidgetitem2)
-        __qtablewidgetitem3 = QTableWidgetItem()
-        self.table_layout.setHorizontalHeaderItem(3, __qtablewidgetitem3)
-        if (self.table_layout.rowCount() < 5):
-            self.table_layout.setRowCount(5)
-        font4 = QFont()
-        font4.setFamilies([u"Segoe UI"])
-        __qtablewidgetitem4 = QTableWidgetItem()
-        __qtablewidgetitem4.setFont(font4);
-        self.table_layout.setVerticalHeaderItem(0, __qtablewidgetitem4)
-        __qtablewidgetitem5 = QTableWidgetItem()
-        self.table_layout.setVerticalHeaderItem(1, __qtablewidgetitem5)
-        __qtablewidgetitem6 = QTableWidgetItem()
-        self.table_layout.setVerticalHeaderItem(2, __qtablewidgetitem6)
-        __qtablewidgetitem7 = QTableWidgetItem()
-        self.table_layout.setVerticalHeaderItem(3, __qtablewidgetitem7)
-        __qtablewidgetitem8 = QTableWidgetItem()
-        self.table_layout.setVerticalHeaderItem(4, __qtablewidgetitem8)
-        __qtablewidgetitem9 = QTableWidgetItem()
-        self.table_layout.setItem(0, 0, __qtablewidgetitem9)
-        __qtablewidgetitem10 = QTableWidgetItem()
-        self.table_layout.setItem(0, 1, __qtablewidgetitem10)
-        __qtablewidgetitem11 = QTableWidgetItem()
-        self.table_layout.setItem(0, 2, __qtablewidgetitem11)
-        __qtablewidgetitem12 = QTableWidgetItem()
-        __qtablewidgetitem12.setCheckState(Qt.Checked);
-        self.table_layout.setItem(0, 3, __qtablewidgetitem12)
-        __qtablewidgetitem13 = QTableWidgetItem()
-        self.table_layout.setItem(1, 0, __qtablewidgetitem13)
-        __qtablewidgetitem14 = QTableWidgetItem()
-        self.table_layout.setItem(1, 1, __qtablewidgetitem14)
-        __qtablewidgetitem15 = QTableWidgetItem()
-        self.table_layout.setItem(1, 2, __qtablewidgetitem15)
-        __qtablewidgetitem16 = QTableWidgetItem()
-        __qtablewidgetitem16.setCheckState(Qt.Checked);
-        self.table_layout.setItem(1, 3, __qtablewidgetitem16)
-        __qtablewidgetitem17 = QTableWidgetItem()
-        self.table_layout.setItem(2, 0, __qtablewidgetitem17)
-        __qtablewidgetitem18 = QTableWidgetItem()
-        self.table_layout.setItem(2, 1, __qtablewidgetitem18)
-        __qtablewidgetitem19 = QTableWidgetItem()
-        self.table_layout.setItem(2, 2, __qtablewidgetitem19)
-        __qtablewidgetitem20 = QTableWidgetItem()
-        __qtablewidgetitem20.setCheckState(Qt.Checked);
-        self.table_layout.setItem(2, 3, __qtablewidgetitem20)
-        __qtablewidgetitem21 = QTableWidgetItem()
-        self.table_layout.setItem(3, 0, __qtablewidgetitem21)
-        __qtablewidgetitem22 = QTableWidgetItem()
-        self.table_layout.setItem(3, 1, __qtablewidgetitem22)
-        __qtablewidgetitem23 = QTableWidgetItem()
-        self.table_layout.setItem(3, 2, __qtablewidgetitem23)
-        __qtablewidgetitem24 = QTableWidgetItem()
-        __qtablewidgetitem24.setCheckState(Qt.Checked);
-        self.table_layout.setItem(3, 3, __qtablewidgetitem24)
-        self.table_layout.setObjectName(u"table_layout")
-        sizePolicy3 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        sizePolicy3.setHorizontalStretch(0)
-        sizePolicy3.setVerticalStretch(0)
-        sizePolicy3.setHeightForWidth(self.table_layout.sizePolicy().hasHeightForWidth())
-        self.table_layout.setSizePolicy(sizePolicy3)
-        palette = QPalette()
-        brush = QBrush(QColor(221, 221, 221, 255))
-        brush.setStyle(Qt.SolidPattern)
-        palette.setBrush(QPalette.Active, QPalette.WindowText, brush)
-        brush1 = QBrush(QColor(0, 0, 0, 0))
-        brush1.setStyle(Qt.SolidPattern)
-        palette.setBrush(QPalette.Active, QPalette.Button, brush1)
-        palette.setBrush(QPalette.Active, QPalette.Text, brush)
-        palette.setBrush(QPalette.Active, QPalette.ButtonText, brush)
-        brush2 = QBrush(QColor(0, 0, 0, 255))
-        brush2.setStyle(Qt.NoBrush)
-        palette.setBrush(QPalette.Active, QPalette.Base, brush2)
-        palette.setBrush(QPalette.Active, QPalette.Window, brush1)
-        palette.setBrush(QPalette.Inactive, QPalette.WindowText, brush)
-        palette.setBrush(QPalette.Inactive, QPalette.Button, brush1)
-        palette.setBrush(QPalette.Inactive, QPalette.Text, brush)
-        palette.setBrush(QPalette.Inactive, QPalette.ButtonText, brush)
-        brush3 = QBrush(QColor(0, 0, 0, 255))
-        brush3.setStyle(Qt.NoBrush)
-        palette.setBrush(QPalette.Inactive, QPalette.Base, brush3)
-        palette.setBrush(QPalette.Inactive, QPalette.Window, brush1)
-        palette.setBrush(QPalette.Disabled, QPalette.WindowText, brush)
-        palette.setBrush(QPalette.Disabled, QPalette.Button, brush1)
-        palette.setBrush(QPalette.Disabled, QPalette.Text, brush)
-        palette.setBrush(QPalette.Disabled, QPalette.ButtonText, brush)
-        brush4 = QBrush(QColor(0, 0, 0, 255))
-        brush4.setStyle(Qt.NoBrush)
-        palette.setBrush(QPalette.Disabled, QPalette.Base, brush4)
-        palette.setBrush(QPalette.Disabled, QPalette.Window, brush1)
-        self.table_layout.setPalette(palette)
-        self.table_layout.setFrameShape(QFrame.NoFrame)
-        self.table_layout.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
-        self.table_layout.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
-        self.table_layout.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.table_layout.setSelectionMode(QAbstractItemView.NoSelection)
-        self.table_layout.setSelectionBehavior(QAbstractItemView.SelectRows)
-        self.table_layout.setShowGrid(True)
-        self.table_layout.setGridStyle(Qt.SolidLine)
-        self.table_layout.setSortingEnabled(True)
-        self.table_layout.horizontalHeader().setVisible(False)
-        self.table_layout.horizontalHeader().setCascadingSectionResizes(True)
-        self.table_layout.horizontalHeader().setDefaultSectionSize(200)
-        self.table_layout.horizontalHeader().setStretchLastSection(True)
-        self.table_layout.verticalHeader().setVisible(False)
-        self.table_layout.verticalHeader().setCascadingSectionResizes(False)
-        self.table_layout.verticalHeader().setHighlightSections(False)
-        self.table_layout.verticalHeader().setStretchLastSection(True)
-
-        self.horizontalLayout_12.addWidget(self.table_layout)
-
-        self.optionBtns_layout = QVBoxLayout()
-        self.optionBtns_layout.setObjectName(u"optionBtns_layout")
-        self.rename_btn = QPushButton(self.row_3)
-        self.rename_btn.setObjectName(u"rename_btn")
-        self.rename_btn.setEnabled(False)
-        self.rename_btn.setMinimumSize(QSize(150, 30))
-        self.rename_btn.setFont(font)
-        self.rename_btn.setCursor(QCursor(Qt.PointingHandCursor))
-        self.rename_btn.setStyleSheet(u"background-color: rgb(52, 59, 72);")
-
-        self.optionBtns_layout.addWidget(self.rename_btn)
-
-        self.restore_btn = QPushButton(self.row_3)
-        self.restore_btn.setObjectName(u"restore_btn")
-        self.restore_btn.setEnabled(False)
-        self.restore_btn.setMinimumSize(QSize(150, 30))
-        self.restore_btn.setFont(font)
-        self.restore_btn.setCursor(QCursor(Qt.PointingHandCursor))
-        self.restore_btn.setStyleSheet(u"background-color: rgb(52, 59, 72);")
-
-        self.optionBtns_layout.addWidget(self.restore_btn)
-
-        self.export_btn = QPushButton(self.row_3)
-        self.export_btn.setObjectName(u"export_btn")
-        self.export_btn.setEnabled(False)
-        self.export_btn.setMinimumSize(QSize(150, 30))
-        self.export_btn.setFont(font)
-        self.export_btn.setCursor(QCursor(Qt.PointingHandCursor))
-        self.export_btn.setStyleSheet(u"background-color: rgb(52, 59, 72);")
-
-        self.optionBtns_layout.addWidget(self.export_btn)
-
-        self.import_btn = QPushButton(self.row_3)
-        self.import_btn.setObjectName(u"import_btn")
-        self.import_btn.setEnabled(False)
-        self.import_btn.setMinimumSize(QSize(150, 30))
-        self.import_btn.setFont(font)
-        self.import_btn.setCursor(QCursor(Qt.PointingHandCursor))
-        self.import_btn.setStyleSheet(u"background-color: rgb(52, 59, 72);")
-
-        self.optionBtns_layout.addWidget(self.import_btn)
-        self.horizontalLayout_12.addLayout(self.optionBtns_layout)
-        self.verticalLayout.addWidget(self.row_3)
-
-        sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-
-        self.retranslateUi()
-
-        return self.widgets
