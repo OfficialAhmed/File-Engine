@@ -6,6 +6,7 @@ from PySide6.QtWidgets import *
 from . resources_rc import *
 from ..environment import Constant, Common, ProgressBar, Html
 from .ui_delete import Ui as Ui_delete
+from .ui_rename import Ui as Ui_rename
 from controller import Controller
 
 
@@ -237,12 +238,15 @@ class Ui(object):
 
         """
         ////////////////////////////////////////////////
-                DELETE PAGE CONTENT
+                PAGES CONTENT
         ////////////////////////////////////////////////
         """
         # SET SHARED WIDGETS AFTER RENDERING
         _UiDelete = Ui_delete()
         self.delete_widgets = _UiDelete.render_page()
+        
+        _UiRename = Ui_rename()
+        self.rename_widgets = _UiRename.render_page()
 
         """
         ////////////////////////////////////////////////
@@ -699,7 +703,7 @@ class Ui(object):
         self.horizontalLayout.addWidget(self.leftBox)
         self.horizontalLayout.addWidget(self.rightButtons, 0, Qt.AlignRight)
         self.verticalLayout_2.addWidget(self.contentTopBg)
-        self.stackedWidget.addWidget(self.new_page)
+        self.stackedWidget.addWidget(self.rename_widgets)
         self.verticalLayout_15.addWidget(self.stackedWidget)
         self.horizontalLayout_4.addWidget(self.pagesContainer)
         self.verticalLayout_13.addWidget(self.topMenus, 0, Qt.AlignTop)
@@ -751,7 +755,7 @@ class Ui(object):
 
         objs = {
             # OBJECT:                  (TEXT, TOOLTIP)
-            self.btn_display_mode:         ("LIGHT/DARK MODE", ""),
+            self.btn_display_mode:     ("LIGHT/DARK MODE", ""),
             self.btn_adjustments:      ("NOT IMPLEMENTED", ""),
             self.btn_more:             ("NOT IMPLEMENTED", ""),
             self.btn_message:          ("NOT IMPLEMENTED", ""),
