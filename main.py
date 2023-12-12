@@ -110,8 +110,8 @@ class MainWindow(QMainWindow):
         match btn_name:
             case "home_page":      page = self.widgets.home_widgets
             case "delete_page":    page = self.widgets.delete_widgets
+            case "rename_page":    page = self.widgets.rename_widgets
             case "move_page":      page = self.widgets.new_page
-            case "rename_page":    page = self.widgets.new_page
             case "lookup_page":    page = self.widgets.new_page
 
         self.widgets.stackedWidget.setCurrentWidget(page)
