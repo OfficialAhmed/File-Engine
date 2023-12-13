@@ -8,24 +8,21 @@ File Engine is a powerful and flexible file management and automation tool that 
 
 # FEATURES
 
-Search for files or folders recursively by:
-- Full name
-- Pattern
-- File extention
-
+- **File Search:** Quickly search for files based on file format, name, or content.
+- **Cross-Platform:** Works seamlessly on Windows, macOS, and Linux.
+- **User-Friendly Interface:** A user-friendly interface makes it easy for both beginners and power users.
+- **Detect hidden attribute** Read Files/Folders flagged as hidden
+      
 ### TODO LIST
 
-- [x] **File Search:** Quickly search for files based on file format, name, or content.
+- [x] **Export/Import Processes:** Save current process eliminate the need of researching again
+- [ ] **Automation:** Set up automated tasks to streamline your file management workflows.
 - [ ] **Bulk Operations:** Perform batch operations such as:
   - [ ] Moving
   - [ ] Copying
-  - [x] Deleting / Restoring files
   - [ ] Renaming
-- [ ] **Automation:** Set up automated tasks to streamline your file management workflows.
-- [x] **Cross-Platform:** Works seamlessly on Windows, macOS, and Linux.
-- [x] **User-Friendly Interface:** A user-friendly interface makes it easy for both beginners and power users.
-- [x] **Detect hidden attribute** Read Files/Folders flagged as hidden
-
+  - [x] Deleting
+  - [x] Restoring files
 
 # PREREQUISITES
 
