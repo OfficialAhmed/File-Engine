@@ -3,94 +3,18 @@ from PySide6.QtGui import QBrush, QColor, QCursor, QPalette
 from PySide6.QtWidgets import (
     QAbstractItemView, QAbstractScrollArea, QCheckBox, QComboBox, QFrame,
     QGridLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QSizePolicy,
-    QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget
+    QTableWidget, QVBoxLayout, QWidget
 )
 
 import os
 import json
-from Interface.environment import Common
+from Interface.environment import Common, RestoreWorker
+
 
 class Ui(Common):
 
     def __init__(self) -> None:
         super().__init__()
-
-        self.data = {}
-        self.checkboxes = []
-        self.table_headers = (
-            "FILE | FOLDER",
-            "SOURCE",
-            "SIZE (MB)",
-            "SELECT / DESELECT"
-        )
-
-    def generate_table(self):
-        """
-            GENERATE THE TABLE USING THE SELF.DATA
-        """
-
-        data = self.data.values()
-
-        # RENDER TABLE HEADERS
-        self.init_table(len(data))
-
-        # POPULATE THE TABLE WITH DATA
-        for row_index, row_data in enumerate(data):
-
-            for col_index, (_, value) in enumerate(row_data.items()):
-
-                item = QTableWidgetItem(str(value))
-                self.table_layout.setItem(row_index, col_index, item)
-
-                # RENDER CHECK ITEMS FOR EACH TABLE-ROW
-                if col_index == 2:
-
-                    checkbox = QCheckBox()
-                    checkbox.setChecked(True)
-
-                    self.table_layout.setCellWidget(
-                        row_index,                      # ROW INDEX
-                        3,                              # LAST COLUMN
-                        checkbox                        # ITEM
-                    )
-
-                    self.checkboxes.append(checkbox)
-
-        # RESIZE COLUMNS - BASED ON CONTENT SIZE
-        for col_index in range(self.table_layout.columnCount()):
-            self.table_layout.resizeColumnToContents(col_index)
-
-    def start_lookup_clicked(self):
-
-        if self.controller.show_dialog(
-            "WOULD YOU LIKE TO START THE SEARCHING PROCESS?",
-            "ARE YOU SURE?"
-        ):
-
-            # CACHE USER INPUTS
-            self.export_cache()
-
-            # SEARCH PROCESS
-            self.startBtn.setEnabled(False)
-            self.data, is_failed = self.get_data()
-            self.startBtn.setEnabled(True)
-
-            # THE PROCESS FAILED TO FETCH DATA. A MESSAGE HAS BEEN SHOWN TO THE USER.
-            if is_failed:
-                return None
-
-            # PATH EXISTED BUT NO FILES HAVE BEEN FOUND
-            if not self.data:
-                self.init_table()
-
-                self.controller.show_dialog(
-                    "NO DATA HAS BEEN FOUND!",          # MESSAGE
-                    "ITEMS CANNOT BE FOUND!",           # WINDOW TITLE
-                    is_dialog=False                     # FALSE = INFORMATIONAL
-                )
-                return None
-
-            self.generate_table()
 
     def rename_content_clicked(self):
         # TODO: CHANGE METHOD
@@ -106,60 +30,7 @@ class Ui(Common):
         self.progressBar.update(100)
         print("renaming process started...")
 
-        # files_to_remove = []
-        # self.rows_to_remove = []
-
-        # FLAG SELECTED TABLE ITEMS
-        # for indx, cb in enumerate(self.checkboxes):
-
-        #     # IF CHECKBOX SELECTED
-        #     if cb.isChecked():
-
-        #         # FETCH DATA FROM TABLE
-        #         file = self.table_layout.item(
-        #             indx, 0                                 # EACH ROW, 1ST COLUMN
-        #         ).text()
-
-        #         root = self.table_layout.item(
-        #             indx, 1                                 # EACH ROW, 2ND COLUMN
-        #         ).text()
-
-        #         files_to_remove.append(f"{root}//{file}")
-        #         self.rows_to_remove.append(indx)
-
-        # # DELETE FILES WITH THREADS
-        # future_process = DeleteWorker(
-        #     files_to_remove,
-        #     self.lookupType.currentText()
-        # )
-
-        # # UPDATE PROGRESS BAR
-        # future_process.progress_signal.connect(
-        #     self.progressBar.update
-        # )
-
-        # # DELETE ROWS FROM THE UI
-        # future_process.remove_rows_signal.connect(
-        #     self.remove_table_rows
-        # )
-
-        # # SUCCESSFULL ITEMS REMOVAL MESSAGE
-        # future_process.is_success.connect(
-        #     self.removing_process_state
-        # )
-
-        # # UNSUCCESSFULL ITEMS REMOVAL MESSAGE
-        # future_process.is_fail.connect(
-        #     lambda error: self.controller.show_dialog(
-        #         f"SOMTHING WENT WRONG WHILE REMOVING | ERROR <{error}>",
-        #         "C",
-        #         False
-        #     )
-        # )
-
-        # future_process.run()
-
-    def restore_files_clicked(self) -> None:
+    def restore_content_clicked(self) -> None:
 
         # PROMPT USER
         if not self.controller.show_dialog(
@@ -187,20 +58,20 @@ class Ui(Common):
             data: dict = json.load(open(trash_file))
 
             # RESTORE FILES WITH THREADS
-            future_process = RestoreWorker(data)
+            worker = RestoreWorker(data)
 
             # UPDATE PROGRESS BAR WITH THE VALUE RETURNED BY THE SIGNAL
-            future_process.progress_signal.connect(
+            worker.progress_signal.connect(
                 self.progressBar.update
             )
 
             # SUCCESSFULL ITEMS REMOVAL MESSAGE
-            future_process.is_success.connect(
-                self.removing_process_state
+            worker.is_success.connect(
+                self.renaming_process_state
             )
 
             # UNSUCCESSFULL ITEMS REMOVAL MESSAGE
-            future_process.is_fail.connect(
+            worker.is_fail.connect(
                 lambda error: self.controller.show_dialog(
                     f"SOMTHING WENT WRONG WHILE RESTORING | ERROR <{error}>",
                     "C",
@@ -208,7 +79,7 @@ class Ui(Common):
                 )
             )
 
-            future_process.run()
+            worker.run()
 
         except Exception as e:
 
@@ -219,54 +90,7 @@ class Ui(Common):
             )
             return None
 
-    def export_process_clicked(self) -> None:
-        """
-        EXPORT CURRENT DATA FOR LATER USE (FOR THE LOADING PROCESS)
-        """
-
-        # IF NO DATA HAS BEEN FOUND, RETURN
-        if not self.data:
-            self.controller.show_dialog(
-                f"TO EXPORT THE CURRENT PROCESS, YOU NEED TO START THE PROCESS FIRST!",
-                "I",
-                is_dialog=False
-            )
-
-            return None
-
-        # GET FILE DESTINATION
-        folder_path = self.get_path()
-        path = f"{folder_path}\\{self.get_timestamp()}.json"
-
-        if folder_path:
-
-            with open(path, "w") as file:
-                json.dump(self.data, file)
-
-            # CHECK IF FILE EXPORTED SUCCESSFULLY
-            if os.path.exists(path) and os.path.getsize(path) > 0:
-                self.controller.show_dialog(
-                    f"PROCESS EXPORTED SUCCESSFULLY!",
-                    "I",
-                    is_dialog=False
-                )
-
-            else:
-                self.controller.show_dialog(
-                    f"SOMETHING WENT WRONG! PROCESS WASN'T EXPORTED. PLEASE TRY AGAIN!",
-                    "C",
-                    is_dialog=False
-                )
-
-    def import_process_clicked(self) -> None:
-        """
-            OVERWRITE THE DATA FROM A JSON FILE GENERATED BY THE SAVE PROCESS
-            THEN POPULATE THE DATA ONTO A NEW GENERATED TABLE
-        """
-        self.data = json.load(open(self.get_path("json")))
-        self.generate_table()
-
-    def removing_process_state(self, state: bool):
+    def renaming_process_state(self, state: bool):
         # TODO: CHANGE METHOD
 
         if state:
@@ -283,85 +107,21 @@ class Ui(Common):
                 False
             )
 
-    def init_table(self, rows=1, columns=4):
-        """
-        Render a new table widget with headers
-        """
+    def restore_process_state(self, state: bool):
 
-        total_rows = rows
-        total_columns = columns
-
-        # CLEAR PREVIOUS ROWS
-        self.checkboxes.clear()
-        self.table_layout.setRowCount(0)
-
-        self.table_layout.setRowCount(total_rows)
-        self.table_layout.setColumnCount(total_columns)
-
-        # RENDER TABLE HEADERS
-        self.table_layout.setHorizontalHeaderLabels(self.table_headers)
-
-        self.retranslateTableHeaders()
-
-    def table_header_clicked(self, header_section: int) -> None:
-        """
-        ### ON TABLE HEADER CLICK 
-
-            Zero-indexed header
-            * On click header `0` `1` `2` -> re-render checkboxes
-            * On click header `3`         -> (De)Select Checkboxes
-        """
-
-        if header_section == 3:
-
-            # SELECT/DESELCT ALL CHECKBOXES
-            for checkbox in self.checkboxes:
-                checkbox.toggle()
+        if state:
+            self.controller.show_dialog(
+                f"SUCCESSFULY RESTORED ALL ITEM(S)",
+                "OPERATION SUCCESSFULL",
+                False
+            )
 
         else:
-
-            # RE-RENDER TABLE CHECKBOXES TO REARRANGE THEM BASED ON THE NEW SORT
-            total_checkboxes = len(self.checkboxes)
-            self.checkboxes.clear()
-
-            for row_indx in range(total_checkboxes):
-
-                checkbox = QCheckBox()
-                checkbox.setChecked(False)
-
-                self.table_layout.setCellWidget(
-                    row_indx,                            # ROW INDEX
-                    3,                                   # LAST COLUMN
-                    checkbox                             # ITEM
-                )
-
-                self.checkboxes.append(checkbox)
-
-    def remove_table_rows(self) -> None:
-        """
-            DELETE ALL CHECKED ROWS AFTER REMOVING THE FILES
-        """
-
-        if not self.rows_to_remove:
             self.controller.show_dialog(
-                "NO DATA HAS BEEN SELECTED", is_dialog=False
+                f"SOME ITEM(S) WEREN'T RESTORED SUCCESSFULY",
+                "OPERATION PARTIALLY SUCCESSFULL",
+                False
             )
-            return None
-
-        # REMOVE SELECTED CHECKBOXES
-        for row in reversed(self.rows_to_remove):
-            self.table_layout.removeRow(row)
-            self.checkboxes.pop(row)
-
-    def retranslateTableHeaders(self):
-
-        for col, txt in enumerate(self.table_headers):
-
-            header_item = QTableWidgetItem(
-                QCoreApplication.translate("MainWindow", txt)
-            )
-
-            self.table_layout.setHorizontalHeaderItem(col, header_item)
 
     def render_page(self):
         self.widgets = QWidget()
@@ -600,7 +360,7 @@ class Ui(Common):
         )
         self.table_layout.setSizePolicy(sizePolicy3)
 
-        self.init_table()
+        self.init_table(self.table_layout)
 
         """
         ===================================================================
@@ -739,7 +499,7 @@ class Ui(Common):
         )
 
         self.restore_btn.clicked.connect(
-            lambda: self.restore_files_clicked()
+            lambda: self.restore_content_clicked()
         )
 
         self.LookupType_comboBox.currentTextChanged.connect(
