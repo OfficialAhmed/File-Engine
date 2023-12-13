@@ -8,7 +8,7 @@ from PySide6.QtWidgets import (
 
 import os
 import json
-from Interface.environment import Common
+from Interface.environment import Common, RestoreWorker
 
 class Ui(Common):
 
