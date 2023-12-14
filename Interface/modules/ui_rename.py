@@ -267,13 +267,6 @@ class Ui(Common):
         self.lookupFormat2_comboBox.setFrame(True)
         self.lookupFormat3_comboBox.setFrame(True)
 
-        self.renameBy_comboBox.setAutoFillBackground(False)
-        self.renameBy2_comboBox.setAutoFillBackground(False)
-        self.isRecursive_checkBox.setAutoFillBackground(False)
-        self.lookupFormat_comboBox.setAutoFillBackground(False)
-        self.lookupFormat2_comboBox.setAutoFillBackground(False)
-        self.lookupFormat3_comboBox.setAutoFillBackground(False)
-
         self.row_3.setFrameShape(QFrame.StyledPanel)
         self.table_layout.setFrameShape(QFrame.NoFrame)
         self.frame_content_wid_4.setFrameShape(QFrame.NoFrame)
@@ -505,6 +498,14 @@ class Ui(Common):
         self.LookupType_comboBox.currentTextChanged.connect(
             lambda: self.change_lookup_format()
         )
+        
+        self.lookupFormat2_comboBox.currentTextChanged.connect(
+            lambda: self.lookup_format2_changed()
+        )
+        
+        self.lookupFormat3_comboBox.currentTextChanged.connect(
+            lambda: self.lookup_format3_changed()
+        )
 
         # ON TABLE-HEADER CLICK
         self.table_layout.horizontalHeader().sectionClicked.connect(
@@ -513,6 +514,28 @@ class Ui(Common):
 
         return self.widgets
 
+    def lookup_format2_changed(self):
+        
+        current_format2 = self.lookupFormat2_comboBox.currentText()
+        
+        if current_format2 != "CONTAIN":
+            self.lookupFormat3_comboBox.hide()
+        else:
+            self.lookupFormat3_comboBox.show()
+            
+    def lookup_format3_changed(self):
+        
+        custom_input = ("custom", "excluding")
+        current_format3 = self.lookupFormat3_comboBox.currentText()
+        
+        if current_format3.lower().split(" ")[-1] not in custom_input: 
+            self.lookupInput_lineEdit.hide()
+            
+        else:
+            self.lookupInput_lineEdit.show()
+            
+            
+        
     def retranslateUi(self):
         """
         TRANSLATE UI TEXT
