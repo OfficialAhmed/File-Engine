@@ -34,11 +34,6 @@ class UiSettings(MainWindow):
     def get_state(self):
         return UiSettings.GLOBAL_STATE
 
-    # SET STATUS
-    # def set_state(self, state):
-    #     # global GLOBAL_STATE
-    #     UiSettings.GLOBAL_STATE = state
-
     # MAXIMIZE AND RESTORE WINDOW
     def maximize_restore(self):
 

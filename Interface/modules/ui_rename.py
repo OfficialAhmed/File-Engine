@@ -498,10 +498,10 @@ class Ui(Common):
             lambda: self.change_lookup_format()
         )
         self.lookupByComboBox3.currentTextChanged.connect(
-            lambda: self.lookup_by_format_2_changed()
+            lambda: self.lookup_input_2_changed()
         )
         self.lookupByComboBox4.currentTextChanged.connect(
-            lambda: self.lookup_by_format_3_changed()
+            lambda: self.lookup_input_3_changed()
         )
         self.renameToComboBox.currentTextChanged.connect(
             lambda: self.rename_method_changed()
@@ -514,7 +514,7 @@ class Ui(Common):
 
         return self.widgets
 
-    def lookup_by_format_2_changed(self):
+    def lookup_input_2_changed(self):
 
         if self.lookupByComboBox3.currentText() != "CONTAIN":
             self.lookupByLineEdit.show()
@@ -524,7 +524,7 @@ class Ui(Common):
         self.lookupByLineEdit.hide()
         self.lookupByComboBox4.show()
 
-    def lookup_by_format_3_changed(self):
+    def lookup_input_3_changed(self):
 
         # IF THE SELECTED OPTION DOESNT CONTAIN CUSTOM INPUT, HIDE INPUT
         if self.lookupByComboBox4.currentText().lower().split(" ")[-1] not in ("custom", "excluding"):
@@ -569,12 +569,9 @@ class Ui(Common):
         """
 
         for widget, info in self.options.items():
-            if info:
-                widget.addItems(
-                    [
-                        QCoreApplication.translate("MainWindow", text, None) for text in info
-                    ]
-                )
+            widget.addItems([
+                QCoreApplication.translate("MainWindow", text, None) for text in info
+            ])
 
         """
         ===================================================================
@@ -647,7 +644,6 @@ class Ui(Common):
         ===================================================================
         """
         self.lookupByLineEdit.hide()
-        self.renameToLineEdit.hide()
 
         self.tableWidget.setSortingEnabled(True)
         self.retranslateTableHeaders()
