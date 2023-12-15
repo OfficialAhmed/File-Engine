@@ -144,6 +144,7 @@ class Ui(Common):
         self.verticalLayout = QVBoxLayout(self.widgets)
         self.PageTitle_label = QLabel(self.frame_content_wid_3)
         self.LookuByTitle_label = QLabel(self.frame_content_wid_2)
+        self.RenameToTitle_label = QLabel(self.frame_content_wid_4)
         self.startLookup_btn = QPushButton(self.frame_content_wid_2)
         self.renameBy_comboBox = QComboBox(self.frame_content_wid_4)
         self.renameBy2_comboBox = QComboBox(self.frame_content_wid_4)
@@ -230,6 +231,14 @@ class Ui(Common):
         self.browseCurrentPath_btn.setStyleSheet(
             self.html.get_bg_color("light blue")
         )
+        
+        self.LookuByTitle_label.setStyleSheet(
+            self.html.get_text_color("dracula purple")
+        )
+        
+        self.RenameToTitle_label.setStyleSheet(
+            self.html.get_text_color("dracula purple")
+        )
 
         self.horizontalLayout_11.addLayout(self.first_layout)
 
@@ -255,10 +264,6 @@ class Ui(Common):
         self.horizontalLayout_10.setContentsMargins(-1, 5, -1, 5)
         self.second_layout.setContentsMargins(-1, -1, -1, 0)
         self.lookupInput_lineEdit.setMaxLength(100)
-
-        self.LookuByTitle_label.setLineWidth(1)
-        self.LookuByTitle_label.setAlignment(
-            Qt.AlignLeading | Qt.AlignLeft | Qt.AlignVCenter)
 
         self.renameBy_comboBox.setFrame(True)
         self.renameBy2_comboBox.setFrame(True)
@@ -293,6 +298,7 @@ class Ui(Common):
         self.second_layout.addWidget(self.LookuByTitle_label, 0, 0, 1, 1)
         self.second_layout.addWidget(self.lookupFormat2_comboBox, 1, 1, 1, 1)
         self.second_layout.addWidget(self.lookupFormat3_comboBox, 1, 2, 1, 1)
+        self.third_layout.addWidget(self.RenameToTitle_label, 0, 0, 1, 1)
         self.third_layout.addWidget(self.startLookup_btn, 1, 3, 1, 1)
         self.third_layout.addWidget(self.renameValue_lineEdit, 1, 2, 1, 1)
         self.third_layout.addWidget(self.renameBy_comboBox, 1, 0, 1, 1)
@@ -336,9 +342,9 @@ class Ui(Common):
         self.browseCurrentPath_btn.setObjectName(u"browseCurrentPath_btn")
         self.lookupFormat_comboBox.setObjectName(u"lookupFormat_comboBox")
         self.lookupFormat3_comboBox.setObjectName(u"lookupFormat3_comboBox")
-        self.LookuByTitle_label.setStyleSheet(u"color: rgb(113, 126, 149);")
         self.lookupFormat2_comboBox.setObjectName(u"lookupFormat2_comboBox")
 
+ 
         """
         ===================================================================
                                 TABLE CONTENT
@@ -519,8 +525,10 @@ class Ui(Common):
         current_format2 = self.lookupFormat2_comboBox.currentText()
         
         if current_format2 != "CONTAIN":
+            self.lookupInput_lineEdit.show()
             self.lookupFormat3_comboBox.hide()
         else:
+            self.lookupInput_lineEdit.hide()
             self.lookupFormat3_comboBox.show()
             
     def lookup_format3_changed(self):
@@ -626,7 +634,7 @@ class Ui(Common):
         )
         self.lookupInput_lineEdit.setPlaceholderText(
             QCoreApplication.translate(
-                "MainWindow", "Enter values to look for seperated by comma", None
+                "MainWindow", "Enter values to look for [seperated by comma]", None
             )
         )
         self.LookuByTitle_label.setText(
@@ -634,6 +642,13 @@ class Ui(Common):
                 "MainWindow", "LOOKUP BY", None
             )
         )
+        self.RenameToTitle_label.setText(
+            QCoreApplication.translate(
+                "MainWindow", "RENAME TO", None
+            )
+        )
+        
+        self.lookupInput_lineEdit.hide()
 
         """
         ////////////////////////////////////////////////
