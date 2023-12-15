@@ -214,21 +214,10 @@ class Common:
         # REMOVE ALL TYPES
         self.lookupFormat.clear()
 
-        # GENERATE NEW TYPES
-        new_formats = (
-            "NAME",
-            "PATTERN"
-        )
-
         # ADD THE OPTION 'EXTENSION' IF 'FILES' SELECTED
-        if current_type == "FILES":
-            new_formats = (
-                "NAME",
-                "PATTERN",
-                "EXTENSION"
-            )
+        formats = ("NAME", "EXTENSION") if current_type == "FILES" else ("NAME",)
 
-        for format in new_formats:
+        for format in formats:
             self.lookupFormat.addItem(format)
 
     def get_data(self) -> (dict, bool):
@@ -519,9 +508,9 @@ class Html:
 
     def get_bg_color(self, name: str) -> str:
         return f"background-color: rgb({self.color.get(name)})"
-
-    def get_rgb_color(self, name: str) -> tuple[int, int, int]:
-        return tuple(int(x) for x in self.color.get(name).split(", "))
+    
+    def get_text_color(self, name:str) -> str:
+        return f"color: rgb({self.COLOR.get(name)})"
 
     def title_span_tag(self, text: str, clr: str = "#ff79c6", f_size: str = "12") -> str:
         return f'<span style="font-size:{f_size}pt; font-weight:600; color:{clr}">{text}</span>'
