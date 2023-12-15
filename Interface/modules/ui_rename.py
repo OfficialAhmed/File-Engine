@@ -131,56 +131,63 @@ class Ui(Common):
                         SET WIDGETS (SENSITIVE LAYOUT)
         ===================================================================
         """
-        self.first_layout = QGridLayout()
-        self.second_layout = QGridLayout()
-        self.third_layout = QGridLayout()
+        self.firstGrid = QGridLayout()
+        self.secondGrid = QGridLayout()
+        self.thirdGrid = QGridLayout()
 
-        self.row_3 = QFrame(self.widgets)
-        self.table_layout = QTableWidget(self.row_3)
-        self.frame_content_wid_3 = QFrame(self.widgets)
-        self.frame_content_wid_2 = QFrame(self.widgets)
-        self.frame_content_wid_4 = QFrame(self.widgets)
+        self.tableFrame = QFrame(self.widgets)
+        self.contentFrame1 = QFrame(self.widgets)
+        self.contentFrame2 = QFrame(self.widgets)
+        self.contentFrame3 = QFrame(self.widgets)
+        self.tableWidget = QTableWidget(self.tableFrame)
 
-        self.verticalLayout = QVBoxLayout(self.widgets)
-        self.PageTitle_label = QLabel(self.frame_content_wid_3)
-        self.LookuByTitle_label = QLabel(self.frame_content_wid_2)
-        self.RenameToTitle_label = QLabel(self.frame_content_wid_4)
-        self.startLookup_btn = QPushButton(self.frame_content_wid_2)
-        self.renameBy_comboBox = QComboBox(self.frame_content_wid_4)
-        self.renameBy2_comboBox = QComboBox(self.frame_content_wid_4)
-        self.LookupType_comboBox = QComboBox(self.frame_content_wid_3)
-        self.lookupInput_lineEdit = QLineEdit(self.frame_content_wid_2)
-        self.isRecursive_checkBox = QCheckBox(self.frame_content_wid_2)
-        self.renameValue_lineEdit = QLineEdit(self.frame_content_wid_4)
-        self.currentPath_lineEdit = QLineEdit(self.frame_content_wid_3)
-        self.horizontalLayout_11 = QHBoxLayout(self.frame_content_wid_3)
-        self.horizontalLayout_10 = QHBoxLayout(self.frame_content_wid_2)
-        self.lookupFormat_comboBox = QComboBox(self.frame_content_wid_2)
-        self.horizontalLayout_13 = QHBoxLayout(self.frame_content_wid_4)
-        self.lookupFormat2_comboBox = QComboBox(self.frame_content_wid_2)
-        self.lookupFormat3_comboBox = QComboBox(self.frame_content_wid_2)
-        self.browseCurrentPath_btn = QPushButton(self.frame_content_wid_3)
+        self.pageTitleLabel = QLabel(self.contentFrame1)
+        self.lookupByTitleLabel = QLabel(self.contentFrame2)
+        self.renameToTitleLabel = QLabel(self.contentFrame3)
+
+        self.pathLineEdit = QLineEdit(self.contentFrame1)
+        self.lookupByLineEdit = QLineEdit(self.contentFrame2)
+        self.renameToLineEdit = QLineEdit(self.contentFrame3)
+
+        self.horizontalBoxLayout = QHBoxLayout(self.tableFrame)
+        self.horizontalBoxLayout2 = QHBoxLayout(self.contentFrame1)
+        self.horizontalBoxLayout3 = QHBoxLayout(self.contentFrame2)
+        self.horizontalBoxLayout4 = QHBoxLayout(self.contentFrame3)
+
+        self.isRecursiveCheckBox = QCheckBox(self.contentFrame2)
+
+        self.lookupByComboBox = QComboBox(self.contentFrame1)
+        self.lookupByComboBox2 = QComboBox(self.contentFrame2)
+        self.lookupByComboBox3 = QComboBox(self.contentFrame2)
+        self.lookupByComboBox4 = QComboBox(self.contentFrame2)
+
+        self.renameToComboBox = QComboBox(self.contentFrame3)
+        self.renameToComboBox2 = QComboBox(self.contentFrame3)
 
         self.optionBtns_layout = QVBoxLayout()
-        self.rename_btn = QPushButton(self.row_3)
-        self.export_btn = QPushButton(self.row_3)
-        self.import_btn = QPushButton(self.row_3)
-        self.restore_btn = QPushButton(self.row_3)
+        self.verticalBoxLayout = QVBoxLayout(self.widgets)
 
-        self.verticalLayout.setSpacing(10)
-        self.verticalLayout.setContentsMargins(10, 10, 10, 10)
-        self.frame_content_wid_3.setFrameShape(QFrame.NoFrame)
-        self.frame_content_wid_3.setFrameShadow(QFrame.Raised)
-        self.horizontalLayout_11.setContentsMargins(-1, 5, -1, 5)
-        self.LookupType_comboBox.setAutoFillBackground(False)
+        self.browsePathBtn = QPushButton(self.contentFrame1)
+        self.startLookupBtn = QPushButton(self.contentFrame2)
+        self.renameBtn = QPushButton(self.tableFrame)
+        self.exportBtn = QPushButton(self.tableFrame)
+        self.importBtn = QPushButton(self.tableFrame)
+        self.restoreBtn = QPushButton(self.tableFrame)
+
+        self.verticalBoxLayout.setSpacing(10)
+        self.verticalBoxLayout.setContentsMargins(10, 10, 10, 10)
+        self.contentFrame1.setFrameShape(QFrame.NoFrame)
+        self.contentFrame1.setFrameShadow(QFrame.Raised)
+        self.horizontalBoxLayout2.setContentsMargins(-1, 5, -1, 5)
+        self.lookupByComboBox.setAutoFillBackground(False)
 
         self.set_controller_widgets(
-            self.LookupType_comboBox,
-            self.currentPath_lineEdit,
-            self.lookupFormat_comboBox,
-            self.lookupInput_lineEdit,
-            self.isRecursive_checkBox,
-            self.startLookup_btn
+            self.lookupByComboBox,
+            self.pathLineEdit,
+            self.lookupByComboBox2,
+            self.lookupByLineEdit,
+            self.isRecursiveCheckBox,
+            self.startLookupBtn
         )
 
         """
@@ -188,163 +195,130 @@ class Ui(Common):
                             SET STYLESHEET
         ===================================================================
         """
-        self.startLookup_btn.setStyleSheet(
+        self.startLookupBtn.setStyleSheet(
             self.html.get_bg_color("light blue")
         )
 
-        self.renameBy_comboBox.setStyleSheet(
+        self.renameToComboBox.setStyleSheet(
             self.html.get_bg_color("dark blue")
         )
 
-        self.renameBy2_comboBox.setStyleSheet(
+        self.renameToComboBox2.setStyleSheet(
             self.html.get_bg_color("dark blue")
         )
 
-        self.LookupType_comboBox.setStyleSheet(
+        self.lookupByComboBox.setStyleSheet(
             self.html.get_bg_color("dark blue")
         )
 
-        self.currentPath_lineEdit.setStyleSheet(
+        self.pathLineEdit.setStyleSheet(
             self.html.get_bg_color("dark blue")
         )
 
-        self.lookupInput_lineEdit.setStyleSheet(
+        self.lookupByLineEdit.setStyleSheet(
             self.html.get_bg_color("dark blue")
         )
 
-        self.renameValue_lineEdit.setStyleSheet(
+        self.renameToLineEdit.setStyleSheet(
             self.html.get_bg_color("dark blue")
         )
 
-        self.lookupFormat_comboBox.setStyleSheet(
+        self.lookupByComboBox2.setStyleSheet(
             self.html.get_bg_color("dark blue")
         )
 
-        self.lookupFormat2_comboBox.setStyleSheet(
+        self.lookupByComboBox3.setStyleSheet(
             self.html.get_bg_color("dark blue")
         )
 
-        self.lookupFormat3_comboBox.setStyleSheet(
+        self.lookupByComboBox4.setStyleSheet(
             self.html.get_bg_color("dark blue")
         )
 
-        self.browseCurrentPath_btn.setStyleSheet(
+        self.browsePathBtn.setStyleSheet(
             self.html.get_bg_color("light blue")
         )
-        
-        self.LookuByTitle_label.setStyleSheet(
-            self.html.get_text_color("dracula purple")
-        )
-        
-        self.RenameToTitle_label.setStyleSheet(
+
+        self.lookupByTitleLabel.setStyleSheet(
             self.html.get_text_color("dracula purple")
         )
 
-        self.horizontalLayout_11.addLayout(self.first_layout)
+        self.renameToTitleLabel.setStyleSheet(
+            self.html.get_text_color("dracula purple")
+        )
+
+        self.horizontalBoxLayout2.addLayout(self.firstGrid)
 
         """
         ===================================================================
                                 SET FRAMINGS
         ===================================================================
         """
-        self.row_3.setMinimumSize(QSize(0, 150))
-        self.rename_btn.setMinimumSize(QSize(150, 30))
-        self.export_btn.setMinimumSize(QSize(150, 30))
-        self.import_btn.setMinimumSize(QSize(150, 30))
-        self.restore_btn.setMinimumSize(QSize(150, 30))
-        self.startLookup_btn.setMinimumSize(QSize(150, 30))
-        self.lookupInput_lineEdit.setMinimumSize(QSize(0, 30))
-        self.currentPath_lineEdit.setMinimumSize(QSize(0, 30))
-        self.renameValue_lineEdit.setMinimumSize(QSize(0, 30))
-        self.browseCurrentPath_btn.setMinimumSize(QSize(150, 30))
+        self.tableFrame.setMinimumSize(QSize(0, 150))
+        self.renameBtn.setMinimumSize(QSize(150, 30))
+        self.exportBtn.setMinimumSize(QSize(150, 30))
+        self.importBtn.setMinimumSize(QSize(150, 30))
+        self.restoreBtn.setMinimumSize(QSize(150, 30))
+        self.startLookupBtn.setMinimumSize(QSize(150, 30))
+        self.lookupByLineEdit.setMinimumSize(QSize(0, 30))
+        self.pathLineEdit.setMinimumSize(QSize(0, 30))
+        self.renameToLineEdit.setMinimumSize(QSize(0, 30))
+        self.browsePathBtn.setMinimumSize(QSize(150, 30))
 
-        self.frame_content_wid_2.setFrameShape(QFrame.NoFrame)
-        self.frame_content_wid_2.setFrameShadow(QFrame.Raised)
+        self.contentFrame2.setFrameShape(QFrame.NoFrame)
+        self.contentFrame2.setFrameShadow(QFrame.Raised)
 
-        self.horizontalLayout_10.setContentsMargins(-1, 5, -1, 5)
-        self.second_layout.setContentsMargins(-1, -1, -1, 0)
-        self.lookupInput_lineEdit.setMaxLength(100)
+        self.horizontalBoxLayout3.setContentsMargins(-1, 5, -1, 5)
+        self.secondGrid.setContentsMargins(-1, -1, -1, 0)
+        self.lookupByLineEdit.setMaxLength(100)
 
-        self.renameBy_comboBox.setFrame(True)
-        self.renameBy2_comboBox.setFrame(True)
-        self.LookupType_comboBox.setFrame(True)
-        self.lookupFormat_comboBox.setFrame(True)
-        self.lookupFormat2_comboBox.setFrame(True)
-        self.lookupFormat3_comboBox.setFrame(True)
+        # self.tableFrame.setFrameShape(QFrame.StyledPanel)
+        # self.tableWidget.setFrameShape(QFrame.NoFrame)
+        # self.contentFrame3.setFrameShape(QFrame.NoFrame)
+        # self.contentFrame3.setFrameShadow(QFrame.Raised)
 
-        self.row_3.setFrameShape(QFrame.StyledPanel)
-        self.table_layout.setFrameShape(QFrame.NoFrame)
-        self.frame_content_wid_4.setFrameShape(QFrame.NoFrame)
-        self.frame_content_wid_4.setFrameShadow(QFrame.Raised)
+        self.horizontalBoxLayout3.addLayout(self.secondGrid)
 
-        self.horizontalLayout_10.addLayout(self.second_layout)
+        self.thirdGrid.setContentsMargins(-1, -1, -1, 0)
+        self.renameToLineEdit.setMaxLength(50)
 
-        self.third_layout.setContentsMargins(-1, -1, -1, 0)
-        self.renameValue_lineEdit.setMaxLength(50)
+        self.horizontalBoxLayout4.addLayout(self.thirdGrid)
 
-        self.horizontalLayout_13.addLayout(self.third_layout)
+        self.tableFrame.setFrameShadow(QFrame.Raised)
+        self.horizontalBoxLayout.setSpacing(0)
+        self.horizontalBoxLayout.setContentsMargins(0, 0, 0, 0)
 
-        self.row_3.setFrameShadow(QFrame.Raised)
-        self.horizontalLayout_12 = QHBoxLayout(self.row_3)
-        self.horizontalLayout_12.setSpacing(0)
-        self.horizontalLayout_12.setContentsMargins(0, 0, 0, 0)
+        self.firstGrid.addWidget(self.lookupByComboBox, 1, 0, 1, 1)
+        self.firstGrid.addWidget(self.pageTitleLabel, 0, 0, 1, 1)
+        self.firstGrid.addWidget(self.pathLineEdit, 1, 1, 1, 1)
+        self.firstGrid.addWidget(self.browsePathBtn, 1, 2, 1, 1)
 
-        self.first_layout.addWidget(self.LookupType_comboBox, 1, 0, 1, 1)
-        self.first_layout.addWidget(self.PageTitle_label, 0, 0, 1, 1)
-        self.first_layout.addWidget(self.currentPath_lineEdit, 1, 1, 1, 1)
-        self.first_layout.addWidget(self.browseCurrentPath_btn, 1, 2, 1, 1)
-        self.second_layout.addWidget(self.lookupInput_lineEdit, 1, 3, 1, 1)
-        self.second_layout.addWidget(self.lookupFormat_comboBox, 1, 0, 1, 1)
-        self.second_layout.addWidget(self.LookuByTitle_label, 0, 0, 1, 1)
-        self.second_layout.addWidget(self.lookupFormat2_comboBox, 1, 1, 1, 1)
-        self.second_layout.addWidget(self.lookupFormat3_comboBox, 1, 2, 1, 1)
-        self.third_layout.addWidget(self.RenameToTitle_label, 0, 0, 1, 1)
-        self.third_layout.addWidget(self.startLookup_btn, 1, 3, 1, 1)
-        self.third_layout.addWidget(self.renameValue_lineEdit, 1, 2, 1, 1)
-        self.third_layout.addWidget(self.renameBy_comboBox, 1, 0, 1, 1)
-        self.third_layout.addWidget(self.renameBy2_comboBox, 1, 1, 1, 1)
-        self.third_layout.addWidget(self.isRecursive_checkBox, 2, 0, 1, 1)
-        self.verticalLayout.addWidget(self.frame_content_wid_3)
-        self.verticalLayout.addWidget(self.frame_content_wid_2)
-        self.verticalLayout.addWidget(self.frame_content_wid_4)
-        self.verticalLayout.addWidget(self.row_3)
-        self.horizontalLayout_12.addWidget(self.table_layout)
-        self.optionBtns_layout.addWidget(self.rename_btn)
-        self.optionBtns_layout.addWidget(self.restore_btn)
-        self.optionBtns_layout.addWidget(self.export_btn)
-        self.optionBtns_layout.addWidget(self.import_btn)
-        self.horizontalLayout_12.addLayout(self.optionBtns_layout)
+        self.secondGrid.addWidget(self.lookupByLineEdit, 1, 3, 1, 1)
+        self.secondGrid.addWidget(self.lookupByComboBox2, 1, 0, 1, 1)
+        self.secondGrid.addWidget(self.lookupByTitleLabel, 0, 0, 1, 1)
+        self.secondGrid.addWidget(self.lookupByComboBox3, 1, 1, 1, 1)
+        self.secondGrid.addWidget(self.lookupByComboBox4, 1, 2, 1, 1)
 
-        self.row_3.setObjectName(u"row_3")
-        self.widgets.setObjectName(u"widgets")
-        self.first_layout.setObjectName(u"first_layout")
-        self.third_layout.setObjectName(u"third_layout")
-        self.second_layout.setObjectName(u"second_layout")
-        self.verticalLayout.setObjectName(u"verticalLayout")
-        self.PageTitle_label.setObjectName(u"PageTitle_label")
-        self.startLookup_btn.setObjectName(u"startLookup_btn")
-        self.optionBtns_layout.setObjectName(u"optionBtns_layout")
-        self.renameBy_comboBox.setObjectName(u"renameBy_comboBox")
-        self.LookuByTitle_label.setObjectName(u"LookuByTitle_label")
-        self.renameBy2_comboBox.setObjectName(u"renameBy2_comboBox")
-        self.horizontalLayout_12.setObjectName(u"horizontalLayout_12")
-        self.LookupType_comboBox.setObjectName(u"LookupType_comboBox")
-        self.frame_content_wid_3.setObjectName(u"frame_content_wid_3")
-        self.horizontalLayout_11.setObjectName(u"horizontalLayout_11")
-        self.horizontalLayout_10.setObjectName(u"horizontalLayout_10")
-        self.horizontalLayout_13.setObjectName(u"horizontalLayout_13")
-        self.frame_content_wid_4.setObjectName(u"frame_content_wid_4")
-        self.frame_content_wid_2.setObjectName(u"frame_content_wid_2")
-        self.renameValue_lineEdit.setObjectName(u"renameValue_lineEdit")
-        self.currentPath_lineEdit.setObjectName(u"currentPath_lineEdit")
-        self.lookupInput_lineEdit.setObjectName(u"lookupInput_lineEdit")
-        self.isRecursive_checkBox.setObjectName(u"isRecursive_checkBox")
-        self.browseCurrentPath_btn.setObjectName(u"browseCurrentPath_btn")
-        self.lookupFormat_comboBox.setObjectName(u"lookupFormat_comboBox")
-        self.lookupFormat3_comboBox.setObjectName(u"lookupFormat3_comboBox")
-        self.lookupFormat2_comboBox.setObjectName(u"lookupFormat2_comboBox")
+        self.thirdGrid.addWidget(self.renameToTitleLabel, 0, 0, 1, 1)
+        self.thirdGrid.addWidget(self.startLookupBtn, 1, 3, 1, 1)
+        self.thirdGrid.addWidget(self.renameToLineEdit, 1, 1, 1, 1)
+        self.thirdGrid.addWidget(self.renameToComboBox, 1, 0, 1, 1)
+        self.thirdGrid.addWidget(self.renameToComboBox2, 1, 2, 1, 1)
+        self.thirdGrid.addWidget(self.isRecursiveCheckBox, 2, 0, 1, 1)
 
- 
+        self.verticalBoxLayout.addWidget(self.contentFrame1)
+        self.verticalBoxLayout.addWidget(self.contentFrame2)
+        self.verticalBoxLayout.addWidget(self.contentFrame3)
+        self.verticalBoxLayout.addWidget(self.tableFrame)
+
+        self.optionBtns_layout.addWidget(self.renameBtn)
+        self.optionBtns_layout.addWidget(self.restoreBtn)
+        self.optionBtns_layout.addWidget(self.exportBtn)
+        self.optionBtns_layout.addWidget(self.importBtn)
+
+        self.horizontalBoxLayout.addWidget(self.tableWidget)
+        self.horizontalBoxLayout.addLayout(self.optionBtns_layout)
+
         """
         ===================================================================
                                 TABLE CONTENT
@@ -355,11 +329,11 @@ class Ui(Common):
         sizePolicy3.setHorizontalStretch(0)
         sizePolicy3.setVerticalStretch(0)
         sizePolicy3.setHeightForWidth(
-            self.table_layout.sizePolicy().hasHeightForWidth()
+            self.tableWidget.sizePolicy().hasHeightForWidth()
         )
-        self.table_layout.setSizePolicy(sizePolicy3)
+        self.tableWidget.setSizePolicy(sizePolicy3)
 
-        self.init_table(self.table_layout)
+        self.init_table(self.tableWidget)
 
         """
         ===================================================================
@@ -395,37 +369,36 @@ class Ui(Common):
         palette.setBrush(QPalette.Disabled, QPalette.WindowText, brush)
         palette.setBrush(QPalette.Disabled, QPalette.ButtonText, brush)
 
-        self.table_layout.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
-        self.table_layout.setSizeAdjustPolicy(
+        self.tableWidget.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        self.tableWidget.setSizeAdjustPolicy(
             QAbstractScrollArea.AdjustToContents)
-        self.table_layout.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.table_layout.setSelectionMode(QAbstractItemView.NoSelection)
-        self.table_layout.setSelectionBehavior(QAbstractItemView.SelectRows)
-        self.table_layout.setShowGrid(True)
-        self.table_layout.setGridStyle(Qt.SolidLine)
-        self.table_layout.setSortingEnabled(True)
-        self.table_layout.horizontalHeader().setVisible(True)
-        self.table_layout.horizontalHeader().setCascadingSectionResizes(True)
-        self.table_layout.horizontalHeader().setDefaultSectionSize(200)
-        self.table_layout.horizontalHeader().setStretchLastSection(True)
-        self.table_layout.verticalHeader().setVisible(False)
-        self.table_layout.verticalHeader().setCascadingSectionResizes(True)
-        self.table_layout.verticalHeader().setHighlightSections(False)
-        self.table_layout.verticalHeader().setStretchLastSection(False)
+        self.tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.tableWidget.setSelectionMode(QAbstractItemView.NoSelection)
+        self.tableWidget.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.tableWidget.setShowGrid(True)
+        self.tableWidget.setGridStyle(Qt.SolidLine)
+        self.tableWidget.setSortingEnabled(True)
+        self.tableWidget.horizontalHeader().setVisible(True)
+        self.tableWidget.horizontalHeader().setCascadingSectionResizes(True)
+        self.tableWidget.horizontalHeader().setDefaultSectionSize(200)
+        self.tableWidget.horizontalHeader().setStretchLastSection(True)
+        self.tableWidget.verticalHeader().setVisible(False)
+        self.tableWidget.verticalHeader().setCascadingSectionResizes(True)
+        self.tableWidget.verticalHeader().setHighlightSections(False)
+        self.tableWidget.verticalHeader().setStretchLastSection(False)
 
-        self.startLookup_btn.setCursor(QCursor(Qt.PointingHandCursor))
-        self.browseCurrentPath_btn.setCursor(QCursor(Qt.PointingHandCursor))
+        self.startLookupBtn.setCursor(QCursor(Qt.PointingHandCursor))
+        self.browsePathBtn.setCursor(QCursor(Qt.PointingHandCursor))
 
         # BUTTONS DESIGN
         btns = {
-            "rename_btn":           self.rename_btn,
-            "export_btn":           self.export_btn,
-            "import_btn":           self.import_btn,
-            "restore_btn":          self.restore_btn,
+            "rename_btn":           self.renameBtn,
+            "export_btn":           self.exportBtn,
+            "import_btn":           self.importBtn,
+            "restore_btn":          self.restoreBtn,
         }
 
         for btn_name, btn in btns.items():
-            btn.setObjectName(btn_name)
             btn.setMinimumSize(QSize(150, 30))
             btn.setStyleSheet(self.html.get_bg_color("light blue"))
             btn.setCursor(QCursor(Qt.PointingHandCursor))
@@ -442,22 +415,22 @@ class Ui(Common):
         size = (20, 20)
 
         self.set_icon(
-            self.browseCurrentPath_btn, "folder_outline", size
+            self.browsePathBtn, "folder_outline", size
         )
         self.set_icon(
-            self.startLookup_btn, "start", size
+            self.startLookupBtn, "start", size
         )
         self.set_icon(
-            self.rename_btn, "delete sign", size
+            self.renameBtn, "delete sign", size
         )
         self.set_icon(
-            self.restore_btn, "restore file", size
+            self.restoreBtn, "restore file", size
         )
         self.set_icon(
-            self.import_btn, "file upload", size
+            self.importBtn, "file upload", size
         )
         self.set_icon(
-            self.export_btn, "file download", size
+            self.exportBtn, "file download", size
         )
 
         """
@@ -467,83 +440,83 @@ class Ui(Common):
         """
 
         # MANUALY ENTERED PATH
-        self.currentPath_lineEdit.textChanged.connect(
+        self.pathLineEdit.textChanged.connect(
             lambda: self.set_user_path(
-                self.currentPath_lineEdit.text(),
+                self.pathLineEdit.text(),
                 True
             )
         )
-
-        self.browseCurrentPath_btn.clicked.connect(
+        self.browsePathBtn.clicked.connect(
             lambda: self.set_user_path(
                 self.get_path(),
                 False
             )
         )
-
-        self.startLookup_btn.clicked.connect(
+        self.startLookupBtn.clicked.connect(
             lambda: self.start_lookup_clicked()
         )
-
-        self.rename_btn.clicked.connect(
+        self.renameBtn.clicked.connect(
             lambda: self.rename_content_clicked()
         )
-
-        self.export_btn.clicked.connect(
+        self.exportBtn.clicked.connect(
             lambda: self.export_process_clicked()
         )
-
-        self.import_btn.clicked.connect(
+        self.importBtn.clicked.connect(
             lambda: self.import_process_clicked()
         )
-
-        self.restore_btn.clicked.connect(
+        self.restoreBtn.clicked.connect(
             lambda: self.restore_content_clicked()
         )
-
-        self.LookupType_comboBox.currentTextChanged.connect(
+        self.lookupByComboBox.currentTextChanged.connect(
             lambda: self.change_lookup_format()
         )
-        
-        self.lookupFormat2_comboBox.currentTextChanged.connect(
-            lambda: self.lookup_format2_changed()
+        self.lookupByComboBox3.currentTextChanged.connect(
+            lambda: self.lookup_by_format_2_changed()
         )
-        
-        self.lookupFormat3_comboBox.currentTextChanged.connect(
-            lambda: self.lookup_format3_changed()
+        self.lookupByComboBox4.currentTextChanged.connect(
+            lambda: self.lookup_by_format_3_changed()
+        )
+        self.renameToComboBox.currentTextChanged.connect(
+            lambda: self.rename_to_changed()
+        )
+        self.renameToComboBox2.currentTextChanged.connect(
+            lambda: self.rename_to_changed()
         )
 
         # ON TABLE-HEADER CLICK
-        self.table_layout.horizontalHeader().sectionClicked.connect(
+        self.tableWidget.horizontalHeader().sectionClicked.connect(
             self.table_header_clicked
         )
 
         return self.widgets
 
-    def lookup_format2_changed(self):
-        
-        current_format2 = self.lookupFormat2_comboBox.currentText()
-        
-        if current_format2 != "CONTAIN":
-            self.lookupInput_lineEdit.show()
-            self.lookupFormat3_comboBox.hide()
-        else:
-            self.lookupInput_lineEdit.hide()
-            self.lookupFormat3_comboBox.show()
-            
-    def lookup_format3_changed(self):
-        
-        custom_input = ("custom", "excluding")
-        current_format3 = self.lookupFormat3_comboBox.currentText()
-        
-        if current_format3.lower().split(" ")[-1] not in custom_input: 
-            self.lookupInput_lineEdit.hide()
-            
-        else:
-            self.lookupInput_lineEdit.show()
-            
-            
-        
+    def lookup_by_format_2_changed(self):
+
+        if self.lookupByComboBox3.currentText() != "CONTAIN":
+            self.lookupByLineEdit.show()
+            self.lookupByComboBox4.hide()
+            return
+
+        self.lookupByLineEdit.hide()
+        self.lookupByComboBox4.show()
+
+    def lookup_by_format_3_changed(self):
+
+        # IF THE SELECTED OPTION DOESNT CONTAIN CUSTOM INPUT, HIDE INPUT
+        if self.lookupByComboBox4.currentText().lower().split(" ")[-1] not in ("custom", "excluding"):
+            self.lookupByLineEdit.hide()
+            return
+
+        self.lookupByLineEdit.show()
+
+    def rename_to_changed(self):
+
+        if self.renameToComboBox.currentText().lower() == "custom":
+            self.renameToLineEdit.show()
+            return
+
+        self.renameToLineEdit.hide()
+
     def retranslateUi(self):
         """
         TRANSLATE UI TEXT
@@ -556,26 +529,26 @@ class Ui(Common):
         """
 
         data = {
-            self.LookupType_comboBox:   (
+            self.lookupByComboBox:   (
                 "FILES", "FOLDERS"
             ),
-            self.lookupFormat_comboBox: (
+            self.lookupByComboBox2: (
                 "NAME", "EXTENSION"
             ),
-            self.lookupFormat2_comboBox: (
+            self.lookupByComboBox3: (
                 "CONTAIN", "EQUAL TO"
             ),
-            self.lookupFormat3_comboBox: (
+            self.lookupByComboBox4: (
                 "Alphabets only", "Alphabets & Symbols", "Alphabets & Numbers", "Alphabets Excluding",
                 "Numbers only", "Numbers & Symbols", "Numbers Excluding",
                 "Symbols only", "Symbols Excluding",
                 "Custom"
             ),
-            self.renameBy_comboBox:     (
-                "BULK", "TIMESTAMP", "NUMBERING", "CUSTOM"
+            self.renameToComboBox:     (
+                "BULK", "TIMESTAMP", "CUSTOM"
             ),
-            self.renameBy2_comboBox:    (
-                "PREFIX NUMBERS", "SUFFIX NUMBERS", "CUSTOM PREFIX", "CUSTOM SUFFIX"
+            self.renameToComboBox2:    (
+                "PREFIX NUMBERS", "SUFFIX NUMBERS"
             )
         }
 
@@ -593,69 +566,73 @@ class Ui(Common):
         """
 
         data = {
-            self.rename_btn:           ("RENAME", "Rename All Selected Items"),
-            self.restore_btn:          ("RESTORE", "Restore Last Deleted Process"),
-            self.export_btn:           ("EXPORT", "Store Current Lookup"),
-            self.import_btn:           ("IMPORT", "Load Previous Lookup"),
-            self.startLookup_btn:      ("START", "Start Lookup Process"),
-            self.isRecursive_checkBox: ("RECURSIVE", "Find Files Recursively Through The Selected Path"),
+            self.renameBtn:           ("RENAME", "Rename All Selected Items"),
+            self.restoreBtn:          ("RESTORE", "Restore Last Deleted Process"),
+            self.exportBtn:           ("EXPORT", "Store Current Lookup"),
+            self.importBtn:           ("IMPORT", "Load Previous Lookup"),
+            self.startLookupBtn:      ("START", "Start Lookup Process"),
+            self.isRecursiveCheckBox: ("RECURSIVE", "Find Files Recursively Through The Selected Path"),
         }
 
         for widget, info in data.items():
-            widget.setText(QCoreApplication.translate(
-                "MainWindow", info[0], None
+            widget.setText(
+                QCoreApplication.translate("MainWindow", info[0], None)
             )
-            )
-            widget.setToolTip(QCoreApplication.translate(
-                "MainWindow", info[1], None
-            )
+            widget.setToolTip(
+                QCoreApplication.translate("MainWindow", info[1], None)
             )
 
-        self.PageTitle_label.setText(
+        self.pageTitleLabel.setText(
             QCoreApplication.translate("MainWindow", "RENAME", None)
         )
 
-        self.currentPath_lineEdit.setToolTip(
+        self.pathLineEdit.setToolTip(
             QCoreApplication.translate(
                 "MainWindow",
                 "Enter the path where should the lookup process begin",
                 None,
             )
         )
-        self.currentPath_lineEdit.setPlaceholderText(
+        self.pathLineEdit.setPlaceholderText(
             QCoreApplication.translate(
                 "MainWindow", "Enter the path here", None
             )
         )
-        self.browseCurrentPath_btn.setText(
+        self.browsePathBtn.setText(
             QCoreApplication.translate(
                 "MainWindow", "OPEN", None
             )
         )
-        self.lookupInput_lineEdit.setPlaceholderText(
+        self.lookupByLineEdit.setPlaceholderText(
             QCoreApplication.translate(
-                "MainWindow", "Enter values to look for [seperated by comma]", None
+                "MainWindow", "Enter values to look for [seperated by comma]...", None
             )
         )
-        self.LookuByTitle_label.setText(
+        self.renameToLineEdit.setPlaceholderText(
+            QCoreApplication.translate(
+                "MainWindow", "Enter the value here...", None
+            )
+        )
+        self.lookupByTitleLabel.setText(
             QCoreApplication.translate(
                 "MainWindow", "LOOKUP BY", None
             )
         )
-        self.RenameToTitle_label.setText(
+        self.renameToTitleLabel.setText(
             QCoreApplication.translate(
                 "MainWindow", "RENAME TO", None
             )
         )
-        
-        self.lookupInput_lineEdit.hide()
 
         """
-        ////////////////////////////////////////////////
-                TABLE CONTENT
-        ////////////////////////////////////////////////
+        ===================================================================
+                            SET VISIBILITY
+        ===================================================================
         """
-        self.table_layout.setSortingEnabled(True)
+        self.lookupByLineEdit.hide()
+        self.renameToLineEdit.hide()
+
+        self.tableWidget.setSortingEnabled(True)
         self.retranslateTableHeaders()
 
         # SET CACHED DATA
