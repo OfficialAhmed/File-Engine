@@ -190,6 +190,33 @@ class Ui(Common):
             self.startLookupBtn
         )
 
+        self.rename_options_menu = {
+
+            "BULK":         ("PREFIX NUMBERS", "SUFFIX NUMBERS"),
+            "TIMESTAMP":    ("mm_dd_yy_hh_msms", "mm_dd_hh_mm_msms", "hh_mm_ss_msms"),
+            "CUSTOM":       (),
+
+        }
+
+        self.options = {
+            self.lookupByComboBox:   (
+                "FILES", "FOLDERS"
+            ),
+            self.lookupByComboBox2: (
+                "NAME", "EXTENSION"
+            ),
+            self.lookupByComboBox3: (
+                "CONTAIN", "EQUAL TO"
+            ),
+            self.lookupByComboBox4: (
+                "Alphabets only", "Alphabets & Symbols", "Alphabets & Numbers",
+                "Alphabets Excluding", "Numbers only", "Numbers & Symbols",
+                "Numbers Excluding", "Symbols only", "Symbols Excluding", "Custom"
+            ),
+            self.renameToComboBox:     self.rename_options_menu.keys(),
+            self.renameToComboBox2:    self.rename_options_menu.get("BULK")
+        }
+
         """
         ===================================================================
                             SET STYLESHEET
@@ -477,10 +504,7 @@ class Ui(Common):
             lambda: self.lookup_by_format_3_changed()
         )
         self.renameToComboBox.currentTextChanged.connect(
-            lambda: self.rename_to_changed()
-        )
-        self.renameToComboBox2.currentTextChanged.connect(
-            lambda: self.rename_to_changed()
+            lambda: self.rename_method_changed()
         )
 
         # ON TABLE-HEADER CLICK
@@ -509,13 +533,29 @@ class Ui(Common):
 
         self.lookupByLineEdit.show()
 
-    def rename_to_changed(self):
+    def rename_method_changed(self):
 
-        if self.renameToComboBox.currentText().lower() == "custom":
-            self.renameToLineEdit.show()
-            return
+        # SHOW THE RENAME TO COMBO BOXES BASED ON THE OPTION OF THE FIRST COMBO BOX
+        match self.renameToComboBox.currentText().lower():
 
-        self.renameToLineEdit.hide()
+            case "timestamp":
+                self.renameToLineEdit.hide()
+                self.renameToComboBox2.show()
+
+            case "custom":
+                self.renameToLineEdit.show()
+                self.renameToComboBox2.hide()
+
+            case "bulk":
+                self.renameToLineEdit.show()
+                self.renameToComboBox2.show()
+
+        self.renameToComboBox2.clear()
+        self.renameToComboBox2.addItems(
+            self.rename_options_menu.get(
+                self.renameToComboBox.currentText()
+            )
+        )
 
     def retranslateUi(self):
         """
@@ -528,35 +568,12 @@ class Ui(Common):
         ===================================================================
         """
 
-        data = {
-            self.lookupByComboBox:   (
-                "FILES", "FOLDERS"
-            ),
-            self.lookupByComboBox2: (
-                "NAME", "EXTENSION"
-            ),
-            self.lookupByComboBox3: (
-                "CONTAIN", "EQUAL TO"
-            ),
-            self.lookupByComboBox4: (
-                "Alphabets only", "Alphabets & Symbols", "Alphabets & Numbers", "Alphabets Excluding",
-                "Numbers only", "Numbers & Symbols", "Numbers Excluding",
-                "Symbols only", "Symbols Excluding",
-                "Custom"
-            ),
-            self.renameToComboBox:     (
-                "BULK", "TIMESTAMP", "CUSTOM"
-            ),
-            self.renameToComboBox2:    (
-                "PREFIX NUMBERS", "SUFFIX NUMBERS"
-            )
-        }
-
-        for widget, info in data.items():
-            for indx, text in enumerate(info):
-                widget.addItem("")
-                widget.setItemText(
-                    indx, QCoreApplication.translate("MainWindow", text, None)
+        for widget, info in self.options.items():
+            if info:
+                widget.addItems(
+                    [
+                        QCoreApplication.translate("MainWindow", text, None) for text in info
+                    ]
                 )
 
         """
