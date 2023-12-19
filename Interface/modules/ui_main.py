@@ -1,4 +1,6 @@
 import json
+import os
+import shutil
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
@@ -7,7 +9,61 @@ from . resources_rc import *
 from ..environment import Constant, Common, ProgressBar, Html
 from .ui_delete import Ui as Ui_delete
 from .ui_rename import Ui as Ui_rename
+from .ui_search import Ui as Ui_search
 from controller import Controller
+
+
+class Func:
+    """
+        Main Page interactions and functionality
+    """
+
+    def __init__(self) -> None:
+        self.controller = Controller()
+
+    def set_display_mode(self):
+        """
+            CHANGE DISPLAY MODE FROM DARK/LIGHT OR LIGHT/DARK
+            STORE THE BOOL VALUE IN THE DEFAULT SETTINGS
+        """
+
+        if self.controller.show_dialog(
+            "THEME WILL BE CHANGED AFTER RESTARTING",
+            "Q"
+        ):
+            path = "data/settings/default.json"
+            settings: dict = json.load(open(path))
+
+            # INVERSE THE SAVED THEME MODE
+            is_light_theme = False if settings.get("is_light_theme") else True
+
+            settings["is_light_theme"] = is_light_theme
+
+            json.dump(settings, open(path, "w"))
+
+    def empty_trash(self):
+
+        if self.controller.show_dialog(
+            "ATTENTION! THIS WILL EMPTY THE TRASH. YOU WILL NO LONGER ABLE TO RESTORE PREVIOUSLY EDITED FILES",
+            "W"
+        ):
+            path = "data/trash"
+
+            try:
+                shutil.rmtree(path)
+                os.mkdir(path)
+                self.controller.show_dialog(
+                    f"TRASH REMOVED SUCCESSFULLY",
+                    "I",
+                    False
+                )
+
+            except Exception as e:
+                self.controller.show_dialog(
+                    f"SOMTHING WENT WRONG. COULDN'T EMPTY TRASH | ERROR {e}",
+                    "C",
+                    False
+                )
 
 
 class Ui(object):
@@ -15,10 +71,10 @@ class Ui(object):
     def __init__(self) -> None:
         super().__init__()
 
+        self.html = Html()
+        self.ui_function = Func()
         self.constant = Constant()
         self.common_functions = Common()
-        self.controller = Controller()
-        self.html = Html()
 
     def setupUi(self, MainWindow):
 
@@ -84,16 +140,16 @@ class Ui(object):
         self.move_page = QPushButton(self.topMenu)
         self.btn_print = QPushButton(self.topMenus)
         self.btn_logout = QPushButton(self.topMenus)
-        self.lookup_page = QPushButton(self.topMenu)
+        self.search_page = QPushButton(self.topMenu)
         self.delete_page = QPushButton(self.topMenu)
         self.rename_page = QPushButton(self.topMenu)
-        self.btn_message = QPushButton(self.topMenus)
+        self.removeTrashOption = QPushButton(self.topMenus)
         self.moreBtn = QPushButton(self.rightButtons)
         self.btn_more = QPushButton(self.extraTopMenu)
         self.toggleButton = QPushButton(self.toggleBox)
         self.toggleLeftBox = QPushButton(self.bottomMenu)
         self.closeAppBtn = QPushButton(self.rightButtons)
-        self.btn_display_mode = QPushButton(self.extraTopMenu)
+        self.displayModeOption = QPushButton(self.extraTopMenu)
         self.minimizeAppBtn = QPushButton(self.rightButtons)
         self.maximizeAppBtn = QPushButton(self.rightButtons)
         self.btn_adjustments = QPushButton(self.extraTopMenu)
@@ -216,9 +272,7 @@ class Ui(object):
         self.btn_logout.setFont(font)
         self.delete_page.setFont(font)
         self.rename_page.setFont(font)
-        self.lookup_page.setFont(font)
-        self.btn_message.setFont(font)
-        self.btn_display_mode.setFont(font)
+        self.search_page.setFont(font)
         self.toggleButton.setFont(font)
         self.titleLeftApp.setFont(font1)
         self.toggleLeftBox.setFont(font)
@@ -226,6 +280,8 @@ class Ui(object):
         self.titleRightInfo.setFont(font)
         self.btn_adjustments.setFont(font)
         self.maximizeAppBtn.setFont(font3)
+        self.displayModeOption.setFont(font)
+        self.removeTrashOption.setFont(font)
         self.titleLeftDescription.setFont(font2)
 
         """
@@ -247,6 +303,12 @@ class Ui(object):
         
         _UiRename = Ui_rename()
         self.rename_widgets = _UiRename.render_page()
+
+        _UiRename = Ui_rename()
+        self.rename_widgets = _UiRename.render_page()
+        
+        _UiSearch = Ui_search()
+        self.search_widgets = _UiSearch.render_page()
 
         """
         ////////////////////////////////////////////////
@@ -319,11 +381,11 @@ class Ui(object):
         self.move_page.setLayoutDirection(l_2_r)
         self.home_page.setLayoutDirection(l_2_r)
         self.btn_logout.setLayoutDirection(l_2_r)
-        self.btn_message.setLayoutDirection(l_2_r)
-        self.lookup_page.setLayoutDirection(l_2_r)
+        self.removeTrashOption.setLayoutDirection(l_2_r)
+        self.search_page.setLayoutDirection(l_2_r)
         self.rename_page.setLayoutDirection(l_2_r)
         self.delete_page.setLayoutDirection(l_2_r)
-        self.btn_display_mode.setLayoutDirection(l_2_r)
+        self.displayModeOption.setLayoutDirection(l_2_r)
         self.toggleButton.setLayoutDirection(l_2_r)
         self.toggleLeftBox.setLayoutDirection(l_2_r)
         self.btn_adjustments.setLayoutDirection(l_2_r)
@@ -338,17 +400,17 @@ class Ui(object):
 
         self.btn_more.setMinimumSize(_0_45)
         self.btn_print.setMinimumSize(_0_45)
-        self.btn_display_mode.setMinimumSize(_0_45)
         self.move_page.setMinimumSize(_0_45)
         self.home_page.setMinimumSize(_0_45)
         self.btn_logout.setMinimumSize(_0_45)
-        self.btn_message.setMinimumSize(_0_45)
-        self.lookup_page.setMinimumSize(_0_45)
+        self.search_page.setMinimumSize(_0_45)
         self.rename_page.setMinimumSize(_0_45)
         self.delete_page.setMinimumSize(_0_45)
         self.toggleButton.setMinimumSize(_0_45)
         self.toggleLeftBox.setMinimumSize(_0_45)
         self.btn_adjustments.setMinimumSize(_0_45)
+        self.displayModeOption.setMinimumSize(_0_45)
+        self.removeTrashOption.setMinimumSize(_0_45)
 
         self.moreBtn.setMinimumSize(_28_28)
         self.moreBtn.setMaximumSize(_28_28)
@@ -398,14 +460,14 @@ class Ui(object):
         self.delete_page.setSizePolicy(sizePolicy)
         self.rename_page.setSizePolicy(sizePolicy)
         self.move_page.setSizePolicy(sizePolicy)
-        self.lookup_page.setSizePolicy(sizePolicy)
+        self.search_page.setSizePolicy(sizePolicy)
         self.toggleLeftBox.setSizePolicy(sizePolicy)
-        self.btn_display_mode.setSizePolicy(sizePolicy)
+        self.displayModeOption.setSizePolicy(sizePolicy)
         self.btn_adjustments.setSizePolicy(sizePolicy)
         self.btn_more.setSizePolicy(sizePolicy)
         self.leftBox.setSizePolicy(sizePolicy1)
         self.titleRightInfo.setSizePolicy(sizePolicy2)
-        self.btn_message.setSizePolicy(sizePolicy)
+        self.removeTrashOption.setSizePolicy(sizePolicy)
         self.btn_print.setSizePolicy(sizePolicy)
         self.btn_logout.setSizePolicy(sizePolicy)
         self.progressBar.setSizePolicy(sizePolicy3)
@@ -436,13 +498,13 @@ class Ui(object):
             self.move_page.sizePolicy().hasHeightForWidth()
         )
         sizePolicy.setHeightForWidth(
-            self.lookup_page.sizePolicy().hasHeightForWidth()
+            self.search_page.sizePolicy().hasHeightForWidth()
         )
         sizePolicy.setHeightForWidth(
             self.toggleLeftBox.sizePolicy().hasHeightForWidth()
         )
         sizePolicy.setHeightForWidth(
-            self.btn_display_mode.sizePolicy().hasHeightForWidth()
+            self.displayModeOption.sizePolicy().hasHeightForWidth()
         )
         sizePolicy.setHeightForWidth(
             self.btn_adjustments.sizePolicy().hasHeightForWidth()
@@ -453,12 +515,11 @@ class Ui(object):
         sizePolicy1.setHeightForWidth(
             self.leftBox.sizePolicy().hasHeightForWidth()
         )
-
         sizePolicy2.setHeightForWidth(
             self.titleRightInfo.sizePolicy().hasHeightForWidth()
         )
         sizePolicy.setHeightForWidth(
-            self.btn_message.sizePolicy().hasHeightForWidth()
+            self.removeTrashOption.sizePolicy().hasHeightForWidth()
         )
         sizePolicy.setHeightForWidth(
             self.btn_print.sizePolicy().hasHeightForWidth()
@@ -482,17 +543,17 @@ class Ui(object):
         self.move_page.setCursor(pointing_hand)
         self.home_page.setCursor(pointing_hand)
         self.btn_logout.setCursor(pointing_hand)
-        self.lookup_page.setCursor(pointing_hand)
+        self.search_page.setCursor(pointing_hand)
         self.rename_page.setCursor(pointing_hand)
         self.delete_page.setCursor(pointing_hand)
-        self.btn_message.setCursor(pointing_hand)
         self.closeAppBtn.setCursor(pointing_hand)
-        self.btn_display_mode.setCursor(pointing_hand)
         self.toggleButton.setCursor(pointing_hand)
         self.toggleLeftBox.setCursor(pointing_hand)
         self.maximizeAppBtn.setCursor(pointing_hand)
         self.minimizeAppBtn.setCursor(pointing_hand)
         self.btn_adjustments.setCursor(pointing_hand)
+        self.displayModeOption.setCursor(pointing_hand)
+        self.removeTrashOption.setCursor(pointing_hand)
         self.extraCloseColumnBtn.setCursor(pointing_hand)
 
         """
@@ -501,7 +562,6 @@ class Ui(object):
         ////////////////////////////////////////////////
         """
 
-        raised = QFrame.Raised
         no_frame = QFrame.NoFrame
 
         self.bgApp.setFrameShape(no_frame)
@@ -533,35 +593,6 @@ class Ui(object):
         self.frame_size_grip.setFrameShape(no_frame)
         self.contentSettings.setFrameShape(no_frame)
         self.themeSettingsTopDetail.setFrameShape(no_frame)
-
-        self.bgApp.setFrameShadow(raised)
-        self.content.setFrameShadow(raised)
-        self.leftBox.setFrameShadow(raised)
-        self.topLogo.setFrameShadow(raised)
-        self.topMenu.setFrameShadow(raised)
-        self.topMenus.setFrameShadow(raised)
-        self.bottomBar.setFrameShadow(raised)
-        self.extraIcon.setFrameShadow(raised)
-        self.toggleBox.setFrameShadow(raised)
-        self.extraTopBg.setFrameShadow(raised)
-        self.bottomMenu.setFrameShadow(raised)
-        self.leftMenuBg.setFrameShadow(raised)
-        self.contentBox.setFrameShadow(raised)
-        self.topLogoInfo.setFrameShadow(raised)
-        self.extraCenter.setFrameShadow(raised)
-        self.extraBottom.setFrameShadow(raised)
-        self.contentTopBg.setFrameShadow(raised)
-        self.extraTopMenu.setFrameShadow(raised)
-        self.extraContent.setFrameShadow(raised)
-        self.extraLeftBox.setFrameShadow(raised)
-        self.rightButtons.setFrameShadow(raised)
-        self.contentBottom.setFrameShadow(raised)
-        self.leftMenuFrame.setFrameShadow(raised)
-        self.extraRightBox.setFrameShadow(raised)
-        self.pagesContainer.setFrameShadow(raised)
-        self.frame_size_grip.setFrameShadow(raised)
-        self.contentSettings.setFrameShadow(raised)
-        self.themeSettingsTopDetail.setFrameShadow(raised)
 
         """
         ////////////////////////////////////////////////
@@ -599,14 +630,14 @@ class Ui(object):
         self.btn_logout.setObjectName(u"btn_logout")
         self.closeAppBtn.setObjectName(u"closeAppBtn")
         self.extraBottom.setObjectName(u"extraBottom")
-        self.btn_message.setObjectName(u"btn_message")
+        self.removeTrashOption.setObjectName(u"btn_message")
         self.progressBar.setObjectName(u"progressBar")
-        self.lookup_page.setObjectName(u"lookup_page")
+        self.search_page.setObjectName(u"search_page")
         self.rename_page.setObjectName(u"rename_page")
         self.delete_page.setObjectName(u"delete_page")
         self.topLogoInfo.setObjectName(u"topLogoInfo")
         self.extraCenter.setObjectName(u"extraCenter")
-        self.btn_display_mode.setObjectName(u"display_mode")
+        self.displayModeOption.setObjectName(u"display_mode")
         self.extraTopMenu.setObjectName(u"extraTopMenu")
         self.extraContent.setObjectName(u"extraContent")
         self.titleLeftApp.setObjectName(u"titleLeftApp")
@@ -670,14 +701,14 @@ class Ui(object):
         self.verticalLayout_8.addWidget(self.delete_page)
         self.verticalLayout_8.addWidget(self.rename_page)
         self.verticalLayout_8.addWidget(self.move_page)
-        self.verticalLayout_8.addWidget(self.lookup_page)
+        self.verticalLayout_8.addWidget(self.search_page)
 
         self.verticalLayout_9.addWidget(self.toggleLeftBox)
         self.extraTopLayout.addWidget(self.extraIcon, 0, 0, 1, 1)
         self.extraTopLayout.addWidget(self.extraLabel, 0, 1, 1, 1)
         self.extraTopLayout.addWidget(self.extraCloseColumnBtn, 0, 2, 1, 1)
         self.extraColumLayout.addWidget(self.extraTopBg)
-        self.verticalLayout_11.addWidget(self.btn_display_mode)
+        self.verticalLayout_11.addWidget(self.displayModeOption)
         self.verticalLayout_11.addWidget(self.btn_adjustments)
         self.verticalLayout_11.addWidget(self.btn_more)
         self.verticalLayout_12.addWidget(self.extraTopMenu, 0, Qt.AlignTop)
@@ -689,10 +720,12 @@ class Ui(object):
         self.horizontalLayout_2.addWidget(self.maximizeAppBtn)
         self.horizontalLayout_2.addWidget(self.closeAppBtn)
         self.stackedWidget.addWidget(self.home_widgets)
+        self.stackedWidget.addWidget(self.search_widgets)
         self.stackedWidget.addWidget(self.delete_widgets)
+        self.stackedWidget.addWidget(self.rename_widgets)
         self.verticalLayout_20.addWidget(self.label)
         self.verticalLayout_7.addWidget(self.themeSettingsTopDetail)
-        self.verticalLayout_14.addWidget(self.btn_message)
+        self.verticalLayout_14.addWidget(self.removeTrashOption)
         self.verticalLayout_14.addWidget(self.btn_print)
         self.verticalLayout_14.addWidget(self.btn_logout)
 
@@ -703,7 +736,6 @@ class Ui(object):
         self.horizontalLayout.addWidget(self.leftBox)
         self.horizontalLayout.addWidget(self.rightButtons, 0, Qt.AlignRight)
         self.verticalLayout_2.addWidget(self.contentTopBg)
-        self.stackedWidget.addWidget(self.rename_widgets)
         self.verticalLayout_15.addWidget(self.stackedWidget)
         self.horizontalLayout_4.addWidget(self.pagesContainer)
         self.verticalLayout_13.addWidget(self.topMenus, 0, Qt.AlignTop)
@@ -755,12 +787,12 @@ class Ui(object):
 
         objs = {
             # OBJECT:                  (TEXT, TOOLTIP)
-            self.btn_display_mode:     ("LIGHT/DARK MODE", ""),
-            self.btn_adjustments:      ("NOT IMPLEMENTED", ""),
-            self.btn_more:             ("NOT IMPLEMENTED", ""),
-            self.btn_message:          ("NOT IMPLEMENTED", ""),
-            self.btn_print:            ("NOT IMPLEMENTED", ""),
-            self.btn_logout:           ("NOT IMPLEMENTED", ""),
+            self.displayModeOption:     ("LIGHT/DARK MODE", ""),
+            self.btn_adjustments:      ("-", ""),
+            self.btn_more:             ("-", ""),
+            self.removeTrashOption:    ("REMOVE TRASH", "Deletes cached trash."),
+            self.btn_print:            ("-", ""),
+            self.btn_logout:           ("-", ""),
             self.toggleButton:         ("HIDE", ""),
             self.home_page:            ("HOME", ""),
             self.move_page:            ("MOVE", ""),
@@ -768,8 +800,8 @@ class Ui(object):
             self.closeAppBtn:          ("", "Close"),
             self.delete_page:          ("DELETE", ""),
             self.rename_page:          ("RENAME", ""),
-            self.version:              ("v1.1.2", ""),
-            self.lookup_page:          ("LOOKUP", ""),
+            self.version:              ("v1.2.1", ""),
+            self.search_page:          ("SEARCH", ""),
             self.toggleLeftBox:        ("Settings", ""),
             self.extraLabel:           ("Settings", ""),
             self.minimizeAppBtn:       ("", "Minimize"),
@@ -799,7 +831,6 @@ class Ui(object):
                     )
                 )
 
-        
         self.textEdit.setHtml(
             QCoreApplication.translate(
                 "MainWindow",
@@ -831,20 +862,26 @@ class Ui(object):
         self.set_bg_image(self.delete_page, "trash-can")
         self.set_bg_image(self.toggleLeftBox, "settings")
         self.set_bg_image(self.rename_page, "rename-outline")
-        self.set_bg_image(self.lookup_page, "search-outline")
+        self.set_bg_image(self.search_page, "search-outline")
 
         # LEFT MENU OPTIONS
         # self.set_bg_image(self.btn_more, "")
         # self.set_bg_image(self.btn_adjustments, "")
-        self.set_bg_image(self.btn_display_mode, "display-mode-outline")
+        self.set_bg_image(self.displayModeOption, "display-mode-outline")
 
-        self.btn_display_mode.pressed.connect(self.set_display_mode)
+        self.displayModeOption.pressed.connect(
+            self.ui_function.set_display_mode
+        )
+        self.removeTrashOption.pressed.connect(
+            self.ui_function.empty_trash
+        )
+
         self.common_functions.set_icon(self.extraCloseColumnBtn, "close")
 
         # RIGHT MENU OPTIONS
         self.set_bg_image(self.btn_print, "home")
         self.set_bg_image(self.btn_logout, "home")
-        self.set_bg_image(self.btn_message, "home")
+        self.set_bg_image(self.removeTrashOption, "home")
 
     def set_bg_image(self, widget: QWidget, name: str, is_icon=True, extra_style="") -> None:
         """
@@ -859,23 +896,3 @@ class Ui(object):
             f"background-image: url({self.constant.get_resources_path()}{path}/{name}.{ext});\
             {extra_style}"
         )
-
-    def set_display_mode(self):
-        """
-            CHANGE DISPLAY MODE FROM DARK/LIGHT OR LIGHT/DARK
-            STORE THE BOOL VALUE IN THE DEFAULT SETTINGS
-        """
-
-        if self.controller.show_dialog(
-            "THEME WILL BE CHANGED AFTER RESTARTING",
-            "Q"
-        ):
-            path = "data/settings/default.json"
-            settings: dict = json.load(open(path))
-
-            # INVERSE THE SAVED THEME MODE
-            is_light_theme = False if settings.get("is_light_theme") else True
-
-            settings["is_light_theme"] = is_light_theme
-
-            json.dump(settings, open(path, "w"))
