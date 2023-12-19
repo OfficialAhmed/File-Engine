@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'Rename page.ui'
+## Form generated from reading UI file 'Delete page.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.5.2
 ##
@@ -1064,9 +1064,15 @@ class Ui_MainWindow(object):
         self.frame_content_wid_3.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_11 = QHBoxLayout(self.frame_content_wid_3)
         self.horizontalLayout_11.setObjectName(u"horizontalLayout_11")
-        self.horizontalLayout_11.setContentsMargins(-1, 5, -1, 5)
         self.first_layout = QGridLayout()
         self.first_layout.setObjectName(u"first_layout")
+        self.PageTitle_label = QLabel(self.frame_content_wid_3)
+        self.PageTitle_label.setObjectName(u"PageTitle_label")
+        self.PageTitle_label.setFont(font)
+        self.PageTitle_label.setStyleSheet(u"")
+
+        self.first_layout.addWidget(self.PageTitle_label, 0, 0, 1, 1)
+
         self.LookupType_comboBox = QComboBox(self.frame_content_wid_3)
         self.LookupType_comboBox.addItem("")
         self.LookupType_comboBox.addItem("")
@@ -1079,21 +1085,44 @@ class Ui_MainWindow(object):
 
         self.first_layout.addWidget(self.LookupType_comboBox, 1, 0, 1, 1)
 
-        self.PageTitle_label = QLabel(self.frame_content_wid_3)
-        self.PageTitle_label.setObjectName(u"PageTitle_label")
-        self.PageTitle_label.setFont(font)
-        self.PageTitle_label.setStyleSheet(u"")
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
-        self.first_layout.addWidget(self.PageTitle_label, 0, 0, 1, 1)
+        self.first_layout.addItem(self.horizontalSpacer, 1, 1, 1, 1)
 
-        self.currentPath_lineEdit = QLineEdit(self.frame_content_wid_3)
+
+        self.horizontalLayout_11.addLayout(self.first_layout)
+
+
+        self.verticalLayout.addWidget(self.frame_content_wid_3)
+
+        self.row_1 = QFrame(self.widgets)
+        self.row_1.setObjectName(u"row_1")
+        self.row_1.setFrameShape(QFrame.StyledPanel)
+        self.row_1.setFrameShadow(QFrame.Raised)
+        self.verticalLayout_16 = QVBoxLayout(self.row_1)
+        self.verticalLayout_16.setSpacing(0)
+        self.verticalLayout_16.setObjectName(u"verticalLayout_16")
+        self.verticalLayout_16.setContentsMargins(0, 0, 0, 0)
+
+        self.verticalLayout.addWidget(self.row_1)
+
+        self.frame_content_wid_4 = QFrame(self.widgets)
+        self.frame_content_wid_4.setObjectName(u"frame_content_wid_4")
+        self.frame_content_wid_4.setFrameShape(QFrame.NoFrame)
+        self.frame_content_wid_4.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_13 = QHBoxLayout(self.frame_content_wid_4)
+        self.horizontalLayout_13.setObjectName(u"horizontalLayout_13")
+        self.second_layout = QGridLayout()
+        self.second_layout.setObjectName(u"second_layout")
+        self.second_layout.setContentsMargins(-1, -1, -1, 0)
+        self.currentPath_lineEdit = QLineEdit(self.frame_content_wid_4)
         self.currentPath_lineEdit.setObjectName(u"currentPath_lineEdit")
         self.currentPath_lineEdit.setMinimumSize(QSize(0, 30))
         self.currentPath_lineEdit.setStyleSheet(u"background-color: rgb(33, 37, 43);")
 
-        self.first_layout.addWidget(self.currentPath_lineEdit, 1, 1, 1, 1)
+        self.second_layout.addWidget(self.currentPath_lineEdit, 0, 1, 1, 1)
 
-        self.browseCurrentPath_btn = QPushButton(self.frame_content_wid_3)
+        self.browseCurrentPath_btn = QPushButton(self.frame_content_wid_4)
         self.browseCurrentPath_btn.setObjectName(u"browseCurrentPath_btn")
         self.browseCurrentPath_btn.setMinimumSize(QSize(150, 30))
         self.browseCurrentPath_btn.setFont(font)
@@ -1103,13 +1132,13 @@ class Ui_MainWindow(object):
         icon6.addFile(u"../images/icons/folder_outline.svg", QSize(), QIcon.Normal, QIcon.Off)
         self.browseCurrentPath_btn.setIcon(icon6)
 
-        self.first_layout.addWidget(self.browseCurrentPath_btn, 1, 2, 1, 1)
+        self.second_layout.addWidget(self.browseCurrentPath_btn, 0, 2, 1, 1)
 
 
-        self.horizontalLayout_11.addLayout(self.first_layout)
+        self.horizontalLayout_13.addLayout(self.second_layout)
 
 
-        self.verticalLayout.addWidget(self.frame_content_wid_3)
+        self.verticalLayout.addWidget(self.frame_content_wid_4)
 
         self.frame_content_wid_2 = QFrame(self.widgets)
         self.frame_content_wid_2.setObjectName(u"frame_content_wid_2")
@@ -1117,7 +1146,6 @@ class Ui_MainWindow(object):
         self.frame_content_wid_2.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_10 = QHBoxLayout(self.frame_content_wid_2)
         self.horizontalLayout_10.setObjectName(u"horizontalLayout_10")
-        self.horizontalLayout_10.setContentsMargins(-1, 5, -1, 5)
         self.third_layout = QGridLayout()
         self.third_layout.setObjectName(u"third_layout")
         self.third_layout.setContentsMargins(-1, -1, -1, 0)
@@ -1125,74 +1153,8 @@ class Ui_MainWindow(object):
         self.currentLookupInput_lineEdit.setObjectName(u"currentLookupInput_lineEdit")
         self.currentLookupInput_lineEdit.setMinimumSize(QSize(0, 30))
         self.currentLookupInput_lineEdit.setStyleSheet(u"background-color: rgb(33, 37, 43);")
-        self.currentLookupInput_lineEdit.setMaxLength(100)
 
-        self.third_layout.addWidget(self.currentLookupInput_lineEdit, 1, 3, 1, 1)
-
-        self.isRecursive_checkBox = QCheckBox(self.frame_content_wid_2)
-        self.isRecursive_checkBox.setObjectName(u"isRecursive_checkBox")
-        self.isRecursive_checkBox.setEnabled(True)
-        self.isRecursive_checkBox.setAutoFillBackground(False)
-        self.isRecursive_checkBox.setStyleSheet(u"")
-        self.isRecursive_checkBox.setChecked(True)
-
-        self.third_layout.addWidget(self.isRecursive_checkBox, 2, 0, 1, 1)
-
-        self.lookupFormat_comboBox = QComboBox(self.frame_content_wid_2)
-        self.lookupFormat_comboBox.addItem("")
-        self.lookupFormat_comboBox.addItem("")
-        self.lookupFormat_comboBox.setObjectName(u"lookupFormat_comboBox")
-        self.lookupFormat_comboBox.setFont(font)
-        self.lookupFormat_comboBox.setAutoFillBackground(False)
-        self.lookupFormat_comboBox.setStyleSheet(u"background-color: rgb(33, 37, 43);")
-        self.lookupFormat_comboBox.setIconSize(QSize(16, 16))
-        self.lookupFormat_comboBox.setFrame(True)
-
-        self.third_layout.addWidget(self.lookupFormat_comboBox, 1, 0, 1, 1)
-
-        self.LookuByTitle_label = QLabel(self.frame_content_wid_2)
-        self.LookuByTitle_label.setObjectName(u"LookuByTitle_label")
-        self.LookuByTitle_label.setStyleSheet(u"color: rgb(113, 126, 149);")
-        self.LookuByTitle_label.setLineWidth(1)
-        self.LookuByTitle_label.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
-
-        self.third_layout.addWidget(self.LookuByTitle_label, 0, 0, 1, 1)
-
-        self.currentLookupBy2_comboBox = QComboBox(self.frame_content_wid_2)
-        self.currentLookupBy2_comboBox.addItem("")
-        self.currentLookupBy2_comboBox.addItem("")
-        self.currentLookupBy2_comboBox.setObjectName(u"currentLookupBy2_comboBox")
-        self.currentLookupBy2_comboBox.setFont(font)
-        self.currentLookupBy2_comboBox.setAutoFillBackground(False)
-        self.currentLookupBy2_comboBox.setStyleSheet(u"background-color: rgb(33, 37, 43);")
-        self.currentLookupBy2_comboBox.setIconSize(QSize(16, 16))
-        self.currentLookupBy2_comboBox.setFrame(True)
-
-        self.third_layout.addWidget(self.currentLookupBy2_comboBox, 1, 1, 1, 1)
-
-        self.currentLookupBy3_comboBox = QComboBox(self.frame_content_wid_2)
-        self.currentLookupBy3_comboBox.addItem("")
-        self.currentLookupBy3_comboBox.addItem("")
-        self.currentLookupBy3_comboBox.addItem("")
-        self.currentLookupBy3_comboBox.addItem("")
-        self.currentLookupBy3_comboBox.addItem("")
-        self.currentLookupBy3_comboBox.addItem("")
-        self.currentLookupBy3_comboBox.addItem("")
-        self.currentLookupBy3_comboBox.addItem("")
-        self.currentLookupBy3_comboBox.addItem("")
-        self.currentLookupBy3_comboBox.addItem("")
-        self.currentLookupBy3_comboBox.setObjectName(u"currentLookupBy3_comboBox")
-        self.currentLookupBy3_comboBox.setFont(font)
-        self.currentLookupBy3_comboBox.setAutoFillBackground(False)
-        self.currentLookupBy3_comboBox.setStyleSheet(u"background-color: rgb(33, 37, 43);")
-        self.currentLookupBy3_comboBox.setIconSize(QSize(16, 16))
-        self.currentLookupBy3_comboBox.setFrame(True)
-
-        self.third_layout.addWidget(self.currentLookupBy3_comboBox, 1, 2, 1, 1)
-
-        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.third_layout.addItem(self.horizontalSpacer_2, 2, 2, 1, 1)
+        self.third_layout.addWidget(self.currentLookupInput_lineEdit, 1, 1, 1, 1)
 
         self.startLookup_btn = QPushButton(self.frame_content_wid_2)
         self.startLookup_btn.setObjectName(u"startLookup_btn")
@@ -1205,76 +1167,43 @@ class Ui_MainWindow(object):
         icon7.addFile(u"../images/icons/start.svg", QSize(), QIcon.Normal, QIcon.Off)
         self.startLookup_btn.setIcon(icon7)
 
-        self.third_layout.addWidget(self.startLookup_btn, 1, 4, 1, 1)
+        self.third_layout.addWidget(self.startLookup_btn, 1, 2, 1, 1)
+
+        self.currentLookupBy_comboBox = QComboBox(self.frame_content_wid_2)
+        self.currentLookupBy_comboBox.addItem("")
+        self.currentLookupBy_comboBox.addItem("")
+        self.currentLookupBy_comboBox.addItem("")
+        self.currentLookupBy_comboBox.setObjectName(u"currentLookupBy_comboBox")
+        self.currentLookupBy_comboBox.setFont(font)
+        self.currentLookupBy_comboBox.setAutoFillBackground(False)
+        self.currentLookupBy_comboBox.setStyleSheet(u"background-color: rgb(33, 37, 43);")
+        self.currentLookupBy_comboBox.setIconSize(QSize(16, 16))
+        self.currentLookupBy_comboBox.setFrame(True)
+
+        self.third_layout.addWidget(self.currentLookupBy_comboBox, 1, 0, 1, 1)
+
+        self.isRecursive_checkBox = QCheckBox(self.frame_content_wid_2)
+        self.isRecursive_checkBox.setObjectName(u"isRecursive_checkBox")
+        self.isRecursive_checkBox.setEnabled(True)
+        self.isRecursive_checkBox.setAutoFillBackground(False)
+        self.isRecursive_checkBox.setStyleSheet(u"")
+        self.isRecursive_checkBox.setChecked(True)
+
+        self.third_layout.addWidget(self.isRecursive_checkBox, 2, 0, 1, 1)
+
+        self.LookuByTitle_label = QLabel(self.frame_content_wid_2)
+        self.LookuByTitle_label.setObjectName(u"LookuByTitle_label")
+        self.LookuByTitle_label.setStyleSheet(u"color: rgb(113, 126, 149);")
+        self.LookuByTitle_label.setLineWidth(1)
+        self.LookuByTitle_label.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
+
+        self.third_layout.addWidget(self.LookuByTitle_label, 0, 0, 1, 1)
 
 
         self.horizontalLayout_10.addLayout(self.third_layout)
 
 
         self.verticalLayout.addWidget(self.frame_content_wid_2)
-
-        self.frame_content_wid_4 = QFrame(self.widgets)
-        self.frame_content_wid_4.setObjectName(u"frame_content_wid_4")
-        self.frame_content_wid_4.setFrameShape(QFrame.NoFrame)
-        self.frame_content_wid_4.setFrameShadow(QFrame.Raised)
-        self.horizontalLayout_13 = QHBoxLayout(self.frame_content_wid_4)
-        self.horizontalLayout_13.setObjectName(u"horizontalLayout_13")
-        self.third_layout_2 = QGridLayout()
-        self.third_layout_2.setObjectName(u"third_layout_2")
-        self.third_layout_2.setContentsMargins(-1, -1, -1, 0)
-        self.renameValue_lineEdit = QLineEdit(self.frame_content_wid_4)
-        self.renameValue_lineEdit.setObjectName(u"renameValue_lineEdit")
-        self.renameValue_lineEdit.setMinimumSize(QSize(0, 30))
-        self.renameValue_lineEdit.setStyleSheet(u"background-color: rgb(33, 37, 43);")
-        self.renameValue_lineEdit.setMaxLength(50)
-
-        self.third_layout_2.addWidget(self.renameValue_lineEdit, 1, 2, 1, 1)
-
-        self.LookuByTitle_label_2 = QLabel(self.frame_content_wid_4)
-        self.LookuByTitle_label_2.setObjectName(u"LookuByTitle_label_2")
-        self.LookuByTitle_label_2.setStyleSheet(u"color: rgb(113, 126, 149);")
-        self.LookuByTitle_label_2.setLineWidth(1)
-        self.LookuByTitle_label_2.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
-
-        self.third_layout_2.addWidget(self.LookuByTitle_label_2, 0, 0, 1, 1)
-
-        self.renameBy_comboBox = QComboBox(self.frame_content_wid_4)
-        self.renameBy_comboBox.addItem("")
-        self.renameBy_comboBox.addItem("")
-        self.renameBy_comboBox.addItem("")
-        self.renameBy_comboBox.addItem("")
-        self.renameBy_comboBox.setObjectName(u"renameBy_comboBox")
-        self.renameBy_comboBox.setFont(font)
-        self.renameBy_comboBox.setAutoFillBackground(False)
-        self.renameBy_comboBox.setStyleSheet(u"background-color: rgb(33, 37, 43);")
-        self.renameBy_comboBox.setIconSize(QSize(16, 16))
-        self.renameBy_comboBox.setFrame(True)
-
-        self.third_layout_2.addWidget(self.renameBy_comboBox, 1, 0, 1, 1)
-
-        self.renameBy2_comboBox = QComboBox(self.frame_content_wid_4)
-        self.renameBy2_comboBox.addItem("")
-        self.renameBy2_comboBox.addItem("")
-        self.renameBy2_comboBox.addItem("")
-        self.renameBy2_comboBox.addItem("")
-        self.renameBy2_comboBox.setObjectName(u"renameBy2_comboBox")
-        self.renameBy2_comboBox.setFont(font)
-        self.renameBy2_comboBox.setAutoFillBackground(False)
-        self.renameBy2_comboBox.setStyleSheet(u"background-color: rgb(33, 37, 43);")
-        self.renameBy2_comboBox.setIconSize(QSize(16, 16))
-        self.renameBy2_comboBox.setFrame(True)
-
-        self.third_layout_2.addWidget(self.renameBy2_comboBox, 1, 1, 1, 1)
-
-        self.horizontalSpacer_3 = QSpacerItem(20, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.third_layout_2.addItem(self.horizontalSpacer_3, 2, 1, 1, 1)
-
-
-        self.horizontalLayout_13.addLayout(self.third_layout_2)
-
-
-        self.verticalLayout.addWidget(self.frame_content_wid_4)
 
         self.row_3 = QFrame(self.widgets)
         self.row_3.setObjectName(u"row_3")
@@ -1405,19 +1334,19 @@ class Ui_MainWindow(object):
 
         self.optionBtns_layout = QVBoxLayout()
         self.optionBtns_layout.setObjectName(u"optionBtns_layout")
-        self.rename_btn = QPushButton(self.row_3)
-        self.rename_btn.setObjectName(u"rename_btn")
-        self.rename_btn.setEnabled(False)
-        self.rename_btn.setMinimumSize(QSize(150, 30))
-        self.rename_btn.setFont(font)
-        self.rename_btn.setCursor(QCursor(Qt.PointingHandCursor))
-        self.rename_btn.setStyleSheet(u"background-color: rgb(52, 59, 72);")
+        self.delete_btn = QPushButton(self.row_3)
+        self.delete_btn.setObjectName(u"delete_btn")
+        self.delete_btn.setEnabled(False)
+        self.delete_btn.setMinimumSize(QSize(150, 30))
+        self.delete_btn.setFont(font)
+        self.delete_btn.setCursor(QCursor(Qt.PointingHandCursor))
+        self.delete_btn.setStyleSheet(u"background-color: rgb(52, 59, 72);")
         icon8 = QIcon()
         icon8.addFile(u"../images/icons/delete sign.svg", QSize(), QIcon.Normal, QIcon.Off)
-        self.rename_btn.setIcon(icon8)
-        self.rename_btn.setIconSize(QSize(30, 30))
+        self.delete_btn.setIcon(icon8)
+        self.delete_btn.setIconSize(QSize(30, 30))
 
-        self.optionBtns_layout.addWidget(self.rename_btn)
+        self.optionBtns_layout.addWidget(self.delete_btn)
 
         self.restore_btn = QPushButton(self.row_3)
         self.restore_btn.setObjectName(u"restore_btn")
@@ -1433,33 +1362,33 @@ class Ui_MainWindow(object):
 
         self.optionBtns_layout.addWidget(self.restore_btn)
 
-        self.export_btn = QPushButton(self.row_3)
-        self.export_btn.setObjectName(u"export_btn")
-        self.export_btn.setEnabled(False)
-        self.export_btn.setMinimumSize(QSize(150, 30))
-        self.export_btn.setFont(font)
-        self.export_btn.setCursor(QCursor(Qt.PointingHandCursor))
-        self.export_btn.setStyleSheet(u"background-color: rgb(52, 59, 72);")
+        self.save_btn = QPushButton(self.row_3)
+        self.save_btn.setObjectName(u"save_btn")
+        self.save_btn.setEnabled(False)
+        self.save_btn.setMinimumSize(QSize(150, 30))
+        self.save_btn.setFont(font)
+        self.save_btn.setCursor(QCursor(Qt.PointingHandCursor))
+        self.save_btn.setStyleSheet(u"background-color: rgb(52, 59, 72);")
         icon10 = QIcon()
         icon10.addFile(u"../images/icons/file download.svg", QSize(), QIcon.Normal, QIcon.Off)
-        self.export_btn.setIcon(icon10)
-        self.export_btn.setIconSize(QSize(30, 30))
+        self.save_btn.setIcon(icon10)
+        self.save_btn.setIconSize(QSize(30, 30))
 
-        self.optionBtns_layout.addWidget(self.export_btn)
+        self.optionBtns_layout.addWidget(self.save_btn)
 
-        self.import_btn = QPushButton(self.row_3)
-        self.import_btn.setObjectName(u"import_btn")
-        self.import_btn.setEnabled(False)
-        self.import_btn.setMinimumSize(QSize(150, 30))
-        self.import_btn.setFont(font)
-        self.import_btn.setCursor(QCursor(Qt.PointingHandCursor))
-        self.import_btn.setStyleSheet(u"background-color: rgb(52, 59, 72);")
+        self.load_btn = QPushButton(self.row_3)
+        self.load_btn.setObjectName(u"load_btn")
+        self.load_btn.setEnabled(False)
+        self.load_btn.setMinimumSize(QSize(150, 30))
+        self.load_btn.setFont(font)
+        self.load_btn.setCursor(QCursor(Qt.PointingHandCursor))
+        self.load_btn.setStyleSheet(u"background-color: rgb(52, 59, 72);")
         icon11 = QIcon()
         icon11.addFile(u"../images/icons/file upload.svg", QSize(), QIcon.Normal, QIcon.Off)
-        self.import_btn.setIcon(icon11)
-        self.import_btn.setIconSize(QSize(30, 30))
+        self.load_btn.setIcon(icon11)
+        self.load_btn.setIconSize(QSize(30, 30))
 
-        self.optionBtns_layout.addWidget(self.import_btn)
+        self.optionBtns_layout.addWidget(self.load_btn)
 
 
         self.horizontalLayout_12.addLayout(self.optionBtns_layout)
@@ -1676,10 +1605,10 @@ class Ui_MainWindow(object):
         self.closeAppBtn.setToolTip(QCoreApplication.translate("MainWindow", u"Close", None))
 #endif // QT_CONFIG(tooltip)
         self.closeAppBtn.setText("")
+        self.PageTitle_label.setText(QCoreApplication.translate("MainWindow", u"DELETE", None))
         self.LookupType_comboBox.setItemText(0, QCoreApplication.translate("MainWindow", u"FILES", None))
         self.LookupType_comboBox.setItemText(1, QCoreApplication.translate("MainWindow", u"FOLDERS", None))
 
-        self.PageTitle_label.setText(QCoreApplication.translate("MainWindow", u"RENAME", None))
 #if QT_CONFIG(tooltip)
         self.currentPath_lineEdit.setToolTip(QCoreApplication.translate("MainWindow", u"Enter the path where should the lookup process begin", None))
 #endif // QT_CONFIG(tooltip)
@@ -1687,46 +1616,20 @@ class Ui_MainWindow(object):
         self.currentPath_lineEdit.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Enter the path here", None))
         self.browseCurrentPath_btn.setText(QCoreApplication.translate("MainWindow", u"OPEN", None))
         self.currentLookupInput_lineEdit.setText("")
-        self.currentLookupInput_lineEdit.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Enter values to look for seperated by comma", None))
-#if QT_CONFIG(tooltip)
-        self.isRecursive_checkBox.setToolTip(QCoreApplication.translate("MainWindow", u"Find files recursively through the selected path", None))
-#endif // QT_CONFIG(tooltip)
-        self.isRecursive_checkBox.setText(QCoreApplication.translate("MainWindow", u"RECURSIVE", None))
-        self.lookupFormat_comboBox.setItemText(0, QCoreApplication.translate("MainWindow", u"NAME", None))
-        self.lookupFormat_comboBox.setItemText(1, QCoreApplication.translate("MainWindow", u"EXTENSION", None))
-
-        self.LookuByTitle_label.setText(QCoreApplication.translate("MainWindow", u"LOOKUP BY", None))
-        self.currentLookupBy2_comboBox.setItemText(0, QCoreApplication.translate("MainWindow", u"CONTAIN", None))
-        self.currentLookupBy2_comboBox.setItemText(1, QCoreApplication.translate("MainWindow", u"EQUAL TO", None))
-
-        self.currentLookupBy3_comboBox.setItemText(0, QCoreApplication.translate("MainWindow", u"Alphabets only", None))
-        self.currentLookupBy3_comboBox.setItemText(1, QCoreApplication.translate("MainWindow", u"Alphabets & Symbols", None))
-        self.currentLookupBy3_comboBox.setItemText(2, QCoreApplication.translate("MainWindow", u"Alphabets & Numbers", None))
-        self.currentLookupBy3_comboBox.setItemText(3, QCoreApplication.translate("MainWindow", u"Alphabets Excluding", None))
-        self.currentLookupBy3_comboBox.setItemText(4, QCoreApplication.translate("MainWindow", u"Numbers only", None))
-        self.currentLookupBy3_comboBox.setItemText(5, QCoreApplication.translate("MainWindow", u"Numbers & Symbols", None))
-        self.currentLookupBy3_comboBox.setItemText(6, QCoreApplication.translate("MainWindow", u"Numbers Excluding", None))
-        self.currentLookupBy3_comboBox.setItemText(7, QCoreApplication.translate("MainWindow", u"Symbols only", None))
-        self.currentLookupBy3_comboBox.setItemText(8, QCoreApplication.translate("MainWindow", u"Symbols Excluding", None))
-        self.currentLookupBy3_comboBox.setItemText(9, QCoreApplication.translate("MainWindow", u"Custom", None))
-
+        self.currentLookupInput_lineEdit.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Enter your input", None))
 #if QT_CONFIG(tooltip)
         self.startLookup_btn.setToolTip(QCoreApplication.translate("MainWindow", u"Start lookup process", None))
 #endif // QT_CONFIG(tooltip)
         self.startLookup_btn.setText(QCoreApplication.translate("MainWindow", u"START", None))
-        self.renameValue_lineEdit.setText("")
-        self.renameValue_lineEdit.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Enter the value", None))
-        self.LookuByTitle_label_2.setText(QCoreApplication.translate("MainWindow", u"RENAME BY", None))
-        self.renameBy_comboBox.setItemText(0, QCoreApplication.translate("MainWindow", u"BULK", None))
-        self.renameBy_comboBox.setItemText(1, QCoreApplication.translate("MainWindow", u"TIMESTAMP", None))
-        self.renameBy_comboBox.setItemText(2, QCoreApplication.translate("MainWindow", u"NUMBERING", None))
-        self.renameBy_comboBox.setItemText(3, QCoreApplication.translate("MainWindow", u"CUSTOM", None))
+        self.currentLookupBy_comboBox.setItemText(0, QCoreApplication.translate("MainWindow", u"NAME", None))
+        self.currentLookupBy_comboBox.setItemText(1, QCoreApplication.translate("MainWindow", u"PATTERN", None))
+        self.currentLookupBy_comboBox.setItemText(2, QCoreApplication.translate("MainWindow", u"EXTENSION", None))
 
-        self.renameBy2_comboBox.setItemText(0, QCoreApplication.translate("MainWindow", u"PREFIX NUMBERS", None))
-        self.renameBy2_comboBox.setItemText(1, QCoreApplication.translate("MainWindow", u"SUFFIX NUMBERS", None))
-        self.renameBy2_comboBox.setItemText(2, QCoreApplication.translate("MainWindow", u"CUSTOM PREFIX ", None))
-        self.renameBy2_comboBox.setItemText(3, QCoreApplication.translate("MainWindow", u"CUSTOM SUFFIX", None))
-
+#if QT_CONFIG(tooltip)
+        self.isRecursive_checkBox.setToolTip(QCoreApplication.translate("MainWindow", u"Find files recursively through the selected path", None))
+#endif // QT_CONFIG(tooltip)
+        self.isRecursive_checkBox.setText(QCoreApplication.translate("MainWindow", u"RECURSIVE", None))
+        self.LookuByTitle_label.setText(QCoreApplication.translate("MainWindow", u"LOOKUP BY", None))
         ___qtablewidgetitem = self.table_layout.horizontalHeaderItem(0)
         ___qtablewidgetitem.setText(QCoreApplication.translate("MainWindow", u"0", None));
         ___qtablewidgetitem1 = self.table_layout.horizontalHeaderItem(1)
@@ -1777,21 +1680,21 @@ class Ui_MainWindow(object):
         self.table_layout.setSortingEnabled(__sortingEnabled)
 
 #if QT_CONFIG(tooltip)
-        self.rename_btn.setToolTip(QCoreApplication.translate("MainWindow", u"Delete all selected items", None))
+        self.delete_btn.setToolTip(QCoreApplication.translate("MainWindow", u"Delete all selected items", None))
 #endif // QT_CONFIG(tooltip)
-        self.rename_btn.setText(QCoreApplication.translate("MainWindow", u"RENAME", None))
+        self.delete_btn.setText(QCoreApplication.translate("MainWindow", u"DELETE", None))
 #if QT_CONFIG(tooltip)
         self.restore_btn.setToolTip(QCoreApplication.translate("MainWindow", u"Restore last deleted process", None))
 #endif // QT_CONFIG(tooltip)
         self.restore_btn.setText(QCoreApplication.translate("MainWindow", u"RESTORE", None))
 #if QT_CONFIG(tooltip)
-        self.export_btn.setToolTip(QCoreApplication.translate("MainWindow", u"Store current lookup", None))
+        self.save_btn.setToolTip(QCoreApplication.translate("MainWindow", u"Store current lookup", None))
 #endif // QT_CONFIG(tooltip)
-        self.export_btn.setText(QCoreApplication.translate("MainWindow", u"EXPORT", None))
+        self.save_btn.setText(QCoreApplication.translate("MainWindow", u"SAVE", None))
 #if QT_CONFIG(tooltip)
-        self.import_btn.setToolTip(QCoreApplication.translate("MainWindow", u"Load previous lookup", None))
+        self.load_btn.setToolTip(QCoreApplication.translate("MainWindow", u"Load previous lookup", None))
 #endif // QT_CONFIG(tooltip)
-        self.import_btn.setText(QCoreApplication.translate("MainWindow", u"IMPORT", None))
+        self.load_btn.setText(QCoreApplication.translate("MainWindow", u"LOAD", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"NEW PAGE TEST", None))
         self.btn_message.setText(QCoreApplication.translate("MainWindow", u"Message", None))
         self.btn_print.setText(QCoreApplication.translate("MainWindow", u"Print", None))
