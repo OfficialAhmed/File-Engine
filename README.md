@@ -1,5 +1,5 @@
 <div align="center" >
-  <img style="height:190px; width:85%" src="Interface/images/File Engine Banner.png" alt="Image">
+  <img style="height:165px; width:80%" src="Interface/images/File Engine Banner.png" alt="Image">
 </div>
 
 # INTRODUCTION
