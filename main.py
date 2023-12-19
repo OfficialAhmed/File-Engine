@@ -57,7 +57,7 @@ class MainWindow(QMainWindow):
         self.widgets.delete_page.clicked.connect(self.change_page)
         self.widgets.move_page.clicked.connect(self.change_page)
         self.widgets.rename_page.clicked.connect(self.change_page)
-        self.widgets.lookup_page.clicked.connect(self.change_page)
+        self.widgets.search_page.clicked.connect(self.change_page)
 
         # TOGGLE MENU
         self.widgets.toggleButton.clicked.connect(
@@ -111,7 +111,7 @@ class MainWindow(QMainWindow):
             case "home_page":      page = self.widgets.home_widgets
             case "delete_page":    page = self.widgets.delete_widgets
             case "rename_page":    page = self.widgets.rename_widgets
-            case "move_page":      page = self.widgets.new_page
+            case "search_page":    page = self.widgets.search_widgets
             case "lookup_page":    page = self.widgets.new_page
 
         self.widgets.stackedWidget.setCurrentWidget(page)
@@ -166,3 +166,4 @@ if __name__ == "__main__":
     app.setWindowIcon(QIcon("icon.ico"))
     window = MainWindow()
     exit(app.exec())
+    
