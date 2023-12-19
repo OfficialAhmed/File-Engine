@@ -1,9 +1,9 @@
-<!DOCTYPE RCC>
 <RCC>
   <qresource prefix="images">
     <file>..\..\images\images\File Engine logo.png</file>
+    <file>..\..\images\icons\x-outline.svg</file>
+    <file>..\..\images\icons\tick-outline.svg</file>
     <file>..\..\images\images\File Engine vertical.png</file>
-
     <file>..\..\images\icons\menu.svg</file>
     <file>..\..\images\icons\close.svg</file>
     <file>..\..\images\icons\copy-outline.svg</file>
@@ -27,5 +27,5 @@
     <file>..\..\images\icons\trash-can.svg</file>
     <file>..\..\images\icons\arrow down.svg</file>
     <file>..\..\images\icons\display-mode-outline.svg</file>
-    </qresource>
-  </RCC>
+  </qresource>
+</RCC>
