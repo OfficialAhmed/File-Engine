@@ -184,7 +184,7 @@ class Common:
             THEN POPULATE THE DATA ONTO A NEW GENERATED TABLE
         """
         self.data = json.load(open(self.get_path("json")))
-        self.generate_table(self.table_layout)
+        self.generate_table(self.table)
 
     def set_user_path(
         self, path: str,
@@ -348,7 +348,7 @@ class Common:
         total_rows = rows
         total_columns = columns
 
-        self.table_layout = table_layout
+        self.table = table_layout
 
         # CLEAR PREVIOUS ROWS
         self.checkboxes.clear()
@@ -406,7 +406,7 @@ class Common:
                 QCoreApplication.translate("MainWindow", txt)
             )
 
-            self.table_layout.setHorizontalHeaderItem(col, header_item)
+            self.table.setHorizontalHeaderItem(col, header_item)
 
     def table_header_clicked(self, header_section: int) -> None:
         """
@@ -434,7 +434,7 @@ class Common:
                 checkbox = QCheckBox()
                 checkbox.setChecked(False)
 
-                self.table_layout.setCellWidget(
+                self.table.setCellWidget(
                     row_indx,                            # ROW INDEX
                     3,                                   # LAST COLUMN
                     checkbox                             # ITEM
@@ -455,7 +455,7 @@ class Common:
 
         # REMOVE SELECTED CHECKBOXES
         for row in reversed(self.rows_to_remove):
-            self.table_layout.removeRow(row)
+            self.table.removeRow(row)
             self.checkboxes.pop(row)
 
     def start_lookup_clicked(self):
@@ -479,7 +479,7 @@ class Common:
 
             # PATH EXISTED BUT NO FILES HAVE BEEN FOUND
             if not self.data:
-                self.init_table(self.table_layout)
+                self.init_table(self.table)
 
                 self.controller.show_dialog(
                     "NO DATA HAS BEEN FOUND!",          # MESSAGE
@@ -488,7 +488,7 @@ class Common:
                 )
                 return None
 
-            self.generate_table(self.table_layout)
+            self.generate_table(self.table)
 
 
 class Html:
