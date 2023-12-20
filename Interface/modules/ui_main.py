@@ -698,10 +698,10 @@ class Ui(object):
         self.verticalLayout_4.addWidget(self.toggleButton)
 
         self.verticalLayout_8.addWidget(self.home_page)
+        self.verticalLayout_8.addWidget(self.search_page)
         self.verticalLayout_8.addWidget(self.delete_page)
         self.verticalLayout_8.addWidget(self.rename_page)
         self.verticalLayout_8.addWidget(self.move_page)
-        self.verticalLayout_8.addWidget(self.search_page)
 
         self.verticalLayout_9.addWidget(self.toggleLeftBox)
         self.extraTopLayout.addWidget(self.extraIcon, 0, 0, 1, 1)
