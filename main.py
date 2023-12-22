@@ -54,8 +54,8 @@ class MainWindow(QMainWindow):
 
         # LEFT MENUS
         self.widgets.home_page.clicked.connect(self.change_page)
-        self.widgets.delete_page.clicked.connect(self.change_page)
         self.widgets.move_page.clicked.connect(self.change_page)
+        self.widgets.delete_page.clicked.connect(self.change_page)
         self.widgets.rename_page.clicked.connect(self.change_page)
         self.widgets.search_page.clicked.connect(self.change_page)
 

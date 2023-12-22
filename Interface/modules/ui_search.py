@@ -24,244 +24,113 @@ class Ui(Common):
 
         self.widgets = QWidget()
 
-        font = QFont()
-        self.BASIC = QWidget()
-        self.RESULT = QWidget()
-        self.ADVANCED = QWidget()
-
+        """
+        ===================================================================
+                            WIDGETS RENDERING 
+        ===================================================================
+        """
         self.topGL = QGridLayout()
         self.bottomHL = QHBoxLayout()
         self.searchMainVL = QVBoxLayout()
-        self.basicTabMainVL = QVBoxLayout()
-        self.resultTabMainVL = QVBoxLayout()
-        self.advancedTabMainVL = QVBoxLayout()
 
-        self.searchGroup = QGroupBox(self.widgets)
+        # __________   MAIN LAYOUT   ____________________________
+
         self.tabsWidget = QTabWidget(self.widgets)
         self.verticalLayout = QVBoxLayout(self.widgets)
 
-        self.table = QTableWidget(self.RESULT)
-        self.verticalLayout_23 = QVBoxLayout(self.RESULT)
+        self.searchGroupBox = QGroupBox(self.widgets)
+        self.searchGroupBoxGL = QGridLayout(self.searchGroupBox)
+        self.foundMatchLabel = QLabel(self.searchGroupBox)
+        self.pathLineEdit = QLineEdit(self.searchGroupBox)
+        self.browsePathBtn = QPushButton(self.searchGroupBox)
+        self.startSearchBtn = QPushButton(self.searchGroupBox)
+        self.searchTypeComboBox = QComboBox(self.searchGroupBox)
 
+        # __________   BASIC TAB   ______________________________
+
+        self.BASIC = QWidget()
+        self.basicTabMainVL = QVBoxLayout()
         self.titleGroupBox = QGroupBox(self.BASIC)
-        self.verticalLayout_21 = QVBoxLayout(self.BASIC)
-
-        self.verticalLayout_18 = QVBoxLayout(self.ADVANCED)
-        self.advancedTitleGroupBox = QGroupBox(self.ADVANCED)
-        self.advancedOtherGroupBox = QGroupBox(self.ADVANCED)
-        self.advancedMetadataGroupBox = QGroupBox(self.ADVANCED)
-
-        self.moveOptionBtn = QPushButton(self.RESULT)
-        self.deleteOptionBtn = QPushButton(self.RESULT)
-        self.renameOptionBtn = QPushButton(self.RESULT)
-        self.duplicateOptionBtn = QPushButton(self.RESULT)
-
-        self.foundMatchLabel = QLabel(self.searchGroup)
-        self.pathLineEdit = QLineEdit(self.searchGroup)
-        self.browsePathBtn = QPushButton(self.searchGroup)
-        self.third_layout_7 = QGridLayout(self.searchGroup)
-        self.startSearchBtn = QPushButton(self.searchGroup)
-        self.searchTypeComboBox = QComboBox(self.searchGroup)
+        self.verticalLayout3 = QVBoxLayout(self.BASIC)
 
         self.titleLineEdit = QLineEdit(self.titleGroupBox)
         self.titleComboBox = QComboBox(self.titleGroupBox)
         self.titleComboBox2 = QComboBox(self.titleGroupBox)
         self.titleComboBox3 = QComboBox(self.titleGroupBox)
-        self.third_layout_6 = QGridLayout(self.titleGroupBox)
+        self.titleGroupBoxGL = QGridLayout(self.titleGroupBox)
         self.isRecursiveCheckBox = QCheckBox(self.titleGroupBox)
         self.isCaseSensitiveCheckBox = QCheckBox(self.titleGroupBox)
 
+        # __________   ADVANCED TAB   ____________________________
+
+        self.ADVANCED = QWidget()
+        self.advancedTabMainVL = QVBoxLayout()
+        self.advancedTitleGroupBox = QGroupBox(self.ADVANCED)
+
+        self.verticalLayout2 = QVBoxLayout(self.ADVANCED)
+        self.advancedTitleGroupBoxGL = QGridLayout(self.advancedTitleGroupBox)
+
+        self.advancedTitleLineEdite = QLineEdit(self.advancedTitleGroupBox)
         self.advancedTitleComboBox = QComboBox(self.advancedTitleGroupBox)
+        self.advancedTitleComboBox2 = QComboBox(self.advancedTitleGroupBox)
         self.advancedTitleComboBox3 = QComboBox(self.advancedTitleGroupBox)
         self.advancedIsRecuresiveCheckBox = QCheckBox(
             self.advancedTitleGroupBox)
         self.advancedIsCaseSensitiveCheckBox = QCheckBox(
             self.advancedTitleGroupBox)
 
-        self.otherComboBox = QComboBox(self.advancedOtherGroupBox)
-        self.third_layout_8 = QGridLayout(self.advancedTitleGroupBox)
-        self.third_layout_11 = QGridLayout(self.advancedOtherGroupBox)
-        self.advancedTitleLineEdite = QLineEdit(self.advancedTitleGroupBox)
-        self.advancedTitleComboBox2 = QComboBox(self.advancedTitleGroupBox)
+        self.advancedMetadataGroupBox = QGroupBox(self.ADVANCED)
+        self.advancedMetadataGroupBoxGL = QGridLayout(
+            self.advancedMetadataGroupBox)
         self.metadataLineEdit = QLineEdit(self.advancedMetadataGroupBox)
-
-        self.third_layout_9 = QGridLayout(self.advancedMetadataGroupBox)
         self.metadataComboBox = QComboBox(self.advancedMetadataGroupBox)
         self.metadataComboBox2 = QComboBox(self.advancedMetadataGroupBox)
         self.metadataComboBox3 = QComboBox(self.advancedMetadataGroupBox)
 
-        self.verticalLayout.setSpacing(10)
-        self.verticalLayout.setContentsMargins(10, 10, 10, 10)
-        self.third_layout_6.setContentsMargins(10, 20, 10, 10)
-        self.titleLineEdit.setMinimumSize(QSize(0, 30))
-        self.titleLineEdit.setMaxLength(100)
+        self.advancedOtherGroupBox = QGroupBox(self.ADVANCED)
+        self.advancedOtherGroupBoxGL = QGridLayout(self.advancedOtherGroupBox)
+        self.otherLineEdit = QLineEdit(self.advancedOtherGroupBox)
+        self.otherComboBox = QComboBox(self.advancedOtherGroupBox)
+        self.otherComboBox3 = QComboBox(self.advancedOtherGroupBox)
+        self.otherComboBox2 = QComboBox(self.advancedOtherGroupBox)
 
-        self.titleComboBox.addItem("")
-        self.titleComboBox.addItem("")
+        # __________   RESULT TAB   ______________________________
 
-        self.titleComboBox2.addItem("")
-        self.titleComboBox2.addItem("")
+        self.RESULT = QWidget()
+        self.resultTabMainVL = QVBoxLayout()
+        self.table = QTableWidget(self.RESULT)
+        self.moveOptionBtn = QPushButton(self.RESULT)
+        self.deleteOptionBtn = QPushButton(self.RESULT)
+        self.renameOptionBtn = QPushButton(self.RESULT)
+        self.verticalLayout4 = QVBoxLayout(self.RESULT)
+        self.duplicateOptionBtn = QPushButton(self.RESULT)
 
-
-        self.titleComboBox3.addItem("")
-        self.titleComboBox3.addItem("")
-        self.titleComboBox3.addItem("")
-        self.titleComboBox3.addItem("")
-        self.titleComboBox3.addItem("")
-        self.titleComboBox3.addItem("")
-        self.titleComboBox3.addItem("")
-        self.titleComboBox3.addItem("")
-        self.titleComboBox3.addItem("")
-        self.titleComboBox3.addItem("")
 
         self.titleLineEditHSpacer = QSpacerItem(
             40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum
         )
-        self.third_layout_6.addWidget(self.titleLineEdit, 0, 3, 1, 1)
-        self.third_layout_6.addWidget(self.titleComboBox, 0, 0, 1, 1)
-        self.third_layout_6.addWidget(self.titleComboBox2, 0, 1, 1, 1)
-        self.third_layout_6.addWidget(self.titleComboBox3, 0, 2, 1, 1)
-        self.third_layout_6.addWidget(self.isRecursiveCheckBox, 2, 0, 1, 1)
-        self.third_layout_6.addWidget(self.isCaseSensitiveCheckBox, 3, 0, 1, 1)
-        self.basicTabMainVL.addWidget(self.titleGroupBox)
 
         self.tabsVSpacer = QSpacerItem(
             20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding
         )
 
-        self.verticalLayout_21.addLayout(self.basicTabMainVL)
-
         self.tabsWidget.addTab(self.BASIC, "")
-        self.tabsWidget.addTab(self.RESULT, "")
         self.tabsWidget.addTab(self.ADVANCED, "")
+        self.tabsWidget.addTab(self.RESULT, "")
 
-
-        self.advancedTabMainVL.setSpacing(10)
-        self.third_layout_8.setContentsMargins(10, 20, 10, 10)
-        self.advancedTitleLineEdite.setMinimumSize(QSize(0, 30))
-        self.advancedTitleLineEdite.setMaxLength(100)
-
-
-        self.advancedTitleComboBox.addItem("")
-        self.advancedTitleComboBox.addItem("")
-        
-        self.advancedTitleComboBox2.addItem("")
-        self.advancedTitleComboBox2.addItem("")
-        self.advancedTitleComboBox2.setAutoFillBackground(False)
-
-        self.third_layout_6.addItem(self.titleLineEditHSpacer, 2, 3, 1, 1)
-        self.basicTabMainVL.addItem(self.tabsVSpacer)
-        self.third_layout_8.addWidget(self.advancedTitleLineEdite, 0, 3, 1, 1)
-        self.third_layout_8.addWidget(self.advancedTitleComboBox, 0, 0, 1, 1)
-        self.third_layout_8.addWidget(self.advancedTitleComboBox2, 0, 1, 1, 1)
-
-        self.advancedTitleComboBox3.addItem("")
-        self.advancedTitleComboBox3.addItem("")
-        self.advancedTitleComboBox3.addItem("")
-        self.advancedTitleComboBox3.addItem("")
-        self.advancedTitleComboBox3.addItem("")
-        self.advancedTitleComboBox3.addItem("")
-        self.advancedTitleComboBox3.addItem("")
-        self.advancedTitleComboBox3.addItem("")
-        self.advancedTitleComboBox3.addItem("")
-        self.advancedTitleComboBox3.addItem("")
 
         self.advancedTitleLineEditeHSpacer = QSpacerItem(
             40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
-        self.third_layout_8.addItem(
-            self.advancedTitleLineEditeHSpacer, 2, 3, 1, 1)
-
-        self.third_layout_9.setContentsMargins(10, 20, 10, 0)
-        self.metadataComboBox2.addItem("")
-        self.metadataComboBox2.addItem("")
-        self.metadataComboBox2.addItem("")
-        self.metadataComboBox2.addItem("")
-        self.metadataComboBox2.addItem("")
-        self.metadataComboBox2.setIconSize(QSize(16, 16))
-
-        self.metadataComboBox.addItem("")
-        self.metadataComboBox.addItem("")
-        self.metadataComboBox.addItem("")
-        self.metadataComboBox.addItem("")
-        self.metadataComboBox.setObjectName("metadataComboBox")
-
         self.metadataLineEditHSpacer = QSpacerItem(
             40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
-        self.third_layout_9.addItem(self.metadataLineEditHSpacer, 1, 3, 1, 1)
-
-        self.metadataComboBox3.addItem("")
-        self.metadataComboBox3.addItem("")
-        self.metadataComboBox3.addItem("")
-
-        self.metadataLineEdit.setMinimumSize(QSize(0, 30))
-        self.metadataLineEdit.setMaxLength(100)
-
-        self.advancedTabMainVL.addWidget(self.advancedTitleGroupBox)
-        self.advancedTabMainVL.addWidget(self.advancedMetadataGroupBox)
-        self.third_layout_8.addWidget(self.advancedTitleComboBox3, 0, 2, 1, 1)
-        self.third_layout_8.addWidget(
-            self.advancedIsRecuresiveCheckBox, 2, 0, 1, 1)
-        self.third_layout_8.addWidget(
-            self.advancedIsCaseSensitiveCheckBox, 3, 0, 1, 1)
-        self.third_layout_9.addWidget(self.metadataComboBox2, 0, 1, 1, 1)
-        self.third_layout_9.addWidget(self.metadataComboBox, 0, 0, 1, 1)
-        self.third_layout_9.addWidget(self.metadataComboBox3, 0, 2, 1, 1)
-        self.third_layout_9.addWidget(self.metadataLineEdit, 0, 3, 1, 1)
-
-        self.third_layout_11.setContentsMargins(10, 20, 10, 0)
-        self.otherComboBox.addItem("")
-        self.otherComboBox.addItem("")
-
-        self.third_layout_11.addWidget(self.otherComboBox, 0, 0, 1, 1)
-
-        self.otherComboBox3 = QComboBox(self.advancedOtherGroupBox)
-        self.otherComboBox3.addItem("")
-        self.otherComboBox3.addItem("")
-        self.otherComboBox3.addItem("")
-
-        self.third_layout_11.addWidget(self.otherComboBox3, 0, 2, 1, 1)
-
-        self.otherLineEdit = QLineEdit(self.advancedOtherGroupBox)
-        self.otherLineEdit.setMinimumSize(QSize(0, 30))
-        self.otherLineEdit.setMaxLength(100)
-
-        self.third_layout_11.addWidget(self.otherLineEdit, 0, 4, 1, 1)
 
         self.otherLineEditHSpacer = QSpacerItem(
             40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
-        self.third_layout_11.addItem(self.otherLineEditHSpacer, 1, 4, 1, 1)
-
-        self.otherComboBox2 = QComboBox(self.advancedOtherGroupBox)
-        self.otherComboBox2.addItem("")
-        self.otherComboBox2.addItem("")
-        self.otherComboBox2.addItem("")
-        self.otherComboBox2.addItem("")
-        
-        self.otherComboBox.setIconSize(QSize(16, 16))
-        self.titleComboBox.setIconSize(QSize(16, 16))
-        self.titleComboBox2.setIconSize(QSize(16, 16))
-        self.titleComboBox3.setIconSize(QSize(16, 16))
-        self.otherComboBox2.setIconSize(QSize(16, 16))
-        self.otherComboBox3.setIconSize(QSize(16, 16))
-        self.metadataComboBox.setIconSize(QSize(16, 16))
-        self.metadataComboBox3.setIconSize(QSize(16, 16))
-        self.advancedTitleComboBox.setIconSize(QSize(16, 16))
-        self.advancedTitleComboBox2.setIconSize(QSize(16, 16))
-        self.advancedTitleComboBox3.setIconSize(QSize(16, 16))
-
-        self.third_layout_11.addWidget(self.otherComboBox2, 0, 1, 1, 1)
-
-        self.advancedTabMainVL.addWidget(self.advancedOtherGroupBox)
-
         self.advancedBottomVSpacer = QSpacerItem(
             20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
-
-        self.advancedTabMainVL.addItem(self.advancedBottomVSpacer)
-
-        self.verticalLayout_18.addLayout(self.advancedTabMainVL)
 
         if (self.table.columnCount() < 4):
             self.table.setColumnCount(4)
@@ -370,121 +239,315 @@ class Ui(Common):
         self.table.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         self.table.setSizeAdjustPolicy(
             QAbstractScrollArea.AdjustToContents)
-        self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.table.setSelectionMode(QAbstractItemView.NoSelection)
+        self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.table.setSelectionBehavior(QAbstractItemView.SelectRows)
-        self.table.setShowGrid(True)
         self.table.setGridStyle(Qt.SolidLine)
+        self.table.setShowGrid(True)
         self.table.setSortingEnabled(True)
-        self.table.horizontalHeader().setVisible(True)
-        self.table.horizontalHeader().setCascadingSectionResizes(True)
-        self.table.horizontalHeader().setDefaultSectionSize(200)
-        self.table.horizontalHeader().setStretchLastSection(True)
         self.table.verticalHeader().setVisible(False)
-        self.table.verticalHeader().setCascadingSectionResizes(True)
+        self.table.horizontalHeader().setVisible(True)
+        self.table.horizontalHeader().setDefaultSectionSize(200)
         self.table.verticalHeader().setHighlightSections(False)
         self.table.verticalHeader().setStretchLastSection(False)
-
-        self.resultTabMainVL.addWidget(self.table)
+        self.table.horizontalHeader().setStretchLastSection(True)
+        self.table.verticalHeader().setCascadingSectionResizes(True)
+        self.table.horizontalHeader().setCascadingSectionResizes(True)
 
         self.bottomHL.setContentsMargins(-1, 0, -1, -1)
-        self.deleteOptionBtn.setEnabled(False)
-        self.deleteOptionBtn.setMinimumSize(QSize(150, 30))
-        self.deleteOptionBtn.setCursor(QCursor(Qt.PointingHandCursor))
-
-        self.bottomHL.addWidget(self.deleteOptionBtn)
-
-        self.renameOptionBtn.setEnabled(False)
-        self.renameOptionBtn.setMinimumSize(QSize(150, 30))
-        self.renameOptionBtn.setCursor(QCursor(Qt.PointingHandCursor))
-
-        self.bottomHL.addWidget(self.renameOptionBtn)
-
-        self.moveOptionBtn.setEnabled(False)
-        self.moveOptionBtn.setMinimumSize(QSize(150, 30))
-        self.moveOptionBtn.setCursor(QCursor(Qt.PointingHandCursor))
-
-        self.bottomHL.addWidget(self.moveOptionBtn)
-
-        self.duplicateOptionBtn.setEnabled(False)
-        self.duplicateOptionBtn.setMinimumSize(QSize(150, 30))
-        self.duplicateOptionBtn.setCursor(QCursor(Qt.PointingHandCursor))
-
-        self.bottomHL.addWidget(self.duplicateOptionBtn)
 
         self.resultBottomLHSpacer = QSpacerItem(
             40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
-        self.bottomHL.addItem(self.resultBottomLHSpacer)
-        self.resultTabMainVL.addLayout(self.bottomHL)
-        self.verticalLayout_23.addLayout(self.resultTabMainVL)
+        self.searchTypeComboBox.addItem("")
+        self.searchTypeComboBox.addItem("")
 
-        self.verticalLayout.addWidget(self.tabsWidget)
-
-        self.searchGroup.setChecked(False)
-        self.third_layout_7.setContentsMargins(10, 20, 10, 10)
+        """
+        ===================================================================
+                            SET STYLING
+        ===================================================================
+        """
         self.searchMainVL.setSpacing(5)
-        self.topGL.setContentsMargins(-1, 2, -1, 0)
-        self.searchTypeComboBox.addItem("")
-        self.searchTypeComboBox.addItem("")
+        self.verticalLayout.setSpacing(10)
+        self.advancedTabMainVL.setSpacing(10)
 
+        self.otherLineEdit.setMaxLength(100)
+        self.titleLineEdit.setMaxLength(100)
+        self.metadataLineEdit.setMaxLength(100)
+        self.advancedTitleLineEdite.setMaxLength(100)
+
+        self.verticalLayout.setContentsMargins(10, 10, 10, 10)
+        self.titleGroupBoxGL.setContentsMargins(10, 20, 10, 10)
+        self.advancedTitleGroupBoxGL.setContentsMargins(10, 20, 10, 10)
+        self.advancedMetadataGroupBoxGL.setContentsMargins(10, 20, 10, 0)
+        self.advancedOtherGroupBoxGL.setContentsMargins(10, 20, 10, 0)
+
+        self.otherComboBox.setIconSize(QSize(16, 16))
+        self.titleComboBox.setIconSize(QSize(16, 16))
+        self.titleComboBox2.setIconSize(QSize(16, 16))
+        self.titleComboBox3.setIconSize(QSize(16, 16))
+        self.otherComboBox2.setIconSize(QSize(16, 16))
+        self.otherComboBox3.setIconSize(QSize(16, 16))
+        self.metadataComboBox.setIconSize(QSize(16, 16))
+        self.metadataComboBox2.setIconSize(QSize(16, 16))
+        self.metadataComboBox3.setIconSize(QSize(16, 16))
         self.searchTypeComboBox.setIconSize(QSize(16, 16))
+        self.advancedTitleComboBox.setIconSize(QSize(16, 16))
+        self.advancedTitleComboBox2.setIconSize(QSize(16, 16))
+        self.advancedTitleComboBox3.setIconSize(QSize(16, 16))
 
         self.pathLineEdit.setMinimumSize(QSize(0, 30))
+        self.titleLineEdit.setMinimumSize(QSize(0, 30))
+        self.otherLineEdit.setMinimumSize(QSize(0, 30))
+        self.moveOptionBtn.setMinimumSize(QSize(150, 30))
         self.browsePathBtn.setMinimumSize(QSize(150, 30))
         self.startSearchBtn.setMinimumSize(QSize(150, 30))
+        self.metadataLineEdit.setMinimumSize(QSize(0, 30))
+        self.deleteOptionBtn.setMinimumSize(QSize(150, 30))
+        self.renameOptionBtn.setMinimumSize(QSize(150, 30))
+        self.duplicateOptionBtn.setMinimumSize(QSize(150, 30))
+        self.advancedTitleLineEdite.setMinimumSize(QSize(0, 30))
 
+        self.moveOptionBtn.setCursor(QCursor(Qt.PointingHandCursor))
         self.browsePathBtn.setCursor(QCursor(Qt.PointingHandCursor))
         self.startSearchBtn.setCursor(QCursor(Qt.PointingHandCursor))
+        self.deleteOptionBtn.setCursor(QCursor(Qt.PointingHandCursor))
+        self.renameOptionBtn.setCursor(QCursor(Qt.PointingHandCursor))
+        self.duplicateOptionBtn.setCursor(QCursor(Qt.PointingHandCursor))
 
-        self.pathLineEdit.setStyleSheet("background-color: rgb(33, 37, 43);")
-        self.moveOptionBtn.setStyleSheet("background-color: rgb(52, 59, 72);")
-        self.browsePathBtn.setStyleSheet("background-color: rgb(52, 59, 72);")
-        self.otherComboBox.setStyleSheet("background-color: rgb(33, 37, 43);")
-        self.otherLineEdit.setStyleSheet("background-color: rgb(33, 37, 43);")
-        self.titleLineEdit.setStyleSheet("background-color: rgb(33, 37, 43);")
-        self.titleComboBox.setStyleSheet("background-color: rgb(33, 37, 43);")
-        self.otherComboBox3.setStyleSheet("background-color: rgb(33, 37, 43);")
-        self.otherComboBox2.setStyleSheet("background-color: rgb(33, 37, 43);")
-        self.startSearchBtn.setStyleSheet("background-color: rgb(52, 59, 72);")
-        self.titleComboBox2.setStyleSheet("background-color: rgb(33, 37, 43);")
-        self.titleComboBox3.setStyleSheet("background-color: rgb(33, 37, 43);")
-        self.renameOptionBtn.setStyleSheet(
-            "background-color: rgb(52, 59, 72);")
+        self.moveOptionBtn.setStyleSheet(
+            self.html.get_bg_color("light blue")
+        )
+        self.browsePathBtn.setStyleSheet(
+            self.html.get_bg_color("light blue")
+        )
+        self.startSearchBtn.setStyleSheet(
+            self.html.get_bg_color("light blue")
+        )
         self.deleteOptionBtn.setStyleSheet(
-            "background-color: rgb(52, 59, 72);")
-        self.metadataLineEdit.setStyleSheet(
-            "background-color: rgb(33, 37, 43);")
-        self.metadataComboBox.setStyleSheet(
-            "background-color: rgb(33, 37, 43);")
-        self.metadataComboBox2.setStyleSheet(
-            "background-color: rgb(33, 37, 43);")
-        self.metadataComboBox3.setStyleSheet(
-            "background-color: rgb(33, 37, 43);")
+            self.html.get_bg_color("light blue")
+        )
+        self.renameOptionBtn.setStyleSheet(
+            self.html.get_bg_color("light blue")
+        )
         self.duplicateOptionBtn.setStyleSheet(
-            "background-color: rgb(52, 59, 72);")
+            self.html.get_bg_color("light blue")
+        )
+        self.pathLineEdit.setStyleSheet(
+            self.html.get_bg_color("dark blue")
+        )
+        self.otherComboBox.setStyleSheet(
+            self.html.get_bg_color("dark blue")
+        )
+        self.otherLineEdit.setStyleSheet(
+            self.html.get_bg_color("dark blue")
+        )
+        self.titleLineEdit.setStyleSheet(
+            self.html.get_bg_color("dark blue")
+        )
+        self.titleComboBox.setStyleSheet(
+            self.html.get_bg_color("dark blue")
+        )
+        self.otherComboBox3.setStyleSheet(
+            self.html.get_bg_color("dark blue")
+        )
+        self.otherComboBox2.setStyleSheet(
+            self.html.get_bg_color("dark blue")
+        )
+        self.titleComboBox2.setStyleSheet(
+            self.html.get_bg_color("dark blue")
+        )
+        self.titleComboBox3.setStyleSheet(
+            self.html.get_bg_color("dark blue")
+        )
+        self.metadataLineEdit.setStyleSheet(
+            self.html.get_bg_color("dark blue")
+        )
+        self.metadataComboBox.setStyleSheet(
+            self.html.get_bg_color("dark blue")
+        )
+        self.metadataComboBox2.setStyleSheet(
+            self.html.get_bg_color("dark blue")
+        )
+        self.metadataComboBox3.setStyleSheet(
+            self.html.get_bg_color("dark blue")
+        )
         self.searchTypeComboBox.setStyleSheet(
-            "background-color: rgb(33, 37, 43);")
+            self.html.get_bg_color("dark blue")
+        )
         self.advancedTitleComboBox.setStyleSheet(
-            "background-color: rgb(33, 37, 43);")
+            self.html.get_bg_color("dark blue")
+        )
         self.advancedTitleLineEdite.setStyleSheet(
-            "background-color: rgb(33, 37, 43);")
+            self.html.get_bg_color("dark blue")
+        )
         self.advancedTitleComboBox2.setStyleSheet(
-            "background-color: rgb(33, 37, 43);")
+            self.html.get_bg_color("dark blue")
+        )
         self.advancedTitleComboBox3.setStyleSheet(
-            "background-color: rgb(33, 37, 43);")
+            self.html.get_bg_color("dark blue")
+        )
 
         self.foundMatchLabel.setAlignment(Qt.AlignCenter)
 
-        self.searchMainVL.addLayout(self.topGL)
-        self.third_layout_7.addLayout(self.searchMainVL, 1, 0, 1, 1)
+        self.verticalLayout3.addLayout(
+            self.basicTabMainVL
+        )
 
-        self.verticalLayout.addWidget(self.searchGroup)
-        self.searchMainVL.addWidget(self.foundMatchLabel)
-        self.topGL.addWidget(self.pathLineEdit, 0, 1, 1, 1)
-        self.topGL.addWidget(self.browsePathBtn, 0, 2, 1, 1)
-        self.topGL.addWidget(self.startSearchBtn, 0, 3, 1, 1)
-        self.topGL.addWidget(self.searchTypeComboBox, 0, 0, 1, 1)
+        self.searchMainVL.addLayout(
+            self.topGL
+        )
+        self.searchGroupBoxGL.addLayout(
+            self.searchMainVL, 1, 0, 1, 1
+        )
+        self.verticalLayout2.addLayout(
+            self.advancedTabMainVL
+        )
+        self.resultTabMainVL.addLayout(
+            self.bottomHL
+        )
+        self.verticalLayout4.addLayout(
+            self.resultTabMainVL
+        )
+
+        self.searchGroupBoxGL.setContentsMargins(10, 20, 10, 10)
+        self.topGL.setContentsMargins(-1, 2, -1, 0)
+
+        self.titleGroupBoxGL.addWidget(
+            self.titleLineEdit, 0, 3, 1, 1
+        )
+        self.titleGroupBoxGL.addWidget(
+            self.titleComboBox, 0, 0, 1, 1
+        )
+        self.titleGroupBoxGL.addWidget(
+            self.titleComboBox2, 0, 1, 1, 1
+        )
+        self.titleGroupBoxGL.addWidget(
+            self.titleComboBox3, 0, 2, 1, 1
+        )
+        self.titleGroupBoxGL.addWidget(
+            self.isRecursiveCheckBox, 2, 0, 1, 1
+        )
+        self.titleGroupBoxGL.addWidget(
+            self.isCaseSensitiveCheckBox, 3, 0, 1, 1
+        )
+        self.basicTabMainVL.addWidget(
+            self.titleGroupBox
+        )
+        self.advancedTitleGroupBoxGL.addWidget(
+            self.advancedTitleLineEdite, 0, 3, 1, 1
+        )
+        self.advancedTitleGroupBoxGL.addWidget(
+            self.advancedTitleComboBox, 0, 0, 1, 1
+        )
+        self.advancedTitleGroupBoxGL.addWidget(
+            self.advancedTitleComboBox2, 0, 1, 1, 1
+        )
+        self.advancedTabMainVL.addWidget(
+            self.advancedTitleGroupBox
+        )
+        self.advancedTabMainVL.addWidget(
+            self.advancedMetadataGroupBox
+        )
+        self.advancedTitleGroupBoxGL.addWidget(
+            self.advancedTitleComboBox3, 0, 2, 1, 1
+        )
+        self.advancedTitleGroupBoxGL.addWidget(
+            self.advancedIsRecuresiveCheckBox, 2, 0, 1, 1
+        )
+        self.advancedTitleGroupBoxGL.addWidget(
+            self.advancedIsCaseSensitiveCheckBox, 3, 0, 1, 1
+        )
+        self.advancedMetadataGroupBoxGL.addWidget(
+            self.metadataComboBox2, 0, 1, 1, 1
+        )
+        self.advancedMetadataGroupBoxGL.addWidget(
+            self.metadataComboBox, 0, 0, 1, 1
+        )
+        self.advancedMetadataGroupBoxGL.addWidget(
+            self.metadataComboBox3, 0, 2, 1, 1
+        )
+        self.advancedMetadataGroupBoxGL.addWidget(
+            self.metadataLineEdit, 0, 3, 1, 1
+        )
+        self.advancedOtherGroupBoxGL.addWidget(
+            self.otherComboBox, 0, 0, 1, 1
+        )
+        self.advancedOtherGroupBoxGL.addWidget(
+            self.otherComboBox3, 0, 2, 1, 1
+        )
+        self.advancedOtherGroupBoxGL.addWidget(
+            self.otherLineEdit, 0, 4, 1, 1
+        )
+        self.advancedOtherGroupBoxGL.addWidget(
+            self.otherComboBox2, 0, 1, 1, 1
+        )
+        self.advancedTabMainVL.addWidget(
+            self.advancedOtherGroupBox
+        )
+        self.resultTabMainVL.addWidget(
+            self.table
+        )
+        self.bottomHL.addWidget(
+            self.deleteOptionBtn
+        )
+        self.bottomHL.addWidget(
+            self.renameOptionBtn
+        )
+        self.bottomHL.addWidget(
+            self.moveOptionBtn
+        )
+        self.bottomHL.addWidget(
+            self.duplicateOptionBtn
+        )
+        self.verticalLayout.addWidget(
+            self.tabsWidget
+        )
+        self.verticalLayout.addWidget(
+            self.searchGroupBox
+        )
+        self.searchMainVL.addWidget(
+            self.foundMatchLabel
+        )
+        self.topGL.addWidget(
+            self.pathLineEdit, 0, 1, 1, 1
+        )
+        self.topGL.addWidget(
+            self.browsePathBtn, 0, 2, 1, 1
+        )
+        self.topGL.addWidget(
+            self.startSearchBtn, 0, 3, 1, 1
+        )
+        self.topGL.addWidget(
+            self.searchTypeComboBox, 0, 0, 1, 1
+        )
+        self.bottomHL.addItem(
+            self.resultBottomLHSpacer
+        )
+        self.titleGroupBoxGL.addItem(
+            self.titleLineEditHSpacer, 2, 3, 1, 1
+        )
+        self.basicTabMainVL.addItem(
+            self.tabsVSpacer
+        )
+        self.advancedTitleGroupBoxGL.addItem(
+            self.advancedTitleLineEditeHSpacer, 2, 3, 1, 1
+        )
+        self.advancedMetadataGroupBoxGL.addItem(
+            self.metadataLineEditHSpacer, 1, 3, 1, 1
+        )
+        self.advancedOtherGroupBoxGL.addItem(
+            self.otherLineEditHSpacer, 1, 4, 1, 1
+        )
+        self.advancedTabMainVL.addItem(
+            self.advancedBottomVSpacer
+        )
+
+        """
+        ===================================================================
+                            TOGGLE GROUPS
+        ===================================================================
+        """
 
         self.titleGroupBox.toggled.connect(self.titleComboBox.setEnabled)
         self.titleGroupBox.toggled.connect(self.titleLineEdit.setEnabled)
@@ -495,62 +558,6 @@ class Ui(Common):
             self.isCaseSensitiveCheckBox.setEnabled)
 
         self.tabsWidget.setCurrentIndex(0)
-
-        self.table.setObjectName("table")
-        self.topGL.setObjectName("topGL")
-        self.BASIC.setObjectName("BASIC")
-        self.RESULT.setObjectName("RESULT")
-        self.widgets.setObjectName("widgets")
-        self.ADVANCED.setObjectName("ADVANCED")
-        self.bottomHL.setObjectName("bottomHL")
-        self.tabsWidget.setObjectName("tabsWidget")
-        self.searchGroup.setObjectName("searchGroup")
-        self.searchMainVL.setObjectName("searchMainVL")
-        self.pathLineEdit.setObjectName("pathLineEdit")
-        self.titleComboBox.setObjectName("titleComboBox")
-        self.browsePathBtn.setObjectName("browsePathBtn")
-        self.otherComboBox.setObjectName("otherComboBox")
-        self.otherLineEdit.setObjectName("otherLineEdit")
-        self.titleGroupBox.setObjectName("titleGroupBox")
-        self.titleLineEdit.setObjectName("titleLineEdit")
-        self.moveOptionBtn.setObjectName("moveOptionBtn")
-        self.otherComboBox3.setObjectName("otherComboBox3")
-        self.third_layout_8.setObjectName("third_layout_8")
-        self.third_layout_9.setObjectName("third_layout_9")
-        self.otherComboBox2.setObjectName("otherComboBox2")
-        self.verticalLayout.setObjectName("verticalLayout")
-        self.basicTabMainVL.setObjectName("basicTabMainVL")
-        self.third_layout_6.setObjectName("third_layout_6")
-        self.titleComboBox2.setObjectName("titleComboBox2")
-        self.titleComboBox3.setObjectName("titleComboBox3")
-        self.third_layout_7.setObjectName("third_layout_7")
-        self.startSearchBtn.setObjectName("startSearchBtn")
-        self.deleteOptionBtn.setObjectName("deleteOptionBtn")
-        self.renameOptionBtn.setObjectName("renameOptionBtn")
-        self.foundMatchLabel.setObjectName("foundMatchLabel")
-        self.third_layout_11.setObjectName("third_layout_11")
-        self.resultTabMainVL.setObjectName("resultTabMainVL")
-        self.metadataLineEdit.setObjectName("metadataLineEdit")
-        self.metadataComboBox2.setObjectName("metadataComboBox2")
-        self.metadataComboBox3.setObjectName("metadataComboBox3")
-        self.verticalLayout_23.setObjectName("verticalLayout_23")
-        self.verticalLayout_21.setObjectName("verticalLayout_21")
-        self.verticalLayout_18.setObjectName("verticalLayout_18")
-        self.advancedTabMainVL.setObjectName("advancedTabMainVL")
-        self.duplicateOptionBtn.setObjectName("duplicateOptionBtn")
-        self.searchTypeComboBox.setObjectName("searchTypeComboBox")
-        self.isRecursiveCheckBox.setObjectName("isRecursiveCheckBox")
-        self.advancedOtherGroupBox.setObjectName("advancedOtherGroupBox")
-        self.advancedTitleGroupBox.setObjectName("advancedTitleGroupBox")
-        self.advancedTitleComboBox.setObjectName("advancedTitleComboBox")
-        self.advancedTitleLineEdite.setObjectName("advancedTitleLineEdite")
-        self.advancedTitleComboBox2.setObjectName("advancedTitleComboBox2")
-        self.isCaseSensitiveCheckBox.setObjectName("isCaseSensitiveCheckBox")
-        self.advancedMetadataGroupBox.setObjectName("advancedMetadataGroupBox")
-        self.advancedIsRecuresiveCheckBox.setObjectName(
-            "advancedIsRecuresiveCheckBox")
-        self.advancedIsCaseSensitiveCheckBox.setObjectName(
-            "advancedIsCaseSensitiveCheckBox")
 
         self.titleComboBox.setFrame(True)
         self.otherComboBox.setFrame(True)
@@ -571,44 +578,94 @@ class Ui(Common):
         self.advancedOtherGroupBox.setFlat(False)
         self.advancedMetadataGroupBox.setFlat(False)
 
-        self.titleGroupBox.setChecked(True)
-        self.isRecursiveCheckBox.setChecked(True)
-        self.advancedTitleGroupBox.setChecked(True)
-        self.advancedOtherGroupBox.setChecked(False)
-        self.advancedMetadataGroupBox.setChecked(False)
-        self.advancedIsRecuresiveCheckBox.setChecked(True)
-
         self.titleGroupBox.setCheckable(True)
         self.advancedTitleGroupBox.setCheckable(True)
         self.advancedOtherGroupBox.setCheckable(True)
         self.advancedMetadataGroupBox.setCheckable(True)
+        
+        self.titleGroupBox.setChecked(True)
+        self.searchGroupBox.setChecked(False)
+        self.isRecursiveCheckBox.setChecked(True)
+        self.advancedOtherGroupBox.setChecked(False)
+        self.advancedMetadataGroupBox.setChecked(False)
+        self.advancedIsRecuresiveCheckBox.setChecked(True)
 
+
+        self.moveOptionBtn.setEnabled(False)
+        self.deleteOptionBtn.setEnabled(False)
+        self.renameOptionBtn.setEnabled(False)
+        self.duplicateOptionBtn.setEnabled(False)
         self.isRecursiveCheckBox.setEnabled(True)
         self.isCaseSensitiveCheckBox.setEnabled(True)
         self.advancedIsRecuresiveCheckBox.setEnabled(True)
         self.advancedIsCaseSensitiveCheckBox.setEnabled(True)
+        
+        self.titleComboBox.addItem("")
+        self.titleComboBox.addItem("")
 
-        self.titleComboBox.setAutoFillBackground(False)
-        self.titleComboBox2.setAutoFillBackground(False)
-        self.titleComboBox3.setAutoFillBackground(False)
-        self.otherComboBox.setAutoFillBackground(False)
-        self.otherComboBox3.setAutoFillBackground(False)
-        self.otherComboBox2.setAutoFillBackground(False)
-        self.metadataComboBox.setAutoFillBackground(False)
-        self.metadataComboBox3.setAutoFillBackground(False)
-        self.metadataComboBox2.setAutoFillBackground(False)
-        self.searchTypeComboBox.setAutoFillBackground(False)
-        self.isRecursiveCheckBox.setAutoFillBackground(False)
-        self.advancedTitleComboBox.setAutoFillBackground(False)
-        self.advancedTitleComboBox3.setAutoFillBackground(False)
-        self.isCaseSensitiveCheckBox.setAutoFillBackground(False)
-        self.advancedIsRecuresiveCheckBox.setAutoFillBackground(False)
-        self.advancedIsCaseSensitiveCheckBox.setAutoFillBackground(False)
+        self.titleComboBox2.addItem("")
+        self.titleComboBox2.addItem("")
+
+        self.titleComboBox3.addItem("")
+        self.titleComboBox3.addItem("")
+        self.titleComboBox3.addItem("")
+        self.titleComboBox3.addItem("")
+        self.titleComboBox3.addItem("")
+        self.titleComboBox3.addItem("")
+        self.titleComboBox3.addItem("")
+        self.titleComboBox3.addItem("")
+        self.titleComboBox3.addItem("")
+        self.titleComboBox3.addItem("")
+        
+        self.advancedTitleComboBox.addItem("")
+        self.advancedTitleComboBox.addItem("")
+
+        self.advancedTitleComboBox2.addItem("")
+        self.advancedTitleComboBox2.addItem("")
+
+        self.advancedTitleComboBox3.addItem("")
+        self.advancedTitleComboBox3.addItem("")
+        self.advancedTitleComboBox3.addItem("")
+        self.advancedTitleComboBox3.addItem("")
+        self.advancedTitleComboBox3.addItem("")
+        self.advancedTitleComboBox3.addItem("")
+        self.advancedTitleComboBox3.addItem("")
+        self.advancedTitleComboBox3.addItem("")
+        self.advancedTitleComboBox3.addItem("")
+        self.advancedTitleComboBox3.addItem("")
+
+        self.metadataComboBox.addItem("")
+        self.metadataComboBox.addItem("")
+        self.metadataComboBox.addItem("")
+        self.metadataComboBox.addItem("")
+        
+        self.metadataComboBox2.addItem("")
+        self.metadataComboBox2.addItem("")
+        self.metadataComboBox2.addItem("")
+        self.metadataComboBox2.addItem("")
+        self.metadataComboBox2.addItem("")
+
+        self.metadataComboBox3.addItem("")
+        self.metadataComboBox3.addItem("")
+        self.metadataComboBox3.addItem("")
+
+        self.otherComboBox.addItem("")
+        self.otherComboBox.addItem("")
+
+        self.otherComboBox2.addItem("")
+        self.otherComboBox2.addItem("")
+        self.otherComboBox2.addItem("")
+        self.otherComboBox2.addItem("")
+
+        self.otherComboBox3.addItem("")
+        self.otherComboBox3.addItem("")
+        self.otherComboBox3.addItem("")
 
         self.retranslateUi()
         return self.widgets
 
     def retranslateUi(self):
+        
         self.titleGroupBox.setTitle(QCoreApplication.translate(
             "MainWindow", u"TITLE LOOKUP", None))
         self.titleLineEdit.setText("")
@@ -841,7 +898,7 @@ class Ui(Common):
             QCoreApplication.translate("MainWindow", u"DUPLICATE", None))
         self.tabsWidget.setTabText(self.tabsWidget.indexOf(
             self.RESULT), QCoreApplication.translate("MainWindow", u"RESULT", None))
-        self.searchGroup.setTitle(
+        self.searchGroupBox.setTitle(
             QCoreApplication.translate("MainWindow", u"SEARCH", None))
         self.searchTypeComboBox.setItemText(
             0, QCoreApplication.translate("MainWindow", u"FILES", None))
