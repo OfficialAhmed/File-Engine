@@ -70,7 +70,7 @@ class Ui(Common):
         self.verticalLayout2 = QVBoxLayout(self.ADVANCED)
         self.advancedTitleGroupBoxGL = QGridLayout(self.advancedTitleGroupBox)
 
-        self.advancedTitleLineEdite = QLineEdit(self.advancedTitleGroupBox)
+        self.advancedTitleLineEdit = QLineEdit(self.advancedTitleGroupBox)
         self.advancedTitleComboBox = QComboBox(self.advancedTitleGroupBox)
         self.advancedTitleComboBox2 = QComboBox(self.advancedTitleGroupBox)
         self.advancedTitleComboBox3 = QComboBox(self.advancedTitleGroupBox)
@@ -105,7 +105,6 @@ class Ui(Common):
         self.verticalLayout4 = QVBoxLayout(self.RESULT)
         self.duplicateOptionBtn = QPushButton(self.RESULT)
 
-
         self.titleLineEditHSpacer = QSpacerItem(
             40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum
         )
@@ -118,13 +117,11 @@ class Ui(Common):
         self.tabsWidget.addTab(self.ADVANCED, "")
         self.tabsWidget.addTab(self.RESULT, "")
 
-
         self.advancedTitleLineEditeHSpacer = QSpacerItem(
             40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.metadataLineEditHSpacer = QSpacerItem(
             40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
 
         self.otherLineEditHSpacer = QSpacerItem(
             40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
@@ -274,7 +271,7 @@ class Ui(Common):
         self.otherLineEdit.setMaxLength(100)
         self.titleLineEdit.setMaxLength(100)
         self.metadataLineEdit.setMaxLength(100)
-        self.advancedTitleLineEdite.setMaxLength(100)
+        self.advancedTitleLineEdit.setMaxLength(100)
 
         self.verticalLayout.setContentsMargins(10, 10, 10, 10)
         self.titleGroupBoxGL.setContentsMargins(10, 20, 10, 10)
@@ -306,7 +303,7 @@ class Ui(Common):
         self.deleteOptionBtn.setMinimumSize(QSize(150, 30))
         self.renameOptionBtn.setMinimumSize(QSize(150, 30))
         self.duplicateOptionBtn.setMinimumSize(QSize(150, 30))
-        self.advancedTitleLineEdite.setMinimumSize(QSize(0, 30))
+        self.advancedTitleLineEdit.setMinimumSize(QSize(0, 30))
 
         self.moveOptionBtn.setCursor(QCursor(Qt.PointingHandCursor))
         self.browsePathBtn.setCursor(QCursor(Qt.PointingHandCursor))
@@ -378,7 +375,7 @@ class Ui(Common):
         self.advancedTitleComboBox.setStyleSheet(
             self.html.get_bg_color("dark blue")
         )
-        self.advancedTitleLineEdite.setStyleSheet(
+        self.advancedTitleLineEdit.setStyleSheet(
             self.html.get_bg_color("dark blue")
         )
         self.advancedTitleComboBox2.setStyleSheet(
@@ -435,7 +432,7 @@ class Ui(Common):
             self.titleGroupBox
         )
         self.advancedTitleGroupBoxGL.addWidget(
-            self.advancedTitleLineEdite, 0, 3, 1, 1
+            self.advancedTitleLineEdit, 0, 3, 1, 1
         )
         self.advancedTitleGroupBoxGL.addWidget(
             self.advancedTitleComboBox, 0, 0, 1, 1
@@ -545,19 +542,14 @@ class Ui(Common):
 
         """
         ===================================================================
-                            TOGGLE GROUPS
+                            SET DISPLAY RULES
         ===================================================================
         """
 
-        self.titleGroupBox.toggled.connect(self.titleComboBox.setEnabled)
-        self.titleGroupBox.toggled.connect(self.titleLineEdit.setEnabled)
-        self.titleGroupBox.toggled.connect(self.titleComboBox2.setEnabled)
-        self.titleGroupBox.toggled.connect(self.titleComboBox3.setEnabled)
-        self.titleGroupBox.toggled.connect(self.isRecursiveCheckBox.setEnabled)
-        self.titleGroupBox.toggled.connect(
-            self.isCaseSensitiveCheckBox.setEnabled)
-
         self.tabsWidget.setCurrentIndex(0)
+
+        self.titleLineEdit.setHidden(True)
+        self.advancedTitleLineEdit.setHidden(True)
 
         self.titleComboBox.setFrame(True)
         self.otherComboBox.setFrame(True)
@@ -582,14 +574,13 @@ class Ui(Common):
         self.advancedTitleGroupBox.setCheckable(True)
         self.advancedOtherGroupBox.setCheckable(True)
         self.advancedMetadataGroupBox.setCheckable(True)
-        
+
         self.titleGroupBox.setChecked(True)
         self.searchGroupBox.setChecked(False)
         self.isRecursiveCheckBox.setChecked(True)
         self.advancedOtherGroupBox.setChecked(False)
         self.advancedMetadataGroupBox.setChecked(False)
         self.advancedIsRecuresiveCheckBox.setChecked(True)
-
 
         self.moveOptionBtn.setEnabled(False)
         self.deleteOptionBtn.setEnabled(False)
@@ -599,319 +590,405 @@ class Ui(Common):
         self.isCaseSensitiveCheckBox.setEnabled(True)
         self.advancedIsRecuresiveCheckBox.setEnabled(True)
         self.advancedIsCaseSensitiveCheckBox.setEnabled(True)
+
+        self.title_options = {
+            "NAME": {
+                "CONTAIN": (
+                    "Alphabets only",
+                    "Alphabets & Symbols",
+                    "Alphabets & Numbers",
+                    "Alphabets Excluding",
+                    "Numbers & Symbols",
+                    "Numbers Excluding",
+                    "Symbols only",
+                    "Symbols Excluding",
+                    "Custom"
+                ),
+                "EQUAL TO": ()
+            },
+            "EXTENSION": {
+                "CONTAIN": (
+                    "Alphabets only",
+                    "Alphabets & Symbols",
+                    "Alphabets & Numbers",
+                    "Alphabets Excluding",
+                    "Numbers & Symbols",
+                    "Numbers Excluding",
+                    "Symbols only",
+                    "Symbols Excluding",
+                    "Custom"
+                ),
+                "EQUAL TO": ()
+            }
+        }
+
+        self.metadata_options = {
+            "VIDEO": {
+                "DIMENSIONS": (
+                    "1920x1080",
+                    "720x420",
+                    "Custom"
+                ),
+                "DURATION": (
+                    "Custom",
+                ),
+                "BIT RATE": (
+                    "Custom",
+                ),
+                "FRAME RATE": (
+                    "Custom",
+                ),
+                "FPS": (
+                    "Custom",
+                )
+            },
+            "IMAGE": {
+                "DIMENSIONS": (
+                    "Custom",
+                ),
+            },
+            "AUDIO": {
+                "ALBUM": (
+                    "Custom",
+                ),
+                "AUTHOR": (
+                    "Custom",
+                ),
+                "DURATION": (
+                    "Custom",
+                )
+            },
+            "DOCS": {
+                "AUTHOR": (
+                    "Custom",
+                )
+            }
+        }
+
+        self.other_options = {
+            "SIZE": {
+                "BYTES": (
+                    "Custom",
+                ),
+                "KILOBYTES": (
+                    "Custom",
+                ),
+                "MEGABYTES": (
+                    "Custom",
+                ),
+                "GIGABYTES": (
+                    "Custom",
+                )
+            },
+            "DATE CREATED": {
+                "EQUAL TO": (
+                    "Custom",
+                ),
+                "LESS THAN": (
+                    "Custom",
+                ),
+                "GREATER THAN": (
+                    "Custom",
+                )
+            }
+        }
+
+        default_options = {
+
+            # _____   BASIC  ________
+            # _____   TITLE  ________
+            self.titleComboBox: tuple(self.title_options.keys()),
+            self.titleComboBox2: tuple(self.title_options["NAME"].keys()),
+            self.titleComboBox3: tuple(self.title_options["NAME"]["CONTAIN"]),
+
+            # _____   ADVANCED  ________
+            # _____   TITLE  ________
+            self.advancedTitleComboBox: tuple(self.title_options.keys()),
+            self.advancedTitleComboBox2: tuple(self.title_options["NAME"].keys()),
+            self.advancedTitleComboBox3: tuple(self.title_options["NAME"]["CONTAIN"]),
+
+            # _____   METADATA  ________
+            self.metadataComboBox: tuple(self.metadata_options.keys()),
+            self.metadataComboBox2: tuple(self.metadata_options["VIDEO"].keys()),
+            self.metadataComboBox3: tuple(self.metadata_options["VIDEO"]["DIMENSIONS"]),
+
+            # _____   OTHER  ________
+            self.otherComboBox: tuple(self.other_options.keys()),
+            self.otherComboBox2: tuple(self.other_options["SIZE"].keys()),
+            self.otherComboBox3: tuple(self.other_options["SIZE"]["BYTES"])
+        }
+
+        for cb, values in default_options.items():
+            for val in values:
+                cb.addItem(val)
+
+        """
+        ===================================================================
+                            SIGNALS AND CONNECTIONS
+        ===================================================================
+        """
+
+        self.titleGroupBox.toggled.connect(self.titleComboBox.setEnabled)
+        self.titleGroupBox.toggled.connect(self.titleLineEdit.setEnabled)
+        self.titleGroupBox.toggled.connect(self.titleComboBox2.setEnabled)
+        self.titleGroupBox.toggled.connect(self.titleComboBox3.setEnabled)
+        self.titleGroupBox.toggled.connect(self.isRecursiveCheckBox.setEnabled)
+        self.titleGroupBox.toggled.connect(
+            self.isCaseSensitiveCheckBox.setEnabled)
+
+        # _________________         TITLE GROUP BEHAVIOUR       ____________________
+        self.titleComboBox2.currentTextChanged.connect(
+            lambda: self.title_cb2_clicked()
+        )
+        self.titleComboBox3.currentTextChanged.connect(
+            lambda: self.title_cb3_clicked()
+        )
+
+        # _________________    ADVANCED TITLE GROUP BEHAVIOUR   ________________
+        self.advancedTitleComboBox2.currentTextChanged.connect(
+            lambda: self.title_cb2_clicked("advanced")
+        )
+        self.advancedTitleComboBox3.currentTextChanged.connect(
+            lambda: self.title_cb3_clicked("advanced")
+        )
         
-        self.titleComboBox.addItem("")
-        self.titleComboBox.addItem("")
+        # _________________    ADVANCED METADATA GROUP BEHAVIOUR   ______________
+        # Check if there are any connections before disconnecting
 
-        self.titleComboBox2.addItem("")
-        self.titleComboBox2.addItem("")
-
-        self.titleComboBox3.addItem("")
-        self.titleComboBox3.addItem("")
-        self.titleComboBox3.addItem("")
-        self.titleComboBox3.addItem("")
-        self.titleComboBox3.addItem("")
-        self.titleComboBox3.addItem("")
-        self.titleComboBox3.addItem("")
-        self.titleComboBox3.addItem("")
-        self.titleComboBox3.addItem("")
-        self.titleComboBox3.addItem("")
+        self.metadataComboBox.currentTextChanged.connect(
+            lambda: self.md_cb_clicked()
+        )
         
-        self.advancedTitleComboBox.addItem("")
-        self.advancedTitleComboBox.addItem("")
-
-        self.advancedTitleComboBox2.addItem("")
-        self.advancedTitleComboBox2.addItem("")
-
-        self.advancedTitleComboBox3.addItem("")
-        self.advancedTitleComboBox3.addItem("")
-        self.advancedTitleComboBox3.addItem("")
-        self.advancedTitleComboBox3.addItem("")
-        self.advancedTitleComboBox3.addItem("")
-        self.advancedTitleComboBox3.addItem("")
-        self.advancedTitleComboBox3.addItem("")
-        self.advancedTitleComboBox3.addItem("")
-        self.advancedTitleComboBox3.addItem("")
-        self.advancedTitleComboBox3.addItem("")
-
-        self.metadataComboBox.addItem("")
-        self.metadataComboBox.addItem("")
-        self.metadataComboBox.addItem("")
-        self.metadataComboBox.addItem("")
-        
-        self.metadataComboBox2.addItem("")
-        self.metadataComboBox2.addItem("")
-        self.metadataComboBox2.addItem("")
-        self.metadataComboBox2.addItem("")
-        self.metadataComboBox2.addItem("")
-
-        self.metadataComboBox3.addItem("")
-        self.metadataComboBox3.addItem("")
-        self.metadataComboBox3.addItem("")
-
-        self.otherComboBox.addItem("")
-        self.otherComboBox.addItem("")
-
-        self.otherComboBox2.addItem("")
-        self.otherComboBox2.addItem("")
-        self.otherComboBox2.addItem("")
-        self.otherComboBox2.addItem("")
-
-        self.otherComboBox3.addItem("")
-        self.otherComboBox3.addItem("")
-        self.otherComboBox3.addItem("")
+        self.metadataComboBox2.currentTextChanged.connect(
+            lambda: self.md_cb2_clicked()
+        )
 
         self.retranslateUi()
+
         return self.widgets
 
-    def retranslateUi(self):
+    def md_cb_clicked(self):
         
-        self.titleGroupBox.setTitle(QCoreApplication.translate(
-            "MainWindow", u"TITLE LOOKUP", None))
-        self.titleLineEdit.setText("")
-        self.titleLineEdit.setPlaceholderText(QCoreApplication.translate(
-            "MainWindow", u"Enter values to look for seperated by comma", None))
-        self.titleComboBox.setItemText(
-            0, QCoreApplication.translate("MainWindow", u"NAME", None))
-        self.titleComboBox.setItemText(
-            1, QCoreApplication.translate("MainWindow", u"EXTENSION", None))
+        # DISABLE INVOKING FUNCTIONS TEMPORARLY
+        self.metadataComboBox.currentTextChanged.disconnect()
+        self.metadataComboBox2.currentTextChanged.disconnect()
+        
+        options = self.metadata_options[self.metadataComboBox.currentText()]
+        
+        # REGENERATE NEW OPTIONS
+        self.metadataComboBox2.clear()
+        for option in options.keys():
+            self.metadataComboBox2.addItem(option)
+            
+        self.metadataComboBox3.clear()
+        for option in options[tuple(options.keys())[0]]:
+            self.metadataComboBox3.addItem(option)
 
-        self.titleComboBox2.setItemText(
-            0, QCoreApplication.translate("MainWindow", u"CONTAIN", None))
-        self.titleComboBox2.setItemText(
-            1, QCoreApplication.translate("MainWindow", u"EQUAL TO", None))
+        # ENABLE INVOKING THE FUNCTION AGAIN
+        self.metadataComboBox.currentTextChanged.connect(self.md_cb_clicked)
+        self.metadataComboBox2.currentTextChanged.connect(self.md_cb2_clicked)
+    
+    def md_cb2_clicked(self):
+        
+        # DISABLE INVOKING FUNCTIONS TEMPORARLY
+        self.metadataComboBox.currentTextChanged.disconnect()
+        self.metadataComboBox2.currentTextChanged.disconnect()
+        
+        options = self.metadata_options[self.metadataComboBox2.currentText()]
+        
+        # REGENERATE NEW OPTIONS
+        self.metadataComboBox3.clear()
+        for option in options[tuple(options.keys())[0]]:
+            self.metadataComboBox3.addItem(option)
 
-        self.titleComboBox3.setItemText(0, QCoreApplication.translate(
-            "MainWindow", u"Alphabets only", None))
-        self.titleComboBox3.setItemText(1, QCoreApplication.translate(
-            "MainWindow", u"Alphabets & Symbols", None))
-        self.titleComboBox3.setItemText(2, QCoreApplication.translate(
-            "MainWindow", u"Alphabets & Numbers", None))
-        self.titleComboBox3.setItemText(3, QCoreApplication.translate(
-            "MainWindow", u"Alphabets Excluding", None))
-        self.titleComboBox3.setItemText(
-            4, QCoreApplication.translate("MainWindow", u"Numbers only", None))
-        self.titleComboBox3.setItemText(5, QCoreApplication.translate(
-            "MainWindow", u"Numbers & Symbols", None))
-        self.titleComboBox3.setItemText(6, QCoreApplication.translate(
-            "MainWindow", u"Numbers Excluding", None))
-        self.titleComboBox3.setItemText(
-            7, QCoreApplication.translate("MainWindow", u"Symbols only", None))
-        self.titleComboBox3.setItemText(8, QCoreApplication.translate(
-            "MainWindow", u"Symbols Excluding", None))
-        self.titleComboBox3.setItemText(
-            9, QCoreApplication.translate("MainWindow", u"Custom", None))
+        # ENABLE INVOKING THE FUNCTION AGAIN
+        self.metadataComboBox.currentTextChanged.connect(self.md_cb_clicked)
+        self.metadataComboBox2.currentTextChanged.connect(self.md_cb2_clicked)
+        
+    def title_cb2_clicked(self, type=""):
+        """
+            RERENDER OPTIONS BASED ON TITLE CHECKBOX2
+        """
+        if type == "advanced":
 
-        self.isRecursiveCheckBox.setToolTip(QCoreApplication.translate(
-            "MainWindow", u"Find files recursively through the selected path", None))
+            match self.advancedTitleComboBox2.currentText():
+
+                # SHOW FIXED OPTIONS & HIDE CUSTOM
+                case "CONTAIN":
+                    self.advancedTitleComboBox3.setHidden(False)
+                    self.advancedTitleLineEdit.setHidden(True)
+
+                # SHOW CUSTOM OPTION ONLY
+                case "EQUAL TO":
+                    self.advancedTitleComboBox3.setHidden(True)
+                    self.advancedTitleLineEdit.setHidden(False)
+
+        else:
+            match self.titleComboBox2.currentText():
+
+                # SHOW FIXED OPTIONS & HIDE CUSTOM
+                case "CONTAIN":
+                    self.titleComboBox3.setHidden(False)
+                    self.titleLineEdit.setHidden(True)
+
+                # SHOW CUSTOM OPTION ONLY
+                case "EQUAL TO":
+                    self.titleComboBox3.setHidden(True)
+                    self.titleLineEdit.setHidden(False)
+
+    def title_cb3_clicked(self, type=""):
+        """
+            RERENDER OPTIONS BASED ON TITLE CHECKBOX3
+        """
+
+        if type == "advanced":
+            if self.advancedTitleComboBox3.currentText().split(" ")[-1] in ("Excluding", "Custom"):
+                self.advancedTitleLineEdit.setHidden(False)
+            else:
+                self.advancedTitleLineEdit.setHidden(True)
+        else:
+            if self.titleComboBox3.currentText().split(" ")[-1] in ("Excluding", "Custom"):
+                self.titleLineEdit.setHidden(False)
+            else:
+                self.titleLineEdit.setHidden(True)
+
+    def retranslateUi(self):
+
+        self.titleGroupBox.setTitle(
+            QCoreApplication.translate(
+                "MainWindow", u"TITLE LOOKUP", None)
+        )
+
+        self.titleLineEdit.setPlaceholderText(
+            QCoreApplication.translate(
+                "MainWindow", u"Enter values to look for seperated by comma", None)
+        )
+
         self.isRecursiveCheckBox.setText(
-            QCoreApplication.translate("MainWindow", u"RECURSIVE", None))
-        self.isCaseSensitiveCheckBox.setToolTip(QCoreApplication.translate(
-            "MainWindow", u"Find files recursively through the selected path", None))
+            QCoreApplication.translate("MainWindow", u"RECURSIVE", None)
+        )
+
         self.isCaseSensitiveCheckBox.setText(
-            QCoreApplication.translate("MainWindow", u"CASE SENSITIVE", None))
-        self.tabsWidget.setTabText(self.tabsWidget.indexOf(
-            self.BASIC), QCoreApplication.translate("MainWindow", u"BASIC", None))
+            QCoreApplication.translate("MainWindow", u"CASE SENSITIVE", None)
+        )
+
+        self.tabsWidget.setTabText(
+            self.tabsWidget.indexOf(self.BASIC),
+            QCoreApplication.translate("MainWindow", u"BASIC", None)
+        )
+
         self.advancedTitleGroupBox.setTitle(
-            QCoreApplication.translate("MainWindow", u"TITLE LOOKUP", None))
-        self.advancedTitleLineEdite.setText("")
-        self.advancedTitleLineEdite.setPlaceholderText(QCoreApplication.translate(
-            "MainWindow", u"Enter values to look for seperated by comma", None))
-        self.advancedTitleComboBox.setItemText(
-            0, QCoreApplication.translate("MainWindow", u"NAME", None))
-        self.advancedTitleComboBox.setItemText(
-            1, QCoreApplication.translate("MainWindow", u"EXTENSION", None))
+            QCoreApplication.translate("MainWindow", u"TITLE LOOKUP", None)
+        )
 
-        self.advancedTitleComboBox2.setItemText(
-            0, QCoreApplication.translate("MainWindow", u"CONTAIN", None))
-        self.advancedTitleComboBox2.setItemText(
-            1, QCoreApplication.translate("MainWindow", u"EQUAL TO", None))
+        self.advancedTitleLineEdit.setPlaceholderText(
+            QCoreApplication.translate(
+                "MainWindow", u"Enter values to look for seperated by comma", None)
+        )
 
-        self.advancedTitleComboBox3.setItemText(
-            0, QCoreApplication.translate("MainWindow", u"Alphabets only", None))
-        self.advancedTitleComboBox3.setItemText(
-            1, QCoreApplication.translate("MainWindow", u"Alphabets & Symbols", None))
-        self.advancedTitleComboBox3.setItemText(
-            2, QCoreApplication.translate("MainWindow", u"Alphabets & Numbers", None))
-        self.advancedTitleComboBox3.setItemText(
-            3, QCoreApplication.translate("MainWindow", u"Alphabets Excluding", None))
-        self.advancedTitleComboBox3.setItemText(
-            4, QCoreApplication.translate("MainWindow", u"Numbers only", None))
-        self.advancedTitleComboBox3.setItemText(
-            5, QCoreApplication.translate("MainWindow", u"Numbers & Symbols", None))
-        self.advancedTitleComboBox3.setItemText(
-            6, QCoreApplication.translate("MainWindow", u"Numbers Excluding", None))
-        self.advancedTitleComboBox3.setItemText(
-            7, QCoreApplication.translate("MainWindow", u"Symbols only", None))
-        self.advancedTitleComboBox3.setItemText(
-            8, QCoreApplication.translate("MainWindow", u"Symbols Excluding", None))
-        self.advancedTitleComboBox3.setItemText(
-            9, QCoreApplication.translate("MainWindow", u"Custom", None))
-
-        self.advancedIsRecuresiveCheckBox.setToolTip(QCoreApplication.translate(
-            "MainWindow", u"Find files recursively through the selected path", None))
         self.advancedIsRecuresiveCheckBox.setText(
-            QCoreApplication.translate("MainWindow", u"RECURSIVE", None))
-        self.advancedIsCaseSensitiveCheckBox.setToolTip(QCoreApplication.translate(
-            "MainWindow", u"Find files recursively through the selected path", None))
+            QCoreApplication.translate("MainWindow", u"RECURSIVE", None)
+        )
+
+        self.advancedIsCaseSensitiveCheckBox.setToolTip(
+            QCoreApplication.translate(
+                "MainWindow", u"Find files recursively through the selected path", None)
+        )
+
         self.advancedIsCaseSensitiveCheckBox.setText(
-            QCoreApplication.translate("MainWindow", u"CASE SENSITIVE", None))
+            QCoreApplication.translate("MainWindow", u"CASE SENSITIVE", None)
+        )
 
         self.advancedMetadataGroupBox.setTitle(
-            QCoreApplication.translate("MainWindow", u"METADATA LOOKUP", None))
-        self.metadataComboBox2.setItemText(
-            0, QCoreApplication.translate("MainWindow", u"DIMENSIONS", None))
-        self.metadataComboBox2.setItemText(
-            1, QCoreApplication.translate("MainWindow", u"DURATION", None))
-        self.metadataComboBox2.setItemText(
-            2, QCoreApplication.translate("MainWindow", u"BIT RATE", None))
-        self.metadataComboBox2.setItemText(
-            3, QCoreApplication.translate("MainWindow", u"FRAME RATE", None))
-        self.metadataComboBox2.setItemText(
-            4, QCoreApplication.translate("MainWindow", u"FPS", None))
+            QCoreApplication.translate("MainWindow", u"METADATA LOOKUP", None)
+        )
 
-        self.metadataComboBox.setItemText(
-            0, QCoreApplication.translate("MainWindow", u"VIDEO", None))
-        self.metadataComboBox.setItemText(
-            1, QCoreApplication.translate("MainWindow", u"IMAGE", None))
-        self.metadataComboBox.setItemText(
-            2, QCoreApplication.translate("MainWindow", u"AUDIO", None))
-        self.metadataComboBox.setItemText(
-            3, QCoreApplication.translate("MainWindow", u"DOCS", None))
+        self.metadataLineEdit.setPlaceholderText(
+            QCoreApplication.translate(
+                "MainWindow", u"Enter values to look for seperated by comma", None)
+        )
 
-        self.metadataComboBox3.setItemText(
-            0, QCoreApplication.translate("MainWindow", u"1920x1080", None))
-        self.metadataComboBox3.setItemText(
-            1, QCoreApplication.translate("MainWindow", u"720x420", None))
-        self.metadataComboBox3.setItemText(
-            2, QCoreApplication.translate("MainWindow", u"Custom", None))
-
-        self.metadataLineEdit.setText("")
-        self.metadataLineEdit.setPlaceholderText(QCoreApplication.translate(
-            "MainWindow", u"Enter values to look for seperated by comma", None))
         self.advancedOtherGroupBox.setTitle(
-            QCoreApplication.translate("MainWindow", u"OTHER LOOKUPS", None))
-        self.otherComboBox.setItemText(
-            0, QCoreApplication.translate("MainWindow", u"SIZE", None))
-        self.otherComboBox.setItemText(
-            1, QCoreApplication.translate("MainWindow", u"DATE CREATED", None))
+            QCoreApplication.translate("MainWindow", u"OTHER LOOKUPS", None)
+        )
 
-        self.otherComboBox3.setItemText(
-            0, QCoreApplication.translate("MainWindow", u"EQUAL TO", None))
-        self.otherComboBox3.setItemText(
-            1, QCoreApplication.translate("MainWindow", u"LESS THAN", None))
-        self.otherComboBox3.setItemText(
-            2, QCoreApplication.translate("MainWindow", u"GREATER THAN", None))
+        self.otherLineEdit.setPlaceholderText(
+            QCoreApplication.translate(
+                "MainWindow", u"Enter values to look for seperated by comma", None)
+        )
 
-        self.otherLineEdit.setText("")
-        self.otherLineEdit.setPlaceholderText(QCoreApplication.translate(
-            "MainWindow", u"Enter values to look for seperated by comma", None))
-        self.otherComboBox2.setItemText(
-            0, QCoreApplication.translate("MainWindow", u"BYTES", None))
-        self.otherComboBox2.setItemText(
-            1, QCoreApplication.translate("MainWindow", u"KILOBYTES", None))
-        self.otherComboBox2.setItemText(
-            2, QCoreApplication.translate("MainWindow", u"MEGABYTES", None))
-        self.otherComboBox2.setItemText(
-            3, QCoreApplication.translate("MainWindow", u"GIGABYTES", None))
-
-        self.tabsWidget.setTabText(self.tabsWidget.indexOf(
-            self.ADVANCED), QCoreApplication.translate("MainWindow", u"ADVANCED", None))
-        ___qtablewidgetitem = self.table.horizontalHeaderItem(0)
-        ___qtablewidgetitem.setText(
-            QCoreApplication.translate("MainWindow", u"0", None))
-        ___qtablewidgetitem1 = self.table.horizontalHeaderItem(1)
-        ___qtablewidgetitem1.setText(
-            QCoreApplication.translate("MainWindow", u"1", None))
-        ___qtablewidgetitem2 = self.table.horizontalHeaderItem(2)
-        ___qtablewidgetitem2.setText(
-            QCoreApplication.translate("MainWindow", u"2", None))
-        ___qtablewidgetitem3 = self.table.horizontalHeaderItem(3)
-        ___qtablewidgetitem3.setText(
-            QCoreApplication.translate("MainWindow", u"3", None))
-        ___qtablewidgetitem4 = self.table.verticalHeaderItem(0)
-        ___qtablewidgetitem4.setText(
-            QCoreApplication.translate("MainWindow", u"New Row", None))
-        ___qtablewidgetitem5 = self.table.verticalHeaderItem(1)
-        ___qtablewidgetitem5.setText(
-            QCoreApplication.translate("MainWindow", u"New Row", None))
-        ___qtablewidgetitem6 = self.table.verticalHeaderItem(2)
-        ___qtablewidgetitem6.setText(
-            QCoreApplication.translate("MainWindow", u"New Row", None))
-        ___qtablewidgetitem7 = self.table.verticalHeaderItem(3)
-        ___qtablewidgetitem7.setText(
-            QCoreApplication.translate("MainWindow", u"New Row", None))
-        ___qtablewidgetitem8 = self.table.verticalHeaderItem(4)
-        ___qtablewidgetitem8.setText(
-            QCoreApplication.translate("MainWindow", u"New Row", None))
-
-        __sortingEnabled = self.table.isSortingEnabled()
-        self.table.setSortingEnabled(False)
-        ___qtablewidgetitem9 = self.table.item(0, 0)
-        ___qtablewidgetitem9.setText(
-            QCoreApplication.translate("MainWindow", u"Test", None))
-        ___qtablewidgetitem10 = self.table.item(0, 1)
-        ___qtablewidgetitem10.setText(
-            QCoreApplication.translate("MainWindow", u"Text", None))
-        ___qtablewidgetitem11 = self.table.item(0, 2)
-        ___qtablewidgetitem11.setText(
-            QCoreApplication.translate("MainWindow", u"Cell", None))
-        ___qtablewidgetitem12 = self.table.item(0, 3)
-        ___qtablewidgetitem12.setText(
-            QCoreApplication.translate("MainWindow", u"SELECT", None))
-        ___qtablewidgetitem13 = self.table.item(1, 0)
-        ___qtablewidgetitem13.setText(QCoreApplication.translate(
-            "MainWindow", u"test (c 0, r 0)", None))
-        ___qtablewidgetitem14 = self.table.item(1, 1)
-        ___qtablewidgetitem14.setText(QCoreApplication.translate(
-            "MainWindow", u"test (c 1, r 0)", None))
-        ___qtablewidgetitem15 = self.table.item(1, 2)
-        ___qtablewidgetitem15.setText(QCoreApplication.translate(
-            "MainWindow", u"test (c 2, r 0)", None))
-        ___qtablewidgetitem16 = self.table.item(2, 0)
-        ___qtablewidgetitem16.setText(QCoreApplication.translate(
-            "MainWindow", u"test (c 0, r 1)", None))
-        ___qtablewidgetitem17 = self.table.item(2, 1)
-        ___qtablewidgetitem17.setText(QCoreApplication.translate(
-            "MainWindow", u"test (c 1, r 1)", None))
-        ___qtablewidgetitem18 = self.table.item(2, 2)
-        ___qtablewidgetitem18.setText(QCoreApplication.translate(
-            "MainWindow", u"test (c 2, r 1)", None))
-        ___qtablewidgetitem19 = self.table.item(3, 0)
-        ___qtablewidgetitem19.setText(QCoreApplication.translate(
-            "MainWindow", u"test (c 0, r 2)", None))
-        ___qtablewidgetitem20 = self.table.item(3, 1)
-        ___qtablewidgetitem20.setText(QCoreApplication.translate(
-            "MainWindow", u"test (c 1, r 2)", None))
-        ___qtablewidgetitem21 = self.table.item(3, 2)
-        ___qtablewidgetitem21.setText(QCoreApplication.translate(
-            "MainWindow", u"test (c 2 r 2)", None))
-        self.table.setSortingEnabled(__sortingEnabled)
+        self.tabsWidget.setTabText(
+            self.tabsWidget.indexOf(self.ADVANCED),
+            QCoreApplication.translate("MainWindow", u"ADVANCED", None)
+        )
 
         self.deleteOptionBtn.setText(
-            QCoreApplication.translate("MainWindow", u"DELETE", None))
+            QCoreApplication.translate("MainWindow", u"DELETE", None)
+        )
+
         self.renameOptionBtn.setText(
-            QCoreApplication.translate("MainWindow", u"RENAME", None))
+            QCoreApplication.translate("MainWindow", u"RENAME", None)
+        )
+
         self.moveOptionBtn.setText(
-            QCoreApplication.translate("MainWindow", u"MOVE", None))
+            QCoreApplication.translate("MainWindow", u"MOVE", None)
+        )
+
         self.duplicateOptionBtn.setText(
-            QCoreApplication.translate("MainWindow", u"DUPLICATE", None))
-        self.tabsWidget.setTabText(self.tabsWidget.indexOf(
-            self.RESULT), QCoreApplication.translate("MainWindow", u"RESULT", None))
+            QCoreApplication.translate("MainWindow", u"DUPLICATE", None)
+        )
+
+        self.tabsWidget.setTabText(
+            self.tabsWidget.indexOf(self.RESULT),
+            QCoreApplication.translate("MainWindow", u"RESULT", None)
+        )
+
         self.searchGroupBox.setTitle(
-            QCoreApplication.translate("MainWindow", u"SEARCH", None))
+            QCoreApplication.translate("MainWindow", u"SEARCH", None)
+        )
+
         self.searchTypeComboBox.setItemText(
-            0, QCoreApplication.translate("MainWindow", u"FILES", None))
+            0, QCoreApplication.translate("MainWindow", u"FILES", None)
+        )
+
         self.searchTypeComboBox.setItemText(
-            1, QCoreApplication.translate("MainWindow", u"FOLDERS", None))
+            1, QCoreApplication.translate("MainWindow", u"FOLDERS", None)
+        )
 
         self.browsePathBtn.setText(
-            QCoreApplication.translate("MainWindow", u"OPEN", None))
-        self.pathLineEdit.setToolTip(QCoreApplication.translate(
-            "MainWindow", u"Enter the path where should the lookup process begin", None))
+            QCoreApplication.translate("MainWindow", u"OPEN", None)
+        )
+
         self.pathLineEdit.setPlaceholderText(
-            QCoreApplication.translate("MainWindow", u"DIRECTORY PATH...", None))
+            QCoreApplication.translate(
+                "MainWindow", u"DIRECTORY PATH...", None)
+        )
+
         self.startSearchBtn.setText(
-            QCoreApplication.translate("MainWindow", u"START ", None))
-        self.foundMatchLabel.setText(QCoreApplication.translate(
-            "MainWindow", u"FOUND 0 MATCHES ", None))
+            QCoreApplication.translate("MainWindow", u"START ", None)
+        )
+
+        self.foundMatchLabel.setText(
+            QCoreApplication.translate(
+                "MainWindow", u"FOUND 0 MATCHES ", None)
+        )
+
+        self.pathLineEdit.setToolTip(
+            QCoreApplication.translate(
+                "MainWindow", u"Enter the path where should the lookup process begin", None)
+        )
+
+        self.isRecursiveCheckBox.setToolTip(
+            QCoreApplication.translate(
+                "MainWindow", u"Find files recursively through the selected path", None)
+        )
+
+        self.isCaseSensitiveCheckBox.setToolTip(
+            QCoreApplication.translate(
+                "MainWindow", u"Find files recursively through the selected path", None)
+        )
+
+        self.advancedIsRecuresiveCheckBox.setToolTip(
+            QCoreApplication.translate(
+                "MainWindow", u"Find files recursively through the selected path", None)
+        )
