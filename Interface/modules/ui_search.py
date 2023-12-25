@@ -549,6 +549,7 @@ class Ui(Common):
         self.tabsWidget.setCurrentIndex(0)
 
         self.titleLineEdit.setHidden(True)
+        self.metadataLineEdit.setHidden(True)
         self.advancedTitleLineEdit.setHidden(True)
 
         self.titleComboBox.setFrame(True)
@@ -736,121 +737,198 @@ class Ui(Common):
         self.titleGroupBox.toggled.connect(
             self.isCaseSensitiveCheckBox.setEnabled)
 
-        # _________________         TITLE GROUP BEHAVIOUR       ____________________
+        # _________________         TITLE-GROUP BEHAVIOUR       ____________________
         self.titleComboBox2.currentTextChanged.connect(
-            lambda: self.title_cb2_clicked()
+            lambda: self.title_cb2_changed()
         )
         self.titleComboBox3.currentTextChanged.connect(
-            lambda: self.title_cb3_clicked()
+            lambda: self.title_cb3_changed()
         )
 
-        # _________________    ADVANCED TITLE GROUP BEHAVIOUR   ________________
+        # _________________    ADVANCED TITLE-GROUP BEHAVIOUR   ________________
         self.advancedTitleComboBox2.currentTextChanged.connect(
-            lambda: self.title_cb2_clicked("advanced")
+            lambda: self.title_cb2_changed("advanced")
         )
         self.advancedTitleComboBox3.currentTextChanged.connect(
-            lambda: self.title_cb3_clicked("advanced")
+            lambda: self.title_cb3_changed("advanced")
         )
-        
-        # _________________    ADVANCED METADATA GROUP BEHAVIOUR   ______________
-        # Check if there are any connections before disconnecting
 
+        # _________________    ADVANCED METADATA-GROUP BEHAVIOUR   ______________
         self.metadataComboBox.currentTextChanged.connect(
-            lambda: self.md_cb_clicked()
+            lambda: self.md_option_changed(1)
         )
-        
         self.metadataComboBox2.currentTextChanged.connect(
-            lambda: self.md_cb2_clicked()
+            lambda: self.md_option_changed(2)
+        )
+        self.metadataComboBox3.currentTextChanged.connect(
+            lambda: self.md_option_changed(3)
+        )
+
+        # _________________    ADVANCED OTHER-GROUP BEHAVIOUR   ______________
+        self.otherComboBox.currentTextChanged.connect(
+            lambda: self.other_option_changed(1)
+        )
+        self.otherComboBox2.currentTextChanged.connect(
+            lambda: self.other_option_changed(2)
+        )
+        self.otherComboBox3.currentTextChanged.connect(
+            lambda: self.other_option_changed(3)
         )
 
         self.retranslateUi()
 
         return self.widgets
 
-    def md_cb_clicked(self):
-        
-        # DISABLE INVOKING FUNCTIONS TEMPORARLY
+    def md_option_changed(self, changed_cb: int):
+        """
+            ### METADATA GROUP OPTIONS CHANGED
+            GENERATE AVAILABLE OPTIONS BASED ON CURRENT OPTION
+        """
+
+        # DISABLE THE FUNCTION TEMPORARLY
         self.metadataComboBox.currentTextChanged.disconnect()
         self.metadataComboBox2.currentTextChanged.disconnect()
-        
-        options = self.metadata_options[self.metadataComboBox.currentText()]
-        
-        # REGENERATE NEW OPTIONS
-        self.metadataComboBox2.clear()
-        for option in options.keys():
-            self.metadataComboBox2.addItem(option)
-            
-        self.metadataComboBox3.clear()
-        for option in options[tuple(options.keys())[0]]:
-            self.metadataComboBox3.addItem(option)
+        self.metadataComboBox3.currentTextChanged.disconnect()
 
-        # ENABLE INVOKING THE FUNCTION AGAIN
-        self.metadataComboBox.currentTextChanged.connect(self.md_cb_clicked)
-        self.metadataComboBox2.currentTextChanged.connect(self.md_cb2_clicked)
-    
-    def md_cb2_clicked(self):
-        
-        # DISABLE INVOKING FUNCTIONS TEMPORARLY
-        self.metadataComboBox.currentTextChanged.disconnect()
-        self.metadataComboBox2.currentTextChanged.disconnect()
-        
-        options = self.metadata_options[self.metadataComboBox2.currentText()]
-        
-        # REGENERATE NEW OPTIONS
-        self.metadataComboBox3.clear()
-        for option in options[tuple(options.keys())[0]]:
-            self.metadataComboBox3.addItem(option)
+        match changed_cb:
 
-        # ENABLE INVOKING THE FUNCTION AGAIN
-        self.metadataComboBox.currentTextChanged.connect(self.md_cb_clicked)
-        self.metadataComboBox2.currentTextChanged.connect(self.md_cb2_clicked)
+            case 1:
+
+                options = self.metadata_options[
+                    self.metadataComboBox.currentText()
+                ]
+
+                # 2nd COMBOBOX OPTIONS
+                self.metadataComboBox2.clear()
+                for option in options.keys():
+                    self.metadataComboBox2.addItem(option)
+
+                options = options[tuple(options.keys())[0]]
+
+            case 2:
+
+                options = self.metadata_options[
+                    self.metadataComboBox.currentText()
+                ][self.metadataComboBox2.currentText()]
+
+            case 3:
+
+                if self.metadataComboBox3.currentText().split(" ")[-1] in ("Custom", "Excluding"):
+                    self.metadataLineEdit.setHidden(False)
+                else:
+                    self.metadataLineEdit.setHidden(True)
+
+        if changed_cb != 3:
+
+            # 3rd COMBOBOX OPTIONS
+            self.metadataComboBox3.clear()
+            for option in options:
+                self.metadataComboBox3.addItem(option)
+
+        # ENABLE THE FUNCTION AGAIN
+        self.metadataComboBox.currentTextChanged.connect(
+            lambda: self.md_option_changed(1))
+        self.metadataComboBox2.currentTextChanged.connect(
+            lambda: self.md_option_changed(2))
+        self.metadataComboBox3.currentTextChanged.connect(
+            lambda: self.md_option_changed(3))
+
+    def other_option_changed(self, changed_cb: int):
+        """
+            ### METADATA GROUP OPTIONS CHANGED
+            GENERATE AVAILABLE OPTIONS BASED ON CURRENT OPTION
+        """
+
+        # DISABLE THE FUNCTION TEMPORARLY
+        self.otherComboBox.currentTextChanged.disconnect()
+        self.otherComboBox2.currentTextChanged.disconnect()
+        self.otherComboBox3.currentTextChanged.disconnect()
+
+        match changed_cb:
+
+            case 1:
+
+                options = self.other_options[
+                    self.otherComboBox.currentText()
+                ]
+
+                # 2nd COMBOBOX OPTIONS
+                self.otherComboBox2.clear()
+                for option in options.keys():
+                    self.otherComboBox2.addItem(option)
+
+                options = options[tuple(options.keys())[0]]
+
+            case 2:
+
+                options = self.other_options[
+                    self.otherComboBox.currentText()
+                ][self.otherComboBox2.currentText()]
+
+            case 3:
+
+                if self.otherComboBox3.currentText().split(" ")[-1] in ("Custom", "Excluding"):
+                    self.otherLineEdit.setHidden(False)
+                else:
+                    self.otherLineEdit.setHidden(True)
+
+        if changed_cb != 3:
+
+            # 3rd COMBOBOX OPTIONS
+            self.otherComboBox3.clear()
+            for option in options:
+                self.otherComboBox3.addItem(option)
+
+        # ENABLE THE FUNCTION AGAIN
+        self.otherComboBox.currentTextChanged.connect(
+            lambda: self.other_option_changed(1))
+        self.otherComboBox2.currentTextChanged.connect(
+            lambda: self.other_option_changed(2))
+        self.otherComboBox3.currentTextChanged.connect(
+            lambda: self.other_option_changed(3))
+
+    def title_cb2_changed(self, type=""):
+        """
+            ### BASIC TITLE GROUP OPTIONS CHANGED
+            GENERATE AVAILABLE OPTIONS BASED ON TITLE CHECKBOX2
+        """
+        le = self.titleLineEdit     # LINE EDIT
+        cb = self.titleComboBox2    # CHECKBOX    
+        cb3 = self.titleComboBox3   # CHECKBOX TO HIDE
         
-    def title_cb2_clicked(self, type=""):
-        """
-            RERENDER OPTIONS BASED ON TITLE CHECKBOX2
-        """
         if type == "advanced":
+            le = self.advancedTitleLineEdit
+            cb = self.advancedTitleComboBox2
+            cb3 = self.advancedTitleComboBox3 
 
-            match self.advancedTitleComboBox2.currentText():
+        match cb.currentText():
 
-                # SHOW FIXED OPTIONS & HIDE CUSTOM
-                case "CONTAIN":
-                    self.advancedTitleComboBox3.setHidden(False)
-                    self.advancedTitleLineEdit.setHidden(True)
+            # SHOW FIXED OPTIONS & HIDE CUSTOM
+            case "CONTAIN":
+                cb3.setHidden(False)
+                le.setHidden(True)
 
-                # SHOW CUSTOM OPTION ONLY
-                case "EQUAL TO":
-                    self.advancedTitleComboBox3.setHidden(True)
-                    self.advancedTitleLineEdit.setHidden(False)
+            # SHOW CUSTOM OPTION ONLY
+            case "EQUAL TO":
+                cb3.setHidden(True)
+                le.setHidden(False)
 
-        else:
-            match self.titleComboBox2.currentText():
-
-                # SHOW FIXED OPTIONS & HIDE CUSTOM
-                case "CONTAIN":
-                    self.titleComboBox3.setHidden(False)
-                    self.titleLineEdit.setHidden(True)
-
-                # SHOW CUSTOM OPTION ONLY
-                case "EQUAL TO":
-                    self.titleComboBox3.setHidden(True)
-                    self.titleLineEdit.setHidden(False)
-
-    def title_cb3_clicked(self, type=""):
+    def title_cb3_changed(self, type=""):
         """
             RERENDER OPTIONS BASED ON TITLE CHECKBOX3
         """
 
+        cb = self.titleComboBox3    # CHECKBOX    
+        le = self.titleLineEdit     # LINE EDIT
+        
         if type == "advanced":
-            if self.advancedTitleComboBox3.currentText().split(" ")[-1] in ("Excluding", "Custom"):
-                self.advancedTitleLineEdit.setHidden(False)
-            else:
-                self.advancedTitleLineEdit.setHidden(True)
+            cb = self.advancedTitleComboBox3
+            le = self.advancedTitleLineEdit
+            
+        if cb.currentText().split(" ")[-1] in ("Excluding", "Custom"):
+            le.setHidden(False)
         else:
-            if self.titleComboBox3.currentText().split(" ")[-1] in ("Excluding", "Custom"):
-                self.titleLineEdit.setHidden(False)
-            else:
-                self.titleLineEdit.setHidden(True)
+            le.setHidden(True)
 
     def retranslateUi(self):
 
