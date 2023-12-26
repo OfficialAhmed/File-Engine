@@ -1,21 +1,431 @@
 
-from PySide6.QtCore import (
-    QCoreApplication, QSize, Qt
-)
-from PySide6.QtGui import (
-    QBrush, QColor, QCursor, QFont, QPalette
-)
+from PySide6.QtCore import QCoreApplication, QSize, Qt
+from PySide6.QtGui import QCursor
 from PySide6.QtWidgets import (
-    QAbstractItemView, QAbstractScrollArea, QCheckBox, QComboBox, QFrame,
+    QAbstractItemView, QAbstractScrollArea, QCheckBox, QComboBox,
     QGridLayout, QGroupBox, QHBoxLayout,  QLabel, QLineEdit, QPushButton,
-    QSizePolicy, QSpacerItem, QTabWidget, QTableWidget,
-    QTableWidgetItem, QVBoxLayout, QWidget
+    QSizePolicy, QSpacerItem, QTabWidget, QTableWidget, QVBoxLayout, QWidget
 )
 
 from Interface.environment import Common
 
 
-class Ui(Common):
+class Page(Common):
+    """
+        QWIDGETS STORED IN THIS CLASS TO BE SHARED TO ALL CHILDREN
+    """
+
+    topGL = None
+    BASIC = None
+    RESULT = None
+    widgets = None
+    ADVANCED = None
+    bottomHL = None
+    tabsWidget = None
+    tableWidget = None
+    searchMainVL = None
+    pathLineEdit = None
+    moveOptionBtn = None
+    browsePathBtn = None
+    titleGroupBox = None
+    titleLineEdit = None
+    titleComboBox = None
+    otherLineEdit = None
+    otherComboBox = None
+    titleComboBox2 = None
+    titleComboBox3 = None
+    basicTabMainVL = None
+    verticalLayout = None
+    searchGroupBox = None
+    startSearchBtn = None
+    otherComboBox3 = None
+    otherComboBox2 = None
+    titleGroupBoxGL = None
+    resultTabMainVL = None
+    deleteOptionBtn = None
+    renameOptionBtn = None
+    verticalLayout2 = None
+    verticalLayout3 = None
+    verticalLayout4 = None
+    foundMatchLabel = None
+    metadataLineEdit = None
+    metadataComboBox = None
+    searchGroupBoxGL = None
+    advancedTabMainVL = None
+    metadataComboBox2 = None
+    metadataComboBox3 = None
+    duplicateOptionBtn = None
+    searchTypeComboBox = None
+    isRecursiveCheckBox = None
+    advancedOtherGroupBox = None
+    advancedTitleGroupBox = None
+    advancedTitleLineEdit = None
+    advancedTitleComboBox = None
+    advancedTitleComboBox2 = None
+    advancedTitleComboBox3 = None
+    isCaseSensitiveCheckBox = None
+    advancedTitleGroupBoxGL = None
+    advancedOtherGroupBoxGL = None
+    advancedMetadataGroupBox = None
+    advancedMetadataGroupBoxGL = None
+    advancedIsRecuresiveCheckBox = None
+    advancedIsCaseSensitiveCheckBox = None
+
+    tabs = ("BASIC", "ADVANCED", "RESULT")
+
+    search_options = {
+        "NAME": ("FILES", "FOLDERS"),
+        "EXTENSION": ("FILES",)
+    }
+
+    title_options = {
+        "NAME": {
+            "CONTAIN": (
+                "Alphabets only",
+                "Alphabets & Symbols",
+                "Alphabets & Numbers",
+                "Alphabets Excluding",
+                "Numbers & Symbols",
+                "Numbers Excluding",
+                "Symbols only",
+                "Symbols Excluding",
+                "Custom"
+            ),
+            "EQUAL TO": ()
+        },
+        "EXTENSION": {
+            "CONTAIN": (
+                "Alphabets only",
+                "Alphabets & Symbols",
+                "Alphabets & Numbers",
+                "Alphabets Excluding",
+                "Numbers & Symbols",
+                "Numbers Excluding",
+                "Symbols only",
+                "Symbols Excluding",
+                "Custom"
+            ),
+            "EQUAL TO": ()
+        }
+    }
+
+    metadata_options = {
+        "VIDEO": {
+            "DIMENSIONS": (
+                "1920x1080",
+                "720x420",
+                "Custom"
+            ),
+            "DURATION": (
+                "Custom",
+            ),
+            "BIT RATE": (
+                "Custom",
+            ),
+            "FRAME RATE": (
+                "Custom",
+            ),
+            "FPS": (
+                "Custom",
+            )
+        },
+        "IMAGE": {
+            "DIMENSIONS": (
+                "Custom",
+            ),
+        },
+        "AUDIO": {
+            "ALBUM": (
+                "Custom",
+            ),
+            "AUTHOR": (
+                "Custom",
+            ),
+            "DURATION": (
+                "Custom",
+            )
+        },
+        "DOCS": {
+            "AUTHOR": (
+                "Custom",
+            )
+        }
+    }
+
+    other_options = {
+        "SIZE": {
+            "BYTES": (
+                "Custom",
+            ),
+            "KILOBYTES": (
+                "Custom",
+            ),
+            "MEGABYTES": (
+                "Custom",
+            ),
+            "GIGABYTES": (
+                "Custom",
+            )
+        },
+        "DATE CREATED": {
+            "EQUAL TO": (
+                "Custom",
+            ),
+            "LESS THAN": (
+                "Custom",
+            ),
+            "GREATER THAN": (
+                "Custom",
+            )
+        }
+    }
+
+    def __init__(self) -> None:
+        super().__init__()
+
+
+class Response(Page):
+    """
+        SIGNALS HANDLING AND UI BEHAVIOUR
+    """
+
+    def __init__(self) -> None:
+        super().__init__()
+
+    def title_cb_changed(self):
+        """
+            ### CHANGE SEARCH TYPE OPTIONS 
+        """
+
+        self.searchTypeComboBox.clear()
+        for option in self.search_options.get(self.titleComboBox.currentText()):
+            self.searchTypeComboBox.addItem(option)
+
+    def title_cb2_changed(self, type=""):
+        """
+            ### BASIC TITLE GROUP OPTIONS CHANGED
+            GENERATE AVAILABLE OPTIONS BASED ON TITLE CHECKBOX2
+        """
+        le = self.titleLineEdit     # LINE EDIT
+        cb = self.titleComboBox2    # CHECKBOX
+        cb3 = self.titleComboBox3   # CHECKBOX TO HIDE
+
+        if type == "advanced":
+            le = self.advancedTitleLineEdit
+            cb = self.advancedTitleComboBox2
+            cb3 = self.advancedTitleComboBox3
+
+        match cb.currentText():
+
+            # SHOW FIXED OPTIONS & HIDE CUSTOM
+            case "CONTAIN":
+                cb3.setHidden(False)
+                le.setHidden(True)
+
+            # SHOW CUSTOM OPTION ONLY
+            case "EQUAL TO":
+                cb3.setHidden(True)
+                le.setHidden(False)
+
+    def title_cb3_changed(self, type=""):
+        """
+            RERENDER OPTIONS BASED ON TITLE CHECKBOX3
+        """
+
+        cb = self.titleComboBox3    # CHECKBOX
+        le = self.titleLineEdit     # LINE EDIT
+
+        if type == "advanced":
+            cb = self.advancedTitleComboBox3
+            le = self.advancedTitleLineEdit
+
+        if cb.currentText().split(" ")[-1] in ("Excluding", "Custom"):
+            le.setHidden(False)
+        else:
+            le.setHidden(True)
+
+    def md_option_changed(self, changed_cb: int):
+        """
+            ### METADATA GROUP OPTIONS CHANGED
+            GENERATE AVAILABLE OPTIONS BASED ON CURRENT OPTION
+        """
+
+        # DISABLE THE FUNCTION TEMPORARLY
+        self.metadataComboBox.currentTextChanged.disconnect()
+        self.metadataComboBox2.currentTextChanged.disconnect()
+        self.metadataComboBox3.currentTextChanged.disconnect()
+
+        match changed_cb:
+
+            case 1:
+
+                options = self.metadata_options[
+                    self.metadataComboBox.currentText()
+                ]
+
+                # 2nd COMBOBOX OPTIONS
+                self.metadataComboBox2.clear()
+                for option in options.keys():
+                    self.metadataComboBox2.addItem(option)
+
+                options = options[tuple(options.keys())[0]]
+
+            case 2:
+
+                options = self.metadata_options[
+                    self.metadataComboBox.currentText()
+                ][self.metadataComboBox2.currentText()]
+
+            case 3:
+
+                if self.metadataComboBox3.currentText().split(" ")[-1] in ("Custom", "Excluding"):
+                    self.metadataLineEdit.setHidden(False)
+                else:
+                    self.metadataLineEdit.setHidden(True)
+
+        if changed_cb != 3:
+
+            # 3rd COMBOBOX OPTIONS
+            self.metadataComboBox3.clear()
+            for option in options:
+                self.metadataComboBox3.addItem(option)
+
+        # ENABLE THE FUNCTION AGAIN
+        self.metadataComboBox.currentTextChanged.connect(
+            lambda: self.md_option_changed(1))
+        self.metadataComboBox2.currentTextChanged.connect(
+            lambda: self.md_option_changed(2))
+        self.metadataComboBox3.currentTextChanged.connect(
+            lambda: self.md_option_changed(3))
+
+    def other_option_changed(self, changed_cb: int):
+        """
+            ### METADATA GROUP OPTIONS CHANGED
+            GENERATE AVAILABLE OPTIONS BASED ON CURRENT OPTION
+        """
+
+        # DISABLE THE FUNCTION TEMPORARLY
+        self.otherComboBox.currentTextChanged.disconnect()
+        self.otherComboBox2.currentTextChanged.disconnect()
+        self.otherComboBox3.currentTextChanged.disconnect()
+
+        match changed_cb:
+
+            case 1:
+
+                options = self.other_options[
+                    self.otherComboBox.currentText()
+                ]
+
+                # 2nd COMBOBOX OPTIONS
+                self.otherComboBox2.clear()
+                for option in options.keys():
+                    self.otherComboBox2.addItem(option)
+
+                options = options[tuple(options.keys())[0]]
+
+            case 2:
+
+                options = self.other_options[
+                    self.otherComboBox.currentText()
+                ][self.otherComboBox2.currentText()]
+
+            case 3:
+
+                if self.otherComboBox3.currentText().split(" ")[-1] in ("Custom", "Excluding"):
+                    self.otherLineEdit.setHidden(False)
+                else:
+                    self.otherLineEdit.setHidden(True)
+
+        if changed_cb != 3:
+
+            # 3rd COMBOBOX OPTIONS
+            self.otherComboBox3.clear()
+            for option in options:
+                self.otherComboBox3.addItem(option)
+
+        # ENABLE THE FUNCTION AGAIN
+        self.otherComboBox.currentTextChanged.connect(
+            lambda: self.other_option_changed(1))
+        self.otherComboBox2.currentTextChanged.connect(
+            lambda: self.other_option_changed(2))
+        self.otherComboBox3.currentTextChanged.connect(
+            lambda: self.other_option_changed(3))
+
+    def start_search_clicked(self):
+        
+        path = self.pathLineEdit.text()
+        
+        if not path:
+            print("invalid: path input empty")
+            return
+        
+        self.controller.update_finder_param(
+            path,
+            self.isRecursiveCheckBox.isChecked()
+        )
+        
+        
+    
+
+        match self.tabs[self.tabsWidget.currentIndex()]:
+            
+            case "BASIC":
+                
+                custom_input:str = self.titleLineEdit.text()
+                search_type:str = self.titleComboBox.currentText()
+                
+                if self.titleComboBox2.currentText() == "CONTAIN":
+                    
+                    txt:str = self.titleComboBox3.currentText()
+                    last_word = txt.split(" ")[-1]
+                    
+                    if last_word == "Custom":
+                        pass
+                    elif last_word == "Excluding":
+                        pass
+                    else:
+                        
+                        match txt:
+                            case "Alphabets only":
+                                self.data = self.controller.get_files_by_title_only_alphabets()
+                            case "Alphabets & Symbols":
+                                pass
+                            case "Alphabets & Numbers":
+                                pass
+                            case "Alphabets Excluding":
+                                pass
+                            case "Numbers & Symbols":
+                                pass
+                            case "Numbers Excluding":
+                                pass
+                            case "Symbols only":
+                                pass
+                            case "Symbols Excluding":
+                                pass
+                            case "Custom":
+                                pass
+                    
+                else:
+                    pass
+                            
+                self.generate_table(self.tableWidget)
+                self.foundMatchLabel.setText(f"{len(self.data)} MATCHES FOUND")
+                self.tabsWidget.setCurrentIndex(self.tabs.index("RESULT"))
+            
+            case "ADVANCED":
+                pass
+            
+            case "RESULT":
+                # TODO: SHOW A DIALOG HERE
+                print("CANNOT START PROCESS. CHANGE THE TAB TO BASIC OR ADVANCED")
+            
+
+
+class Ui(Response):
+    """
+        UI RENDERING AND TRANSLATING TEXTS
+    """
 
     def __init__(self) -> None:
         super().__init__()
@@ -23,12 +433,6 @@ class Ui(Common):
     def render_page(self):
 
         self.widgets = QWidget()
-
-        """
-        ===================================================================
-                            WIDGETS RENDERING 
-        ===================================================================
-        """
         self.topGL = QGridLayout()
         self.bottomHL = QHBoxLayout()
         self.searchMainVL = QVBoxLayout()
@@ -98,7 +502,7 @@ class Ui(Common):
 
         self.RESULT = QWidget()
         self.resultTabMainVL = QVBoxLayout()
-        self.table = QTableWidget(self.RESULT)
+        self.tableWidget = QTableWidget(self.RESULT)
         self.moveOptionBtn = QPushButton(self.RESULT)
         self.deleteOptionBtn = QPushButton(self.RESULT)
         self.renameOptionBtn = QPushButton(self.RESULT)
@@ -129,74 +533,30 @@ class Ui(Common):
         self.advancedBottomVSpacer = QSpacerItem(
             20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
-        if (self.table.columnCount() < 4):
-            self.table.setColumnCount(4)
-        __qtablewidgetitem = QTableWidgetItem()
-        self.table.setHorizontalHeaderItem(0, __qtablewidgetitem)
-        __qtablewidgetitem1 = QTableWidgetItem()
-        self.table.setHorizontalHeaderItem(1, __qtablewidgetitem1)
-        __qtablewidgetitem2 = QTableWidgetItem()
-        self.table.setHorizontalHeaderItem(2, __qtablewidgetitem2)
-        __qtablewidgetitem3 = QTableWidgetItem()
-        self.table.setHorizontalHeaderItem(3, __qtablewidgetitem3)
-        if (self.table.rowCount() < 5):
-            self.table.setRowCount(5)
-        font4 = QFont()
-        font4.setFamilies([u"Segoe UI"])
-        __qtablewidgetitem4 = QTableWidgetItem()
-        self.table.setVerticalHeaderItem(0, __qtablewidgetitem4)
-        __qtablewidgetitem5 = QTableWidgetItem()
-        self.table.setVerticalHeaderItem(1, __qtablewidgetitem5)
-        __qtablewidgetitem6 = QTableWidgetItem()
-        self.table.setVerticalHeaderItem(2, __qtablewidgetitem6)
-        __qtablewidgetitem7 = QTableWidgetItem()
-        self.table.setVerticalHeaderItem(3, __qtablewidgetitem7)
-        __qtablewidgetitem8 = QTableWidgetItem()
-        self.table.setVerticalHeaderItem(4, __qtablewidgetitem8)
-        __qtablewidgetitem9 = QTableWidgetItem()
-        self.table.setItem(0, 0, __qtablewidgetitem9)
-        __qtablewidgetitem10 = QTableWidgetItem()
-        self.table.setItem(0, 1, __qtablewidgetitem10)
+        self.set_controller_widgets(
+            self.searchTypeComboBox,
+            self.pathLineEdit,
+            self.titleComboBox,
+            self.pathLineEdit,
+            self.isRecursiveCheckBox,
+            self.startSearchBtn
+        )
 
-        __qtablewidgetitem11 = QTableWidgetItem()
-        self.table.setItem(0, 2, __qtablewidgetitem11)
-        __qtablewidgetitem12 = QTableWidgetItem()
-        __qtablewidgetitem12.setCheckState(Qt.Checked)
-        self.table.setItem(0, 3, __qtablewidgetitem12)
-        __qtablewidgetitem13 = QTableWidgetItem()
-        self.table.setItem(1, 0, __qtablewidgetitem13)
-        __qtablewidgetitem14 = QTableWidgetItem()
-        self.table.setItem(1, 1, __qtablewidgetitem14)
-        __qtablewidgetitem15 = QTableWidgetItem()
-        self.table.setItem(1, 2, __qtablewidgetitem15)
-        __qtablewidgetitem16 = QTableWidgetItem()
-        __qtablewidgetitem16.setCheckState(Qt.Checked)
-        self.table.setItem(1, 3, __qtablewidgetitem16)
-        __qtablewidgetitem17 = QTableWidgetItem()
-        self.table.setItem(2, 0, __qtablewidgetitem17)
-        __qtablewidgetitem18 = QTableWidgetItem()
-        self.table.setItem(2, 1, __qtablewidgetitem18)
-        __qtablewidgetitem19 = QTableWidgetItem()
-        self.table.setItem(2, 2, __qtablewidgetitem19)
-        __qtablewidgetitem20 = QTableWidgetItem()
-        __qtablewidgetitem20.setCheckState(Qt.Checked)
-        self.table.setItem(2, 3, __qtablewidgetitem20)
-        __qtablewidgetitem21 = QTableWidgetItem()
-        self.table.setItem(3, 0, __qtablewidgetitem21)
-        __qtablewidgetitem22 = QTableWidgetItem()
-        self.table.setItem(3, 1, __qtablewidgetitem22)
-        __qtablewidgetitem23 = QTableWidgetItem()
-        self.table.setItem(3, 2, __qtablewidgetitem23)
-        __qtablewidgetitem24 = QTableWidgetItem()
-        __qtablewidgetitem24.setCheckState(Qt.Checked)
-        self.table.setItem(3, 3, __qtablewidgetitem24)
+        """
+        ===================================================================
+                                TABLE CONTENT
+        ===================================================================
+        """
 
         sizePolicy3 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         sizePolicy3.setHorizontalStretch(0)
         sizePolicy3.setVerticalStretch(0)
         sizePolicy3.setHeightForWidth(
-            self.table.sizePolicy().hasHeightForWidth())
-        self.table.setSizePolicy(sizePolicy3)
+            self.tableWidget.sizePolicy().hasHeightForWidth()
+        )
+        self.tableWidget.setSizePolicy(sizePolicy3)
+
+        self.init_table(self.tableWidget)
 
         """
         ===================================================================
@@ -204,60 +564,27 @@ class Ui(Common):
         ===================================================================
         """
 
-        palette = QPalette()
-        brush = QBrush(QColor(221, 221, 221, 255))
-        brush.setStyle(Qt.SolidPattern)
-
-        brush1 = QBrush(QColor(0, 0, 0, 0))
-        brush1.setStyle(Qt.SolidPattern)
-
-        brush2 = QBrush(QColor(0, 0, 0, 255))
-        brush2.setStyle(Qt.NoBrush)
-
-        palette.setBrush(QPalette.Active, QPalette.Text, brush)
-        palette.setBrush(QPalette.Active, QPalette.Button, brush1)
-        palette.setBrush(QPalette.Active, QPalette.WindowText, brush)
-        palette.setBrush(QPalette.Active, QPalette.ButtonText, brush)
-
-        palette.setBrush(QPalette.Active, QPalette.Base, brush2)
-        palette.setBrush(QPalette.Inactive, QPalette.Text, brush)
-        palette.setBrush(QPalette.Disabled, QPalette.Text, brush)
-        palette.setBrush(QPalette.Active, QPalette.Window, brush1)
-        palette.setBrush(QPalette.Inactive, QPalette.Base, brush2)
-        palette.setBrush(QPalette.Inactive, QPalette.Button, brush1)
-        palette.setBrush(QPalette.Inactive, QPalette.Window, brush1)
-        palette.setBrush(QPalette.Disabled, QPalette.Button, brush1)
-        palette.setBrush(QPalette.Inactive, QPalette.WindowText, brush)
-        palette.setBrush(QPalette.Inactive, QPalette.ButtonText, brush)
-        palette.setBrush(QPalette.Disabled, QPalette.WindowText, brush)
-        palette.setBrush(QPalette.Disabled, QPalette.ButtonText, brush)
-
-        self.table.setFrameShape(QFrame.NoFrame)
-        self.table.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
-        self.table.setSizeAdjustPolicy(
+        self.tableWidget.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        self.tableWidget.setSizeAdjustPolicy(
             QAbstractScrollArea.AdjustToContents)
-        self.table.setSelectionMode(QAbstractItemView.NoSelection)
-        self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.table.setSelectionBehavior(QAbstractItemView.SelectRows)
-        self.table.setGridStyle(Qt.SolidLine)
-        self.table.setShowGrid(True)
-        self.table.setSortingEnabled(True)
-        self.table.verticalHeader().setVisible(False)
-        self.table.horizontalHeader().setVisible(True)
-        self.table.horizontalHeader().setDefaultSectionSize(200)
-        self.table.verticalHeader().setHighlightSections(False)
-        self.table.verticalHeader().setStretchLastSection(False)
-        self.table.horizontalHeader().setStretchLastSection(True)
-        self.table.verticalHeader().setCascadingSectionResizes(True)
-        self.table.horizontalHeader().setCascadingSectionResizes(True)
-
+        self.tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.tableWidget.setSelectionMode(QAbstractItemView.NoSelection)
+        self.tableWidget.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.tableWidget.setShowGrid(True)
+        self.tableWidget.setGridStyle(Qt.SolidLine)
+        self.tableWidget.setSortingEnabled(True)
+        self.tableWidget.horizontalHeader().setVisible(True)
+        self.tableWidget.horizontalHeader().setCascadingSectionResizes(True)
+        self.tableWidget.horizontalHeader().setDefaultSectionSize(200)
+        self.tableWidget.horizontalHeader().setStretchLastSection(True)
+        self.tableWidget.verticalHeader().setVisible(False)
+        self.tableWidget.verticalHeader().setCascadingSectionResizes(True)
+        self.tableWidget.verticalHeader().setHighlightSections(False)
+        self.tableWidget.verticalHeader().setStretchLastSection(False)
         self.bottomHL.setContentsMargins(-1, 0, -1, -1)
 
         self.resultBottomLHSpacer = QSpacerItem(
             40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.searchTypeComboBox.addItem("")
-        self.searchTypeComboBox.addItem("")
 
         """
         ===================================================================
@@ -483,7 +810,7 @@ class Ui(Common):
             self.advancedOtherGroupBox
         )
         self.resultTabMainVL.addWidget(
-            self.table
+            self.tableWidget
         )
         self.bottomHL.addWidget(
             self.deleteOptionBtn
@@ -577,7 +904,6 @@ class Ui(Common):
         self.advancedMetadataGroupBox.setCheckable(True)
 
         self.titleGroupBox.setChecked(True)
-        self.searchGroupBox.setChecked(False)
         self.isRecursiveCheckBox.setChecked(True)
         self.advancedOtherGroupBox.setChecked(False)
         self.advancedMetadataGroupBox.setChecked(False)
@@ -591,108 +917,6 @@ class Ui(Common):
         self.isCaseSensitiveCheckBox.setEnabled(True)
         self.advancedIsRecuresiveCheckBox.setEnabled(True)
         self.advancedIsCaseSensitiveCheckBox.setEnabled(True)
-
-        self.title_options = {
-            "NAME": {
-                "CONTAIN": (
-                    "Alphabets only",
-                    "Alphabets & Symbols",
-                    "Alphabets & Numbers",
-                    "Alphabets Excluding",
-                    "Numbers & Symbols",
-                    "Numbers Excluding",
-                    "Symbols only",
-                    "Symbols Excluding",
-                    "Custom"
-                ),
-                "EQUAL TO": ()
-            },
-            "EXTENSION": {
-                "CONTAIN": (
-                    "Alphabets only",
-                    "Alphabets & Symbols",
-                    "Alphabets & Numbers",
-                    "Alphabets Excluding",
-                    "Numbers & Symbols",
-                    "Numbers Excluding",
-                    "Symbols only",
-                    "Symbols Excluding",
-                    "Custom"
-                ),
-                "EQUAL TO": ()
-            }
-        }
-
-        self.metadata_options = {
-            "VIDEO": {
-                "DIMENSIONS": (
-                    "1920x1080",
-                    "720x420",
-                    "Custom"
-                ),
-                "DURATION": (
-                    "Custom",
-                ),
-                "BIT RATE": (
-                    "Custom",
-                ),
-                "FRAME RATE": (
-                    "Custom",
-                ),
-                "FPS": (
-                    "Custom",
-                )
-            },
-            "IMAGE": {
-                "DIMENSIONS": (
-                    "Custom",
-                ),
-            },
-            "AUDIO": {
-                "ALBUM": (
-                    "Custom",
-                ),
-                "AUTHOR": (
-                    "Custom",
-                ),
-                "DURATION": (
-                    "Custom",
-                )
-            },
-            "DOCS": {
-                "AUTHOR": (
-                    "Custom",
-                )
-            }
-        }
-
-        self.other_options = {
-            "SIZE": {
-                "BYTES": (
-                    "Custom",
-                ),
-                "KILOBYTES": (
-                    "Custom",
-                ),
-                "MEGABYTES": (
-                    "Custom",
-                ),
-                "GIGABYTES": (
-                    "Custom",
-                )
-            },
-            "DATE CREATED": {
-                "EQUAL TO": (
-                    "Custom",
-                ),
-                "LESS THAN": (
-                    "Custom",
-                ),
-                "GREATER THAN": (
-                    "Custom",
-                )
-            }
-        }
 
         default_options = {
 
@@ -716,7 +940,9 @@ class Ui(Common):
             # _____   OTHER  ________
             self.otherComboBox: tuple(self.other_options.keys()),
             self.otherComboBox2: tuple(self.other_options["SIZE"].keys()),
-            self.otherComboBox3: tuple(self.other_options["SIZE"]["BYTES"])
+            self.otherComboBox3: tuple(self.other_options["SIZE"]["BYTES"]),
+
+            self.searchTypeComboBox: ("FILES", "FOLDERS")
         }
 
         for cb, values in default_options.items():
@@ -737,7 +963,20 @@ class Ui(Common):
         self.titleGroupBox.toggled.connect(
             self.isCaseSensitiveCheckBox.setEnabled)
 
+        self.startSearchBtn.clicked.connect(
+            lambda: self.start_search_clicked()
+        )
+        self.browsePathBtn.clicked.connect(
+            lambda: self.set_user_path(
+                self.get_path(),
+                False
+            )
+        )
+
         # _________________         TITLE-GROUP BEHAVIOUR       ____________________
+        self.titleComboBox.currentTextChanged.connect(
+            lambda: self.title_cb_changed()
+        )
         self.titleComboBox2.currentTextChanged.connect(
             lambda: self.title_cb2_changed()
         )
@@ -775,162 +1014,17 @@ class Ui(Common):
             lambda: self.other_option_changed(3)
         )
 
-        self.retranslateUi()
+        self.retranslate()
 
         return self.widgets
 
-    def md_option_changed(self, changed_cb: int):
-        """
-            ### METADATA GROUP OPTIONS CHANGED
-            GENERATE AVAILABLE OPTIONS BASED ON CURRENT OPTION
-        """
+    def retranslate(self):
 
-        # DISABLE THE FUNCTION TEMPORARLY
-        self.metadataComboBox.currentTextChanged.disconnect()
-        self.metadataComboBox2.currentTextChanged.disconnect()
-        self.metadataComboBox3.currentTextChanged.disconnect()
-
-        match changed_cb:
-
-            case 1:
-
-                options = self.metadata_options[
-                    self.metadataComboBox.currentText()
-                ]
-
-                # 2nd COMBOBOX OPTIONS
-                self.metadataComboBox2.clear()
-                for option in options.keys():
-                    self.metadataComboBox2.addItem(option)
-
-                options = options[tuple(options.keys())[0]]
-
-            case 2:
-
-                options = self.metadata_options[
-                    self.metadataComboBox.currentText()
-                ][self.metadataComboBox2.currentText()]
-
-            case 3:
-
-                if self.metadataComboBox3.currentText().split(" ")[-1] in ("Custom", "Excluding"):
-                    self.metadataLineEdit.setHidden(False)
-                else:
-                    self.metadataLineEdit.setHidden(True)
-
-        if changed_cb != 3:
-
-            # 3rd COMBOBOX OPTIONS
-            self.metadataComboBox3.clear()
-            for option in options:
-                self.metadataComboBox3.addItem(option)
-
-        # ENABLE THE FUNCTION AGAIN
-        self.metadataComboBox.currentTextChanged.connect(
-            lambda: self.md_option_changed(1))
-        self.metadataComboBox2.currentTextChanged.connect(
-            lambda: self.md_option_changed(2))
-        self.metadataComboBox3.currentTextChanged.connect(
-            lambda: self.md_option_changed(3))
-
-    def other_option_changed(self, changed_cb: int):
-        """
-            ### METADATA GROUP OPTIONS CHANGED
-            GENERATE AVAILABLE OPTIONS BASED ON CURRENT OPTION
-        """
-
-        # DISABLE THE FUNCTION TEMPORARLY
-        self.otherComboBox.currentTextChanged.disconnect()
-        self.otherComboBox2.currentTextChanged.disconnect()
-        self.otherComboBox3.currentTextChanged.disconnect()
-
-        match changed_cb:
-
-            case 1:
-
-                options = self.other_options[
-                    self.otherComboBox.currentText()
-                ]
-
-                # 2nd COMBOBOX OPTIONS
-                self.otherComboBox2.clear()
-                for option in options.keys():
-                    self.otherComboBox2.addItem(option)
-
-                options = options[tuple(options.keys())[0]]
-
-            case 2:
-
-                options = self.other_options[
-                    self.otherComboBox.currentText()
-                ][self.otherComboBox2.currentText()]
-
-            case 3:
-
-                if self.otherComboBox3.currentText().split(" ")[-1] in ("Custom", "Excluding"):
-                    self.otherLineEdit.setHidden(False)
-                else:
-                    self.otherLineEdit.setHidden(True)
-
-        if changed_cb != 3:
-
-            # 3rd COMBOBOX OPTIONS
-            self.otherComboBox3.clear()
-            for option in options:
-                self.otherComboBox3.addItem(option)
-
-        # ENABLE THE FUNCTION AGAIN
-        self.otherComboBox.currentTextChanged.connect(
-            lambda: self.other_option_changed(1))
-        self.otherComboBox2.currentTextChanged.connect(
-            lambda: self.other_option_changed(2))
-        self.otherComboBox3.currentTextChanged.connect(
-            lambda: self.other_option_changed(3))
-
-    def title_cb2_changed(self, type=""):
-        """
-            ### BASIC TITLE GROUP OPTIONS CHANGED
-            GENERATE AVAILABLE OPTIONS BASED ON TITLE CHECKBOX2
-        """
-        le = self.titleLineEdit     # LINE EDIT
-        cb = self.titleComboBox2    # CHECKBOX    
-        cb3 = self.titleComboBox3   # CHECKBOX TO HIDE
-        
-        if type == "advanced":
-            le = self.advancedTitleLineEdit
-            cb = self.advancedTitleComboBox2
-            cb3 = self.advancedTitleComboBox3 
-
-        match cb.currentText():
-
-            # SHOW FIXED OPTIONS & HIDE CUSTOM
-            case "CONTAIN":
-                cb3.setHidden(False)
-                le.setHidden(True)
-
-            # SHOW CUSTOM OPTION ONLY
-            case "EQUAL TO":
-                cb3.setHidden(True)
-                le.setHidden(False)
-
-    def title_cb3_changed(self, type=""):
-        """
-            RERENDER OPTIONS BASED ON TITLE CHECKBOX3
-        """
-
-        cb = self.titleComboBox3    # CHECKBOX    
-        le = self.titleLineEdit     # LINE EDIT
-        
-        if type == "advanced":
-            cb = self.advancedTitleComboBox3
-            le = self.advancedTitleLineEdit
-            
-        if cb.currentText().split(" ")[-1] in ("Excluding", "Custom"):
-            le.setHidden(False)
-        else:
-            le.setHidden(True)
-
-    def retranslateUi(self):
+        # TABS RETRANSLATION
+        for indx, tab_title in enumerate(self.tabs):
+            self.tabsWidget.setTabText(
+                indx, QCoreApplication.translate("MainWindow", tab_title, None)
+            )
 
         self.titleGroupBox.setTitle(
             QCoreApplication.translate(
@@ -939,7 +1033,7 @@ class Ui(Common):
 
         self.titleLineEdit.setPlaceholderText(
             QCoreApplication.translate(
-                "MainWindow", u"Enter values to look for seperated by comma", None)
+                "MainWindow", u"Enter values seperated by comma", None)
         )
 
         self.isRecursiveCheckBox.setText(
@@ -950,18 +1044,13 @@ class Ui(Common):
             QCoreApplication.translate("MainWindow", u"CASE SENSITIVE", None)
         )
 
-        self.tabsWidget.setTabText(
-            self.tabsWidget.indexOf(self.BASIC),
-            QCoreApplication.translate("MainWindow", u"BASIC", None)
-        )
-
         self.advancedTitleGroupBox.setTitle(
             QCoreApplication.translate("MainWindow", u"TITLE LOOKUP", None)
         )
 
         self.advancedTitleLineEdit.setPlaceholderText(
             QCoreApplication.translate(
-                "MainWindow", u"Enter values to look for seperated by comma", None)
+                "MainWindow", u"Enter values seperated by comma", None)
         )
 
         self.advancedIsRecuresiveCheckBox.setText(
@@ -983,7 +1072,7 @@ class Ui(Common):
 
         self.metadataLineEdit.setPlaceholderText(
             QCoreApplication.translate(
-                "MainWindow", u"Enter values to look for seperated by comma", None)
+                "MainWindow", u"Enter values seperated by comma", None)
         )
 
         self.advancedOtherGroupBox.setTitle(
@@ -992,12 +1081,7 @@ class Ui(Common):
 
         self.otherLineEdit.setPlaceholderText(
             QCoreApplication.translate(
-                "MainWindow", u"Enter values to look for seperated by comma", None)
-        )
-
-        self.tabsWidget.setTabText(
-            self.tabsWidget.indexOf(self.ADVANCED),
-            QCoreApplication.translate("MainWindow", u"ADVANCED", None)
+                "MainWindow", u"Enter values seperated by comma", None)
         )
 
         self.deleteOptionBtn.setText(
@@ -1014,11 +1098,6 @@ class Ui(Common):
 
         self.duplicateOptionBtn.setText(
             QCoreApplication.translate("MainWindow", u"DUPLICATE", None)
-        )
-
-        self.tabsWidget.setTabText(
-            self.tabsWidget.indexOf(self.RESULT),
-            QCoreApplication.translate("MainWindow", u"RESULT", None)
         )
 
         self.searchGroupBox.setTitle(
@@ -1057,11 +1136,6 @@ class Ui(Common):
         )
 
         self.isRecursiveCheckBox.setToolTip(
-            QCoreApplication.translate(
-                "MainWindow", u"Find files recursively through the selected path", None)
-        )
-
-        self.isCaseSensitiveCheckBox.setToolTip(
             QCoreApplication.translate(
                 "MainWindow", u"Find files recursively through the selected path", None)
         )

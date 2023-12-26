@@ -78,15 +78,12 @@ class Controller:
     def get_folders_by_name(self, name: str) -> dict:
         return self.FOLDER_FINDER.find("NAME", name)
 
-    def get_files_by_pattern(self, pattern: str) -> dict:
-        return self.FILE_FINDER.find("PATTERN", pattern)
-
-    def get_folders_by_pattern(self, pattern: str) -> dict:
-        return self.FOLDER_FINDER.find("PATTERN", pattern)
-
     def get_files_by_extension(self, extension: str) -> dict:
         return self.FILE_FINDER.find("EXTENSION", extension)
 
+    def get_files_by_title_only_alphabets(self) -> dict:
+        return self.FILE_FINDER.search("TITLE", "ALPHABETS")
+    
     """
     /////////////////////////////////////////////////////
                     REMOVER METHODS

@@ -85,6 +85,7 @@ class File(Finder):
 
     def find(self, by: str, input: str):
 
+        # METHOD TO BE TRUNCATED
         # RESET FILES ON EVERY SEARCH
         self.reset_detected_files()
 
@@ -95,7 +96,7 @@ class File(Finder):
                 match by:
 
                     case "NAME":
-
+                        
                         if file[: file.find(".")].strip() == input:
                             self.add_detected_file(file, root)
 
@@ -103,12 +104,7 @@ class File(Finder):
 
                         if file.endswith(f".{input}"):
                             self.add_detected_file(file, root)
-
-                    case "PATTERN":
-
-                        if input.lower() in file.lower():
-                            self.add_detected_file(file, root)
-
+                            
         else:
 
             for file in self.get_files():
@@ -124,13 +120,37 @@ class File(Finder):
                         if file.endswith(f".{input}"):
                             self.add_detected_file(file)
 
-                    case "PATTERN":
-
-                        if input.lower() in file.lower():
-                            self.add_detected_file(file)
-
         return self.detected_files
 
+    def search(self, by: str, input: str) -> dict:
+
+        # RESET FILES ON EVERY SEARCH
+        self.reset_detected_files()
+
+        if self.is_recursive:
+
+            for root, file in self.get_files_recursive():
+
+                file_title:str = file[: file.find(".")].strip()
+                file_ext:str = file[file.find(".")+1:].strip()
+                
+                match by:
+
+                    case "TITLE":
+                        
+                        match input:
+                            case "ALPHABETS":
+                                if file_title.isalpha():
+                                    self.add_detected_file(file, root)
+
+                    case "EXTENSION":
+
+                        match input:
+                            case "ALPHABETS":
+                                if file_ext.isalpha():
+                                    self.add_detected_file(file, root)
+        return self.detected_files
+                        
 
 class Folder(Finder):
 
@@ -182,10 +202,6 @@ class Folder(Finder):
                         if folder == input:
                             self.add_detected_folder(folder, root)
 
-                    case "PATTERN":
-                        if input.lower() in folder.lower():
-                            self.add_detected_folder(folder, root)
-
         else:
 
             for folder in self.get_files():
@@ -194,11 +210,6 @@ class Folder(Finder):
 
                     case "NAME":
                         if folder == input:
-                            self.add_detected_folder(folder)
-
-                    case "PATTERN":
-
-                        if input.lower() in folder.lower():
                             self.add_detected_folder(folder)
 
         return self.detected_folders

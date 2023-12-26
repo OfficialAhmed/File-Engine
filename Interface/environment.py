@@ -269,16 +269,10 @@ class Common:
                     case "EXTENSION":
                         data = self.controller.get_files_by_extension(input)
 
-                    case "PATTERN":
-                        data = self.controller.get_files_by_pattern(input)
-
             elif type == "FOLDERS":
                 match format:
                     case "NAME":
                         data = self.controller.get_folders_by_name(input)
-
-                    case "PATTERN":
-                        data = self.controller.get_folders_by_pattern(input)
 
             return (data, False)
 
@@ -508,8 +502,8 @@ class Html:
 
     def get_bg_color(self, name: str) -> str:
         return f"background-color: rgb({self.color.get(name)})"
-    
-    def get_text_color(self, name:str) -> str:
+
+    def get_text_color(self, name: str) -> str:
         return f"color: rgb({self.COLOR.get(name)})"
 
     def title_span_tag(self, text: str, clr: str = "#ff79c6", f_size: str = "12") -> str:
@@ -585,7 +579,7 @@ class Worker(QObject):
     is_fail = Signal(str)
     is_success = Signal(bool)
     progress_signal = Signal(float)
-    
+
 
 class DeleteWorker(Worker):
     """
@@ -599,7 +593,7 @@ class DeleteWorker(Worker):
 
     def __init__(self, files: list, lookup_type: str) -> None:
         super().__init__()
-        
+
         self.files = files
         self.lookup_type = lookup_type
 
