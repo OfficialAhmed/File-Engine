@@ -54,8 +54,8 @@ class MainWindow(QMainWindow):
 
         # LEFT MENUS
         self.widgets.home_page.clicked.connect(self.change_page)
-        self.widgets.delete_page.clicked.connect(self.change_page)
         self.widgets.move_page.clicked.connect(self.change_page)
+        self.widgets.delete_page.clicked.connect(self.change_page)
         self.widgets.rename_page.clicked.connect(self.change_page)
         self.widgets.search_page.clicked.connect(self.change_page)
 
@@ -112,7 +112,7 @@ class MainWindow(QMainWindow):
             case "delete_page":    page = self.widgets.delete_widgets
             case "rename_page":    page = self.widgets.rename_widgets
             case "search_page":    page = self.widgets.search_widgets
-            case "lookup_page":    page = self.widgets.new_page
+            # case "lookup_page":    page = self.widgets.new_page
 
         self.widgets.stackedWidget.setCurrentWidget(page)
 

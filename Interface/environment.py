@@ -184,7 +184,7 @@ class Common:
             THEN POPULATE THE DATA ONTO A NEW GENERATED TABLE
         """
         self.data = json.load(open(self.get_path("json")))
-        self.generate_table(self.table_layout)
+        self.generate_table(self.table)
 
     def set_user_path(
         self, path: str,
@@ -269,16 +269,10 @@ class Common:
                     case "EXTENSION":
                         data = self.controller.get_files_by_extension(input)
 
-                    case "PATTERN":
-                        data = self.controller.get_files_by_pattern(input)
-
             elif type == "FOLDERS":
                 match format:
                     case "NAME":
                         data = self.controller.get_folders_by_name(input)
-
-                    case "PATTERN":
-                        data = self.controller.get_folders_by_pattern(input)
 
             return (data, False)
 
@@ -348,7 +342,7 @@ class Common:
         total_rows = rows
         total_columns = columns
 
-        self.table_layout = table_layout
+        self.table = table_layout
 
         # CLEAR PREVIOUS ROWS
         self.checkboxes.clear()
@@ -370,7 +364,11 @@ class Common:
         data = self.data.values()
 
         # RENDER TABLE HEADERS
-        self.init_table(table_layout, len(data))
+        self.init_table(
+            table_layout, len(data)
+        ) if self.data else self.init_table(
+            table_layout
+        )
 
         # POPULATE THE TABLE WITH DATA
         for row_index, row_data in enumerate(data):
@@ -406,7 +404,7 @@ class Common:
                 QCoreApplication.translate("MainWindow", txt)
             )
 
-            self.table_layout.setHorizontalHeaderItem(col, header_item)
+            self.table.setHorizontalHeaderItem(col, header_item)
 
     def table_header_clicked(self, header_section: int) -> None:
         """
@@ -434,7 +432,7 @@ class Common:
                 checkbox = QCheckBox()
                 checkbox.setChecked(False)
 
-                self.table_layout.setCellWidget(
+                self.table.setCellWidget(
                     row_indx,                            # ROW INDEX
                     3,                                   # LAST COLUMN
                     checkbox                             # ITEM
@@ -455,7 +453,7 @@ class Common:
 
         # REMOVE SELECTED CHECKBOXES
         for row in reversed(self.rows_to_remove):
-            self.table_layout.removeRow(row)
+            self.table.removeRow(row)
             self.checkboxes.pop(row)
 
     def start_lookup_clicked(self):
@@ -479,7 +477,7 @@ class Common:
 
             # PATH EXISTED BUT NO FILES HAVE BEEN FOUND
             if not self.data:
-                self.init_table(self.table_layout)
+                self.init_table(self.table)
 
                 self.controller.show_dialog(
                     "NO DATA HAS BEEN FOUND!",          # MESSAGE
@@ -488,7 +486,7 @@ class Common:
                 )
                 return None
 
-            self.generate_table(self.table_layout)
+            self.generate_table(self.table)
 
 
 class Html:
@@ -508,8 +506,8 @@ class Html:
 
     def get_bg_color(self, name: str) -> str:
         return f"background-color: rgb({self.color.get(name)})"
-    
-    def get_text_color(self, name:str) -> str:
+
+    def get_text_color(self, name: str) -> str:
         return f"color: rgb({self.COLOR.get(name)})"
 
     def title_span_tag(self, text: str, clr: str = "#ff79c6", f_size: str = "12") -> str:
@@ -585,7 +583,7 @@ class Worker(QObject):
     is_fail = Signal(str)
     is_success = Signal(bool)
     progress_signal = Signal(float)
-    
+
 
 class DeleteWorker(Worker):
     """
@@ -599,7 +597,7 @@ class DeleteWorker(Worker):
 
     def __init__(self, files: list, lookup_type: str) -> None:
         super().__init__()
-        
+
         self.files = files
         self.lookup_type = lookup_type
 

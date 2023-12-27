@@ -61,31 +61,59 @@ class Controller:
     //////////////////////////////////////////////////////
     """
 
-    def update_finder_param(self, path: str, is_recursive: bool) -> None:
+    def update_finder_param(self, path: str, is_recursive: bool, is_case_sensetive: bool) -> None:
         """
             Variables set from UI after rendering
         """
 
         self.FILE_FINDER.set_path(path)
         self.FILE_FINDER.set_recursive(is_recursive)
+        self.FILE_FINDER.set_case_sensitive(is_case_sensetive)
 
         self.FOLDER_FINDER.set_path(path)
         self.FOLDER_FINDER.set_recursive(is_recursive)
+        self.FOLDER_FINDER.set_case_sensitive(is_case_sensetive)
 
     def get_files_by_name(self, name: str) -> dict:
+        # TODO: TO BE TRUNCATED
         return self.FILE_FINDER.find("NAME", name)
+
+    def get_files_by_extension(self, extension: str) -> dict:
+        # TODO: TO BE TRUNCATED
+        return self.FILE_FINDER.find("EXTENSION", extension)
+
+    def get_files_by_title(self, input: list) -> dict:
+        return self.FILE_FINDER.search("TITLE", input)
+
+    def get_files_by_title_only_alphabets(self) -> dict:
+        return self.FILE_FINDER.search("TITLE", "ALPHABETS")
+
+    def get_files_by_title_only_symbols(self) -> dict:
+        return self.FILE_FINDER.search("TITLE", "SYMBOLS")
+
+    def get_files_by_title_alpha_symbol(self) -> dict:
+        return self.FILE_FINDER.search("TITLE", "ALPHABETS & SYMBOLS")
+
+    def get_files_by_title_alpha_num(self) -> dict:
+        return self.FILE_FINDER.search("TITLE", "ALPHABETS & NUMBERS")
+
+    def get_files_by_title_num_symbol(self) -> dict:
+        return self.FILE_FINDER.search("TITLE", "NUMBERS & SYMBOLS")
+
+    def get_files_by_title_custom(self, input: str) -> dict:
+        return self.FILE_FINDER.search("TITLE", "CUSTOM", custom=input)
+
+    def get_files_by_title_alpha_exclude(self, input) -> dict:
+        return self.FILE_FINDER.search("TITLE", "ALPHABETS EXCLUSION", exclude=input)
+
+    def get_files_by_title_num_exclude(self, input) -> dict:
+        return self.FILE_FINDER.search("TITLE", "NUMBERS EXCLUSION", exclude=input)
+
+    def get_files_by_title_symbol_exclude(self, input) -> dict:
+        return self.FILE_FINDER.search("TITLE", "SYMBOLS EXCLUSION", exclude=input)
 
     def get_folders_by_name(self, name: str) -> dict:
         return self.FOLDER_FINDER.find("NAME", name)
-
-    def get_files_by_pattern(self, pattern: str) -> dict:
-        return self.FILE_FINDER.find("PATTERN", pattern)
-
-    def get_folders_by_pattern(self, pattern: str) -> dict:
-        return self.FOLDER_FINDER.find("PATTERN", pattern)
-
-    def get_files_by_extension(self, extension: str) -> dict:
-        return self.FILE_FINDER.find("EXTENSION", extension)
 
     """
     /////////////////////////////////////////////////////
@@ -109,7 +137,7 @@ class Controller:
 
     def empty_trash(self) -> None:
         self.FILE_REMOVER.empty_trash()
-        
+
     def remove_file(self, file_path: str) -> None | str:
         self.FILE_REMOVER.remove(file_path)
 
