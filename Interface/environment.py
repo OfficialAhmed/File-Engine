@@ -364,7 +364,11 @@ class Common:
         data = self.data.values()
 
         # RENDER TABLE HEADERS
-        self.init_table(table_layout, len(data))
+        self.init_table(
+            table_layout, len(data)
+        ) if self.data else self.init_table(
+            table_layout
+        )
 
         # POPULATE THE TABLE WITH DATA
         for row_index, row_data in enumerate(data):

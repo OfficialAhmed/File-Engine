@@ -1,4 +1,5 @@
 
+import re
 from PySide6.QtCore import QCoreApplication, QSize, Qt
 from PySide6.QtGui import QCursor
 from PySide6.QtWidgets import (
@@ -362,51 +363,38 @@ class Response(Page):
 
         self.controller.update_finder_param(
             path,
-            self.isRecursiveCheckBox.isChecked()
+            self.isRecursiveCheckBox.isChecked(),
+            self.isCaseSensitiveCheckBox.isChecked()
         )
 
         match self.tabs[self.tabsWidget.currentIndex()]:
 
             case "BASIC":
 
-                custom_input: str = self.titleLineEdit.text()
                 search_type: str = self.titleComboBox.currentText()
+                custom_input: list = self.titleLineEdit.text().replace(" ", "").split(",")
 
-                if self.titleComboBox2.currentText() == "CONTAIN":
-
-                    txt: str = self.titleComboBox3.currentText()
-                    last_word = txt.split(" ")[-1]
-
-                    if last_word == "Custom":
-                        pass
-                    elif last_word == "Excluding":
-                        pass
-                    else:
-
-                        match txt:
-                            case "Alphabets only":
-                                self.data = self.controller.get_files_by_title_only_alphabets()
-                            case "Alphabets & Symbols":
-                                pass
-                            case "Alphabets & Numbers":
-                                pass
-                            case "Alphabets Excluding":
-                                pass
-                            case "Numbers & Symbols":
-                                pass
-                            case "Numbers Excluding":
-                                pass
-                            case "Symbols only":
-                                pass
-                            case "Symbols Excluding":
-                                pass
-                            case "Custom":
-                                pass
+                if self.titleComboBox2.currentText() != "CONTAIN":
+                    
+                    self.data = self.controller.get_files_by_title(
+                        custom_input
+                    )
 
                 else:
-                    pass
+                    match self.titleComboBox3.currentText():
+                        case "Symbols only":        self.data = self.controller.get_files_by_title_only_symbols()
+                        case "Alphabets only":      self.data = self.controller.get_files_by_title_only_alphabets()
+                        case "Numbers & Symbols":   self.data = self.controller.get_files_by_title_num_symbol()
+                        case "Numbers Excluding":   self.data = self.controller.get_files_by_title_num_exclude(custom_input)
+                        case "Symbols Excluding":   self.data = self.controller.get_files_by_title_symbol_exclude(custom_input)
+                        case "Alphabets Excluding": self.data = self.controller.get_files_by_title_alpha_exclude(custom_input)
+                        case "Alphabets & Numbers": self.data = self.controller.get_files_by_title_alpha_num()
+                        case "Alphabets & Symbols": self.data = self.controller.get_files_by_title_alpha_symbol()
+                        case "Custom":              self.data = self.controller.get_files_by_title_custom(self.titleLineEdit.text().strip())
 
+                # SHOW THE RESULT PAGE AFTER RENDERING TABLE
                 self.generate_table(self.tableWidget)
+                    
                 self.foundMatchLabel.setText(f"{len(self.data)} MATCHES FOUND")
                 self.tabsWidget.setCurrentIndex(self.tabs.index("RESULT"))
 
