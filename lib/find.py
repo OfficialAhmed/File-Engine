@@ -96,7 +96,7 @@ class File(Finder):
                 match by:
 
                     case "NAME":
-                        
+
                         if file[: file.find(".")].strip() == input:
                             self.add_detected_file(file, root)
 
@@ -104,7 +104,7 @@ class File(Finder):
 
                         if file.endswith(f".{input}"):
                             self.add_detected_file(file, root)
-                            
+
         else:
 
             for file in self.get_files():
@@ -131,13 +131,13 @@ class File(Finder):
 
             for root, file in self.get_files_recursive():
 
-                file_title:str = file[: file.find(".")].strip()
-                file_ext:str = file[file.find(".")+1:].strip()
-                
+                file_title: str = file[: file.find(".")].strip()
+                file_ext: str = file[file.find(".")+1:].strip()
+
                 match by:
 
                     case "TITLE":
-                        
+
                         match input:
                             case "ALPHABETS":
                                 if file_title.isalpha():
@@ -149,8 +149,30 @@ class File(Finder):
                             case "ALPHABETS":
                                 if file_ext.isalpha():
                                     self.add_detected_file(file, root)
+        else:
+
+            for file in self.get_files():
+
+                file_title: str = file[: file.find(".")].strip()
+                file_ext: str = file[file.find(".")+1:].strip()
+
+                match by:
+
+                    case "TITLE":
+
+                        match input:
+                            case "ALPHABETS":
+                                if file_title.isalpha():
+                                    self.add_detected_file(file)
+
+                    case "EXTENSION":
+
+                        match input:
+                            case "ALPHABETS":
+                                if file_ext.isalpha():
+                                    self.add_detected_file(file)
         return self.detected_files
-                        
+
 
 class Folder(Finder):
 

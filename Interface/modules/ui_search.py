@@ -353,39 +353,36 @@ class Response(Page):
             lambda: self.other_option_changed(3))
 
     def start_search_clicked(self):
-        
+
         path = self.pathLineEdit.text()
-        
+
         if not path:
             print("invalid: path input empty")
             return
-        
+
         self.controller.update_finder_param(
             path,
             self.isRecursiveCheckBox.isChecked()
         )
-        
-        
-    
 
         match self.tabs[self.tabsWidget.currentIndex()]:
-            
+
             case "BASIC":
-                
-                custom_input:str = self.titleLineEdit.text()
-                search_type:str = self.titleComboBox.currentText()
-                
+
+                custom_input: str = self.titleLineEdit.text()
+                search_type: str = self.titleComboBox.currentText()
+
                 if self.titleComboBox2.currentText() == "CONTAIN":
-                    
-                    txt:str = self.titleComboBox3.currentText()
+
+                    txt: str = self.titleComboBox3.currentText()
                     last_word = txt.split(" ")[-1]
-                    
+
                     if last_word == "Custom":
                         pass
                     elif last_word == "Excluding":
                         pass
                     else:
-                        
+
                         match txt:
                             case "Alphabets only":
                                 self.data = self.controller.get_files_by_title_only_alphabets()
@@ -405,21 +402,20 @@ class Response(Page):
                                 pass
                             case "Custom":
                                 pass
-                    
+
                 else:
                     pass
-                            
+
                 self.generate_table(self.tableWidget)
                 self.foundMatchLabel.setText(f"{len(self.data)} MATCHES FOUND")
                 self.tabsWidget.setCurrentIndex(self.tabs.index("RESULT"))
-            
+
             case "ADVANCED":
                 pass
-            
+
             case "RESULT":
                 # TODO: SHOW A DIALOG HERE
                 print("CANNOT START PROCESS. CHANGE THE TAB TO BASIC OR ADVANCED")
-            
 
 
 class Ui(Response):
