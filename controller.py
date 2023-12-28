@@ -101,7 +101,7 @@ class Controller:
         return self.FILE_FINDER.search("TITLE", "NUMBERS & SYMBOLS")
 
     def get_files_by_title_custom(self, input: str) -> dict:
-        return self.FILE_FINDER.search("TITLE", "CUSTOM", custom=input)
+        return self.FILE_FINDER.search("TITLE", "CUSTOM (REGEX)", custom=input)
 
     def get_files_by_title_alpha_exclude(self, input) -> dict:
         return self.FILE_FINDER.search("TITLE", "ALPHABETS EXCLUSION", exclude=input)

@@ -54,6 +54,12 @@ class File(Finder):
 
         self.file_counter = 0
         self.detected_files = {}
+        self.regex = {
+            "SYMBOLS":              r"^[@#$%^&*(){}~'_+\-.]+$",
+            "ALPHABETS & SYMBOLS":  r'^[a-zA-Z!@#$%^&*()_+.\\-]+|^[^\s/\\:*?"<>|]+$',
+            "ALPHABETS & NUMBERS":  r'^[a-zA-Z0-9]+$',
+            "NUMBERS & SYMBOLS":    r"^[0-9!@#$%^&*(){}~'_+\-.]+$"
+        }
 
     def set_path(self, path: str) -> None:
         self.path = path
@@ -129,189 +135,66 @@ class File(Finder):
 
     def search(self, by: str, input: str | list, exclude=[], custom="") -> dict:
 
-        if exclude:
-
-            # PRE CALCULATE THE REGEX FOR EXCLUSIONS
-            exclude = set(exclude)
-            num_regex = f"^[{''.join(set('0-9') - exclude)}]+$"
-            alpha_regex = f"^[{''.join(sorted(set('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') - exclude))}]+$"
-            symbol_regex = f"^[^{''.join(map(re.escape, exclude))}]+$"
-
         # RESET FILES ON EVERY SEARCH
         self.reset_detected_files()
+
+        if exclude:
+            
+            # CALCULATE REGEX AND EXCLUDING THE USER INPUT
+            exclude = set(exclude)
+            self.regex["NUMBERS EXCLUSION"] = f"^[{''.join(set('0-9') - exclude)}]+$"
+            self.regex["SYMBOLS EXCLUSION"] = "^[^" + "@" + "#$%^&*()" + "{}~'_+\-.]+$" # FIXME: doesnt work
+            self.regex["ALPHABETS EXCLUSION"] = f"^[{''.join(sorted(set('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') - exclude))}]+$"
+
+        def is_match(file: str, input: str | list) -> bool:
+
+            file_title: str = file[: file.rfind(".")].strip()
+            file_ext: str = file[file.rfind(".")+1:].strip()
+
+            check = file_title
+            if by == "EXTENSION":
+                check = file_ext
+
+            match input:
+
+                case "ALPHABETS":
+
+                    if check.isalpha():
+                        return True
+
+                case "CUSTOM (REGEX)":
+
+                    # (CONTAIN -> CUSTOM) OPTION CUSTOM INPUT LOOKING SPECIFIC INPUT IN TITLE
+                    try:
+                        if re.match(re.compile(custom), check):
+                            return True
+                    except re.error:
+                        print("regex invalid")
+
+                case _:
+
+                    if isinstance(input, list):
+                        # (EQUAL TO) OPTION CUSTOM INPUT BY USER LOOKING FOR SPECIFIC INPUT
+                        if check in input:
+                            return True
+                    else:
+                        if re.match(re.compile(self.regex.get(input)), check):
+                            return True
+
+            return False
 
         if self.is_recursive:
 
             for root, file in self.get_files_recursive():
+                if is_match(file, input):
+                    self.add_detected_file(file, root)
 
-                file_title: str = file[: file.rfind(".")].strip()
-                file_ext: str = file[file.rfind(".")+1:].strip()
-
-                match by:
-
-                    case "TITLE":
-                        match input:
-                            case "ALPHABETS":
-                                if file_title.isalpha():
-                                    self.add_detected_file(file, root)
-                            case "SYMBOLS":
-                                if re.match(re.compile(r'^[^\w\s]+$'), file_title):
-                                    self.add_detected_file(file, root)
-                            case "ALPHABETS & SYMBOLS":
-                                if re.match(re.compile(r'^[a-zA-Z!@#$%^&*()_+.\\-]+|^[^\s/\\:*?"<>|]+$'), file_title):
-                                    self.add_detected_file(file, root)
-                            case "ALPHABETS & NUMBERS":
-                                if re.match(re.compile(r'^[a-zA-Z0-9]+$'), file_title):
-                                    self.add_detected_file(file, root)
-                            case "NUMBERS & SYMBOLS":
-                                if re.match(re.compile(r'^[0-9!@#$%^&*()_+.\\-]+|^[^\s/\\:*?"<>|]+$'), file_title):
-                                    self.add_detected_file(file, root)
-                            case "ALPHABETS EXCLUSION":
-                                if re.match(re.compile(alpha_regex), file_title):
-                                    self.add_detected_file(file, root)
-                            case "NUMBERS EXCLUSION":
-                                if re.match(re.compile(num_regex), file_title):
-                                    self.add_detected_file(file, root)
-                            case "SYMBOLS EXCLUSION":
-                                if re.match(re.compile(symbol_regex), file_title):
-                                    self.add_detected_file(file, root)
-                            case "CUSTOM":
-                                # (CONTAIN -> CUSTOM) OPTION CUSTOM INPUT LOOKING SPECIFIC INPUT IN TITLE
-                                try:
-                                    if re.match(re.compile(custom), file_title):
-                                        self.add_detected_file(file, root)
-                                except re.error:
-                                    print("regex invalid")
-
-                            case _:
-                                # (EQUAL TO) OPTION CUSTOM INPUT BY USER LOOKING FOR SPECIFIC INPUT
-                                if file_title in input:
-                                    self.add_detected_file(file, root)
-
-                    case "EXTENSION":
-                        match input:
-                            case "ALPHABETS":
-                                if file_ext.isalpha():
-                                    self.add_detected_file(file, root)
-                            case "SYMBOLS":
-                                if re.match(re.compile(r'^[^\w\s]+$'), file_ext):
-                                    self.add_detected_file(file, root)
-                            case "ALPHABETS & SYMBOLS":
-                                if re.match(re.compile(r'^[a-zA-Z!@#$%^&*()_+.\\-]+|^[^\s/\\:*?"<>|]+$'), file_ext):
-                                    self.add_detected_file(file, root)
-                            case "ALPHABETS & NUMBERS":
-                                if re.match(re.compile(r'^[a-zA-Z0-9]+$'), file_ext):
-                                    self.add_detected_file(file, root)
-                            case "NUMBERS & SYMBOLS":
-                                if re.match(re.compile(r'^[0-9!@#$%^&*()_+.\\-]+|^[^\s/\\:*?"<>|]+$'), file_ext):
-                                    self.add_detected_file(file, root)
-                            case "ALPHABETS EXCLUSION":
-                                if re.match(re.compile(alpha_regex), file_ext):
-                                    self.add_detected_file(file, root)
-                            case "NUMBERS EXCLUSION":
-                                if re.match(re.compile(num_regex), file_ext):
-                                    self.add_detected_file(file, root)
-                            case "SYMBOLS EXCLUSION":
-                                if re.match(re.compile(symbol_regex), file_ext):
-                                    self.add_detected_file(file, root)
-                            case "CUSTOM":
-                                # (CONTAIN -> CUSTOM) OPTION CUSTOM INPUT LOOKING SPECIFIC INPUT IN TITLE
-                                try:
-                                    if re.match(re.compile(custom), file_ext):
-                                        self.add_detected_file(file, root)
-                                except re.error:
-                                    print("regex invalid")
-
-                            case _:
-                                # (EQUAL TO) OPTION CUSTOM INPUT BY USER LOOKING FOR SPECIFIC INPUT
-                                if file_ext in input:
-                                    self.add_detected_file(file, root)
         else:
 
             for file in self.get_files():
+                if is_match(file, input):
+                    self.add_detected_file(file)
 
-                file_title: str = file[: file.find(".")].strip()
-                file_ext: str = file[file.find(".")+1:].strip()
-
-                match by:
-
-                    case "TITLE":
-                        match input:
-                            case "ALPHABETS":
-                                if file_title.isalpha():
-                                    self.add_detected_file(file)
-                            case "SYMBOLS":
-                                if re.match(re.compile(r'^[^\w\s]+$'), file_title):
-                                    self.add_detected_file(file)
-                            case "ALPHABETS & SYMBOLS":
-                                if re.match(re.compile(r'^[a-zA-Z!@#$%^&*()_+.\\-]+|^[^\s/\\:*?"<>|]+$'), file_title):
-                                    self.add_detected_file(file)
-                            case "ALPHABETS & NUMBERS":
-                                if re.match(re.compile(r'^[a-zA-Z0-9]+$'), file_title):
-                                    self.add_detected_file(file)
-                            case "NUMBERS & SYMBOLS":
-                                if re.match(re.compile(r'^[0-9!@#$%^&*()_+.\\-]+|^[^\s/\\:*?"<>|]+$'), file_title):
-                                    self.add_detected_file(file)
-                            case "ALPHABETS EXCLUSION":
-                                if re.match(re.compile(alpha_regex), file_title):
-                                    self.add_detected_file(file)
-                            case "NUMBERS EXCLUSION":
-                                if re.match(re.compile(num_regex), file_title):
-                                    self.add_detected_file(file)
-                            case "SYMBOLS EXCLUSION":
-                                if re.match(re.compile(symbol_regex), file_title):
-                                    self.add_detected_file(file)
-                            case "CUSTOM":
-                                # (CONTAIN -> CUSTOM) OPTION CUSTOM INPUT LOOKING SPECIFIC INPUT IN TITLE
-                                try:
-                                    if re.match(re.compile(custom), file_title):
-                                        self.add_detected_file(file)
-                                except re.error:
-                                    print("regex invalid")
-
-                            case _:
-                                # (EQUAL TO) OPTION CUSTOM INPUT BY USER LOOKING FOR SPECIFIC INPUT
-                                if file_title in input:
-                                    self.add_detected_file(file)
-
-                    case "EXTENSION":
-                        match input:
-                            case "ALPHABETS":
-                                if file_ext.isalpha():
-                                    self.add_detected_file(file)
-                            case "SYMBOLS":
-                                if re.match(re.compile(r'^[^\w\s]+$'), file_ext):
-                                    self.add_detected_file(file)
-                            case "ALPHABETS & SYMBOLS":
-                                if re.match(re.compile(r'^[a-zA-Z!@#$%^&*()_+.\\-]+|^[^\s/\\:*?"<>|]+$'), file_ext):
-                                    self.add_detected_file(file)
-                            case "ALPHABETS & NUMBERS":
-                                if re.match(re.compile(r'^[a-zA-Z0-9]+$'), file_ext):
-                                    self.add_detected_file(file)
-                            case "NUMBERS & SYMBOLS":
-                                if re.match(re.compile(r'^[0-9!@#$%^&*()_+.\\-]+|^[^\s/\\:*?"<>|]+$'), file_ext):
-                                    self.add_detected_file(file)
-                            case "ALPHABETS EXCLUSION":
-                                if re.match(re.compile(alpha_regex), file_ext):
-                                    self.add_detected_file(file)
-                            case "NUMBERS EXCLUSION":
-                                if re.match(re.compile(num_regex), file_ext):
-                                    self.add_detected_file(file)
-                            case "SYMBOLS EXCLUSION":
-                                if re.match(re.compile(symbol_regex), file_ext):
-                                    self.add_detected_file(file)
-                            case "CUSTOM":
-                                # (CONTAIN -> CUSTOM) OPTION CUSTOM INPUT LOOKING SPECIFIC INPUT IN TITLE
-                                try:
-                                    if re.match(re.compile(custom), file_ext):
-                                        self.add_detected_file(file)
-                                except re.error:
-                                    print("regex invalid")
-
-                            case _:
-                                # (EQUAL TO) OPTION CUSTOM INPUT BY USER LOOKING FOR SPECIFIC INPUT
-                                if file_ext in input:
-                                    self.add_detected_file(file)
         return self.detected_files
 
 

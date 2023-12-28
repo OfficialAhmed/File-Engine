@@ -90,7 +90,7 @@ class Page(Common):
                 "Numbers Excluding",
                 "Symbols only",
                 "Symbols Excluding",
-                "Custom"
+                "Custom (REGEX)"
             ),
             "EQUAL TO": ()
         },
@@ -104,7 +104,7 @@ class Page(Common):
                 "Numbers Excluding",
                 "Symbols only",
                 "Symbols Excluding",
-                "Custom"
+                "Custom (REGEX)"
             ),
             "EQUAL TO": ()
         }
@@ -240,7 +240,7 @@ class Response(Page):
             cb = self.advancedTitleComboBox3
             le = self.advancedTitleLineEdit
 
-        if cb.currentText().split(" ")[-1] in ("Excluding", "Custom"):
+        if cb.currentText().split(" ")[-1] in ("Excluding", "(REGEX)"):
             le.setHidden(False)
         else:
             le.setHidden(True)
@@ -279,7 +279,7 @@ class Response(Page):
 
             case 3:
 
-                if self.metadataComboBox3.currentText().split(" ")[-1] in ("Custom", "Excluding"):
+                if self.metadataComboBox3.currentText().split(" ")[-1] in ("(REGEX)", "Excluding"):
                     self.metadataLineEdit.setHidden(False)
                 else:
                     self.metadataLineEdit.setHidden(True)
@@ -333,7 +333,7 @@ class Response(Page):
 
             case 3:
 
-                if self.otherComboBox3.currentText().split(" ")[-1] in ("Custom", "Excluding"):
+                if self.otherComboBox3.currentText().split(" ")[-1] in ("(REGEX)", "Excluding"):
                     self.otherLineEdit.setHidden(False)
                 else:
                     self.otherLineEdit.setHidden(True)
@@ -390,7 +390,7 @@ class Response(Page):
                         case "Alphabets Excluding": self.data = self.controller.get_files_by_title_alpha_exclude(custom_input)
                         case "Alphabets & Numbers": self.data = self.controller.get_files_by_title_alpha_num()
                         case "Alphabets & Symbols": self.data = self.controller.get_files_by_title_alpha_symbol()
-                        case "Custom":              self.data = self.controller.get_files_by_title_custom(self.titleLineEdit.text().strip())
+                        case "Custom (REGEX)":      self.data = self.controller.get_files_by_title_custom(self.titleLineEdit.text().strip())
 
                 # SHOW THE RESULT PAGE AFTER RENDERING TABLE
                 self.generate_table(self.tableWidget)
