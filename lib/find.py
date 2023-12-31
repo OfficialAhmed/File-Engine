@@ -12,8 +12,54 @@ class Finder:
     def __init__(self) -> None:
 
         self.path = ""
+        self.counter = 0
         self.is_recursive = None
         self.is_case_sensitive = None
+        self.detected_matches = {}
+        self.regex = {
+            "SYMBOLS":              r"^[@#$%^&*(){}~'_+\-.]+$",
+            "ALPHABETS & SYMBOLS":  r'^[a-zA-Z!@#$%^&*()_+.\\-]+|^[^\s/\\:*?"<>|]+$',
+            "ALPHABETS & NUMBERS":  r'^[a-zA-Z0-9]+$',
+            "NUMBERS & SYMBOLS":    r"^[0-9!@#$%^&*(){}~'_+\-.]+$"
+        }
+
+    def exclude_regex(self, exclude):
+        self.regex["NUMBERS EXCLUSION"] = f"^[{''.join(set('0-9') - exclude)}]+$"
+        self.regex["SYMBOLS EXCLUSION"] = "^[^" + "@" + "#$%^&*()" + "{}~'_+\-.]+$"  # FIXME: doesnt work
+        self.regex["ALPHABETS EXCLUSION"] = f"^[{''.join(sorted(set('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') - exclude))}]+$"
+        
+    def set_path(self, path: str) -> None:
+        self.path = path
+
+    def reset_detected_matches(self) -> None:
+        self.folder_counter = 0
+        self.detected_folders = {}
+
+    def set_recursive(self, rec: bool):
+        self.is_recursive = rec
+
+    def set_case_sensitive(self, cs: bool) -> None:
+        self.is_case_sensitive = cs
+
+    def add_detected_match(self, object_name: str, match: str, root='') -> None:
+        """
+            Store the detected file in a dict along its size and root
+        """
+
+        # SET DEFAULT PATH - FOR FOLDER DETECTION
+        if not root:
+            root = self.path
+
+        # CONVERT BYTES TO MB
+        size = os.path.getsize(f"{root}/{match}") / (1024*1024)
+
+        self.detected_matches[self.counter] = {
+            object_name: match,
+            "root": root,
+            "size": round(size, 3)
+        }
+
+        self.counter += 1
 
     def get_files(self) -> str:
         """
@@ -23,7 +69,7 @@ class Finder:
         for file in os.listdir(self.path):
             yield file
 
-    def get_files_recursive(self) -> tuple[str:str]:
+    def get_recursive(self) -> tuple[str:str]:
         """
             Yields tuple (root, file) recursively thorugh all folders
 
@@ -34,118 +80,67 @@ class Finder:
             for file in files:
                 yield (root, file)
 
-    def get_folders(self):
+    def get_folders(self) -> str:
 
         for file in os.listdir(self.path):
             yield file
 
-    def get_folders_recursive(self):
+    def get_folders_recursive(self) -> tuple[str:str]:
 
         for root, folders, _ in os.walk(self.path):
 
             for folder in folders:
                 yield (root, folder)
 
+    def update_finder_param(self, path: str, is_recursive: bool, is_case_sensetive: bool) -> None:
+        self.set_path(path)
+        self.set_recursive(is_recursive)
+        self.set_case_sensitive(is_case_sensetive)
+
+    def get_by_title(self, input: list) -> dict:
+        return self.search("TITLE", input)
+
+    def get_by_title_only_alphabets(self) -> dict:
+        return self.search("TITLE", "ALPHABETS")
+
+    def get_by_title_only_symbols(self) -> dict:
+        return self.search("TITLE", "SYMBOLS")
+
+    def get_by_title_alpha_symbol(self) -> dict:
+        return self.search("TITLE", "ALPHABETS & SYMBOLS")
+
+    def get_by_title_alpha_num(self) -> dict:
+        return self.search("TITLE", "ALPHABETS & NUMBERS")
+
+    def get_by_title_num_symbol(self) -> dict:
+        return self.search("TITLE", "NUMBERS & SYMBOLS")
+
+    def get_by_title_custom(self, input: str) -> dict:
+        return self.search("TITLE", "CUSTOM (REGEX)", custom=input)
+
+    def get_by_title_alpha_exclude(self, input) -> dict:
+        return self.search("TITLE", "ALPHABETS EXCLUSION", exclude=input)
+
+    def get_by_title_num_exclude(self, input) -> dict:
+        return self.search("TITLE", "NUMBERS EXCLUSION", exclude=input)
+
+    def get_by_title_symbol_exclude(self, input) -> dict:
+        return self.search("TITLE", "SYMBOLS EXCLUSION", exclude=input)
 
 class File(Finder):
 
     def __init__(self) -> None:
         super().__init__()
 
-        self.file_counter = 0
-        self.detected_files = {}
-        self.regex = {
-            "SYMBOLS":              r"^[@#$%^&*(){}~'_+\-.]+$",
-            "ALPHABETS & SYMBOLS":  r'^[a-zA-Z!@#$%^&*()_+.\\-]+|^[^\s/\\:*?"<>|]+$',
-            "ALPHABETS & NUMBERS":  r'^[a-zA-Z0-9]+$',
-            "NUMBERS & SYMBOLS":    r"^[0-9!@#$%^&*(){}~'_+\-.]+$"
-        }
-
-    def set_path(self, path: str) -> None:
-        self.path = path
-
-    def set_recursive(self, rec: bool) -> None:
-        self.is_recursive = rec
-
-    def set_case_sensitive(self, cs: bool) -> None:
-        self.is_case_sensitive = cs
-
-    def reset_detected_files(self) -> None:
-        self.file_counter = 0
-        self.detected_files = {}
-
-    def add_detected_file(self, file, root=''):
-        """
-            Store the detected file in a dict along its size and root
-        """
-
-        # SET DEFAULT PATH - FOR FOLDER DETECTION
-        if not root:
-            root = self.path
-
-        # CONVERT BYTES TO MB
-        size = os.path.getsize(f"{root}/{file}") / (1024*1024)
-
-        self.detected_files[self.file_counter] = {
-            "file": file,
-            "root": root,
-            "size": round(size, 3)
-        }
-
-        self.file_counter += 1
-
-    def find(self, by: str, input: str):
-
-        # TODO: METHOD TO BE TRUNCATED
-        # RESET FILES ON EVERY SEARCH
-        self.reset_detected_files()
-
-        if self.is_recursive:
-
-            for root, file in self.get_files_recursive():
-
-                match by:
-
-                    case "NAME":
-
-                        if file[: file.find(".")].strip() == input:
-                            self.add_detected_file(file, root)
-
-                    case "EXTENSION":
-
-                        if file.endswith(f".{input}"):
-                            self.add_detected_file(file, root)
-
-        else:
-
-            for file in self.get_files():
-
-                match by:
-
-                    case "NAME":
-                        if file[: file.find(".")].strip() == input:
-                            self.add_detected_file(file)
-
-                    case "EXTENSION":
-
-                        if file.endswith(f".{input}"):
-                            self.add_detected_file(file)
-
-        return self.detected_files
-
     def search(self, by: str, input: str | list, exclude=[], custom="") -> dict:
 
         # RESET FILES ON EVERY SEARCH
-        self.reset_detected_files()
+        self.reset_detected_matches()
 
         if exclude:
-            
-            # CALCULATE REGEX AND EXCLUDING THE USER INPUT
             exclude = set(exclude)
-            self.regex["NUMBERS EXCLUSION"] = f"^[{''.join(set('0-9') - exclude)}]+$"
-            self.regex["SYMBOLS EXCLUSION"] = "^[^" + "@" + "#$%^&*()" + "{}~'_+\-.]+$" # FIXME: doesnt work
-            self.regex["ALPHABETS EXCLUSION"] = f"^[{''.join(sorted(set('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') - exclude))}]+$"
-
+            self.exclude_regex(exclude)
+            
         def is_match(file: str, input: str | list) -> bool:
 
             file_title: str = file[: file.rfind(".")].strip()
@@ -185,17 +180,17 @@ class File(Finder):
 
         if self.is_recursive:
 
-            for root, file in self.get_files_recursive():
+            for root, file in self.get_recursive():
                 if is_match(file, input):
-                    self.add_detected_file(file, root)
+                    self.add_detected_match("file", file, root)
 
         else:
 
             for file in self.get_files():
                 if is_match(file, input):
-                    self.add_detected_file(file)
+                    self.add_detected_match("file", file)
 
-        return self.detected_files
+        return self.detected_matches
 
 
 class Folder(Finder):
@@ -203,62 +198,59 @@ class Folder(Finder):
     def __init__(self) -> None:
         super().__init__()
 
-        self.folder_counter = 0
-        self.detected_folders = {}
-
-    def set_path(self, path: str):
-        self.path = path
-
-    def reset_detected_folders(self) -> None:
-        self.folder_counter = 0
-        self.detected_folders = {}
-
-    def set_recursive(self, rec: bool):
-        self.is_recursive = rec
-
-    def set_case_sensitive(self, cs: bool) -> None:
-        self.is_case_sensitive = cs
-
-    def add_detected_folder(self, folder, root=''):
+    def search(self, by, input: str | list, exclude=[], custom="") -> dict:
         """
-            Store the detected file in a dict along its size and root
+            arg: by 
+                A PLACEHOLDER NEVER USED FOR FOLDER SEARCH ... TO BE FIXED
         """
-
-        # SET DEFAULT PATH - FOR FOLDER DETECTION
-        if not root:
-            root = self.path
-
-        self.detected_folders[self.folder_counter] = {
-            "folder": folder,
-            "root": root,
-            "size": "-"
-        }
-
-        self.folder_counter += 1
-
-    def find(self, by: str, input: str):
-
+        
         # RESET FILES ON EVERY SEARCH
-        self.reset_detected_folders()
+        self.reset_detected_matches()
+
+        if exclude:
+            exclude = set(exclude)
+            self.exclude_regex(exclude)
+            
+        def is_match(folder: str, input: str | list) -> bool:
+
+            match input:
+
+                case "ALPHABETS":
+
+                    if folder.isalpha():
+                        return True
+
+                case "CUSTOM (REGEX)":
+
+                    # (CONTAIN -> CUSTOM) OPTION CUSTOM INPUT LOOKING SPECIFIC INPUT IN TITLE
+                    try:
+                        if re.match(re.compile(custom), folder):
+                            return True
+                    except re.error:
+                        print("regex invalid")
+
+                case _:
+
+                    if isinstance(input, list):
+                        # (EQUAL TO) OPTION CUSTOM INPUT BY USER LOOKING FOR SPECIFIC INPUT
+                        if folder in input:
+                            return True
+                    else:
+                        if re.match(re.compile(self.regex.get(input)), folder):
+                            return True
+
+            return False
 
         if self.is_recursive:
 
-            for root, folder in self.get_folders_recursive():
-
-                match by:
-
-                    case "NAME":
-                        if folder == input:
-                            self.add_detected_folder(folder, root)
+            for root, file in self.get_recursive():
+                if is_match(file, input):
+                    self.add_detected_match("folder", file, root)
 
         else:
 
-            for folder in self.get_files():
+            for file in self.get_files():
+                if is_match(file, input):
+                    self.add_detected_match("folder", file)
 
-                match by:
-
-                    case "NAME":
-                        if folder == input:
-                            self.add_detected_folder(folder)
-
-        return self.detected_folders
+        return self.detected_matches

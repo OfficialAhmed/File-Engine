@@ -8,7 +8,7 @@
     <x>0</x>
     <y>0</y>
     <width>965</width>
-    <height>590</height>
+    <height>637</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -582,7 +582,7 @@ Button */
         <number>0</number>
        </property>
        <item>
-        <widget class="QFrame" name="leftMenuBg">
+        <widget class="QFrame" name="leftMenuBg_test">
          <property name="minimumSize">
           <size>
            <width>60</width>
@@ -1108,7 +1108,7 @@ Button */
         </widget>
        </item>
        <item>
-        <widget class="QFrame" name="extraLeftBox">
+        <widget class="QFrame" name="extraLeftBox_test">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -1516,7 +1516,7 @@ p, li { white-space: pre-wrap; }
            <number>0</number>
           </property>
           <item>
-           <widget class="QFrame" name="contentTopBg">
+           <widget class="QFrame" name="contentTopBg_test">
             <property name="minimumSize">
              <size>
               <width>0</width>
@@ -1850,7 +1850,7 @@ p, li { white-space: pre-wrap; }
                  <number>0</number>
                 </property>
                 <item>
-                 <widget class="QFrame" name="pagesContainer">
+                 <widget class="QFrame" name="pageContainer">
                   <property name="styleSheet">
                    <string notr="true"/>
                   </property>
@@ -1891,7 +1891,7 @@ background-position: center;
 background-repeat: no-repeat;</string>
                       </property>
                      </widget>
-                     <widget class="QWidget" name="widgets">
+                     <widget class="QWidget" name="DeletePageWidget">
                       <property name="styleSheet">
                        <string notr="true">b</string>
                       </property>
@@ -1912,93 +1912,13 @@ background-repeat: no-repeat;</string>
                         <number>10</number>
                        </property>
                        <item>
-                        <widget class="QFrame" name="frame_content_wid_3">
-                         <property name="frameShape">
-                          <enum>QFrame::NoFrame</enum>
+                        <widget class="QFrame" name="mainFrame">
+                         <property name="minimumSize">
+                          <size>
+                           <width>0</width>
+                           <height>150</height>
+                          </size>
                          </property>
-                         <property name="frameShadow">
-                          <enum>QFrame::Raised</enum>
-                         </property>
-                         <layout class="QHBoxLayout" name="horizontalLayout_11">
-                          <item>
-                           <layout class="QGridLayout" name="first_layout">
-                            <item row="0" column="0">
-                             <widget class="QLabel" name="PageTitle_label">
-                              <property name="font">
-                               <font>
-                                <family>Segoe UI</family>
-                                <pointsize>10</pointsize>
-                                <weight>50</weight>
-                                <italic>false</italic>
-                                <bold>false</bold>
-                               </font>
-                              </property>
-                              <property name="styleSheet">
-                               <string notr="true"/>
-                              </property>
-                              <property name="text">
-                               <string>DELETE</string>
-                              </property>
-                             </widget>
-                            </item>
-                            <item row="1" column="0">
-                             <widget class="QComboBox" name="LookupType_comboBox">
-                              <property name="font">
-                               <font>
-                                <family>Segoe UI</family>
-                                <pointsize>10</pointsize>
-                                <weight>50</weight>
-                                <italic>false</italic>
-                                <bold>false</bold>
-                               </font>
-                              </property>
-                              <property name="autoFillBackground">
-                               <bool>false</bool>
-                              </property>
-                              <property name="styleSheet">
-                               <string notr="true">background-color: rgb(33, 37, 43);</string>
-                              </property>
-                              <property name="iconSize">
-                               <size>
-                                <width>16</width>
-                                <height>16</height>
-                               </size>
-                              </property>
-                              <property name="frame">
-                               <bool>true</bool>
-                              </property>
-                              <item>
-                               <property name="text">
-                                <string>FILES</string>
-                               </property>
-                              </item>
-                              <item>
-                               <property name="text">
-                                <string>FOLDERS</string>
-                               </property>
-                              </item>
-                             </widget>
-                            </item>
-                            <item row="1" column="1">
-                             <spacer name="horizontalSpacer">
-                              <property name="orientation">
-                               <enum>Qt::Horizontal</enum>
-                              </property>
-                              <property name="sizeHint" stdset="0">
-                               <size>
-                                <width>40</width>
-                                <height>20</height>
-                               </size>
-                              </property>
-                             </spacer>
-                            </item>
-                           </layout>
-                          </item>
-                         </layout>
-                        </widget>
-                       </item>
-                       <item>
-                        <widget class="QFrame" name="row_1">
                          <property name="frameShape">
                           <enum>QFrame::StyledPanel</enum>
                          </property>
@@ -2021,271 +1941,8 @@ background-repeat: no-repeat;</string>
                           <property name="bottomMargin">
                            <number>0</number>
                           </property>
-                         </layout>
-                        </widget>
-                       </item>
-                       <item>
-                        <widget class="QFrame" name="frame_content_wid_4">
-                         <property name="frameShape">
-                          <enum>QFrame::NoFrame</enum>
-                         </property>
-                         <property name="frameShadow">
-                          <enum>QFrame::Raised</enum>
-                         </property>
-                         <layout class="QHBoxLayout" name="horizontalLayout_13">
                           <item>
-                           <layout class="QGridLayout" name="second_layout">
-                            <property name="bottomMargin">
-                             <number>0</number>
-                            </property>
-                            <item row="0" column="1">
-                             <widget class="QLineEdit" name="currentPath_lineEdit">
-                              <property name="minimumSize">
-                               <size>
-                                <width>0</width>
-                                <height>30</height>
-                               </size>
-                              </property>
-                              <property name="toolTip">
-                               <string>Enter the path where should the lookup process begin</string>
-                              </property>
-                              <property name="styleSheet">
-                               <string notr="true">background-color: rgb(33, 37, 43);</string>
-                              </property>
-                              <property name="text">
-                               <string/>
-                              </property>
-                              <property name="placeholderText">
-                               <string>Enter the path here</string>
-                              </property>
-                             </widget>
-                            </item>
-                            <item row="0" column="2">
-                             <widget class="QPushButton" name="browseCurrentPath_btn">
-                              <property name="minimumSize">
-                               <size>
-                                <width>150</width>
-                                <height>30</height>
-                               </size>
-                              </property>
-                              <property name="font">
-                               <font>
-                                <family>Segoe UI</family>
-                                <pointsize>10</pointsize>
-                                <weight>50</weight>
-                                <italic>false</italic>
-                                <bold>false</bold>
-                               </font>
-                              </property>
-                              <property name="cursor">
-                               <cursorShape>PointingHandCursor</cursorShape>
-                              </property>
-                              <property name="styleSheet">
-                               <string notr="true">background-color: rgb(52, 59, 72);</string>
-                              </property>
-                              <property name="text">
-                               <string>OPEN</string>
-                              </property>
-                              <property name="icon">
-                               <iconset>
-                                <normaloff>../images/icons/folder_outline.svg</normaloff>../images/icons/folder_outline.svg</iconset>
-                              </property>
-                             </widget>
-                            </item>
-                           </layout>
-                          </item>
-                         </layout>
-                        </widget>
-                       </item>
-                       <item>
-                        <widget class="QFrame" name="frame_content_wid_2">
-                         <property name="frameShape">
-                          <enum>QFrame::NoFrame</enum>
-                         </property>
-                         <property name="frameShadow">
-                          <enum>QFrame::Raised</enum>
-                         </property>
-                         <layout class="QHBoxLayout" name="horizontalLayout_10">
-                          <item>
-                           <layout class="QGridLayout" name="third_layout">
-                            <property name="bottomMargin">
-                             <number>0</number>
-                            </property>
-                            <item row="1" column="1">
-                             <widget class="QLineEdit" name="currentLookupInput_lineEdit">
-                              <property name="minimumSize">
-                               <size>
-                                <width>0</width>
-                                <height>30</height>
-                               </size>
-                              </property>
-                              <property name="styleSheet">
-                               <string notr="true">background-color: rgb(33, 37, 43);</string>
-                              </property>
-                              <property name="text">
-                               <string/>
-                              </property>
-                              <property name="placeholderText">
-                               <string>Enter your input</string>
-                              </property>
-                             </widget>
-                            </item>
-                            <item row="1" column="2">
-                             <widget class="QPushButton" name="startLookup_btn">
-                              <property name="enabled">
-                               <bool>false</bool>
-                              </property>
-                              <property name="minimumSize">
-                               <size>
-                                <width>150</width>
-                                <height>30</height>
-                               </size>
-                              </property>
-                              <property name="font">
-                               <font>
-                                <family>Segoe UI</family>
-                                <pointsize>10</pointsize>
-                                <weight>50</weight>
-                                <italic>false</italic>
-                                <bold>false</bold>
-                               </font>
-                              </property>
-                              <property name="cursor">
-                               <cursorShape>PointingHandCursor</cursorShape>
-                              </property>
-                              <property name="toolTip">
-                               <string>Start lookup process</string>
-                              </property>
-                              <property name="styleSheet">
-                               <string notr="true">background-color: rgb(52, 59, 72);</string>
-                              </property>
-                              <property name="text">
-                               <string>START</string>
-                              </property>
-                              <property name="icon">
-                               <iconset>
-                                <normaloff>../images/icons/start.svg</normaloff>../images/icons/start.svg</iconset>
-                              </property>
-                             </widget>
-                            </item>
-                            <item row="1" column="0">
-                             <widget class="QComboBox" name="currentLookupBy_comboBox">
-                              <property name="font">
-                               <font>
-                                <family>Segoe UI</family>
-                                <pointsize>10</pointsize>
-                                <weight>50</weight>
-                                <italic>false</italic>
-                                <bold>false</bold>
-                               </font>
-                              </property>
-                              <property name="autoFillBackground">
-                               <bool>false</bool>
-                              </property>
-                              <property name="styleSheet">
-                               <string notr="true">background-color: rgb(33, 37, 43);</string>
-                              </property>
-                              <property name="iconSize">
-                               <size>
-                                <width>16</width>
-                                <height>16</height>
-                               </size>
-                              </property>
-                              <property name="frame">
-                               <bool>true</bool>
-                              </property>
-                              <item>
-                               <property name="text">
-                                <string>NAME</string>
-                               </property>
-                              </item>
-                              <item>
-                               <property name="text">
-                                <string>PATTERN</string>
-                               </property>
-                              </item>
-                              <item>
-                               <property name="text">
-                                <string>EXTENSION</string>
-                               </property>
-                              </item>
-                             </widget>
-                            </item>
-                            <item row="2" column="0">
-                             <widget class="QCheckBox" name="isRecursive_checkBox">
-                              <property name="enabled">
-                               <bool>true</bool>
-                              </property>
-                              <property name="toolTip">
-                               <string>Find files recursively through the selected path</string>
-                              </property>
-                              <property name="autoFillBackground">
-                               <bool>false</bool>
-                              </property>
-                              <property name="styleSheet">
-                               <string notr="true"/>
-                              </property>
-                              <property name="text">
-                               <string>RECURSIVE</string>
-                              </property>
-                              <property name="checked">
-                               <bool>true</bool>
-                              </property>
-                             </widget>
-                            </item>
-                            <item row="0" column="0">
-                             <widget class="QLabel" name="LookuByTitle_label">
-                              <property name="styleSheet">
-                               <string notr="true">color: rgb(113, 126, 149);</string>
-                              </property>
-                              <property name="lineWidth">
-                               <number>1</number>
-                              </property>
-                              <property name="text">
-                               <string>LOOKUP BY</string>
-                              </property>
-                              <property name="alignment">
-                               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                              </property>
-                             </widget>
-                            </item>
-                           </layout>
-                          </item>
-                         </layout>
-                        </widget>
-                       </item>
-                       <item>
-                        <widget class="QFrame" name="row_3">
-                         <property name="minimumSize">
-                          <size>
-                           <width>0</width>
-                           <height>150</height>
-                          </size>
-                         </property>
-                         <property name="frameShape">
-                          <enum>QFrame::StyledPanel</enum>
-                         </property>
-                         <property name="frameShadow">
-                          <enum>QFrame::Raised</enum>
-                         </property>
-                         <layout class="QHBoxLayout" name="horizontalLayout_12">
-                          <property name="spacing">
-                           <number>0</number>
-                          </property>
-                          <property name="leftMargin">
-                           <number>0</number>
-                          </property>
-                          <property name="topMargin">
-                           <number>0</number>
-                          </property>
-                          <property name="rightMargin">
-                           <number>0</number>
-                          </property>
-                          <property name="bottomMargin">
-                           <number>0</number>
-                          </property>
-                          <item>
-                           <widget class="QTableWidget" name="table_layout">
+                           <widget class="QTableWidget" name="tableLayout">
                             <property name="sizePolicy">
                              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                               <horstretch>0</horstretch>
@@ -2660,181 +2317,227 @@ background-repeat: no-repeat;</string>
                            </widget>
                           </item>
                           <item>
-                           <layout class="QVBoxLayout" name="optionBtns_layout">
+                           <layout class="QHBoxLayout" name="bottomHLayout">
+                            <property name="spacing">
+                             <number>0</number>
+                            </property>
+                            <property name="leftMargin">
+                             <number>40</number>
+                            </property>
+                            <property name="rightMargin">
+                             <number>40</number>
+                            </property>
                             <item>
-                             <widget class="QPushButton" name="delete_btn">
-                              <property name="enabled">
-                               <bool>false</bool>
-                              </property>
-                              <property name="minimumSize">
-                               <size>
-                                <width>150</width>
-                                <height>30</height>
-                               </size>
-                              </property>
-                              <property name="font">
-                               <font>
-                                <family>Segoe UI</family>
-                                <pointsize>10</pointsize>
-                                <weight>50</weight>
-                                <italic>false</italic>
-                                <bold>false</bold>
-                               </font>
-                              </property>
-                              <property name="cursor">
-                               <cursorShape>PointingHandCursor</cursorShape>
-                              </property>
-                              <property name="toolTip">
-                               <string>Delete all selected items</string>
-                              </property>
-                              <property name="styleSheet">
-                               <string notr="true">background-color: rgb(52, 59, 72);</string>
-                              </property>
-                              <property name="text">
+                             <widget class="QGroupBox" name="groupBox">
+                              <property name="title">
                                <string>DELETE</string>
                               </property>
-                              <property name="icon">
-                               <iconset>
-                                <normaloff>../images/icons/delete sign.svg</normaloff>../images/icons/delete sign.svg</iconset>
-                              </property>
-                              <property name="iconSize">
-                               <size>
-                                <width>30</width>
-                                <height>30</height>
-                               </size>
-                              </property>
-                             </widget>
-                            </item>
-                            <item>
-                             <widget class="QPushButton" name="restore_btn">
-                              <property name="enabled">
-                               <bool>false</bool>
-                              </property>
-                              <property name="minimumSize">
-                               <size>
-                                <width>150</width>
-                                <height>30</height>
-                               </size>
-                              </property>
-                              <property name="font">
-                               <font>
-                                <family>Segoe UI</family>
-                                <pointsize>10</pointsize>
-                                <weight>50</weight>
-                                <italic>false</italic>
-                                <bold>false</bold>
-                               </font>
-                              </property>
-                              <property name="cursor">
-                               <cursorShape>PointingHandCursor</cursorShape>
-                              </property>
-                              <property name="toolTip">
-                               <string>Restore last deleted process</string>
-                              </property>
-                              <property name="styleSheet">
-                               <string notr="true">background-color: rgb(52, 59, 72);</string>
-                              </property>
-                              <property name="text">
-                               <string>RESTORE</string>
-                              </property>
-                              <property name="icon">
-                               <iconset>
-                                <normaloff>../images/icons/restore file.svg</normaloff>../images/icons/restore file.svg</iconset>
-                              </property>
-                              <property name="iconSize">
-                               <size>
-                                <width>30</width>
-                                <height>30</height>
-                               </size>
-                              </property>
-                             </widget>
-                            </item>
-                            <item>
-                             <widget class="QPushButton" name="save_btn">
-                              <property name="enabled">
-                               <bool>false</bool>
-                              </property>
-                              <property name="minimumSize">
-                               <size>
-                                <width>150</width>
-                                <height>30</height>
-                               </size>
-                              </property>
-                              <property name="font">
-                               <font>
-                                <family>Segoe UI</family>
-                                <pointsize>10</pointsize>
-                                <weight>50</weight>
-                                <italic>false</italic>
-                                <bold>false</bold>
-                               </font>
-                              </property>
-                              <property name="cursor">
-                               <cursorShape>PointingHandCursor</cursorShape>
-                              </property>
-                              <property name="toolTip">
-                               <string>Store current lookup</string>
-                              </property>
-                              <property name="styleSheet">
-                               <string notr="true">background-color: rgb(52, 59, 72);</string>
-                              </property>
-                              <property name="text">
-                               <string>SAVE</string>
-                              </property>
-                              <property name="icon">
-                               <iconset>
-                                <normaloff>../images/icons/file download.svg</normaloff>../images/icons/file download.svg</iconset>
-                              </property>
-                              <property name="iconSize">
-                               <size>
-                                <width>30</width>
-                                <height>30</height>
-                               </size>
-                              </property>
-                             </widget>
-                            </item>
-                            <item>
-                             <widget class="QPushButton" name="load_btn">
-                              <property name="enabled">
-                               <bool>false</bool>
-                              </property>
-                              <property name="minimumSize">
-                               <size>
-                                <width>150</width>
-                                <height>30</height>
-                               </size>
-                              </property>
-                              <property name="font">
-                               <font>
-                                <family>Segoe UI</family>
-                                <pointsize>10</pointsize>
-                                <weight>50</weight>
-                                <italic>false</italic>
-                                <bold>false</bold>
-                               </font>
-                              </property>
-                              <property name="cursor">
-                               <cursorShape>PointingHandCursor</cursorShape>
-                              </property>
-                              <property name="toolTip">
-                               <string>Load previous lookup</string>
-                              </property>
-                              <property name="styleSheet">
-                               <string notr="true">background-color: rgb(52, 59, 72);</string>
-                              </property>
-                              <property name="text">
-                               <string>LOAD</string>
-                              </property>
-                              <property name="icon">
-                               <iconset>
-                                <normaloff>../images/icons/file upload.svg</normaloff>../images/icons/file upload.svg</iconset>
-                              </property>
-                              <property name="iconSize">
-                               <size>
-                                <width>30</width>
-                                <height>30</height>
-                               </size>
-                              </property>
+                              <layout class="QGridLayout" name="gridLayout_2">
+                               <item row="0" column="0">
+                                <layout class="QGridLayout" name="gridLayout">
+                                 <item row="2" column="0">
+                                  <widget class="QPushButton" name="deleteBtn">
+                                   <property name="enabled">
+                                    <bool>false</bool>
+                                   </property>
+                                   <property name="minimumSize">
+                                    <size>
+                                     <width>150</width>
+                                     <height>30</height>
+                                    </size>
+                                   </property>
+                                   <property name="font">
+                                    <font>
+                                     <family>Segoe UI</family>
+                                     <pointsize>10</pointsize>
+                                     <weight>50</weight>
+                                     <italic>false</italic>
+                                     <bold>false</bold>
+                                    </font>
+                                   </property>
+                                   <property name="cursor">
+                                    <cursorShape>PointingHandCursor</cursorShape>
+                                   </property>
+                                   <property name="toolTip">
+                                    <string>Load previous lookup</string>
+                                   </property>
+                                   <property name="styleSheet">
+                                    <string notr="true">background-color: rgb(52, 59, 72);</string>
+                                   </property>
+                                   <property name="text">
+                                    <string>DELETE</string>
+                                   </property>
+                                   <property name="icon">
+                                    <iconset>
+                                     <normaloff>../images/icons/file upload.svg</normaloff>../images/icons/file upload.svg</iconset>
+                                   </property>
+                                   <property name="iconSize">
+                                    <size>
+                                     <width>30</width>
+                                     <height>30</height>
+                                    </size>
+                                   </property>
+                                  </widget>
+                                 </item>
+                                 <item row="2" column="2">
+                                  <widget class="QPushButton" name="exportBtn">
+                                   <property name="enabled">
+                                    <bool>false</bool>
+                                   </property>
+                                   <property name="minimumSize">
+                                    <size>
+                                     <width>150</width>
+                                     <height>30</height>
+                                    </size>
+                                   </property>
+                                   <property name="font">
+                                    <font>
+                                     <family>Segoe UI</family>
+                                     <pointsize>10</pointsize>
+                                     <weight>50</weight>
+                                     <italic>false</italic>
+                                     <bold>false</bold>
+                                    </font>
+                                   </property>
+                                   <property name="cursor">
+                                    <cursorShape>PointingHandCursor</cursorShape>
+                                   </property>
+                                   <property name="toolTip">
+                                    <string>Restore last deleted process</string>
+                                   </property>
+                                   <property name="styleSheet">
+                                    <string notr="true">background-color: rgb(52, 59, 72);</string>
+                                   </property>
+                                   <property name="text">
+                                    <string>EXPORT</string>
+                                   </property>
+                                   <property name="icon">
+                                    <iconset>
+                                     <normaloff>../images/icons/restore file.svg</normaloff>../images/icons/restore file.svg</iconset>
+                                   </property>
+                                   <property name="iconSize">
+                                    <size>
+                                     <width>30</width>
+                                     <height>30</height>
+                                    </size>
+                                   </property>
+                                  </widget>
+                                 </item>
+                                 <item row="2" column="1">
+                                  <widget class="QPushButton" name="restoreBtn">
+                                   <property name="enabled">
+                                    <bool>false</bool>
+                                   </property>
+                                   <property name="minimumSize">
+                                    <size>
+                                     <width>150</width>
+                                     <height>30</height>
+                                    </size>
+                                   </property>
+                                   <property name="font">
+                                    <font>
+                                     <family>Segoe UI</family>
+                                     <pointsize>10</pointsize>
+                                     <weight>50</weight>
+                                     <italic>false</italic>
+                                     <bold>false</bold>
+                                    </font>
+                                   </property>
+                                   <property name="cursor">
+                                    <cursorShape>PointingHandCursor</cursorShape>
+                                   </property>
+                                   <property name="toolTip">
+                                    <string>Store current lookup</string>
+                                   </property>
+                                   <property name="styleSheet">
+                                    <string notr="true">background-color: rgb(52, 59, 72);</string>
+                                   </property>
+                                   <property name="text">
+                                    <string>RESTORE</string>
+                                   </property>
+                                   <property name="icon">
+                                    <iconset>
+                                     <normaloff>../images/icons/file download.svg</normaloff>../images/icons/file download.svg</iconset>
+                                   </property>
+                                   <property name="iconSize">
+                                    <size>
+                                     <width>30</width>
+                                     <height>30</height>
+                                    </size>
+                                   </property>
+                                  </widget>
+                                 </item>
+                                 <item row="2" column="3">
+                                  <widget class="QPushButton" name="importBtn">
+                                   <property name="enabled">
+                                    <bool>false</bool>
+                                   </property>
+                                   <property name="minimumSize">
+                                    <size>
+                                     <width>150</width>
+                                     <height>30</height>
+                                    </size>
+                                   </property>
+                                   <property name="font">
+                                    <font>
+                                     <family>Segoe UI</family>
+                                     <pointsize>10</pointsize>
+                                     <weight>50</weight>
+                                     <italic>false</italic>
+                                     <bold>false</bold>
+                                    </font>
+                                   </property>
+                                   <property name="cursor">
+                                    <cursorShape>PointingHandCursor</cursorShape>
+                                   </property>
+                                   <property name="toolTip">
+                                    <string>Restore last deleted process</string>
+                                   </property>
+                                   <property name="styleSheet">
+                                    <string notr="true">background-color: rgb(52, 59, 72);</string>
+                                   </property>
+                                   <property name="text">
+                                    <string>IMPORT</string>
+                                   </property>
+                                   <property name="icon">
+                                    <iconset>
+                                     <normaloff>../images/icons/restore file.svg</normaloff>../images/icons/restore file.svg</iconset>
+                                   </property>
+                                   <property name="iconSize">
+                                    <size>
+                                     <width>30</width>
+                                     <height>30</height>
+                                    </size>
+                                   </property>
+                                  </widget>
+                                 </item>
+                                 <item row="1" column="0">
+                                  <layout class="QHBoxLayout" name="totalRecordsHL">
+                                   <property name="spacing">
+                                    <number>20</number>
+                                   </property>
+                                   <item>
+                                    <widget class="QLabel" name="totalRecordsTextLabel">
+                                     <property name="text">
+                                      <string>TOTAL RECORDS: </string>
+                                     </property>
+                                     <property name="textFormat">
+                                      <enum>Qt::AutoText</enum>
+                                     </property>
+                                    </widget>
+                                   </item>
+                                   <item>
+                                    <widget class="QLabel" name="totalRecordsLabel">
+                                     <property name="text">
+                                      <string>9750</string>
+                                     </property>
+                                    </widget>
+                                   </item>
+                                  </layout>
+                                 </item>
+                                </layout>
+                               </item>
+                              </layout>
                              </widget>
                             </item>
                            </layout>
@@ -2844,10 +2547,10 @@ background-repeat: no-repeat;</string>
                        </item>
                       </layout>
                      </widget>
-                     <widget class="QWidget" name="new_page">
+                     <widget class="QWidget" name="NewPage_test">
                       <layout class="QVBoxLayout" name="verticalLayout_20">
                        <item>
-                        <widget class="QLabel" name="label">
+                        <widget class="QLabel" name="label_test">
                          <property name="text">
                           <string>NEW PAGE TEST</string>
                          </property>
