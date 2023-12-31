@@ -46,6 +46,276 @@ class Constant:
         return self._RESOURCES_PATH
 
 
+class Table:
+
+    table_headers = (
+        "FILE | FOLDER",
+        "SOURCE",
+        "SIZE (MB)",
+        "SELECT / DESELECT"
+    )
+
+    def __init__(self) -> None:
+        self.data = {}
+        self.checkboxes = []
+        self.controller = Controller()
+        self.controller.update_remover_param()
+        self.isSpecsSet = False     # LIMIT TABLE DESIGN TO ONLY ONE TIME
+
+    def render(self, table_widget: QTableWidget, rows=1, columns=4):
+        """
+            RENDER TABLE WITH THE HEADERS ONLY
+        """
+
+        self.table = table_widget
+
+        if not self.isSpecsSet:
+            self.set_specs()
+            self.isSpecsSet = True
+
+        total_rows = rows
+        total_columns = columns
+
+        # CLEAR PREVIOUS ROWS
+        self.checkboxes.clear()
+        table_widget.setRowCount(0)
+
+        table_widget.setRowCount(total_rows)
+        table_widget.setColumnCount(total_columns)
+
+        # RENDER TABLE HEADERS
+        table_widget.setHorizontalHeaderLabels(self.table_headers)
+
+        self.retranslate_headers()
+
+    def set_data(self, data):
+        self.data = data
+
+    def set_specs(self):
+
+        palette = QPalette()
+        brush = QBrush(QColor(221, 221, 221, 255))
+        brush.setStyle(Qt.SolidPattern)
+
+        brush1 = QBrush(QColor(0, 0, 0, 0))
+        brush1.setStyle(Qt.SolidPattern)
+
+        brush2 = QBrush(QColor(0, 0, 0, 255))
+        brush2.setStyle(Qt.NoBrush)
+
+        palette.setBrush(QPalette.Active, QPalette.Text, brush)
+        palette.setBrush(QPalette.Active, QPalette.Button, brush1)
+        palette.setBrush(QPalette.Active, QPalette.WindowText, brush)
+        palette.setBrush(QPalette.Active, QPalette.ButtonText, brush)
+
+        palette.setBrush(QPalette.Active, QPalette.Base, brush2)
+        palette.setBrush(QPalette.Inactive, QPalette.Text, brush)
+        palette.setBrush(QPalette.Disabled, QPalette.Text, brush)
+        palette.setBrush(QPalette.Active, QPalette.Window, brush1)
+        palette.setBrush(QPalette.Inactive, QPalette.Base, brush2)
+        palette.setBrush(QPalette.Inactive, QPalette.Button, brush1)
+        palette.setBrush(QPalette.Inactive, QPalette.Window, brush1)
+        palette.setBrush(QPalette.Disabled, QPalette.Button, brush1)
+        palette.setBrush(QPalette.Inactive, QPalette.WindowText, brush)
+        palette.setBrush(QPalette.Inactive, QPalette.ButtonText, brush)
+        palette.setBrush(QPalette.Disabled, QPalette.WindowText, brush)
+        palette.setBrush(QPalette.Disabled, QPalette.ButtonText, brush)
+
+        self.table.setFrameShape(QFrame.NoFrame)
+        self.table.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        self.table.setSizeAdjustPolicy(
+            QAbstractScrollArea.AdjustToContents)
+        self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.table.setSelectionMode(QAbstractItemView.NoSelection)
+        self.table.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.table.setShowGrid(True)
+        self.table.setGridStyle(Qt.SolidLine)
+        self.table.setSortingEnabled(True)
+        self.table.horizontalHeader().setVisible(True)
+        self.table.horizontalHeader().setCascadingSectionResizes(True)
+        self.table.horizontalHeader().setDefaultSectionSize(200)
+        self.table.horizontalHeader().setStretchLastSection(True)
+        self.table.verticalHeader().setVisible(False)
+        self.table.verticalHeader().setCascadingSectionResizes(True)
+        self.table.verticalHeader().setHighlightSections(False)
+        self.table.verticalHeader().setStretchLastSection(False)
+
+    def fill(self):
+        """
+            POPULATE THE TABLE USING THE DATA DICTIONARY
+        """
+
+        data = self.data.values()
+
+        # RENDER TABLE HEADERS
+        self.render(
+            self.table, len(data)
+        ) if self.data else self.render(
+            self.table
+        )
+
+        # POPULATE THE TABLE WITH DATA
+        for row_index, row_data in enumerate(data):
+
+            for col_index, (_, value) in enumerate(row_data.items()):
+
+                item = QTableWidgetItem(str(value))
+                self.table.setItem(row_index, col_index, item)
+
+                # RENDER CHECK ITEMS FOR EACH TABLE-ROW
+                if col_index == 2:
+
+                    checkbox = QCheckBox()
+                    checkbox.setChecked(True)
+
+                    self.table.setCellWidget(
+                        row_index,                      # ROW INDEX
+                        3,                              # LAST COLUMN
+                        checkbox                        # ITEM
+                    )
+
+                    self.checkboxes.append(checkbox)
+
+        # RESIZE COLUMNS - BASED ON CONTENT SIZE
+        for col_index in range(self.table.columnCount()):
+            self.table.resizeColumnToContents(col_index)
+
+    def retranslate_headers(self):
+
+        for col, txt in enumerate(self.table_headers):
+
+            header_item = QTableWidgetItem(
+                QCoreApplication.translate("MainWindow", txt)
+            )
+
+            self.table.setHorizontalHeaderItem(col, header_item)
+
+    def table_header_clicked(self, header_section: int) -> None:
+        """
+        ### ON TABLE HEADER CLICK 
+
+            Zero-indexed header
+            * On click header `0` `1` `2` -> re-render checkboxes
+            * On click header `3`         -> (De)Select Checkboxes
+        """
+
+        if header_section == 3:
+
+            # SELECT/DESELCT ALL CHECKBOXES
+            for checkbox in self.checkboxes:
+                checkbox.toggle()
+
+        else:
+
+            # RE-RENDER TABLE CHECKBOXES TO REARRANGE THEM BASED ON THE NEW SORT
+            total_checkboxes = len(self.checkboxes)
+            self.checkboxes.clear()
+
+            for row_indx in range(total_checkboxes):
+
+                checkbox = QCheckBox()
+                checkbox.setChecked(False)
+
+                self.table.setCellWidget(
+                    row_indx,                            # ROW INDEX
+                    3,                                   # LAST COLUMN
+                    checkbox                             # ITEM
+                )
+
+                self.checkboxes.append(checkbox)
+
+    def remove_table_rows(self) -> None:
+        """
+            DELETE ALL CHECKED ROWS AFTER REMOVING THE FILES
+        """
+
+        if not self.rows_to_remove:
+            self.controller.show_dialog(
+                "NO DATA HAS BEEN SELECTED", is_dialog=False
+            )
+            return None
+
+        # REMOVE SELECTED CHECKBOXES
+        for row in reversed(self.rows_to_remove):
+            self.table.removeRow(row)
+            self.checkboxes.pop(row)
+
+    def get_path(self, file_extension="") -> str | None:
+        """
+            ### RENDER A WINDOW TO GET FILE/FOLDER PATH 
+
+            - IF EXTENSION PROVIDED GET `FILE`, ELSE GET `FOLDER` PATH 
+        """
+
+        # ALLOW ONE FILE OF THE GIVEN EXTENSION
+        if file_extension:
+            path, _ = QFileDialog.getOpenFileName(
+                None,
+                "PICK A FILE TO CONTINUE",
+                "",                                     # PATH ON-WINDOW RENDER
+                f"*.{file_extension}",
+                options=QFileDialog.Options(),
+            )
+
+        # ALLOW FOLDER PATH ONLY
+        else:
+            path = QFileDialog.getExistingDirectory(
+                None,
+                "PICK A FOLDER TO CONTINUE",
+                "",                                     # PATH ON-WINDOW RENDER
+                options=QFileDialog.Options(),
+            )
+
+        return path if path else None
+
+    def export_process_clicked(self) -> None:
+        """
+        EXPORT CURRENT DATA FOR LATER USE (FOR THE LOADING PROCESS)
+        """
+
+        # IF NO DATA HAS BEEN FOUND, RETURN
+        if not self.data:
+            self.controller.show_dialog(
+                f"TO EXPORT THE CURRENT PROCESS, YOU NEED TO START THE PROCESS FIRST!",
+                "I",
+                is_dialog=False
+            )
+
+            return None
+
+        # GET FILE DESTINATION
+        folder_path = self.get_path()
+        path = f"{folder_path}\\{datetime.now().strftime('%d-%m-%Y %H_%M_%S')}.json"
+
+        if folder_path:
+
+            with open(path, "w") as file:
+                json.dump(self.data, file)
+
+            # CHECK IF FILE EXPORTED SUCCESSFULLY
+            if os.path.exists(path) and os.path.getsize(path) > 0:
+                self.controller.show_dialog(
+                    f"PROCESS EXPORTED SUCCESSFULLY!",
+                    "I",
+                    is_dialog=False
+                )
+
+            else:
+                self.controller.show_dialog(
+                    f"SOMETHING WENT WRONG! PROCESS WASN'T EXPORTED. PLEASE TRY AGAIN!",
+                    "C",
+                    is_dialog=False
+                )
+
+    def import_process_clicked(self) -> None:
+        """
+            OVERWRITE THE DATA FROM A JSON FILE GENERATED BY THE SAVE PROCESS
+            THEN POPULATE THE DATA ONTO A NEW GENERATED TABLE
+        """
+        self.data = json.load(open(self.get_path("json")))
+        self.fill()
+
+
 class Common:
     """
         COMMON METHODS BETWEEN FEATURES
@@ -55,19 +325,13 @@ class Common:
         self.constant = Constant()
 
         self.html = Html()
+        self.table = Table()
         self.constant = Constant()
         self.controller = Controller()
         self.progressBar = ProgressBar()
         self.controller.update_remover_param()
 
         self.data = {}
-        self.checkboxes = []
-        self.table_headers = (
-            "FILE | FOLDER",
-            "SOURCE",
-            "SIZE (MB)",
-            "SELECT / DESELECT"
-        )
 
         self.path_input = ""
         self.cache_file = self.controller.CACHE_FILE
@@ -139,53 +403,6 @@ class Common:
         with open(self.cache_file, "w+") as file:
             json.dump(cache, file)
 
-    def export_process_clicked(self) -> None:
-        """
-        EXPORT CURRENT DATA FOR LATER USE (FOR THE LOADING PROCESS)
-        """
-
-        # IF NO DATA HAS BEEN FOUND, RETURN
-        if not self.data:
-            self.controller.show_dialog(
-                f"TO EXPORT THE CURRENT PROCESS, YOU NEED TO START THE PROCESS FIRST!",
-                "I",
-                is_dialog=False
-            )
-
-            return None
-
-        # GET FILE DESTINATION
-        folder_path = self.get_path()
-        path = f"{folder_path}\\{self.get_timestamp()}.json"
-
-        if folder_path:
-
-            with open(path, "w") as file:
-                json.dump(self.data, file)
-
-            # CHECK IF FILE EXPORTED SUCCESSFULLY
-            if os.path.exists(path) and os.path.getsize(path) > 0:
-                self.controller.show_dialog(
-                    f"PROCESS EXPORTED SUCCESSFULLY!",
-                    "I",
-                    is_dialog=False
-                )
-
-            else:
-                self.controller.show_dialog(
-                    f"SOMETHING WENT WRONG! PROCESS WASN'T EXPORTED. PLEASE TRY AGAIN!",
-                    "C",
-                    is_dialog=False
-                )
-
-    def import_process_clicked(self) -> None:
-        """
-            OVERWRITE THE DATA FROM A JSON FILE GENERATED BY THE SAVE PROCESS
-            THEN POPULATE THE DATA ONTO A NEW GENERATED TABLE
-        """
-        self.data = json.load(open(self.get_path("json")))
-        self.generate_table(self.table)
-
     def set_user_path(
         self, path: str,
         is_changed_manually: bool
@@ -219,71 +436,6 @@ class Common:
 
         for format in formats:
             self.lookupFormat.addItem(format)
-
-    def get_data(self) -> (dict, bool):
-        """
-        ### Begin lookup process. 
-            * Deactivate all btns and reactivate upon end of process 
-        """
-
-        input: str = self.lookupInput.text()
-        type: str = self.lookupType.currentText()
-        format: str = self.lookupFormat.currentText()
-        is_recursive: bool = self.isRecursive.isChecked()
-
-        # UPDATE THE FINDER PARAMETERS
-        self.controller.update_finder_param(
-            self.path_input,
-            is_recursive,
-        )
-
-        data = {}
-
-        # TERMINATE IF EITHER INPUTS ARE EMPTY
-        if not input or not self.path_input:
-            self.controller.show_dialog(
-                "SEARCH INPUT IS EMPTY!",
-                "w",
-                is_dialog=False
-            )
-
-            return (data, True)                 # FAILED = True
-
-        # TERMINATE IF ENTERED PATH CANNOT BE FOUND
-        if not os.path.exists(self.currentPathInput.text()):
-            self.controller.show_dialog(
-                "FOLDER DOESN'T EXIST. DOUBLE CHECK THE ENTERED PATH",
-                "w",
-                is_dialog=False
-            )
-
-            return (data, True)                 # FAILED = True
-
-        try:
-            # SEARCH BY SELECTED FORMAT
-            if type == "FILES":
-                match format:
-                    case "NAME":
-                        data = self.controller.get_files_by_name(input)
-
-                    case "EXTENSION":
-                        data = self.controller.get_files_by_extension(input)
-
-            elif type == "FOLDERS":
-                match format:
-                    case "NAME":
-                        data = self.controller.get_folders_by_name(input)
-
-            return (data, False)
-
-        except Exception as e:
-            self.controller.show_dialog(
-                f"UNKNOWN ERROR OCCURED | {str(e)}",
-                "c",
-                is_dialog=False
-            )
-
-            return (data, True)                 # FAILED = True
 
     def set_icon(self, widget: QWidget, name: str, size=(18, 18)) -> str:
 
@@ -330,163 +482,6 @@ class Common:
         """
 
         return 100 / total_files
-
-    def get_timestamp(self):
-        return datetime.now().strftime("%d-%m-%Y %H_%M_%S")
-
-    def init_table(self, table_layout, rows=1, columns=4):
-        """
-        Render a new table widget with headers
-        """
-
-        total_rows = rows
-        total_columns = columns
-
-        self.table = table_layout
-
-        # CLEAR PREVIOUS ROWS
-        self.checkboxes.clear()
-        table_layout.setRowCount(0)
-
-        table_layout.setRowCount(total_rows)
-        table_layout.setColumnCount(total_columns)
-
-        # RENDER TABLE HEADERS
-        table_layout.setHorizontalHeaderLabels(self.table_headers)
-
-        self.retranslateTableHeaders()
-
-    def generate_table(self, table_layout):
-        """
-            GENERATE THE TABLE USING THE SELF.DATA
-        """
-
-        data = self.data.values()
-
-        # RENDER TABLE HEADERS
-        self.init_table(
-            table_layout, len(data)
-        ) if self.data else self.init_table(
-            table_layout
-        )
-
-        # POPULATE THE TABLE WITH DATA
-        for row_index, row_data in enumerate(data):
-
-            for col_index, (_, value) in enumerate(row_data.items()):
-
-                item = QTableWidgetItem(str(value))
-                table_layout.setItem(row_index, col_index, item)
-
-                # RENDER CHECK ITEMS FOR EACH TABLE-ROW
-                if col_index == 2:
-
-                    checkbox = QCheckBox()
-                    checkbox.setChecked(True)
-
-                    table_layout.setCellWidget(
-                        row_index,                      # ROW INDEX
-                        3,                              # LAST COLUMN
-                        checkbox                        # ITEM
-                    )
-
-                    self.checkboxes.append(checkbox)
-
-        # RESIZE COLUMNS - BASED ON CONTENT SIZE
-        for col_index in range(table_layout.columnCount()):
-            table_layout.resizeColumnToContents(col_index)
-
-    def retranslateTableHeaders(self):
-
-        for col, txt in enumerate(self.table_headers):
-
-            header_item = QTableWidgetItem(
-                QCoreApplication.translate("MainWindow", txt)
-            )
-
-            self.table.setHorizontalHeaderItem(col, header_item)
-
-    def table_header_clicked(self, header_section: int) -> None:
-        """
-        ### ON TABLE HEADER CLICK 
-
-            Zero-indexed header
-            * On click header `0` `1` `2` -> re-render checkboxes
-            * On click header `3`         -> (De)Select Checkboxes
-        """
-
-        if header_section == 3:
-
-            # SELECT/DESELCT ALL CHECKBOXES
-            for checkbox in self.checkboxes:
-                checkbox.toggle()
-
-        else:
-
-            # RE-RENDER TABLE CHECKBOXES TO REARRANGE THEM BASED ON THE NEW SORT
-            total_checkboxes = len(self.checkboxes)
-            self.checkboxes.clear()
-
-            for row_indx in range(total_checkboxes):
-
-                checkbox = QCheckBox()
-                checkbox.setChecked(False)
-
-                self.table.setCellWidget(
-                    row_indx,                            # ROW INDEX
-                    3,                                   # LAST COLUMN
-                    checkbox                             # ITEM
-                )
-
-                self.checkboxes.append(checkbox)
-
-    def remove_table_rows(self) -> None:
-        """
-            DELETE ALL CHECKED ROWS AFTER REMOVING THE FILES
-        """
-
-        if not self.rows_to_remove:
-            self.controller.show_dialog(
-                "NO DATA HAS BEEN SELECTED", is_dialog=False
-            )
-            return None
-
-        # REMOVE SELECTED CHECKBOXES
-        for row in reversed(self.rows_to_remove):
-            self.table.removeRow(row)
-            self.checkboxes.pop(row)
-
-    def start_lookup_clicked(self):
-
-        if self.controller.show_dialog(
-            "WOULD YOU LIKE TO START THE SEARCHING PROCESS?",
-            "ARE YOU SURE?"
-        ):
-
-            # CACHE USER INPUTS
-            self.export_cache()
-
-            # SEARCH PROCESS
-            self.startBtn.setEnabled(False)
-            self.data, is_failed = self.get_data()
-            self.startBtn.setEnabled(True)
-
-            # THE PROCESS FAILED TO FETCH DATA. A MESSAGE HAS BEEN SHOWN TO THE USER.
-            if is_failed:
-                return None
-
-            # PATH EXISTED BUT NO FILES HAVE BEEN FOUND
-            if not self.data:
-                self.init_table(self.table)
-
-                self.controller.show_dialog(
-                    "NO DATA HAS BEEN FOUND!",          # MESSAGE
-                    "ITEMS CANNOT BE FOUND!",           # WINDOW TITLE
-                    is_dialog=False                     # FALSE = INFORMATIONAL
-                )
-                return None
-
-            self.generate_table(self.table)
 
 
 class Html:

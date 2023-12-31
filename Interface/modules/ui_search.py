@@ -1,14 +1,14 @@
 
-import re
 from PySide6.QtCore import QCoreApplication, QSize, Qt
 from PySide6.QtGui import QCursor
 from PySide6.QtWidgets import (
-    QAbstractItemView, QAbstractScrollArea, QCheckBox, QComboBox,
+    QCheckBox, QComboBox,
     QGridLayout, QGroupBox, QHBoxLayout,  QLabel, QLineEdit, QPushButton,
     QSizePolicy, QSpacerItem, QTabWidget, QTableWidget, QVBoxLayout, QWidget
 )
 
 from Interface.environment import Common
+from lib.find import File, Folder
 
 
 class Page(Common):
@@ -90,7 +90,7 @@ class Page(Common):
                 "Numbers Excluding",
                 "Symbols only",
                 "Symbols Excluding",
-                "Custom"
+                "Custom (REGEX)"
             ),
             "EQUAL TO": ()
         },
@@ -104,7 +104,7 @@ class Page(Common):
                 "Numbers Excluding",
                 "Symbols only",
                 "Symbols Excluding",
-                "Custom"
+                "Custom (REGEX)"
             ),
             "EQUAL TO": ()
         }
@@ -240,7 +240,7 @@ class Response(Page):
             cb = self.advancedTitleComboBox3
             le = self.advancedTitleLineEdit
 
-        if cb.currentText().split(" ")[-1] in ("Excluding", "Custom"):
+        if cb.currentText().split(" ")[-1] in ("Excluding", "(REGEX)"):
             le.setHidden(False)
         else:
             le.setHidden(True)
@@ -279,7 +279,7 @@ class Response(Page):
 
             case 3:
 
-                if self.metadataComboBox3.currentText().split(" ")[-1] in ("Custom", "Excluding"):
+                if self.metadataComboBox3.currentText().split(" ")[-1] in ("(REGEX)", "Excluding"):
                     self.metadataLineEdit.setHidden(False)
                 else:
                     self.metadataLineEdit.setHidden(True)
@@ -333,7 +333,7 @@ class Response(Page):
 
             case 3:
 
-                if self.otherComboBox3.currentText().split(" ")[-1] in ("Custom", "Excluding"):
+                if self.otherComboBox3.currentText().split(" ")[-1] in ("(REGEX)", "Excluding"):
                     self.otherLineEdit.setHidden(False)
                 else:
                     self.otherLineEdit.setHidden(True)
@@ -358,52 +358,87 @@ class Response(Page):
         path = self.pathLineEdit.text()
 
         if not path:
-            print("invalid: path input empty")
+            self.controller.show_dialog(
+                msg="PATH IS EMPTY!",
+                mode="w",
+                is_dialog=False
+            )
             return
 
-        self.controller.update_finder_param(
-            path,
-            self.isRecursiveCheckBox.isChecked(),
-            self.isCaseSensitiveCheckBox.isChecked()
-        )
+        if not self.controller.show_dialog(
+            "WOULD YOU LIKE TO START THE SEARCHING PROCESS?",
+            "ARE YOU SURE?"
+        ):
+            return
 
-        match self.tabs[self.tabsWidget.currentIndex()]:
+        try:
 
-            case "BASIC":
+            match self.tabs[self.tabsWidget.currentIndex()]:
 
-                search_type: str = self.titleComboBox.currentText()
-                custom_input: list = self.titleLineEdit.text().replace(" ", "").split(",")
+                case "BASIC":
 
-                if self.titleComboBox2.currentText() != "CONTAIN":
-                    
-                    self.data = self.controller.get_files_by_title(
-                        custom_input
+                    search_type: str = self.searchTypeComboBox.currentText()
+                    custom_input: list = self.titleLineEdit.text().replace(" ", "").split(",")
+
+                    finder = File()
+                    if search_type == "FOLDERS":
+                        finder = Folder()
+
+                    finder.update_finder_param(
+                        path,
+                        self.isRecursive.isChecked(),
+                        self.isCaseSensitiveCheckBox.isChecked()
                     )
 
-                else:
-                    match self.titleComboBox3.currentText():
-                        case "Symbols only":        self.data = self.controller.get_files_by_title_only_symbols()
-                        case "Alphabets only":      self.data = self.controller.get_files_by_title_only_alphabets()
-                        case "Numbers & Symbols":   self.data = self.controller.get_files_by_title_num_symbol()
-                        case "Numbers Excluding":   self.data = self.controller.get_files_by_title_num_exclude(custom_input)
-                        case "Symbols Excluding":   self.data = self.controller.get_files_by_title_symbol_exclude(custom_input)
-                        case "Alphabets Excluding": self.data = self.controller.get_files_by_title_alpha_exclude(custom_input)
-                        case "Alphabets & Numbers": self.data = self.controller.get_files_by_title_alpha_num()
-                        case "Alphabets & Symbols": self.data = self.controller.get_files_by_title_alpha_symbol()
-                        case "Custom":              self.data = self.controller.get_files_by_title_custom(self.titleLineEdit.text().strip())
+                    if self.titleComboBox2.currentText() != "CONTAIN":
+                        self.data = finder.get_by_title(
+                            custom_input
+                        )
 
-                # SHOW THE RESULT PAGE AFTER RENDERING TABLE
-                self.generate_table(self.tableWidget)
-                    
-                self.foundMatchLabel.setText(f"{len(self.data)} MATCHES FOUND")
-                self.tabsWidget.setCurrentIndex(self.tabs.index("RESULT"))
+                    else:
+                        match self.titleComboBox3.currentText():
+                            case "Symbols only":        self.data = finder.get_by_title_only_symbols()
+                            case "Alphabets only":      self.data = finder.get_by_title_only_alphabets()
+                            case "Numbers & Symbols":   self.data = finder.get_by_title_num_symbol()
+                            case "Numbers Excluding":   self.data = finder.get_by_title_num_exclude(custom_input)
+                            case "Symbols Excluding":   self.data = finder.get_by_title_symbol_exclude(custom_input)
+                            case "Alphabets Excluding": self.data = finder.get_by_title_alpha_exclude(custom_input)
+                            case "Alphabets & Numbers": self.data = finder.get_by_title_alpha_num()
+                            case "Alphabets & Symbols": self.data = finder.get_by_title_alpha_symbol()
+                            case "Custom (REGEX)":      self.data = finder.get_by_title_custom(self.titleLineEdit.text().strip())
 
-            case "ADVANCED":
-                pass
+                    self.table.set_data(self.data)
+                    self.table.fill()
 
-            case "RESULT":
-                # TODO: SHOW A DIALOG HERE
-                print("CANNOT START PROCESS. CHANGE THE TAB TO BASIC OR ADVANCED")
+                    # SHOW THE RESULT PAGE AFTER RENDERING TABLE
+                    self.foundMatchLabel.setText(
+                        f"{len(self.data)} MATCHES FOUND"
+                        )
+                    self.tabsWidget.setCurrentIndex(self.tabs.index("RESULT"))
+
+                    if not self.data:
+                        self.controller.show_dialog(
+                            "NO DATA HAS BEEN FOUND!",  # MESSAGE
+                            "ITEMS CANNOT BE FOUND!",   # WINDOW TITLE
+                            is_dialog=False             # FALSE = INFORMATIONAL
+                        )
+
+                case "ADVANCED":
+                    pass
+
+                case "RESULT":
+                    self.controller.show_dialog(
+                        "CANNOT START THE PROCESS. CHANGE THE TAB TO BASIC OR ADVANCED",
+                        "INVALID TAB SELECTED",
+                        is_dialog=False
+                    )
+
+        except Exception as e:
+            self.controller.show_dialog(
+                f"UNKNOWN ERROR OCCURED | {str(e)}",
+                "c",
+                is_dialog=False
+            )
 
 
 class Ui(Response):
@@ -526,46 +561,7 @@ class Ui(Response):
             self.startSearchBtn
         )
 
-        """
-        ===================================================================
-                                TABLE CONTENT
-        ===================================================================
-        """
-
-        sizePolicy3 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        sizePolicy3.setHorizontalStretch(0)
-        sizePolicy3.setVerticalStretch(0)
-        sizePolicy3.setHeightForWidth(
-            self.tableWidget.sizePolicy().hasHeightForWidth()
-        )
-        self.tableWidget.setSizePolicy(sizePolicy3)
-
-        self.init_table(self.tableWidget)
-
-        """
-        ===================================================================
-                           PALLETE AND BRUSHES
-        ===================================================================
-        """
-
-        self.tableWidget.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
-        self.tableWidget.setSizeAdjustPolicy(
-            QAbstractScrollArea.AdjustToContents)
-        self.tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.tableWidget.setSelectionMode(QAbstractItemView.NoSelection)
-        self.tableWidget.setSelectionBehavior(QAbstractItemView.SelectRows)
-        self.tableWidget.setShowGrid(True)
-        self.tableWidget.setGridStyle(Qt.SolidLine)
-        self.tableWidget.setSortingEnabled(True)
-        self.tableWidget.horizontalHeader().setVisible(True)
-        self.tableWidget.horizontalHeader().setCascadingSectionResizes(True)
-        self.tableWidget.horizontalHeader().setDefaultSectionSize(200)
-        self.tableWidget.horizontalHeader().setStretchLastSection(True)
-        self.tableWidget.verticalHeader().setVisible(False)
-        self.tableWidget.verticalHeader().setCascadingSectionResizes(True)
-        self.tableWidget.verticalHeader().setHighlightSections(False)
-        self.tableWidget.verticalHeader().setStretchLastSection(False)
-        self.bottomHL.setContentsMargins(-1, 0, -1, -1)
+        self.table.render(self.tableWidget)
 
         self.resultBottomLHSpacer = QSpacerItem(
             40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
@@ -575,6 +571,13 @@ class Ui(Response):
                             SET STYLING
         ===================================================================
         """
+
+        size = (20, 20)
+
+        self.set_icon(
+            self.browsePathBtn, "folder_outline", size
+        )
+
         self.searchMainVL.setSpacing(5)
         self.verticalLayout.setSpacing(10)
         self.advancedTabMainVL.setSpacing(10)

@@ -360,7 +360,7 @@ class Ui(Common):
         )
         self.tableWidget.setSizePolicy(sizePolicy3)
 
-        self.init_table(self.tableWidget)
+        self.table.render(self.tableWidget)
 
         """
         ===================================================================
@@ -509,7 +509,7 @@ class Ui(Common):
 
         # ON TABLE-HEADER CLICK
         self.tableWidget.horizontalHeader().sectionClicked.connect(
-            self.table_header_clicked
+            self.table.table_header_clicked
         )
 
         return self.widgets
@@ -646,7 +646,7 @@ class Ui(Common):
         self.lookupByLineEdit.hide()
 
         self.tableWidget.setSortingEnabled(True)
-        self.retranslateTableHeaders()
+        self.table.retranslate_headers()
 
         # SET CACHED DATA
         self.import_cache()
