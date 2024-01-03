@@ -359,50 +359,6 @@ class Common:
         self.lookupFormat:     QComboBox = lookupFormat
         self.currentPathInput: QLineEdit = currentPath
 
-    def import_cache(self) -> None:
-
-        # IF CACHE FOUND
-        if os.path.exists(self.controller.CACHE_FILE):
-            cache: dict = json.load(open(self.cache_file)).get("delete page")
-
-            self.lookupInput.setText(cache.get("lookupInput"))
-            self.isRecursive.setChecked(cache.get("IsRecursive"))
-            self.currentPathInput.setText(cache.get("currentPath"))
-            self.lookupType.setCurrentText(cache.get("lookupType"))
-
-            self.path_input = cache.get("currentPath")
-
-            # UPDATE LOOKUP FORMAT ACCORDING TO THE CACHED LOOKUP TYPE
-            self.change_lookup_format()
-
-            self.lookupFormat.setCurrentText(cache.get("lookupFormat"))
-
-    def export_cache(self) -> None:
-
-        # TODO: CHECK IF BOTH CACHES ARE THE SAME, SKIP EXPORTING - NO NEED TO WASTE TIME IN WRITING
-        cache = {}
-
-        # IF CACHE FOUND
-        if os.path.exists(self.cache_file):
-            cache: dict = json.load(open(self.cache_file))
-
-        search = self.lookupInput.text()
-        path = self.currentPathInput.text()
-        lu_type = self.lookupType.currentText()
-        recursive = self.isRecursive.isChecked()
-        lu_frmt = self.lookupFormat.currentText()
-
-        cache["delete page"] = {
-            "lookupType":   lu_type,
-            "currentPath":  path,
-            "lookupFormat": lu_frmt,
-            "lookupInput":  search,
-            "IsRecursive":  recursive,
-        }
-
-        with open(self.cache_file, "w+") as file:
-            json.dump(cache, file)
-
     def set_user_path(
         self, path: str,
         is_changed_manually: bool

@@ -1,4 +1,9 @@
 
+from json import load as jsonLoad
+from json import dump as jsonDump
+from json import JSONDecodeError
+from os import path as osPath
+from os import remove as osRemove
 from PySide6.QtCore import QCoreApplication, QSize, Qt
 from PySide6.QtGui import QCursor
 from PySide6.QtWidgets import (
@@ -22,55 +27,55 @@ class Page(Common):
     widgets = None
     ADVANCED = None
     bottomHL = None
-    tabsWidget = None
-    tableWidget = None
+    tabsWidget: QTabWidget = None
+    tableWidget: QTableWidget = None
     searchMainVL = None
-    pathLineEdit = None
-    moveOptionBtn = None
-    browsePathBtn = None
+    pathLineEdit: QLineEdit = None
+    moveOptionBtn: QPushButton = None
+    browsePathBtn: QPushButton = None
     titleGroupBox = None
-    titleLineEdit = None
-    titleComboBox = None
-    otherLineEdit = None
-    otherComboBox = None
-    titleComboBox2 = None
-    titleComboBox3 = None
+    titleLineEdit: QLineEdit = None
+    titleComboBox: QComboBox = None
+    otherLineEdit: QLineEdit = None
+    otherComboBox: QComboBox = None
+    titleComboBox2: QComboBox = None
+    titleComboBox3: QComboBox = None
     basicTabMainVL = None
     verticalLayout = None
     searchGroupBox = None
-    startSearchBtn = None
-    otherComboBox3 = None
-    otherComboBox2 = None
+    startSearchBtn: QPushButton = None
+    otherComboBox3: QComboBox = None
+    otherComboBox2: QComboBox = None
     titleGroupBoxGL = None
     resultTabMainVL = None
-    deleteOptionBtn = None
-    renameOptionBtn = None
+    deleteOptionBtn: QPushButton = None
+    renameOptionBtn: QPushButton = None
     verticalLayout2 = None
     verticalLayout3 = None
     verticalLayout4 = None
     foundMatchLabel = None
-    metadataLineEdit = None
-    metadataComboBox = None
+    metadataLineEdit: QLineEdit = None
+    metadataComboBox: QComboBox = None
     searchGroupBoxGL = None
     advancedTabMainVL = None
-    metadataComboBox2 = None
-    metadataComboBox3 = None
+    metadataComboBox2: QComboBox = None
+    metadataComboBox3: QComboBox = None
     duplicateOptionBtn = None
-    searchTypeComboBox = None
-    isRecursiveCheckBox = None
+    searchTypeComboBox: QComboBox = None
+    isRecursiveCheckBox: QCheckBox = None
     advancedOtherGroupBox = None
     advancedTitleGroupBox = None
-    advancedTitleLineEdit = None
-    advancedTitleComboBox = None
-    advancedTitleComboBox2 = None
-    advancedTitleComboBox3 = None
-    isCaseSensitiveCheckBox = None
+    advancedTitleLineEdit: QLineEdit = None
+    advancedTitleComboBox: QComboBox = None
+    advancedTitleComboBox2: QComboBox = None
+    advancedTitleComboBox3: QComboBox = None
+    isCaseSensitiveCheckBox: QCheckBox = None
     advancedTitleGroupBoxGL = None
     advancedOtherGroupBoxGL = None
     advancedMetadataGroupBox = None
     advancedMetadataGroupBoxGL = None
-    advancedIsRecuresiveCheckBox = None
-    advancedIsCaseSensitiveCheckBox = None
+    advancedIsRecuresiveCheckBox: QCheckBox = None
+    advancedIsCaseSensitiveCheckBox: QCheckBox = None
 
     tabs = ("BASIC", "ADVANCED", "RESULT")
 
@@ -377,6 +382,7 @@ class Response(Page):
 
                 case "BASIC":
 
+                    self.export_tab_cache("BASIC")
                     search_type: str = self.searchTypeComboBox.currentText()
                     custom_input: list = self.titleLineEdit.text().replace(" ", "").split(",")
 
@@ -413,7 +419,7 @@ class Response(Page):
                     # SHOW THE RESULT PAGE AFTER RENDERING TABLE
                     self.foundMatchLabel.setText(
                         f"{len(self.data)} MATCHES FOUND"
-                        )
+                    )
                     self.tabsWidget.setCurrentIndex(self.tabs.index("RESULT"))
 
                     if not self.data:
@@ -424,7 +430,7 @@ class Response(Page):
                         )
 
                 case "ADVANCED":
-                    pass
+                    self.export_tab_cache("ADVANCED")
 
                 case "RESULT":
                     self.controller.show_dialog(
@@ -433,12 +439,112 @@ class Response(Page):
                         is_dialog=False
                     )
 
+        except JSONDecodeError:
+            self.controller.show_dialog(
+                f"THE CACHE FILE WAS CURRUPTED. PLEASE CLOSE THE APP AND REMOVE IT FROM ({self.cache_file})",
+                "c",
+                is_dialog=False
+            )
+
         except Exception as e:
             self.controller.show_dialog(
                 f"UNKNOWN ERROR OCCURED | {str(e)}",
                 "c",
                 is_dialog=False
             )
+
+    def export_tab_cache(self, tab) -> None:
+        """
+            STORE CURRENT SEARCH SETTINGS 
+        """
+
+        match tab:
+
+            case "BASIC":
+                data = {
+                    "titleComboBox":            self.titleComboBox.currentText(),
+                    "titleComboBox2":           self.titleComboBox2.currentText(),
+                    "titleComboBox3":           self.titleComboBox3.currentText(),
+                    "titleLineEdit":            self.titleLineEdit.text(),
+                    "isRecursiveCheckBox":      self.isRecursiveCheckBox.isChecked(),
+                    "isCaseSensitiveCheckBox":  self.isCaseSensitiveCheckBox.isChecked()
+                }
+
+            case "ADVANCED":
+                data = {
+                    "metadataComboBox":         self.metadataComboBox.currentText(),
+                    "metadataComboBox2":        self.metadataComboBox2.currentText(),
+                    "metadataComboBox3":        self.metadataComboBox3.currentText(),
+                    "metadataLineEdit":         self.metadataLineEdit.text(),
+
+                    "otherComboBox":            self.otherComboBox.currentText(),
+                    "otherComboBox2":           self.otherComboBox2.currentText(),
+                    "otherComboBox3":           self.otherComboBox3.currentText(),
+                    "otherLineEdit":            self.otherLineEdit.text(),
+
+                    "advancedTitleComboBox":            self.advancedTitleComboBox.currentText(),
+                    "advancedTitleComboBox2":           self.advancedTitleComboBox2.currentText(),
+                    "advancedTitleComboBox3":           self.advancedTitleComboBox3.currentText(),
+                    "advancedTitleLineEdit":            self.advancedTitleLineEdit.text(),
+                    "advancedIsRecuresiveCheckBox":     self.advancedIsRecuresiveCheckBox.isChecked(),
+                    "advancedIsCaseSensitiveCheckBox":  self.advancedIsCaseSensitiveCheckBox.isChecked(),
+                }
+
+        cache: dict = {}
+
+        # RETRIEVE EXISTING CACHE IF AVAILABLE
+        if osPath.exists(self.cache_file):
+            cache = jsonLoad(open(self.cache_file))
+
+        cache[tab] = data
+        cache["SEARCH"] = {
+            "searchTypeComboBox":       self.searchTypeComboBox.currentText(),
+            "pathLineEdit":             self.pathLineEdit.text()
+        }
+
+        with open(self.cache_file, "w+") as file:
+            jsonDump(cache, file)
+
+    def import_tab_cache(self) -> None:
+
+        # fmt: off
+        if osPath.exists(self.cache_file):
+            cache: dict = jsonLoad(open(self.cache_file))
+
+            data: dict = cache.get("BASIC")
+
+            self.titleComboBox.setCurrentText(data.get("titleComboBox"))
+            self.titleComboBox2.setCurrentText(data.get("titleComboBox2"))
+            self.titleComboBox3.setCurrentText(data.get("titleComboBox3"))
+            self.titleLineEdit.setText(data.get("titleLineEdit"))
+            self.isRecursiveCheckBox.setChecked(data.get("isRecursiveCheckBox"))
+            self.isCaseSensitiveCheckBox.setChecked(data.get("isCaseSensitiveCheckBox"))
+
+            data: dict = cache.get("ADVANCED")
+
+            self.advancedTitleComboBox.setCurrentText(data.get("advancedTitleComboBox"))
+            self.advancedTitleComboBox2.setCurrentText(data.get("advancedTitleComboBox2"))
+            self.advancedTitleComboBox3.setCurrentText(data.get("advancedTitleComboBox3"))
+            self.advancedTitleLineEdit.setText(data.get("advancedTitleLineEdit"))
+            self.advancedIsRecuresiveCheckBox.setChecked(data.get("advancedIsRecuresiveCheckBox"))
+            self.advancedIsCaseSensitiveCheckBox.setChecked(data.get("advancedIsCaseSensitiveCheckBox"))
+
+            self.metadataComboBox.setCurrentText(data.get("metadataComboBox"))
+            self.metadataComboBox2.setCurrentText(data.get("metadataComboBox2"))
+            self.metadataComboBox3.setCurrentText(data.get("metadataComboBox3"))
+            self.metadataLineEdit.setText(data.get("metadataLineEdit"))
+
+            self.otherComboBox.setCurrentText(data.get("otherComboBox"))
+            self.otherComboBox2.setCurrentText(data.get("otherComboBox2"))
+            self.otherComboBox3.setCurrentText(data.get("otherComboBox3"))
+            self.otherLineEdit.setText(data.get("otherLineEdit"))
+
+            data: dict = cache.get("SEARCH")
+
+            self.searchTypeComboBox.setCurrentText(data.get("searchTypeComboBox"))
+            self.pathLineEdit.setText(data.get("pathLineEdit"))
+
+        # fmt: on
 
 
 class Ui(Response):
@@ -1131,3 +1237,5 @@ class Ui(Response):
             QCoreApplication.translate(
                 "MainWindow", u"Find files recursively through the selected path", None)
         )
+        
+        self.import_tab_cache()

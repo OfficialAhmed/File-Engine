@@ -647,6 +647,3 @@ class Ui(Common):
 
         self.tableWidget.setSortingEnabled(True)
         self.table.retranslate_headers()
-
-        # SET CACHED DATA
-        self.import_cache()

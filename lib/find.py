@@ -72,7 +72,6 @@ class Finder:
     def get_recursive(self) -> tuple[str:str]:
         """
             Yields tuple (root, file) recursively thorugh all folders
-
         """
 
         for root, _, files in os.walk(self.path):

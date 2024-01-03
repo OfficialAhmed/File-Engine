@@ -385,5 +385,3 @@ class Ui(Common):
         self.totalRecordsLabel.setText(
             QCoreApplication.translate("MainWindow", "0", None))
 
-        # SET CACHED DATA
-        self.import_cache()
