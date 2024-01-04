@@ -111,8 +111,9 @@ class MainWindow(QMainWindow):
         match page:
             case "delete_page":
                 self.widgets.delete_page.click()
+                table = self.widgets.delete_widgets.findChild(QTableWidget, "tableWidget")
         
-        self.table.render(self.widgets.delete_widgets.findChild(QTableWidget, "tableWidget"))
+        self.table.render(table)
         self.table.set_data(jsonLoad(open(self.common.proccess_file)))
         self.table.fill()
         

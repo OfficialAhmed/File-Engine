@@ -507,11 +507,6 @@ class Ui(Common):
             lambda: self.rename_method_changed()
         )
 
-        # ON TABLE-HEADER CLICK
-        self.tableWidget.horizontalHeader().sectionClicked.connect(
-            self.table.table_header_clicked
-        )
-
         return self.widgets
 
     def lookup_input_2_changed(self):

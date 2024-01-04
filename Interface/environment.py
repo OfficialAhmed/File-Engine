@@ -26,6 +26,7 @@
 """
 
 import concurrent.futures
+from time import time
 
 from PySide6.QtCore import *
 from PySide6.QtGui import *
@@ -44,7 +45,8 @@ class Constant:
     @classmethod
     def get_resources_path(self):
         return self._RESOURCES_PATH
-    
+
+
 class Table:
 
     table_headers = (
@@ -58,37 +60,39 @@ class Table:
 
     def __init__(self) -> None:
         self.checkboxes = []
-        self.constant = Constant()
         self.controller = Controller()
         self.controller.update_remover_param()
-        self.isSpecsSet = False     # LIMIT TABLE DESIGN TO ONLY ONE TIME
+        self.is_specs_set = False     # LIMIT TABLE DESIGN TO ONLY ONE TIME
+        self.last_invoke_time = 0
 
-    def render(self, table_widget: QTableWidget, rows=1, columns=4):
+    def render(self, tableWidget: QTableWidget, rows=1, columns=4):
         """
             RENDER TABLE WITH THE HEADERS ONLY
         """
 
-        self.table = table_widget
+        self.table = tableWidget
 
-        if not self.isSpecsSet:
+        if not self.is_specs_set:
             self.set_specs()
-            self.isSpecsSet = True
-
-        total_rows = rows
-        total_columns = columns
+            self.is_specs_set = True
 
         # CLEAR PREVIOUS ROWS
         self.checkboxes.clear()
-        table_widget.setRowCount(0)
+        tableWidget.setRowCount(0)
 
-        table_widget.setRowCount(total_rows)
-        table_widget.setColumnCount(total_columns)
+        tableWidget.setRowCount(rows)
+        tableWidget.setColumnCount(columns)
 
         # RENDER TABLE HEADERS
-        table_widget.setHorizontalHeaderLabels(self.table_headers)
+        tableWidget.setHorizontalHeaderLabels(self.table_headers)
+
+        # ON HEADER CLICK
+        tableWidget.horizontalHeader().sectionClicked.connect(
+            self.header_clicked
+        )
 
         self.retranslate_headers()
-
+        
     def set_data(self, data):
         self.data = data
 
@@ -191,7 +195,7 @@ class Table:
 
             self.table.setHorizontalHeaderItem(col, header_item)
 
-    def table_header_clicked(self, header_section: int) -> None:
+    def header_clicked(self, header_section: int) -> None:
         """
         ### ON TABLE HEADER CLICK 
 
@@ -199,7 +203,11 @@ class Table:
             * On click header `0` `1` `2` -> re-render checkboxes
             * On click header `3`         -> (De)Select Checkboxes
         """
-
+        
+        # A FIX TO RESTRICT MULTIPLE METHOD INVOKES: A BUG RELATED TO SECTIONCLICK
+        if time() - self.last_invoke_time <= 0.08:
+            return
+        
         if header_section == 3:
 
             # SELECT/DESELCT ALL CHECKBOXES
@@ -225,7 +233,9 @@ class Table:
 
                 self.checkboxes.append(checkbox)
 
-    def remove_table_rows(self) -> None:
+        self.last_invoke_time = time()
+        
+    def remove_rows(self) -> None:
         """
             DELETE ALL CHECKED ROWS AFTER REMOVING THE FILES
         """

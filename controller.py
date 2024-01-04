@@ -52,7 +52,6 @@ class Controller:
             msg, mode, is_dialog
         )
 
-
     def update_remover_param(self) -> None:
         """
             Set when remover object init

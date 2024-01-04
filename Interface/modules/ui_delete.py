@@ -334,11 +334,6 @@ class Ui(Common):
         #     lambda: self.restore_content_clicked()
         # )
 
-        # # ON TABLE-HEADER CLICK
-        # self.tableWidget.horizontalHeader().sectionClicked.connect(
-        #     self.table_header_clicked
-        # )
-
         return self.widgets
 
     def retranslateUi(self):
