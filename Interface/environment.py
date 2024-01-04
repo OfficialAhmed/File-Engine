@@ -44,8 +44,7 @@ class Constant:
     @classmethod
     def get_resources_path(self):
         return self._RESOURCES_PATH
-
-
+    
 class Table:
 
     table_headers = (
@@ -55,9 +54,11 @@ class Table:
         "SELECT / DESELECT"
     )
 
+    # SHARED TO BE ACCESSED FROM THE MAIN PAGE
+
     def __init__(self) -> None:
-        self.data = {}
         self.checkboxes = []
+        self.constant = Constant()
         self.controller = Controller()
         self.controller.update_remover_param()
         self.isSpecsSet = False     # LIMIT TABLE DESIGN TO ONLY ONE TIME
@@ -322,8 +323,6 @@ class Common:
     """
 
     def __init__(self) -> None:
-        self.constant = Constant()
-
         self.html = Html()
         self.table = Table()
         self.constant = Constant()
@@ -335,6 +334,7 @@ class Common:
 
         self.path_input = ""
         self.cache_file = self.controller.CACHE_FILE
+        self.proccess_file = self.controller.PROCESS_FILE
 
         # CREATE DATA FOLDER IF NOT FOUND
         if not os.path.exists("data"):

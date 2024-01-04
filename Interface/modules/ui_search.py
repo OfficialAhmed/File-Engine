@@ -3,7 +3,6 @@ from json import load as jsonLoad
 from json import dump as jsonDump
 from json import JSONDecodeError
 from os import path as osPath
-from os import remove as osRemove
 from PySide6.QtCore import QCoreApplication, QSize, Qt
 from PySide6.QtGui import QCursor
 from PySide6.QtWidgets import (
@@ -14,7 +13,6 @@ from PySide6.QtWidgets import (
 
 from Interface.environment import Common
 from lib.find import File, Folder
-
 
 class Page(Common):
     """
@@ -60,7 +58,7 @@ class Page(Common):
     advancedTabMainVL = None
     metadataComboBox2: QComboBox = None
     metadataComboBox3: QComboBox = None
-    duplicateOptionBtn = None
+    duplicateOptionBtn: QPushButton = None
     searchTypeComboBox: QComboBox = None
     isRecursiveCheckBox: QCheckBox = None
     advancedOtherGroupBox = None
@@ -358,100 +356,12 @@ class Response(Page):
         self.otherComboBox3.currentTextChanged.connect(
             lambda: self.other_option_changed(3))
 
-    def start_search_clicked(self):
+    def set_clickable_options(self, is_enable: bool) -> None:
 
-        path = self.pathLineEdit.text()
-
-        if not path:
-            self.controller.show_dialog(
-                msg="PATH IS EMPTY!",
-                mode="w",
-                is_dialog=False
-            )
-            return
-
-        if not self.controller.show_dialog(
-            "WOULD YOU LIKE TO START THE SEARCHING PROCESS?",
-            "ARE YOU SURE?"
-        ):
-            return
-
-        try:
-
-            match self.tabs[self.tabsWidget.currentIndex()]:
-
-                case "BASIC":
-
-                    self.export_tab_cache("BASIC")
-                    search_type: str = self.searchTypeComboBox.currentText()
-                    custom_input: list = self.titleLineEdit.text().replace(" ", "").split(",")
-
-                    finder = File()
-                    if search_type == "FOLDERS":
-                        finder = Folder()
-
-                    finder.update_finder_param(
-                        path,
-                        self.isRecursive.isChecked(),
-                        self.isCaseSensitiveCheckBox.isChecked()
-                    )
-
-                    if self.titleComboBox2.currentText() != "CONTAIN":
-                        self.data = finder.get_by_title(
-                            custom_input
-                        )
-
-                    else:
-                        match self.titleComboBox3.currentText():
-                            case "Symbols only":        self.data = finder.get_by_title_only_symbols()
-                            case "Alphabets only":      self.data = finder.get_by_title_only_alphabets()
-                            case "Numbers & Symbols":   self.data = finder.get_by_title_num_symbol()
-                            case "Numbers Excluding":   self.data = finder.get_by_title_num_exclude(custom_input)
-                            case "Symbols Excluding":   self.data = finder.get_by_title_symbol_exclude(custom_input)
-                            case "Alphabets Excluding": self.data = finder.get_by_title_alpha_exclude(custom_input)
-                            case "Alphabets & Numbers": self.data = finder.get_by_title_alpha_num()
-                            case "Alphabets & Symbols": self.data = finder.get_by_title_alpha_symbol()
-                            case "Custom (REGEX)":      self.data = finder.get_by_title_custom(self.titleLineEdit.text().strip())
-
-                    self.table.set_data(self.data)
-                    self.table.fill()
-
-                    # SHOW THE RESULT PAGE AFTER RENDERING TABLE
-                    self.foundMatchLabel.setText(
-                        f"{len(self.data)} MATCHES FOUND"
-                    )
-                    self.tabsWidget.setCurrentIndex(self.tabs.index("RESULT"))
-
-                    if not self.data:
-                        self.controller.show_dialog(
-                            "NO DATA HAS BEEN FOUND!",  # MESSAGE
-                            "ITEMS CANNOT BE FOUND!",   # WINDOW TITLE
-                            is_dialog=False             # FALSE = INFORMATIONAL
-                        )
-
-                case "ADVANCED":
-                    self.export_tab_cache("ADVANCED")
-
-                case "RESULT":
-                    self.controller.show_dialog(
-                        "CANNOT START THE PROCESS. CHANGE THE TAB TO BASIC OR ADVANCED",
-                        "INVALID TAB SELECTED",
-                        is_dialog=False
-                    )
-
-        except JSONDecodeError:
-            self.controller.show_dialog(
-                f"THE CACHE FILE WAS CURRUPTED. PLEASE CLOSE THE APP AND REMOVE IT FROM ({self.cache_file})",
-                "c",
-                is_dialog=False
-            )
-
-        except Exception as e:
-            self.controller.show_dialog(
-                f"UNKNOWN ERROR OCCURED | {str(e)}",
-                "c",
-                is_dialog=False
-            )
+        self.moveOptionBtn.setEnabled(is_enable)
+        self.deleteOptionBtn.setEnabled(is_enable)
+        self.renameOptionBtn.setEnabled(is_enable)
+        self.duplicateOptionBtn.setEnabled(is_enable)
 
     def export_tab_cache(self, tab) -> None:
         """
@@ -545,6 +455,111 @@ class Response(Page):
             self.pathLineEdit.setText(data.get("pathLineEdit"))
 
         # fmt: on
+
+    def start_search_clicked(self):
+
+        path = self.pathLineEdit.text()
+
+        if not path:
+            self.controller.show_dialog(
+                msg="PATH IS EMPTY!",
+                mode="w",
+                is_dialog=False
+            )
+            return
+
+        if not self.controller.show_dialog(
+            "WOULD YOU LIKE TO START THE SEARCHING PROCESS?",
+            "ARE YOU SURE?"
+        ):
+            return
+
+        try:
+
+            match self.tabs[self.tabsWidget.currentIndex()]:
+
+                case "BASIC":
+
+                    self.export_tab_cache("BASIC")
+                    search_type: str = self.searchTypeComboBox.currentText()
+                    custom_input: list = self.titleLineEdit.text().replace(" ", "").split(",")
+
+                    finder = File()
+                    if search_type == "FOLDERS":
+                        finder = Folder()
+
+                    finder.update_finder_param(
+                        path,
+                        self.isRecursive.isChecked(),
+                        self.isCaseSensitiveCheckBox.isChecked()
+                    )
+
+                    search = self.titleComboBox.currentText()
+
+                    if self.titleComboBox2.currentText() != "CONTAIN":
+
+                        if search == "NAME":
+                            self.data = finder.get_by_title(custom_input)
+                        else:
+                            self.data = finder.get_by_extension(custom_input)
+
+                    else:
+
+                        match self.titleComboBox3.currentText():
+                            case "Symbols only":        self.data = finder.get_only_symbols(search)
+                            case "Alphabets only":      self.data = finder.get_only_alphabets(search)
+                            case "Numbers & Symbols":   self.data = finder.get_num_symbol(search)
+                            case "Numbers Excluding":   self.data = finder.get_num_exclude(search, custom_input)
+                            case "Symbols Excluding":   self.data = finder.get_symbol_exclude(search, custom_input)
+                            case "Alphabets Excluding": self.data = finder.get_alpha_exclude(search, custom_input)
+                            case "Alphabets & Numbers": self.data = finder.get_alpha_num(search)
+                            case "Alphabets & Symbols": self.data = finder.get_alpha_symbol(search)
+                            case "Custom (REGEX)":      self.data = finder.get_custom(search, self.titleLineEdit.text().strip())
+
+                    self.table.set_data(self.data)
+                    self.table.fill()
+
+                    # SHOW THE RESULT PAGE AFTER RENDERING TABLE
+                    self.foundMatchLabel.setText(
+                        f"{len(self.data)} MATCHES FOUND"
+                    )
+                    self.tabsWidget.setCurrentIndex(self.tabs.index("RESULT"))
+
+                    if not self.data:
+                        self.set_clickable_options(False)
+                        self.controller.show_dialog(
+                            "NO DATA HAS BEEN FOUND!",  # MESSAGE
+                            "ITEMS CANNOT BE FOUND!",   # WINDOW TITLE
+                            is_dialog=False             # FALSE = INFORMATIONAL
+                        )
+                        return
+
+                    self.set_clickable_options(True)
+                    jsonDump(self.data, open(self.proccess_file, "w+"))
+
+                case "ADVANCED":
+                    self.export_tab_cache("ADVANCED")
+
+                case "RESULT":
+                    self.controller.show_dialog(
+                        "CANNOT START THE PROCESS. CHANGE THE TAB TO BASIC OR ADVANCED",
+                        "INVALID TAB SELECTED",
+                        is_dialog=False
+                    )
+
+        except JSONDecodeError:
+            self.controller.show_dialog(
+                f"THE CACHE FILE WAS CURRUPTED. PLEASE CLOSE THE APP AND REMOVE IT FROM ({self.cache_file})",
+                "c",
+                is_dialog=False
+            )
+
+        except Exception as e:
+            self.controller.show_dialog(
+                f"UNKNOWN ERROR OCCURED | {str(e)}",
+                "c",
+                is_dialog=False
+            )
 
 
 class Ui(Response):
@@ -1053,8 +1068,7 @@ class Ui(Response):
         self.titleGroupBox.toggled.connect(self.titleComboBox2.setEnabled)
         self.titleGroupBox.toggled.connect(self.titleComboBox3.setEnabled)
         self.titleGroupBox.toggled.connect(self.isRecursiveCheckBox.setEnabled)
-        self.titleGroupBox.toggled.connect(
-            self.isCaseSensitiveCheckBox.setEnabled)
+        self.titleGroupBox.toggled.connect(self.isCaseSensitiveCheckBox.setEnabled)
 
         self.startSearchBtn.clicked.connect(
             lambda: self.start_search_clicked()
@@ -1106,7 +1120,10 @@ class Ui(Response):
         self.otherComboBox3.currentTextChanged.connect(
             lambda: self.other_option_changed(3)
         )
-
+        
+        # OPTIONS NAMING - TO CHANGE THE CURRENT PAGE FROM SEARCH PAGE
+        self.deleteOptionBtn.setObjectName("deleteOptionBtn")
+        
         self.retranslate()
 
         return self.widgets
@@ -1237,5 +1254,5 @@ class Ui(Response):
             QCoreApplication.translate(
                 "MainWindow", u"Find files recursively through the selected path", None)
         )
-        
+
         self.import_tab_cache()

@@ -6,7 +6,8 @@
 """
 
 # BUILT-INS
-from json import load, dump
+from json import load as jsonLoad
+from json import dump as jsonDump
 from os import environ, path, makedirs
 from sys import argv, exit
 from platform import system
@@ -19,6 +20,7 @@ from PySide6.QtGui import *
 # CUSTOME WIDGETS STYLING
 from Interface.modules.ui_main import *
 from Interface.modules.ui_settings import *
+from Interface.environment import Table, Common
 
 
 # FIX Problem for High DPI and Scale above 100%
@@ -31,6 +33,9 @@ class MainWindow(QMainWindow):
 
     def __init__(self):
         QMainWindow.__init__(self)
+        
+        self.table = Table()
+        self.common = Common()
 
         # SET AS GLOBAL WIDGETS
         self.ui = Ui()
@@ -96,6 +101,21 @@ class MainWindow(QMainWindow):
             )
         )
 
+        # SIGNALS TO CHANGE PAGE FROM SEARCH PAGE
+        self.widgets.search_widgets.findChild(QPushButton, "deleteOptionBtn").clicked.connect(
+            lambda: self.indirect_change_page("delete_page")
+        )
+
+    def indirect_change_page(self, page):
+        
+        match page:
+            case "delete_page":
+                self.widgets.delete_page.click()
+        
+        self.table.render(self.widgets.delete_widgets.findChild(QTableWidget, "tableWidget"))
+        self.table.set_data(jsonLoad(open(self.common.proccess_file)))
+        self.table.fill()
+        
     def change_page(self):
         """
             BUTTONS CLICK
@@ -148,14 +168,14 @@ class MainWindow(QMainWindow):
 
         # MAKE SURE FILE EXISTS BEFORE MOVING ON
         if path.exists(dir + file):
-            return load(open(dir + file))
+            return jsonLoad(open(dir + file))
 
         # DEFAULT SETTINGS ON CREATE
         data = {
             "is_light_theme": False,
         }
 
-        dump(data, open(dir + file, "w+"))
+        jsonDump(data, open(dir + file, "w+"))
 
         return data
 
@@ -166,4 +186,3 @@ if __name__ == "__main__":
     app.setWindowIcon(QIcon("icon.ico"))
     window = MainWindow()
     exit(app.exec())
-    

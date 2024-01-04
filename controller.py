@@ -26,6 +26,7 @@ class Controller:
 
     TRASH_PATH: str = DATA_PATH + "trash\\"
     CACHE_FILE: str = DATA_PATH + "Cache.json"
+    PROCESS_FILE: str = DATA_PATH + "Process.json"
     TRASH_CONTENT_FILE = f"{TRASH_PATH}content.json"
 
     FILE_REMOVER = Delete.File()
