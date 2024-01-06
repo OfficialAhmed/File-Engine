@@ -1,20 +1,21 @@
 from PySide6.QtCore import QCoreApplication, QSize, Qt
-from PySide6.QtGui import QBrush, QColor, QCursor, QPalette
+from PySide6.QtGui import QCursor
 from PySide6.QtWidgets import (
-    QAbstractItemView, QAbstractScrollArea, QCheckBox, QComboBox, QFrame,
+    QCheckBox, QComboBox, QFrame,
     QGridLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QSizePolicy,
     QTableWidget, QVBoxLayout, QWidget
 )
 
 import os
 import json
-from Interface.environment import Common, RestoreWorker
+from Interface.environment import Common, RestoreWorker, Table
 
 
 class Ui(Common):
 
     def __init__(self) -> None:
         super().__init__()
+        self.table = Table()
 
     def rename_content_clicked(self):
         # TODO: CHANGE METHOD
@@ -299,11 +300,6 @@ class Ui(Common):
         self.secondGrid.setContentsMargins(-1, -1, -1, 0)
         self.lookupByLineEdit.setMaxLength(100)
 
-        # self.tableFrame.setFrameShape(QFrame.StyledPanel)
-        # self.tableWidget.setFrameShape(QFrame.NoFrame)
-        # self.contentFrame3.setFrameShape(QFrame.NoFrame)
-        # self.contentFrame3.setFrameShadow(QFrame.Raised)
-
         self.horizontalBoxLayout3.addLayout(self.secondGrid)
 
         self.thirdGrid.setContentsMargins(-1, -1, -1, 0)
@@ -361,58 +357,6 @@ class Ui(Common):
         self.tableWidget.setSizePolicy(sizePolicy3)
 
         self.table.render(self.tableWidget)
-
-        """
-        ===================================================================
-                           PALLETE AND BRUSHES
-        ===================================================================
-        """
-
-        palette = QPalette()
-        brush = QBrush(QColor(221, 221, 221, 255))
-        brush.setStyle(Qt.SolidPattern)
-
-        brush1 = QBrush(QColor(0, 0, 0, 0))
-        brush1.setStyle(Qt.SolidPattern)
-
-        brush2 = QBrush(QColor(0, 0, 0, 255))
-        brush2.setStyle(Qt.NoBrush)
-
-        palette.setBrush(QPalette.Active, QPalette.Text, brush)
-        palette.setBrush(QPalette.Active, QPalette.Button, brush1)
-        palette.setBrush(QPalette.Active, QPalette.WindowText, brush)
-        palette.setBrush(QPalette.Active, QPalette.ButtonText, brush)
-
-        palette.setBrush(QPalette.Active, QPalette.Base, brush2)
-        palette.setBrush(QPalette.Inactive, QPalette.Text, brush)
-        palette.setBrush(QPalette.Disabled, QPalette.Text, brush)
-        palette.setBrush(QPalette.Active, QPalette.Window, brush1)
-        palette.setBrush(QPalette.Inactive, QPalette.Base, brush2)
-        palette.setBrush(QPalette.Inactive, QPalette.Button, brush1)
-        palette.setBrush(QPalette.Inactive, QPalette.Window, brush1)
-        palette.setBrush(QPalette.Disabled, QPalette.Button, brush1)
-        palette.setBrush(QPalette.Inactive, QPalette.WindowText, brush)
-        palette.setBrush(QPalette.Inactive, QPalette.ButtonText, brush)
-        palette.setBrush(QPalette.Disabled, QPalette.WindowText, brush)
-        palette.setBrush(QPalette.Disabled, QPalette.ButtonText, brush)
-
-        self.tableWidget.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
-        self.tableWidget.setSizeAdjustPolicy(
-            QAbstractScrollArea.AdjustToContents)
-        self.tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.tableWidget.setSelectionMode(QAbstractItemView.NoSelection)
-        self.tableWidget.setSelectionBehavior(QAbstractItemView.SelectRows)
-        self.tableWidget.setShowGrid(True)
-        self.tableWidget.setGridStyle(Qt.SolidLine)
-        self.tableWidget.setSortingEnabled(True)
-        self.tableWidget.horizontalHeader().setVisible(True)
-        self.tableWidget.horizontalHeader().setCascadingSectionResizes(True)
-        self.tableWidget.horizontalHeader().setDefaultSectionSize(200)
-        self.tableWidget.horizontalHeader().setStretchLastSection(True)
-        self.tableWidget.verticalHeader().setVisible(False)
-        self.tableWidget.verticalHeader().setCascadingSectionResizes(True)
-        self.tableWidget.verticalHeader().setHighlightSections(False)
-        self.tableWidget.verticalHeader().setStretchLastSection(False)
 
         self.startLookupBtn.setCursor(QCursor(Qt.PointingHandCursor))
         self.browsePathBtn.setCursor(QCursor(Qt.PointingHandCursor))

@@ -20,7 +20,6 @@ from PySide6.QtGui import *
 # CUSTOME WIDGETS STYLING
 from Interface.modules.ui_main import *
 from Interface.modules.ui_settings import *
-from Interface.environment import Table, Common
 
 
 # FIX Problem for High DPI and Scale above 100%
@@ -33,15 +32,14 @@ class MainWindow(QMainWindow):
 
     def __init__(self):
         QMainWindow.__init__(self)
-        
-        self.table = Table()
-        self.common = Common()
 
         # SET AS GLOBAL WIDGETS
         self.ui = Ui()
         self.ui.setupUi(self)
+
         # global widgets
         self.widgets = self.ui
+        SharedPages.set_widgets(self.widgets, self.ui)
 
         # USE CUSTOM TITLE BAR | USE AS "False" FOR MAC OR LINUX
         self.ui.EENABLE_CUSTOM_TITLE_BAR = True if system() == "Windows" else False
@@ -58,11 +56,25 @@ class MainWindow(QMainWindow):
         UiSettings.uiDefinitions(self)
 
         # LEFT MENUS
-        self.widgets.home_page.clicked.connect(self.change_page)
-        self.widgets.move_page.clicked.connect(self.change_page)
-        self.widgets.delete_page.clicked.connect(self.change_page)
-        self.widgets.rename_page.clicked.connect(self.change_page)
-        self.widgets.search_page.clicked.connect(self.change_page)
+        self.widgets.home_page_btn.clicked.connect(
+            lambda: SharedPages.change(
+                self.widgets.home_page_btn, "home_page", self.widgets.home_widgets)
+        )
+        self.widgets.delete_page_btn.clicked.connect(
+            lambda: SharedPages.change(
+                self.widgets.delete_page_btn, "delete_page", self.widgets.delete_widgets)
+        )
+        self.widgets.rename_page_btn.clicked.connect(
+            lambda: SharedPages.change(
+                self.widgets.rename_page_btn, "rename_page", self.widgets.rename_widgets)
+        )
+        self.widgets.search_page_btn.clicked.connect(
+            lambda: SharedPages.change(
+                self.widgets.search_page_btn, "search_page", self.widgets.search_widgets)
+        )
+        # self.widgets.move_page_btn.clicked.connect(
+        #     lambda: SharedPages.change(self.widgets.move_page_btn, "move_page", self.widgets.move_widgets)
+        # )
 
         # TOGGLE MENU
         self.widgets.toggleButton.clicked.connect(
@@ -95,47 +107,16 @@ class MainWindow(QMainWindow):
         self.widgets.stackedWidget.setCurrentWidget(
             self.widgets.home_widgets
         )
-        self.widgets.home_page.setStyleSheet(
+        self.widgets.home_page_btn.setStyleSheet(
             UiSettings.selectMenu(
-                self.widgets.home_page.styleSheet()
+                self.widgets.home_page_btn.styleSheet()
             )
         )
 
         # SIGNALS TO CHANGE PAGE FROM SEARCH PAGE
         self.widgets.search_widgets.findChild(QPushButton, "deleteOptionBtn").clicked.connect(
-            lambda: self.indirect_change_page("delete_page")
+            lambda: SharedPages.change_indirect("delete_page")
         )
-
-    def indirect_change_page(self, page):
-        
-        match page:
-            case "delete_page":
-                self.widgets.delete_page.click()
-                table = self.widgets.delete_widgets.findChild(QTableWidget, "tableWidget")
-        
-        self.table.render(table)
-        self.table.set_data(jsonLoad(open(self.common.proccess_file)))
-        self.table.fill()
-        
-    def change_page(self):
-        """
-            BUTTONS CLICK
-        """
-
-        btn = self.sender()
-        btn_name = btn.objectName()
-
-        UiSettings.resetStyle(self, btn_name)
-        btn.setStyleSheet(UiSettings.selectMenu(btn.styleSheet()))
-
-        match btn_name:
-            case "home_page":      page = self.widgets.home_widgets
-            case "delete_page":    page = self.widgets.delete_widgets
-            case "rename_page":    page = self.widgets.rename_widgets
-            case "search_page":    page = self.widgets.search_widgets
-            # case "lookup_page":    page = self.widgets.new_page
-
-        self.widgets.stackedWidget.setCurrentWidget(page)
 
     def resizeEvent(self, event):
         """
@@ -182,6 +163,7 @@ class MainWindow(QMainWindow):
 
 
 if __name__ == "__main__":
+    from controller import SharedPages
 
     app = QApplication(argv)
     app.setWindowIcon(QIcon("icon.ico"))

@@ -34,6 +34,8 @@ from PySide6.QtWidgets import *
 
 from datetime import datetime
 from controller import Controller
+
+
 import os
 import json
 
@@ -53,10 +55,8 @@ class Table:
         "FILE | FOLDER",
         "SOURCE",
         "SIZE (MB)",
-        "SELECT / DESELECT"
+        "SELECTED"
     )
-
-    # SHARED TO BE ACCESSED FROM THE MAIN PAGE
 
     def __init__(self) -> None:
         self.checkboxes = []
@@ -92,7 +92,7 @@ class Table:
         )
 
         self.retranslate_headers()
-        
+
     def set_data(self, data):
         self.data = data
 
@@ -203,11 +203,11 @@ class Table:
             * On click header `0` `1` `2` -> re-render checkboxes
             * On click header `3`         -> (De)Select Checkboxes
         """
-        
+
         # A FIX TO RESTRICT MULTIPLE METHOD INVOKES: A BUG RELATED TO SECTIONCLICK
         if time() - self.last_invoke_time <= 0.08:
             return
-        
+
         if header_section == 3:
 
             # SELECT/DESELCT ALL CHECKBOXES
@@ -234,7 +234,7 @@ class Table:
                 self.checkboxes.append(checkbox)
 
         self.last_invoke_time = time()
-        
+
     def remove_rows(self) -> None:
         """
             DELETE ALL CHECKED ROWS AFTER REMOVING THE FILES
@@ -334,7 +334,6 @@ class Common:
 
     def __init__(self) -> None:
         self.html = Html()
-        self.table = Table()
         self.constant = Constant()
         self.controller = Controller()
         self.progressBar = ProgressBar()

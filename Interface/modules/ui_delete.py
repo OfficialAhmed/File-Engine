@@ -1,87 +1,27 @@
 from PySide6.QtCore import QCoreApplication, QSize, Qt
-from PySide6.QtGui import QBrush, QColor, QCursor, QPalette
+from PySide6.QtGui import QCursor
 from PySide6.QtWidgets import (
-    QAbstractItemView, QAbstractScrollArea, QCheckBox,  QFrame, QGroupBox,
-    QGridLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QSizePolicy,
+    QFrame, QGroupBox,
+    QGridLayout, QHBoxLayout, QLabel, QPushButton,
     QTableWidget, QVBoxLayout, QWidget
 )
 
 import os
 import json
-from Interface.environment import Common, RestoreWorker, DeleteWorker
+from Interface.environment import Common, RestoreWorker, DeleteWorker, Table
 
 
 class Ui(Common):
 
     def __init__(self) -> None:
         super().__init__()
+
+        self.table = Table()
         self.rows_to_remove = []
 
-    def delete_content_clicked(self):
-
-        # IF USER DID NOT ACCEPT DELETE PROCESS, TERMINATE
-        if not self.controller.show_dialog(
-            "ARE YOU SURE YOU WANT TO *REMOVE* THE SELECTED FILES?",
-            "ARE YOU SURE?"
-        ):
-            return None
-
-        # RESET PROGRESS BAR
-        self.progressBar.update(0)
-
-        files_to_remove = []
-
-        # FLAG SELECTED TABLE ITEMS
-        for indx, cb in enumerate(self.checkboxes):
-
-            # IF CHECKBOX SELECTED
-            if cb.isChecked():
-
-                # FETCH DATA FROM TABLE
-                file = self.tableWidget.item(
-                    indx, 0                                 # EACH ROW, 1ST COLUMN
-                ).text()
-
-                root = self.tableWidget.item(
-                    indx, 1                                 # EACH ROW, 2ND COLUMN
-                ).text()
-
-                files_to_remove.append(f"{root}//{file}")
-                self.rows_to_remove.append(indx)
-
-        # DELETE FILES WITH THREADS
-        worker = DeleteWorker(
-            files_to_remove,
-            self.lookupType.currentText()
-        )
-
-        # UPDATE PROGRESS BAR
-        worker.progress_signal.connect(
-            self.progressBar.update
-        )
-
-        # DELETE ROWS FROM THE UI
-        worker.remove_rows_signal.connect(
-            self.remove_table_rows
-        )
-
-        # SUCCESSFULL ITEMS REMOVAL MESSAGE
-        worker.is_success.connect(
-            self.removing_process_state
-        )
-
-        # UNSUCCESSFULL ITEMS REMOVAL MESSAGE
-        worker.is_fail.connect(
-            lambda error: self.controller.show_dialog(
-                f"SOMTHING WENT WRONG WHILE REMOVING | ERROR <{error}>",
-                "C",    # CRITICAL MESSAGE
-                False
-            )
-        )
-
-        worker.run()
-
     def restore_content_clicked(self) -> None:
+
+        print(self.searchTypeHiddenLabel.text())
 
         # PROMPT USER
         if not self.controller.show_dialog(
@@ -198,15 +138,13 @@ class Ui(Common):
         self.verticalLayout = QVBoxLayout(self.widgets)
         self.totalRecordsTxtLabel = QLabel(self.groupBox)
 
+        self.searchTypeHiddenLabel = QLabel(self.groupBox)
+        self.searchTypeHiddenLabel.setHidden(True)
+
         self.mainFrameVL.setContentsMargins(0, 0, 0, 0)
         self.gridLayout.setContentsMargins(0, 15, 0, 0)
         self.bottomHLayout.setContentsMargins(40, -1, 40, -1)
         self.verticalLayout.setContentsMargins(10, 10, 10, 10)
-
-        self.deleteBtn.setEnabled(False)
-        self.exportBtn.setEnabled(False)
-        self.importBtn.setEnabled(False)
-        self.restoreBtn.setEnabled(False)
 
         self.deleteBtn.setIconSize(QSize(30, 30))
         self.exportBtn.setIconSize(QSize(30, 30))
@@ -275,6 +213,7 @@ class Ui(Common):
         self.totalRecordsHL.setObjectName(u"totalRecordsHL")
         self.totalRecordsLabel.setObjectName(u"totalRecordsLabel")
         self.totalRecordsTxtLabel.setObjectName(u"totalRecordsTxtLabel")
+        self.searchTypeHiddenLabel.setObjectName(u"searchTypeHiddenLabel")
 
         # BUTTONS DESIGN
         btns = {
@@ -292,47 +231,47 @@ class Ui(Common):
 
         self.retranslateUi()
 
-        # """
-        # ===================================================================
-        #                 RENDER PAGE ICONS
-        # ===================================================================
-        # """
-        # size = (20, 20)
+        """
+        ===================================================================
+                        RENDER PAGE ICONS
+        ===================================================================
+        """
+        size = (20, 20)
 
-        # self.set_icon(
-        #     self.deleteBtn, "delete sign", size
-        # )
-        # self.set_icon(
-        #     self.restoreBtn, "restore file", size
-        # )
-        # self.set_icon(
-        #     self.importBtn, "file upload", size
-        # )
-        # self.set_icon(
-        #     self.exportBtn, "file download", size
-        # )
+        self.set_icon(
+            self.deleteBtn, "delete sign", size
+        )
+        self.set_icon(
+            self.restoreBtn, "restore file", size
+        )
+        self.set_icon(
+            self.importBtn, "file upload", size
+        )
+        self.set_icon(
+            self.exportBtn, "file download", size
+        )
 
-        # """
-        # ===================================================================
-        #                 BUTTONS & EVENT/SIGNAL
-        # ===================================================================
-        # """
+        """
+        ===================================================================
+                        BUTTONS & EVENT/SIGNAL
+        ===================================================================
+        """
 
-        # self.deleteBtn.clicked.connect(
-        #     lambda: self.delete_content_clicked()
-        # )
+        self.deleteBtn.clicked.connect(
+            lambda: self.delete_content_clicked()
+        )
 
-        # self.exportBtn.clicked.connect(
-        #     lambda: self.export_process_clicked()
-        # )
+        self.exportBtn.clicked.connect(
+            lambda: self.export_process_clicked()
+        )
 
-        # self.importBtn.clicked.connect(
-        #     lambda: self.import_process_clicked()
-        # )
+        self.importBtn.clicked.connect(
+            lambda: self.import_process_clicked()
+        )
 
-        # self.restoreBtn.clicked.connect(
-        #     lambda: self.restore_content_clicked()
-        # )
+        self.restoreBtn.clicked.connect(
+            lambda: self.restore_content_clicked()
+        )
 
         return self.widgets
 
@@ -380,3 +319,74 @@ class Ui(Common):
         self.totalRecordsLabel.setText(
             QCoreApplication.translate("MainWindow", "0", None))
 
+    def delete_content_clicked(self):
+
+        # IF USER DID NOT ACCEPT DELETE PROCESS, TERMINATE
+        if not self.controller.show_dialog(
+            "ARE YOU SURE YOU WANT TO *REMOVE* THE SELECTED FILES?",
+            "ARE YOU SURE?"
+        ):
+            return
+
+        # RESET PROGRESS BAR
+        self.progressBar.update(0)
+
+        files_to_remove = []
+
+        # FLAG SELECTED TABLE ITEMS
+        for indx, cb in enumerate(self.table.checkboxes):
+
+            # IF CHECKBOX SELECTED
+            if cb.isChecked():
+
+                # FETCH DATA FROM TABLE
+                file = self.tableWidget.item(
+                    indx, 0                                 # EACH ROW, 1ST COLUMN
+                ).text()
+
+                root = self.tableWidget.item(
+                    indx, 1                                 # EACH ROW, 2ND COLUMN
+                ).text()
+
+                files_to_remove.append(f"{root}//{file}")
+                self.rows_to_remove.append(indx)
+
+        if not files_to_remove:
+            self.controller.show_dialog(
+                "PLEASE SELECT AT LEAST ONE FILE",
+                "NO SELECTION!",
+                False
+            )
+            return
+
+        # DELETE FILES WITH THREADS
+        worker = DeleteWorker(
+            files_to_remove,
+            self.searchTypeHiddenLabel.text()
+        )
+
+        # UPDATE PROGRESS BAR
+        worker.progress_signal.connect(
+            self.progressBar.update
+        )
+
+        # DELETE ROWS FROM THE UI
+        worker.remove_rows_signal.connect(
+            self.remove_table_rows
+        )
+
+        # SUCCESSFULL ITEMS REMOVAL MESSAGE
+        worker.is_success.connect(
+            self.removing_process_state
+        )
+
+        # UNSUCCESSFULL ITEMS REMOVAL MESSAGE
+        worker.is_fail.connect(
+            lambda error: self.controller.show_dialog(
+                f"SOMTHING WENT WRONG WHILE REMOVING | ERROR <{error}>",
+                "C",    # CRITICAL MESSAGE
+                False
+            )
+        )
+
+        worker.run()

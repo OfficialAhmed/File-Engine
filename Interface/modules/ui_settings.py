@@ -225,7 +225,7 @@ class UiSettings(MainWindow):
 
     # IMPORT THEMES FILES QSS/CSS
     def theme(self, is_light_theme):
-        
+
         if is_light_theme:
 
             str = open("Interface\\themes\\py_dracula_light.qss").read()
@@ -317,3 +317,4 @@ class UiSettings(MainWindow):
             self.bottom_grip.setGeometry(
                 0, self.height() - 10, self.width(), 10
             )
+

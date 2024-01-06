@@ -6,11 +6,10 @@ from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 
 from . resources_rc import *
-from ..environment import Constant, Common, ProgressBar, Html
+from ..environment import Common, ProgressBar
 from .ui_delete import Ui as Ui_delete
 from .ui_rename import Ui as Ui_rename
 from .ui_search import Ui as Ui_search
-from controller import Controller
 
 
 class Func:
@@ -19,7 +18,7 @@ class Func:
     """
 
     def __init__(self) -> None:
-        self.controller = Controller()
+        self.controller = Common().controller
 
     def set_display_mode(self):
         """
@@ -71,9 +70,7 @@ class Ui(object):
     def __init__(self) -> None:
         super().__init__()
 
-        self.html = Html()
         self.ui_function = Func()
-        self.constant = Constant()
         self.common_functions = Common()
 
     def setupUi(self, MainWindow):
@@ -136,13 +133,13 @@ class Ui(object):
         ////////////////////////////////////////////////
         """
         self.new_page = QWidget()
-        self.home_page = QPushButton(self.topMenu)
-        self.move_page = QPushButton(self.topMenu)
+        self.home_page_btn = QPushButton(self.topMenu)
+        self.move_page_btn = QPushButton(self.topMenu)
         self.btn_print = QPushButton(self.topMenus)
         self.btn_logout = QPushButton(self.topMenus)
-        self.search_page = QPushButton(self.topMenu)
-        self.delete_page = QPushButton(self.topMenu)
-        self.rename_page = QPushButton(self.topMenu)
+        self.search_page_btn = QPushButton(self.topMenu)
+        self.delete_page_btn = QPushButton(self.topMenu)
+        self.rename_page_btn = QPushButton(self.topMenu)
         self.removeTrashOption = QPushButton(self.topMenus)
         self.moreBtn = QPushButton(self.rightButtons)
         self.btn_more = QPushButton(self.extraTopMenu)
@@ -265,14 +262,14 @@ class Ui(object):
         MainWindow.setCentralWidget(self.styleSheet)
 
         self.btn_more.setFont(font)
-        self.home_page.setFont(font)
-        self.move_page.setFont(font)
+        self.home_page_btn.setFont(font)
+        self.move_page_btn.setFont(font)
         self.btn_print.setFont(font)
         self.styleSheet.setFont(font)
         self.btn_logout.setFont(font)
-        self.delete_page.setFont(font)
-        self.rename_page.setFont(font)
-        self.search_page.setFont(font)
+        self.delete_page_btn.setFont(font)
+        self.rename_page_btn.setFont(font)
+        self.search_page_btn.setFont(font)
         self.toggleButton.setFont(font)
         self.titleLeftApp.setFont(font1)
         self.toggleLeftBox.setFont(font)
@@ -378,13 +375,13 @@ class Ui(object):
 
         self.btn_more.setLayoutDirection(l_2_r)
         self.btn_print.setLayoutDirection(l_2_r)
-        self.move_page.setLayoutDirection(l_2_r)
-        self.home_page.setLayoutDirection(l_2_r)
+        self.move_page_btn.setLayoutDirection(l_2_r)
+        self.home_page_btn.setLayoutDirection(l_2_r)
         self.btn_logout.setLayoutDirection(l_2_r)
         self.removeTrashOption.setLayoutDirection(l_2_r)
-        self.search_page.setLayoutDirection(l_2_r)
-        self.rename_page.setLayoutDirection(l_2_r)
-        self.delete_page.setLayoutDirection(l_2_r)
+        self.search_page_btn.setLayoutDirection(l_2_r)
+        self.rename_page_btn.setLayoutDirection(l_2_r)
+        self.delete_page_btn.setLayoutDirection(l_2_r)
         self.displayModeOption.setLayoutDirection(l_2_r)
         self.toggleButton.setLayoutDirection(l_2_r)
         self.toggleLeftBox.setLayoutDirection(l_2_r)
@@ -400,12 +397,12 @@ class Ui(object):
 
         self.btn_more.setMinimumSize(_0_45)
         self.btn_print.setMinimumSize(_0_45)
-        self.move_page.setMinimumSize(_0_45)
-        self.home_page.setMinimumSize(_0_45)
+        self.move_page_btn.setMinimumSize(_0_45)
+        self.home_page_btn.setMinimumSize(_0_45)
         self.btn_logout.setMinimumSize(_0_45)
-        self.search_page.setMinimumSize(_0_45)
-        self.rename_page.setMinimumSize(_0_45)
-        self.delete_page.setMinimumSize(_0_45)
+        self.search_page_btn.setMinimumSize(_0_45)
+        self.rename_page_btn.setMinimumSize(_0_45)
+        self.delete_page_btn.setMinimumSize(_0_45)
         self.toggleButton.setMinimumSize(_0_45)
         self.toggleLeftBox.setMinimumSize(_0_45)
         self.btn_adjustments.setMinimumSize(_0_45)
@@ -456,11 +453,11 @@ class Ui(object):
         self.themeSettingsTopDetail.setMaximumSize(QSize(16777215, 3))
 
         self.toggleButton.setSizePolicy(sizePolicy)
-        self.home_page.setSizePolicy(sizePolicy)
-        self.delete_page.setSizePolicy(sizePolicy)
-        self.rename_page.setSizePolicy(sizePolicy)
-        self.move_page.setSizePolicy(sizePolicy)
-        self.search_page.setSizePolicy(sizePolicy)
+        self.home_page_btn.setSizePolicy(sizePolicy)
+        self.delete_page_btn.setSizePolicy(sizePolicy)
+        self.rename_page_btn.setSizePolicy(sizePolicy)
+        self.move_page_btn.setSizePolicy(sizePolicy)
+        self.search_page_btn.setSizePolicy(sizePolicy)
         self.toggleLeftBox.setSizePolicy(sizePolicy)
         self.displayModeOption.setSizePolicy(sizePolicy)
         self.btn_adjustments.setSizePolicy(sizePolicy)
@@ -486,19 +483,19 @@ class Ui(object):
             self.toggleButton.sizePolicy().hasHeightForWidth()
         )
         sizePolicy.setHeightForWidth(
-            self.home_page.sizePolicy().hasHeightForWidth()
+            self.home_page_btn.sizePolicy().hasHeightForWidth()
         )
         sizePolicy.setHeightForWidth(
-            self.delete_page.sizePolicy().hasHeightForWidth()
+            self.delete_page_btn.sizePolicy().hasHeightForWidth()
         )
         sizePolicy.setHeightForWidth(
-            self.rename_page.sizePolicy().hasHeightForWidth()
+            self.rename_page_btn.sizePolicy().hasHeightForWidth()
         )
         sizePolicy.setHeightForWidth(
-            self.move_page.sizePolicy().hasHeightForWidth()
+            self.move_page_btn.sizePolicy().hasHeightForWidth()
         )
         sizePolicy.setHeightForWidth(
-            self.search_page.sizePolicy().hasHeightForWidth()
+            self.search_page_btn.sizePolicy().hasHeightForWidth()
         )
         sizePolicy.setHeightForWidth(
             self.toggleLeftBox.sizePolicy().hasHeightForWidth()
@@ -540,12 +537,12 @@ class Ui(object):
         self.moreBtn.setCursor(pointing_hand)
         self.btn_more.setCursor(pointing_hand)
         self.btn_print.setCursor(pointing_hand)
-        self.move_page.setCursor(pointing_hand)
-        self.home_page.setCursor(pointing_hand)
+        self.move_page_btn.setCursor(pointing_hand)
+        self.home_page_btn.setCursor(pointing_hand)
         self.btn_logout.setCursor(pointing_hand)
-        self.search_page.setCursor(pointing_hand)
-        self.rename_page.setCursor(pointing_hand)
-        self.delete_page.setCursor(pointing_hand)
+        self.search_page_btn.setCursor(pointing_hand)
+        self.rename_page_btn.setCursor(pointing_hand)
+        self.delete_page_btn.setCursor(pointing_hand)
         self.closeAppBtn.setCursor(pointing_hand)
         self.toggleButton.setCursor(pointing_hand)
         self.toggleLeftBox.setCursor(pointing_hand)
@@ -615,8 +612,8 @@ class Ui(object):
         self.home_widgets.setObjectName(u"delete")
         self.appLayout.setObjectName(u"appLayout")
         self.extraIcon.setObjectName(u"extraIcon")
-        self.move_page.setObjectName(u"move_page")
-        self.home_page.setObjectName(u"home_page")
+        self.move_page_btn.setObjectName(u"move_page")
+        self.home_page_btn.setObjectName(u"home_page")
         self.toggleBox.setObjectName(u"toggleBox")
         self.btn_print.setObjectName(u"btn_print")
         self.bottomBar.setObjectName(u"bottomBar")
@@ -632,9 +629,9 @@ class Ui(object):
         self.extraBottom.setObjectName(u"extraBottom")
         self.removeTrashOption.setObjectName(u"btn_message")
         self.progressBar.setObjectName(u"progressBar")
-        self.search_page.setObjectName(u"search_page")
-        self.rename_page.setObjectName(u"rename_page")
-        self.delete_page.setObjectName(u"delete_page")
+        self.search_page_btn.setObjectName(u"search_page")
+        self.rename_page_btn.setObjectName(u"rename_page")
+        self.delete_page_btn.setObjectName(u"delete_page")
         self.topLogoInfo.setObjectName(u"topLogoInfo")
         self.extraCenter.setObjectName(u"extraCenter")
         self.displayModeOption.setObjectName(u"display_mode")
@@ -697,11 +694,11 @@ class Ui(object):
 
         self.verticalLayout_4.addWidget(self.toggleButton)
 
-        self.verticalLayout_8.addWidget(self.home_page)
-        self.verticalLayout_8.addWidget(self.search_page)
-        self.verticalLayout_8.addWidget(self.delete_page)
-        self.verticalLayout_8.addWidget(self.rename_page)
-        self.verticalLayout_8.addWidget(self.move_page)
+        self.verticalLayout_8.addWidget(self.home_page_btn)
+        self.verticalLayout_8.addWidget(self.search_page_btn)
+        self.verticalLayout_8.addWidget(self.delete_page_btn)
+        self.verticalLayout_8.addWidget(self.rename_page_btn)
+        self.verticalLayout_8.addWidget(self.move_page_btn)
 
         self.verticalLayout_9.addWidget(self.toggleLeftBox)
         self.extraTopLayout.addWidget(self.extraIcon, 0, 0, 1, 1)
@@ -794,14 +791,14 @@ class Ui(object):
             self.btn_print:            ("-", ""),
             self.btn_logout:           ("-", ""),
             self.toggleButton:         ("HIDE", ""),
-            self.home_page:            ("HOME", ""),
-            self.move_page:            ("MOVE", ""),
+            self.home_page_btn:            ("HOME", ""),
+            self.move_page_btn:            ("MOVE", ""),
             self.moreBtn:              ("", "More"),
             self.closeAppBtn:          ("", "Close"),
-            self.delete_page:          ("DELETE", ""),
-            self.rename_page:          ("RENAME", ""),
+            self.delete_page_btn:          ("DELETE", ""),
+            self.rename_page_btn:          ("RENAME", ""),
             self.version:              ("v1.2.1", ""),
-            self.search_page:          ("SEARCH", ""),
+            self.search_page_btn:          ("SEARCH", ""),
             self.toggleLeftBox:        ("Settings", ""),
             self.extraLabel:           ("Settings", ""),
             self.minimizeAppBtn:       ("", "Minimize"),
@@ -834,7 +831,7 @@ class Ui(object):
         self.textEdit.setHtml(
             QCoreApplication.translate(
                 "MainWindow",
-                self.html.get_credits_page(),
+                self.common_functions.html.get_credits_page(),
                 None
             )
         )
@@ -856,13 +853,13 @@ class Ui(object):
         )
 
         # MAIN OPTIONS
-        self.set_bg_image(self.home_page, "home")
+        self.set_bg_image(self.home_page_btn, "home")
         self.set_bg_image(self.toggleButton, "menu")
-        self.set_bg_image(self.move_page, "file move")
-        self.set_bg_image(self.delete_page, "trash-can")
+        self.set_bg_image(self.move_page_btn, "file move")
+        self.set_bg_image(self.delete_page_btn, "trash-can")
         self.set_bg_image(self.toggleLeftBox, "settings")
-        self.set_bg_image(self.rename_page, "rename-outline")
-        self.set_bg_image(self.search_page, "search-outline")
+        self.set_bg_image(self.rename_page_btn, "rename-outline")
+        self.set_bg_image(self.search_page_btn, "search-outline")
 
         # LEFT MENU OPTIONS
         # self.set_bg_image(self.btn_more, "")
@@ -893,6 +890,6 @@ class Ui(object):
         ext = "svg" if is_icon else "png"
 
         widget.setStyleSheet(
-            f"background-image: url({self.constant.get_resources_path()}{path}/{name}.{ext});\
+            f"background-image: url({self.common_functions.constant.get_resources_path()}{path}/{name}.{ext});\
             {extra_style}"
         )

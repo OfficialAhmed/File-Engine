@@ -11,7 +11,9 @@ from PySide6.QtWidgets import (
     QSizePolicy, QSpacerItem, QTabWidget, QTableWidget, QVBoxLayout, QWidget
 )
 
-from Interface.environment import Common
+from Interface.environment import Common, Table
+from controller import SharedPages
+
 from lib.find import File, Folder
 
 class Page(Common):
@@ -195,6 +197,7 @@ class Response(Page):
 
     def __init__(self) -> None:
         super().__init__()
+        self.table = Table()
 
     def title_cb_changed(self):
         """
@@ -569,6 +572,7 @@ class Ui(Response):
 
     def __init__(self) -> None:
         super().__init__()
+
 
     def render_page(self):
 
@@ -1123,6 +1127,8 @@ class Ui(Response):
         
         # OPTIONS NAMING - TO CHANGE THE CURRENT PAGE FROM SEARCH PAGE
         self.deleteOptionBtn.setObjectName("deleteOptionBtn")
+        
+        self.searchTypeComboBox.setObjectName("searchTypeComboBox")
         
         self.retranslate()
 
