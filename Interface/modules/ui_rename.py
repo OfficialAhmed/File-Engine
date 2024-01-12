@@ -1,26 +1,28 @@
 from PySide6.QtCore import QCoreApplication, QSize, Qt
-from PySide6.QtGui import QBrush, QColor, QCursor, QPalette
+from PySide6.QtGui import QCursor
 from PySide6.QtWidgets import (
-    QAbstractItemView, QAbstractScrollArea, QCheckBox, QComboBox, QFrame,
+    QCheckBox, QComboBox, QFrame,
     QGridLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QSizePolicy,
     QTableWidget, QVBoxLayout, QWidget
 )
 
 import os
 import json
-from Interface.environment import Common, RestoreWorker
+from Interface.environment import Common, RestoreWorker, tables
+from Interface.constants import Dialog
 
 
 class Ui(Common):
 
     def __init__(self) -> None:
         super().__init__()
+        self.dialog = Dialog()
 
     def rename_content_clicked(self):
         # TODO: CHANGE METHOD
 
         # IF USER DID NOT ACCEPT DELETE PROCESS, TERMINATE
-        if not self.controller.show_dialog(
+        if not self.dialog.show(
             "ARE YOU SURE YOU WANT TO *REMOVE* THE SELECTED FILES?",
             "ARE YOU SURE?"
         ):
@@ -33,7 +35,7 @@ class Ui(Common):
     def restore_content_clicked(self) -> None:
 
         # PROMPT USER
-        if not self.controller.show_dialog(
+        if not self.dialog.show(
             "ARE YOU SURE YOU WANT TO *RESTORE* PREVIOUSLY REMOVED ITEMS?",
             "ARE YOU SURE?"
         ):
@@ -46,7 +48,7 @@ class Ui(Common):
             # FILE MUST EXIST AND NOT EMPTY, ELSE TERMINATE PROCESS
             if not os.path.exists(trash_file) or not os.path.getsize(trash_file) > 0:
 
-                self.controller.show_dialog(
+                self.dialog.show(
                     f"CANNOT FIND DELETED FILES.",
                     "I",
                     False
@@ -72,7 +74,7 @@ class Ui(Common):
 
             # UNSUCCESSFULL ITEMS REMOVAL MESSAGE
             worker.is_fail.connect(
-                lambda error: self.controller.show_dialog(
+                lambda error: self.dialog.show(
                     f"SOMTHING WENT WRONG WHILE RESTORING | ERROR <{error}>",
                     "C",
                     False
@@ -83,7 +85,7 @@ class Ui(Common):
 
         except Exception as e:
 
-            self.controller.show_dialog(
+            self.dialog.show(
                 f"CANNOT READ RESTORE FILE. ERROR| {e}",
                 "C",
                 is_dialog=False
@@ -94,14 +96,14 @@ class Ui(Common):
         # TODO: CHANGE METHOD
 
         if state:
-            self.controller.show_dialog(
+            self.dialog.show(
                 f"SUCCESSFULY REMOVED ALL ITEM(S)",
                 "OPERATION SUCCESSFULL",
                 False
             )
 
         else:
-            self.controller.show_dialog(
+            self.dialog.show(
                 f"SOME FILE(S) WEREN'T REMOVED SUCCESSFULY",
                 "OPERATION NOT FULLY SUCCESSFULL",
                 False
@@ -110,14 +112,14 @@ class Ui(Common):
     def restore_process_state(self, state: bool):
 
         if state:
-            self.controller.show_dialog(
+            self.dialog.show(
                 f"SUCCESSFULY RESTORED ALL ITEM(S)",
                 "OPERATION SUCCESSFULL",
                 False
             )
 
         else:
-            self.controller.show_dialog(
+            self.dialog.show(
                 f"SOME ITEM(S) WEREN'T RESTORED SUCCESSFULY",
                 "OPERATION PARTIALLY SUCCESSFULL",
                 False
@@ -299,11 +301,6 @@ class Ui(Common):
         self.secondGrid.setContentsMargins(-1, -1, -1, 0)
         self.lookupByLineEdit.setMaxLength(100)
 
-        # self.tableFrame.setFrameShape(QFrame.StyledPanel)
-        # self.tableWidget.setFrameShape(QFrame.NoFrame)
-        # self.contentFrame3.setFrameShape(QFrame.NoFrame)
-        # self.contentFrame3.setFrameShadow(QFrame.Raised)
-
         self.horizontalBoxLayout3.addLayout(self.secondGrid)
 
         self.thirdGrid.setContentsMargins(-1, -1, -1, 0)
@@ -360,59 +357,7 @@ class Ui(Common):
         )
         self.tableWidget.setSizePolicy(sizePolicy3)
 
-        self.table.render(self.tableWidget)
-
-        """
-        ===================================================================
-                           PALLETE AND BRUSHES
-        ===================================================================
-        """
-
-        palette = QPalette()
-        brush = QBrush(QColor(221, 221, 221, 255))
-        brush.setStyle(Qt.SolidPattern)
-
-        brush1 = QBrush(QColor(0, 0, 0, 0))
-        brush1.setStyle(Qt.SolidPattern)
-
-        brush2 = QBrush(QColor(0, 0, 0, 255))
-        brush2.setStyle(Qt.NoBrush)
-
-        palette.setBrush(QPalette.Active, QPalette.Text, brush)
-        palette.setBrush(QPalette.Active, QPalette.Button, brush1)
-        palette.setBrush(QPalette.Active, QPalette.WindowText, brush)
-        palette.setBrush(QPalette.Active, QPalette.ButtonText, brush)
-
-        palette.setBrush(QPalette.Active, QPalette.Base, brush2)
-        palette.setBrush(QPalette.Inactive, QPalette.Text, brush)
-        palette.setBrush(QPalette.Disabled, QPalette.Text, brush)
-        palette.setBrush(QPalette.Active, QPalette.Window, brush1)
-        palette.setBrush(QPalette.Inactive, QPalette.Base, brush2)
-        palette.setBrush(QPalette.Inactive, QPalette.Button, brush1)
-        palette.setBrush(QPalette.Inactive, QPalette.Window, brush1)
-        palette.setBrush(QPalette.Disabled, QPalette.Button, brush1)
-        palette.setBrush(QPalette.Inactive, QPalette.WindowText, brush)
-        palette.setBrush(QPalette.Inactive, QPalette.ButtonText, brush)
-        palette.setBrush(QPalette.Disabled, QPalette.WindowText, brush)
-        palette.setBrush(QPalette.Disabled, QPalette.ButtonText, brush)
-
-        self.tableWidget.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
-        self.tableWidget.setSizeAdjustPolicy(
-            QAbstractScrollArea.AdjustToContents)
-        self.tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.tableWidget.setSelectionMode(QAbstractItemView.NoSelection)
-        self.tableWidget.setSelectionBehavior(QAbstractItemView.SelectRows)
-        self.tableWidget.setShowGrid(True)
-        self.tableWidget.setGridStyle(Qt.SolidLine)
-        self.tableWidget.setSortingEnabled(True)
-        self.tableWidget.horizontalHeader().setVisible(True)
-        self.tableWidget.horizontalHeader().setCascadingSectionResizes(True)
-        self.tableWidget.horizontalHeader().setDefaultSectionSize(200)
-        self.tableWidget.horizontalHeader().setStretchLastSection(True)
-        self.tableWidget.verticalHeader().setVisible(False)
-        self.tableWidget.verticalHeader().setCascadingSectionResizes(True)
-        self.tableWidget.verticalHeader().setHighlightSections(False)
-        self.tableWidget.verticalHeader().setStretchLastSection(False)
+        tables["RENAME"].render(self.tableWidget)
 
         self.startLookupBtn.setCursor(QCursor(Qt.PointingHandCursor))
         self.browsePathBtn.setCursor(QCursor(Qt.PointingHandCursor))
@@ -505,11 +450,6 @@ class Ui(Common):
         )
         self.renameToComboBox.currentTextChanged.connect(
             lambda: self.rename_method_changed()
-        )
-
-        # ON TABLE-HEADER CLICK
-        self.tableWidget.horizontalHeader().sectionClicked.connect(
-            self.table.table_header_clicked
         )
 
         return self.widgets
@@ -646,4 +586,4 @@ class Ui(Common):
         self.lookupByLineEdit.hide()
 
         self.tableWidget.setSortingEnabled(True)
-        self.table.retranslate_headers()
+        tables["RENAME"].retranslate_headers()

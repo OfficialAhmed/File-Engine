@@ -6,7 +6,8 @@
 """
 
 # BUILT-INS
-from json import load, dump
+from json import load as jsonLoad
+from json import dump as jsonDump
 from os import environ, path, makedirs
 from sys import argv, exit
 from platform import system
@@ -35,8 +36,10 @@ class MainWindow(QMainWindow):
         # SET AS GLOBAL WIDGETS
         self.ui = Ui()
         self.ui.setupUi(self)
+
         # global widgets
         self.widgets = self.ui
+        SharedPages.set_widgets(self.widgets, self.ui)
 
         # USE CUSTOM TITLE BAR | USE AS "False" FOR MAC OR LINUX
         self.ui.EENABLE_CUSTOM_TITLE_BAR = True if system() == "Windows" else False
@@ -53,11 +56,25 @@ class MainWindow(QMainWindow):
         UiSettings.uiDefinitions(self)
 
         # LEFT MENUS
-        self.widgets.home_page.clicked.connect(self.change_page)
-        self.widgets.move_page.clicked.connect(self.change_page)
-        self.widgets.delete_page.clicked.connect(self.change_page)
-        self.widgets.rename_page.clicked.connect(self.change_page)
-        self.widgets.search_page.clicked.connect(self.change_page)
+        self.widgets.home_page_btn.clicked.connect(
+            lambda: SharedPages.change(
+                self.widgets.home_page_btn, "home_page", self.widgets.home_widgets)
+        )
+        self.widgets.delete_page_btn.clicked.connect(
+            lambda: SharedPages.change(
+                self.widgets.delete_page_btn, "delete_page", self.widgets.delete_widgets)
+        )
+        self.widgets.rename_page_btn.clicked.connect(
+            lambda: SharedPages.change(
+                self.widgets.rename_page_btn, "rename_page", self.widgets.rename_widgets)
+        )
+        self.widgets.search_page_btn.clicked.connect(
+            lambda: SharedPages.change(
+                self.widgets.search_page_btn, "search_page", self.widgets.search_widgets)
+        )
+        # self.widgets.move_page_btn.clicked.connect(
+        #     lambda: SharedPages.change(self.widgets.move_page_btn, "move_page", self.widgets.move_widgets)
+        # )
 
         # TOGGLE MENU
         self.widgets.toggleButton.clicked.connect(
@@ -90,31 +107,19 @@ class MainWindow(QMainWindow):
         self.widgets.stackedWidget.setCurrentWidget(
             self.widgets.home_widgets
         )
-        self.widgets.home_page.setStyleSheet(
+        self.widgets.home_page_btn.setStyleSheet(
             UiSettings.selectMenu(
-                self.widgets.home_page.styleSheet()
+                self.widgets.home_page_btn.styleSheet()
             )
         )
 
-    def change_page(self):
-        """
-            BUTTONS CLICK
-        """
-
-        btn = self.sender()
-        btn_name = btn.objectName()
-
-        UiSettings.resetStyle(self, btn_name)
-        btn.setStyleSheet(UiSettings.selectMenu(btn.styleSheet()))
-
-        match btn_name:
-            case "home_page":      page = self.widgets.home_widgets
-            case "delete_page":    page = self.widgets.delete_widgets
-            case "rename_page":    page = self.widgets.rename_widgets
-            case "search_page":    page = self.widgets.search_widgets
-            # case "lookup_page":    page = self.widgets.new_page
-
-        self.widgets.stackedWidget.setCurrentWidget(page)
+        # SIGNALS TO CHANGE PAGE FROM SEARCH PAGE
+        self.widgets.search_widgets.findChild(QPushButton, "deleteOptionBtn").clicked.connect(
+            lambda: SharedPages.change_indirect("delete_page")
+        )
+        self.widgets.search_widgets.findChild(QPushButton, "renameOptionBtn").clicked.connect(
+            lambda: SharedPages.change_indirect("rename_page")
+        )
 
     def resizeEvent(self, event):
         """
@@ -148,22 +153,22 @@ class MainWindow(QMainWindow):
 
         # MAKE SURE FILE EXISTS BEFORE MOVING ON
         if path.exists(dir + file):
-            return load(open(dir + file))
+            return jsonLoad(open(dir + file))
 
         # DEFAULT SETTINGS ON CREATE
         data = {
             "is_light_theme": False,
         }
 
-        dump(data, open(dir + file, "w+"))
+        jsonDump(data, open(dir + file, "w+"))
 
         return data
 
 
 if __name__ == "__main__":
+    from Interface.widgets.pages import SharedPages
 
     app = QApplication(argv)
     app.setWindowIcon(QIcon("icon.ico"))
     window = MainWindow()
     exit(app.exec())
-    

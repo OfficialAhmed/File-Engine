@@ -12,7 +12,6 @@ class Finder:
     def __init__(self) -> None:
 
         self.path = ""
-        self.counter = 0
         self.is_recursive = None
         self.is_case_sensitive = None
         self.detected_matches = {}
@@ -25,9 +24,10 @@ class Finder:
 
     def exclude_regex(self, exclude):
         self.regex["NUMBERS EXCLUSION"] = f"^[{''.join(set('0-9') - exclude)}]+$"
-        self.regex["SYMBOLS EXCLUSION"] = "^[^" + "@" + "#$%^&*()" + "{}~'_+\-.]+$"  # FIXME: doesnt work
+        self.regex["SYMBOLS EXCLUSION"] = "^[^" + "@" + \
+            "#$%^&*()" + "{}~'_+\-.]+$"  # FIXME: doesnt work
         self.regex["ALPHABETS EXCLUSION"] = f"^[{''.join(sorted(set('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') - exclude))}]+$"
-        
+
     def set_path(self, path: str) -> None:
         self.path = path
 
@@ -53,13 +53,13 @@ class Finder:
         # CONVERT BYTES TO MB
         size = os.path.getsize(f"{root}/{match}") / (1024*1024)
 
-        self.detected_matches[self.counter] = {
+        # DICT LAYOUT - ACCESSABLE BY INDEX
+        self.detected_matches[match] = {
             object_name: match,
             "root": root,
             "size": round(size, 3)
         }
 
-        self.counter += 1
 
     def get_files(self) -> str:
         """
@@ -99,32 +99,36 @@ class Finder:
     def get_by_title(self, input: list) -> dict:
         return self.search("TITLE", input)
 
-    def get_by_title_only_alphabets(self) -> dict:
-        return self.search("TITLE", "ALPHABETS")
+    def get_by_extension(self, input: list) -> dict:
+        return self.search("EXTENSION", input)
 
-    def get_by_title_only_symbols(self) -> dict:
-        return self.search("TITLE", "SYMBOLS")
+    def get_only_alphabets(self, search: str) -> dict:
+        return self.search(search, "ALPHABETS")
 
-    def get_by_title_alpha_symbol(self) -> dict:
-        return self.search("TITLE", "ALPHABETS & SYMBOLS")
+    def get_only_symbols(self, search: str) -> dict:
+        return self.search(search, "SYMBOLS")
 
-    def get_by_title_alpha_num(self) -> dict:
-        return self.search("TITLE", "ALPHABETS & NUMBERS")
+    def get_alpha_symbol(self, search: str) -> dict:
+        return self.search(search, "ALPHABETS & SYMBOLS")
 
-    def get_by_title_num_symbol(self) -> dict:
-        return self.search("TITLE", "NUMBERS & SYMBOLS")
+    def get_alpha_num(self, search: str) -> dict:
+        return self.search(search, "ALPHABETS & NUMBERS")
 
-    def get_by_title_custom(self, input: str) -> dict:
-        return self.search("TITLE", "CUSTOM (REGEX)", custom=input)
+    def get_num_symbol(self, search: str) -> dict:
+        return self.search(search, "NUMBERS & SYMBOLS")
 
-    def get_by_title_alpha_exclude(self, input) -> dict:
-        return self.search("TITLE", "ALPHABETS EXCLUSION", exclude=input)
+    def get_custom(self, search: str, input: str) -> dict:
+        return self.search(search, "CUSTOM (REGEX)", custom=input)
 
-    def get_by_title_num_exclude(self, input) -> dict:
-        return self.search("TITLE", "NUMBERS EXCLUSION", exclude=input)
+    def get_alpha_exclude(self, search: str, input) -> dict:
+        return self.search(search, "ALPHABETS EXCLUSION", exclude=input)
 
-    def get_by_title_symbol_exclude(self, input) -> dict:
-        return self.search("TITLE", "SYMBOLS EXCLUSION", exclude=input)
+    def get_num_exclude(self, search: str, input) -> dict:
+        return self.search(search, "NUMBERS EXCLUSION", exclude=input)
+
+    def get_symbol_exclude(self, search: str, input) -> dict:
+        return self.search(search, "SYMBOLS EXCLUSION", exclude=input)
+
 
 class File(Finder):
 
@@ -139,7 +143,7 @@ class File(Finder):
         if exclude:
             exclude = set(exclude)
             self.exclude_regex(exclude)
-            
+
         def is_match(file: str, input: str | list) -> bool:
 
             file_title: str = file[: file.rfind(".")].strip()
@@ -202,14 +206,14 @@ class Folder(Finder):
             arg: by 
                 A PLACEHOLDER NEVER USED FOR FOLDER SEARCH ... TO BE FIXED
         """
-        
+
         # RESET FILES ON EVERY SEARCH
         self.reset_detected_matches()
 
         if exclude:
             exclude = set(exclude)
             self.exclude_regex(exclude)
-            
+
         def is_match(folder: str, input: str | list) -> bool:
 
             match input:
