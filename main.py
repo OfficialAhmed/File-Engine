@@ -163,7 +163,7 @@ class MainWindow(QMainWindow):
 
 
 if __name__ == "__main__":
-    from controller import SharedPages
+    from Interface.widgets.pages import SharedPages
 
     app = QApplication(argv)
     app.setWindowIcon(QIcon("icon.ico"))

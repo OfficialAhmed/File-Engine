@@ -25,16 +25,17 @@
     
 """
 
+import lib.delete as Delete
 import concurrent.futures
 from time import time
 
 from PySide6.QtCore import *
+from PySide6.QtCore import QObject
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 
+from Interface.constants import Path, Dialog
 from datetime import datetime
-from controller import Controller
-
 
 import os
 import json
@@ -49,6 +50,202 @@ class Constant:
         return self._RESOURCES_PATH
 
 
+class Common:
+    """
+        COMMON METHODS BETWEEN FEATURES
+    """
+
+    def __init__(self) -> None:
+        self.html = Html()
+        self.paths = Path()
+        self.constant = Constant()
+        self.progressBar = ProgressBar()
+
+        self.data = {}
+
+        self.path_input = ""
+        self.cache_file = self.paths.CACHE_FILE
+        self.proccess_file = self.paths.PROCESS_FILE
+
+        # CREATE DATA FOLDER IF NOT FOUND
+        if not os.path.exists("data"):
+            os.mkdir(self.paths.DATA_PATH)
+
+    def set_controller_widgets(
+        self,
+        lookupType:            QPushButton,
+        currentPath:           QLineEdit,
+        lookupFormat:          QLineEdit,
+        lookupInput:           QCheckBox,
+        isRecursive:           QLineEdit,
+        startBtn:              QComboBox
+    ):
+        """
+        Set current window widgets from 'UI' class
+        """
+        self.startBtn:         QPushButton = startBtn
+        self.lookupType:       QComboBox = lookupType
+        self.lookupInput:      QLineEdit = lookupInput
+        self.isRecursive:      QCheckBox = isRecursive
+        self.lookupFormat:     QComboBox = lookupFormat
+        self.currentPathInput: QLineEdit = currentPath
+
+    def set_user_path(
+        self, path: str,
+        is_changed_manually: bool
+    ) -> None:
+        """
+        Update user path input
+        """
+
+        # RESET USER PATH
+        if not path:
+            self.path_input = ""
+            return
+
+        self.path_input = path
+
+        if not is_changed_manually:
+            self.currentPathInput.setText(path)
+
+    def change_lookup_format(self) -> None:
+        """
+        Change lookup format options according to the lookup type
+        """
+
+        current_type = self.lookupType.currentText()
+
+        # REMOVE ALL TYPES
+        self.lookupFormat.clear()
+
+        # ADD THE OPTION 'EXTENSION' IF 'FILES' SELECTED
+        formats = ("NAME", "EXTENSION") if current_type == "FILES" else ("NAME",)
+
+        for format in formats:
+            self.lookupFormat.addItem(format)
+
+    def set_icon(self, widget: QWidget, name: str, size=(18, 18)) -> str:
+
+        widget.setIcon(
+            QIcon(f"{self.constant.get_resources_path()}icons/{name}.svg")
+        )
+
+        widget.setIconSize(QSize(*size))
+
+    def get_path(self, file_extension="") -> str | None:
+        """
+            ### RENDER A WINDOW TO GET FILE/FOLDER PATH 
+
+            - IF EXTENSION PROVIDED GET `FILE`, ELSE GET `FOLDER` PATH 
+        """
+
+        # ALLOW ONE FILE OF THE GIVEN EXTENSION
+        if file_extension:
+            path, _ = QFileDialog.getOpenFileName(
+                None,
+                "PICK A FILE TO CONTINUE",
+                "",                                     # PATH ON-WINDOW RENDER
+                f"*.{file_extension}",
+                options=QFileDialog.Options(),
+            )
+
+        # ALLOW FOLDER PATH ONLY
+        else:
+            path = QFileDialog.getExistingDirectory(
+                None,
+                "PICK A FOLDER TO CONTINUE",
+                "",                                     # PATH ON-WINDOW RENDER
+                options=QFileDialog.Options(),
+            )
+
+        return path if path else None
+
+    def get_progress_unit(
+        self,
+        total_files: int,
+    ) -> float:
+        """
+            Calculates the shunk to progress in percentage
+        """
+
+        return 100 / total_files
+
+
+class Html:
+
+    COLOR: dict = {
+        "dark blue": "33, 37, 43",
+        "light blue": "52, 59, 72",
+        "dracula pink": "255, 121, 198",
+        "dracula purple": "189, 147, 249"
+    }
+
+    def __init__(self) -> None:
+
+        self.color = self.COLOR
+        self.p_start = '<p align="center" style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">'
+        self.p_end = f"</p>{self.p_start}"
+
+    def get_bg_color(self, name: str) -> str:
+        return f"background-color: rgb({self.color.get(name)})"
+
+    def get_text_color(self, name: str) -> str:
+        return f"color: rgb({self.COLOR.get(name)})"
+
+    def title_span_tag(self, text: str, clr: str = "#ff79c6", f_size: str = "12") -> str:
+        return f'<span style="font-size:{f_size}pt; font-weight:600; color:{clr}">{text}</span>'
+
+    def get_credits_page(self) -> str:
+        return \
+            '<body style="font-family:"Segoe UI"; font-size:10pt; font-weight:400; font-style:normal">\n' +\
+            self.p_start +\
+            self.title_span_tag(
+                "CREDITS"
+            ) + self.p_end +\
+            self.title_span_tag(
+                "MAIN UI DESIGN : Wanderson M. Pimenta", "#ffffff", "9"
+            ) + self.p_end +\
+            self.title_span_tag(
+                "DRACULA THEME: Zeno Rocha", "#ffffff", "9"
+            ) + self.p_end +\
+            self.title_span_tag(
+                "LICENSE"
+            ) + self.p_end +\
+            self.title_span_tag(
+                "https://github.com/OfficialAhmed/File-Engine/blob/main/LICENSE", "#bd93f9", "9"
+            ) + self.p_end +\
+            self.title_span_tag(
+                "DEVELOPER"
+            ) + self.p_end +\
+            self.title_span_tag(
+                "@OfficialAhmed0", "#ffffff", "9"
+            ) + self.p_end +\
+            self.title_span_tag(
+                "GitHub"
+            ) + self.p_end +\
+            self.title_span_tag(
+                "https://github.com/OfficialAhmed/File-Engine", "#bd93f9", "9"
+            )+"</p>"
+
+
+class ProgressBar:
+
+    # STORE GLOABLY FOR ALL CHILDREN
+    progressBar = None
+
+    def update(self, progress: int):
+        num = int(progress * 100)
+        ProgressBar.progressBar.setValue(num)
+
+    def set_widget(self, widget: QProgressBar):
+        """
+            #### Called after the progressbar widget rendered 
+            * ONE TIME CALL METHOD
+            * Widget will be stored in class for reference
+        """
+        ProgressBar.progressBar = widget
+
+
 class Table:
 
     table_headers = (
@@ -59,9 +256,9 @@ class Table:
     )
 
     def __init__(self) -> None:
+        self.paths = Path()
         self.checkboxes = []
-        self.controller = Controller()
-        self.controller.update_remover_param()
+        
         self.is_specs_set = False     # LIMIT TABLE DESIGN TO ONLY ONE TIME
         self.last_invoke_time = 0
 
@@ -241,7 +438,7 @@ class Table:
         """
 
         if not self.rows_to_remove:
-            self.controller.show_dialog(
+            self.paths.show_dialog(
                 "NO DATA HAS BEEN SELECTED", is_dialog=False
             )
             return None
@@ -286,7 +483,7 @@ class Table:
 
         # IF NO DATA HAS BEEN FOUND, RETURN
         if not self.data:
-            self.controller.show_dialog(
+            self.paths.show_dialog(
                 f"TO EXPORT THE CURRENT PROCESS, YOU NEED TO START THE PROCESS FIRST!",
                 "I",
                 is_dialog=False
@@ -305,14 +502,14 @@ class Table:
 
             # CHECK IF FILE EXPORTED SUCCESSFULLY
             if os.path.exists(path) and os.path.getsize(path) > 0:
-                self.controller.show_dialog(
+                self.paths.show_dialog(
                     f"PROCESS EXPORTED SUCCESSFULLY!",
                     "I",
                     is_dialog=False
                 )
 
             else:
-                self.controller.show_dialog(
+                self.paths.show_dialog(
                     f"SOMETHING WENT WRONG! PROCESS WASN'T EXPORTED. PLEASE TRY AGAIN!",
                     "C",
                     is_dialog=False
@@ -327,201 +524,10 @@ class Table:
         self.fill()
 
 
-class Common:
-    """
-        COMMON METHODS BETWEEN FEATURES
-    """
-
-    def __init__(self) -> None:
-        self.html = Html()
-        self.constant = Constant()
-        self.controller = Controller()
-        self.progressBar = ProgressBar()
-        self.controller.update_remover_param()
-
-        self.data = {}
-
-        self.path_input = ""
-        self.cache_file = self.controller.CACHE_FILE
-        self.proccess_file = self.controller.PROCESS_FILE
-
-        # CREATE DATA FOLDER IF NOT FOUND
-        if not os.path.exists("data"):
-            os.mkdir(self.controller.DATA_PATH)
-
-    def set_controller_widgets(
-        self,
-        lookupType:            QPushButton,
-        currentPath:           QLineEdit,
-        lookupFormat:          QLineEdit,
-        lookupInput:           QCheckBox,
-        isRecursive:           QLineEdit,
-        startBtn:              QComboBox
-    ):
-        """
-        Set current window widgets from 'UI' class
-        """
-        self.startBtn:         QPushButton = startBtn
-        self.lookupType:       QComboBox = lookupType
-        self.lookupInput:      QLineEdit = lookupInput
-        self.isRecursive:      QCheckBox = isRecursive
-        self.lookupFormat:     QComboBox = lookupFormat
-        self.currentPathInput: QLineEdit = currentPath
-
-    def set_user_path(
-        self, path: str,
-        is_changed_manually: bool
-    ) -> None:
-        """
-        Update user path input
-        """
-
-        # RESET USER PATH
-        if not path:
-            self.path_input = ""
-            return
-
-        self.path_input = path
-
-        if not is_changed_manually:
-            self.currentPathInput.setText(path)
-
-    def change_lookup_format(self) -> None:
-        """
-        Change lookup format options according to the lookup type
-        """
-
-        current_type = self.lookupType.currentText()
-
-        # REMOVE ALL TYPES
-        self.lookupFormat.clear()
-
-        # ADD THE OPTION 'EXTENSION' IF 'FILES' SELECTED
-        formats = ("NAME", "EXTENSION") if current_type == "FILES" else ("NAME",)
-
-        for format in formats:
-            self.lookupFormat.addItem(format)
-
-    def set_icon(self, widget: QWidget, name: str, size=(18, 18)) -> str:
-
-        widget.setIcon(
-            QIcon(f"{self.constant.get_resources_path()}icons/{name}.svg")
-        )
-
-        widget.setIconSize(QSize(*size))
-
-    def get_path(self, file_extension="") -> str | None:
-        """
-            ### RENDER A WINDOW TO GET FILE/FOLDER PATH 
-
-            - IF EXTENSION PROVIDED GET `FILE`, ELSE GET `FOLDER` PATH 
-        """
-
-        # ALLOW ONE FILE OF THE GIVEN EXTENSION
-        if file_extension:
-            path, _ = QFileDialog.getOpenFileName(
-                None,
-                "PICK A FILE TO CONTINUE",
-                "",                                     # PATH ON-WINDOW RENDER
-                f"*.{file_extension}",
-                options=QFileDialog.Options(),
-            )
-
-        # ALLOW FOLDER PATH ONLY
-        else:
-            path = QFileDialog.getExistingDirectory(
-                None,
-                "PICK A FOLDER TO CONTINUE",
-                "",                                     # PATH ON-WINDOW RENDER
-                options=QFileDialog.Options(),
-            )
-
-        return path if path else None
-
-    def get_progress_unit(
-        self,
-        total_files: int,
-    ) -> float:
-        """
-            Calculates the shunk to progress in percentage
-        """
-
-        return 100 / total_files
-
-
-class Html:
-
-    COLOR: dict = {
-        "dark blue": "33, 37, 43",
-        "light blue": "52, 59, 72",
-        "dracula pink": "255, 121, 198",
-        "dracula purple": "189, 147, 249"
-    }
-
-    def __init__(self) -> None:
-
-        self.color = self.COLOR
-        self.p_start = '<p align="center" style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">'
-        self.p_end = f"</p>{self.p_start}"
-
-    def get_bg_color(self, name: str) -> str:
-        return f"background-color: rgb({self.color.get(name)})"
-
-    def get_text_color(self, name: str) -> str:
-        return f"color: rgb({self.COLOR.get(name)})"
-
-    def title_span_tag(self, text: str, clr: str = "#ff79c6", f_size: str = "12") -> str:
-        return f'<span style="font-size:{f_size}pt; font-weight:600; color:{clr}">{text}</span>'
-
-    def get_credits_page(self) -> str:
-        return \
-            '<body style="font-family:"Segoe UI"; font-size:10pt; font-weight:400; font-style:normal">\n' +\
-            self.p_start +\
-            self.title_span_tag(
-                "CREDITS"
-            ) + self.p_end +\
-            self.title_span_tag(
-                "MAIN UI DESIGN : Wanderson M. Pimenta", "#ffffff", "9"
-            ) + self.p_end +\
-            self.title_span_tag(
-                "DRACULA THEME: Zeno Rocha", "#ffffff", "9"
-            ) + self.p_end +\
-            self.title_span_tag(
-                "LICENSE"
-            ) + self.p_end +\
-            self.title_span_tag(
-                "https://github.com/OfficialAhmed/File-Engine/blob/main/LICENSE", "#bd93f9", "9"
-            ) + self.p_end +\
-            self.title_span_tag(
-                "DEVELOPER"
-            ) + self.p_end +\
-            self.title_span_tag(
-                "@OfficialAhmed0", "#ffffff", "9"
-            ) + self.p_end +\
-            self.title_span_tag(
-                "GitHub"
-            ) + self.p_end +\
-            self.title_span_tag(
-                "https://github.com/OfficialAhmed/File-Engine", "#bd93f9", "9"
-            )+"</p>"
-
-
-class ProgressBar:
-
-    # STORE GLOABLY FOR ALL CHILDREN
-    progressBar = None
-
-    def update(self, progress: int):
-        num = int(progress * 100)
-        ProgressBar.progressBar.setValue(num)
-
-    def set_widget(self, widget: QProgressBar):
-        """
-            #### Called after the progressbar widget rendered 
-            * ONE TIME CALL METHOD
-            * Widget will be stored in class for reference
-        """
-        ProgressBar.progressBar = widget
+tables = {
+    "SEARCH": Table(),
+    "DELETE": Table()
+}
 
 
 """
@@ -544,6 +550,26 @@ class Worker(QObject):
     is_success = Signal(bool)
     progress_signal = Signal(float)
 
+    def __init__(self, parent: QObject | None = ...) -> None:
+        super().__init__(parent)
+
+        self.FILE_REMOVER = Delete.File()
+        self.FOLDER_REMOVER = Delete.Folder()
+        
+    def update_remover_param(self) -> None:
+        """
+            Set when remover object init
+        """
+
+        self.FILE_REMOVER.set_remover_param(
+            self.TRASH_CONTENT_FILE,
+            self.TRASH_PATH
+        )
+        self.FOLDER_REMOVER.set_remover_param(
+            self.TRASH_CONTENT_FILE,
+            self.TRASH_PATH
+        )
+
 
 class DeleteWorker(Worker):
     """
@@ -561,16 +587,20 @@ class DeleteWorker(Worker):
         self.files = files
         self.lookup_type = lookup_type
 
-        self.controller = Controller()
+    def remove_file(self, file_path: str) -> None | str:
+        self.FILE_REMOVER.remove(file_path)
+
+    def remove_folder(self, folder_path: str, folder_name: str) -> None | str:
+        self.FOLDER_REMOVER.remove(folder_path, folder_name)
 
     def process(self, path: str) -> None:
 
         if self.lookup_type == "FOLDERS":
-            if self.controller.remove_folder(path, path[:path.rfind("\\")]):
+            if self.remove_folder(path, path[:path.rfind("\\")]):
                 return False
 
         else:
-            if self.controller.remove_file(path):
+            if self.remove_file(path):
                 return False
 
         return True
@@ -620,11 +650,16 @@ class RestoreWorker(Worker):
         super().__init__()
 
         self.data = data
-        self.controller = Controller()
+
+    def empty_trash(self) -> None:
+        self.FILE_REMOVER.empty_trash()
+
+    def restore_removed_content(self, destination: str) -> None:
+        return self.FILE_REMOVER.restore(destination)
 
     def process(self, dest_with_filename: str) -> None:
 
-        self.controller.restore_removed_content(
+        self.restore_removed_content(
             dest_with_filename
         )
 
@@ -657,7 +692,7 @@ class RestoreWorker(Worker):
                     progress = completed / total_data
                     self.progress_signal.emit(progress)
 
-            self.controller.empty_trash()
+            self.empty_trash()
             self.is_success.emit(is_all_removed)
 
         except Exception as error:

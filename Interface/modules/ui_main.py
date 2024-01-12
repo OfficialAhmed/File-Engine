@@ -10,7 +10,7 @@ from ..environment import Common, ProgressBar
 from .ui_delete import Ui as Ui_delete
 from .ui_rename import Ui as Ui_rename
 from .ui_search import Ui as Ui_search
-
+from Interface.constants import Dialog
 
 class Func:
     """
@@ -18,7 +18,7 @@ class Func:
     """
 
     def __init__(self) -> None:
-        self.controller = Common().controller
+        self.dialog = Dialog()
 
     def set_display_mode(self):
         """
@@ -26,7 +26,7 @@ class Func:
             STORE THE BOOL VALUE IN THE DEFAULT SETTINGS
         """
 
-        if self.controller.show_dialog(
+        if self.dialog.show(
             "THEME WILL BE CHANGED AFTER RESTARTING",
             "Q"
         ):
@@ -42,7 +42,7 @@ class Func:
 
     def empty_trash(self):
 
-        if self.controller.show_dialog(
+        if self.dialog.show(
             "ATTENTION! THIS WILL EMPTY THE TRASH. YOU WILL NO LONGER ABLE TO RESTORE PREVIOUSLY EDITED FILES",
             "W"
         ):
@@ -51,14 +51,14 @@ class Func:
             try:
                 shutil.rmtree(path)
                 os.mkdir(path)
-                self.controller.show_dialog(
+                self.dialog.show(
                     f"TRASH REMOVED SUCCESSFULLY",
                     "I",
                     False
                 )
 
             except Exception as e:
-                self.controller.show_dialog(
+                self.dialog.show(
                     f"SOMTHING WENT WRONG. COULDN'T EMPTY TRASH | ERROR {e}",
                     "C",
                     False

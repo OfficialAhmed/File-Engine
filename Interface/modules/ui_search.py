@@ -12,7 +12,8 @@ from PySide6.QtWidgets import (
 )
 
 from Interface.environment import Common, Table
-from controller import SharedPages
+from Interface.constants import Dialog
+from Interface.widgets.pages import SharedPages
 
 from lib.find import File, Folder
 
@@ -197,6 +198,7 @@ class Response(Page):
 
     def __init__(self) -> None:
         super().__init__()
+        self.dialog = Dialog()
         self.table = Table()
 
     def title_cb_changed(self):
@@ -464,14 +466,14 @@ class Response(Page):
         path = self.pathLineEdit.text()
 
         if not path:
-            self.controller.show_dialog(
+            self.dialog.show(
                 msg="PATH IS EMPTY!",
                 mode="w",
                 is_dialog=False
             )
             return
 
-        if not self.controller.show_dialog(
+        if not self.dialog.show(
             "WOULD YOU LIKE TO START THE SEARCHING PROCESS?",
             "ARE YOU SURE?"
         ):
@@ -530,7 +532,7 @@ class Response(Page):
 
                     if not self.data:
                         self.set_clickable_options(False)
-                        self.controller.show_dialog(
+                        self.dialog.show(
                             "NO DATA HAS BEEN FOUND!",  # MESSAGE
                             "ITEMS CANNOT BE FOUND!",   # WINDOW TITLE
                             is_dialog=False             # FALSE = INFORMATIONAL
@@ -544,21 +546,21 @@ class Response(Page):
                     self.export_tab_cache("ADVANCED")
 
                 case "RESULT":
-                    self.controller.show_dialog(
+                    self.dialog.show(
                         "CANNOT START THE PROCESS. CHANGE THE TAB TO BASIC OR ADVANCED",
                         "INVALID TAB SELECTED",
                         is_dialog=False
                     )
 
         except JSONDecodeError:
-            self.controller.show_dialog(
+            self.dialog.show(
                 f"THE CACHE FILE WAS CURRUPTED. PLEASE CLOSE THE APP AND REMOVE IT FROM ({self.cache_file})",
                 "c",
                 is_dialog=False
             )
 
         except Exception as e:
-            self.controller.show_dialog(
+            self.dialog.show(
                 f"UNKNOWN ERROR OCCURED | {str(e)}",
                 "c",
                 is_dialog=False

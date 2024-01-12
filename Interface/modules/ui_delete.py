@@ -8,7 +8,7 @@ from PySide6.QtWidgets import (
 
 import os
 import json
-from Interface.environment import Common, RestoreWorker, DeleteWorker, Table
+from Interface.environment import Common, RestoreWorker, DeleteWorker, tables
 
 
 class Ui(Common):
@@ -16,7 +16,6 @@ class Ui(Common):
     def __init__(self) -> None:
         super().__init__()
 
-        self.table = Table()
         self.rows_to_remove = []
 
     def restore_content_clicked(self) -> None:
@@ -190,7 +189,7 @@ class Ui(Common):
         ===================================================================
         """
 
-        self.table.render(self.tableWidget)
+        tables["DELETE"].render(self.tableWidget)
 
         """
         ===================================================================
@@ -309,7 +308,7 @@ class Ui(Common):
         ////////////////////////////////////////////////
         """
         self.tableWidget.setSortingEnabled(True)
-        self.table.retranslate_headers()
+        tables["DELETE"].retranslate_headers()
 
         self.groupBox.setTitle(
             QCoreApplication.translate("MainWindow", u"DELETE", None)
@@ -334,7 +333,7 @@ class Ui(Common):
         files_to_remove = []
 
         # FLAG SELECTED TABLE ITEMS
-        for indx, cb in enumerate(self.table.checkboxes):
+        for indx, cb in enumerate(tables["DELETE"].checkboxes):
 
             # IF CHECKBOX SELECTED
             if cb.isChecked():
