@@ -54,6 +54,7 @@ class Finder:
         # CONVERT BYTES TO MB
         size = os.path.getsize(f"{root}/{match}") / (1024*1024)
 
+        # DICT LAYOUT - ACCESSABLE BY INDEX
         self.detected_matches[self.counter] = {
             object_name: match,
             "root": root,

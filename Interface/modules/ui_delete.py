@@ -9,6 +9,7 @@ from PySide6.QtWidgets import (
 import os
 import json
 from Interface.environment import Common, RestoreWorker, DeleteWorker, tables
+from Interface.constants import Dialog, Path
 
 
 class Ui(Common):
@@ -16,14 +17,14 @@ class Ui(Common):
     def __init__(self) -> None:
         super().__init__()
 
+        self.dialog = Dialog()
+        self.paths = Path()
         self.rows_to_remove = []
 
     def restore_content_clicked(self) -> None:
 
-        print(self.searchTypeHiddenLabel.text())
-
         # PROMPT USER
-        if not self.controller.show_dialog(
+        if not self.dialog.show(
             "ARE YOU SURE YOU WANT TO *RESTORE* PREVIOUSLY REMOVED ITEMS?",
             "ARE YOU SURE?"
         ):
@@ -31,12 +32,12 @@ class Ui(Common):
 
         try:
 
-            trash_file = self.controller.TRASH_CONTENT_FILE
+            trash_file = self.paths.TRASH_CONTENT_FILE
 
             # FILE MUST EXIST AND NOT EMPTY, ELSE TERMINATE PROCESS
             if not os.path.exists(trash_file) or not os.path.getsize(trash_file) > 0:
 
-                self.controller.show_dialog(
+                self.dialog.show(
                     f"CANNOT FIND DELETED FILES.",
                     "I",
                     False
@@ -62,7 +63,7 @@ class Ui(Common):
 
             # UNSUCCESSFULL ITEMS REMOVAL MESSAGE
             future_process.is_fail.connect(
-                lambda error: self.controller.show_dialog(
+                lambda error: self.dialog.show(
                     f"SOMTHING WENT WRONG WHILE RESTORING | ERROR <{error}>",
                     "C",
                     False
@@ -73,7 +74,7 @@ class Ui(Common):
 
         except Exception as e:
 
-            self.controller.show_dialog(
+            self.dialog.show(
                 f"CANNOT READ RESTORE FILE. ERROR| {e}",
                 "C",
                 is_dialog=False
@@ -83,14 +84,14 @@ class Ui(Common):
     def removing_process_state(self, state: bool):
 
         if state:
-            self.controller.show_dialog(
+            self.dialog.show(
                 f"SUCCESSFULY REMOVED ALL ITEM(S)",
                 "OPERATION SUCCESSFULL",
                 False
             )
 
         else:
-            self.controller.show_dialog(
+            self.dialog.show(
                 f"SOME ITEM(S) WEREN'T REMOVED SUCCESSFULY",
                 "OPERATION PARTIALLY SUCCESSFULL",
                 False
@@ -99,14 +100,14 @@ class Ui(Common):
     def restore_process_state(self, state: bool):
 
         if state:
-            self.controller.show_dialog(
+            self.dialog.show(
                 f"SUCCESSFULY RESTORED ALL ITEM(S)",
                 "OPERATION SUCCESSFULL",
                 False
             )
 
         else:
-            self.controller.show_dialog(
+            self.dialog.show(
                 f"SOME ITEM(S) WEREN'T RESTORED SUCCESSFULY",
                 "OPERATION PARTIALLY SUCCESSFULL",
                 False
@@ -321,7 +322,7 @@ class Ui(Common):
     def delete_content_clicked(self):
 
         # IF USER DID NOT ACCEPT DELETE PROCESS, TERMINATE
-        if not self.controller.show_dialog(
+        if not self.dialog.show(
             "ARE YOU SURE YOU WANT TO *REMOVE* THE SELECTED FILES?",
             "ARE YOU SURE?"
         ):
@@ -351,7 +352,7 @@ class Ui(Common):
                 self.rows_to_remove.append(indx)
 
         if not files_to_remove:
-            self.controller.show_dialog(
+            self.dialog.show(
                 "PLEASE SELECT AT LEAST ONE FILE",
                 "NO SELECTION!",
                 False
@@ -381,7 +382,7 @@ class Ui(Common):
 
         # UNSUCCESSFULL ITEMS REMOVAL MESSAGE
         worker.is_fail.connect(
-            lambda error: self.controller.show_dialog(
+            lambda error: self.dialog.show(
                 f"SOMTHING WENT WRONG WHILE REMOVING | ERROR <{error}>",
                 "C",    # CRITICAL MESSAGE
                 False

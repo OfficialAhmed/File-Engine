@@ -65,7 +65,6 @@ class Common:
 
         self.path_input = ""
         self.cache_file = self.paths.CACHE_FILE
-        self.proccess_file = self.paths.PROCESS_FILE
 
         # CREATE DATA FOLDER IF NOT FOUND
         if not os.path.exists("data"):
@@ -257,14 +256,15 @@ class Table:
 
     def __init__(self) -> None:
         self.paths = Path()
-        self.checkboxes = []
+        self.checkboxes: list[QCheckBox] = []
         
         self.is_specs_set = False     # LIMIT TABLE DESIGN TO ONLY ONE TIME
         self.last_invoke_time = 0
 
     def render(self, tableWidget: QTableWidget, rows=1, columns=4):
         """
-            RENDER TABLE WITH THE HEADERS ONLY
+            ## RENDER TABLE WITH THE HEADERS ONLY BY DEFAULT
+                - CALLED ONCE, AFTER CREATING THE TABLE WIDGET
         """
 
         self.table = tableWidget
@@ -289,9 +289,6 @@ class Table:
         )
 
         self.retranslate_headers()
-
-    def set_data(self, data):
-        self.data = data
 
     def set_specs(self):
 
@@ -342,12 +339,14 @@ class Table:
         self.table.verticalHeader().setHighlightSections(False)
         self.table.verticalHeader().setStretchLastSection(False)
 
-    def fill(self):
+    def fill(self, data: dict):
         """
-            POPULATE THE TABLE USING THE DATA DICTIONARY
+            SETS THE DATA FOR THE CURRENT ACCESSED OBJECT AND POPULATES THE TABLE WITH THAT
+            - THIS SHOULD BE CALLED BEFORE CALLING ANY METHOD THAT REQUIRES THE DATA
         """
-
-        data = self.data.values()
+        
+        self.data = data
+        data = data.values()
 
         # RENDER TABLE HEADERS
         self.render(

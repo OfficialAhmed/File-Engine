@@ -11,9 +11,8 @@ from PySide6.QtWidgets import (
     QSizePolicy, QSpacerItem, QTabWidget, QTableWidget, QVBoxLayout, QWidget
 )
 
-from Interface.environment import Common, Table
+from Interface.environment import Common, tables
 from Interface.constants import Dialog
-from Interface.widgets.pages import SharedPages
 
 from lib.find import File, Folder
 
@@ -199,7 +198,6 @@ class Response(Page):
     def __init__(self) -> None:
         super().__init__()
         self.dialog = Dialog()
-        self.table = Table()
 
     def title_cb_changed(self):
         """
@@ -521,8 +519,7 @@ class Response(Page):
                             case "Alphabets & Symbols": self.data = finder.get_alpha_symbol(search)
                             case "Custom (REGEX)":      self.data = finder.get_custom(search, self.titleLineEdit.text().strip())
 
-                    self.table.set_data(self.data)
-                    self.table.fill()
+                    tables["SEARCH"].fill(self.data)
 
                     # SHOW THE RESULT PAGE AFTER RENDERING TABLE
                     self.foundMatchLabel.setText(
@@ -540,7 +537,6 @@ class Response(Page):
                         return
 
                     self.set_clickable_options(True)
-                    jsonDump(self.data, open(self.proccess_file, "w+"))
 
                 case "ADVANCED":
                     self.export_tab_cache("ADVANCED")
@@ -688,7 +684,7 @@ class Ui(Response):
             self.startSearchBtn
         )
 
-        self.table.render(self.tableWidget)
+        tables["SEARCH"].render(self.tableWidget)
 
         self.resultBottomLHSpacer = QSpacerItem(
             40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)

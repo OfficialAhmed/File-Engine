@@ -43,22 +43,21 @@ class Page:
         # fmt: off
         search_type = self.widgets.search_widgets.findChild(QComboBox, "searchTypeComboBox").currentText()
 
+        selected_data = {index: tables["SEARCH"].data.get(index) for index, cb in enumerate(tables["SEARCH"].checkboxes) if cb.isChecked()}
+            
         match page:
             case "delete_page":
+                table = tables["DELETE"]
+                
                 self.widgets.delete_page_btn.click()
                 label:  QLabel = self.widgets.delete_widgets.findChild(QLabel, "totalRecordsLabel")
-                table:  QTableWidget = self.widgets.delete_widgets.findChild(QTableWidget, "tableWidget")
-
+                
                 # STORE SEARCH TYPE IN THE HIDDEN LABEL FOR DELETING METHOD 
                 self.widgets.delete_widgets.findChild(QLabel, "searchTypeHiddenLabel").setText(search_type)
 
-        data = jsonLoad(open(self.paths.PROCESS_FILE))
-        label.setText(str(len(data)))
-        tables["DELETE"].set_data(data)
-        print(data)
+        table.fill(selected_data)
+        label.setText(str(len(selected_data)))
         
-        # table.render(table)
-        # table.fill()
         # fmt: on
 
 
