@@ -372,7 +372,7 @@ class Ui(Common):
 
         # DELETE ROWS FROM THE UI
         worker.remove_rows_signal.connect(
-            self.remove_table_rows
+            # FIXME: 
         )
 
         # SUCCESSFULL ITEMS REMOVAL MESSAGE

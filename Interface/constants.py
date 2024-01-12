@@ -19,7 +19,6 @@ class Path:
         self.DATA_PATH:  str = self.ROOT_PATH + "data\\"
         self.TRASH_PATH: str = self.DATA_PATH + "trash\\"
         self.CACHE_FILE: str = self.DATA_PATH + "Cache.json"
-        self.PROCESS_FILE: str = self.DATA_PATH + "Process.json"
         self.TRASH_CONTENT_FILE = f"{self.TRASH_PATH}content.json"
 
 

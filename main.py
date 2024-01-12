@@ -117,6 +117,9 @@ class MainWindow(QMainWindow):
         self.widgets.search_widgets.findChild(QPushButton, "deleteOptionBtn").clicked.connect(
             lambda: SharedPages.change_indirect("delete_page")
         )
+        self.widgets.search_widgets.findChild(QPushButton, "renameOptionBtn").clicked.connect(
+            lambda: SharedPages.change_indirect("rename_page")
+        )
 
     def resizeEvent(self, event):
         """

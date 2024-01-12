@@ -12,7 +12,6 @@ class Finder:
     def __init__(self) -> None:
 
         self.path = ""
-        self.counter = 0
         self.is_recursive = None
         self.is_case_sensitive = None
         self.detected_matches = {}
@@ -55,13 +54,12 @@ class Finder:
         size = os.path.getsize(f"{root}/{match}") / (1024*1024)
 
         # DICT LAYOUT - ACCESSABLE BY INDEX
-        self.detected_matches[self.counter] = {
+        self.detected_matches[match] = {
             object_name: match,
             "root": root,
             "size": round(size, 3)
         }
 
-        self.counter += 1
 
     def get_files(self) -> str:
         """

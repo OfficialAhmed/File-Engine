@@ -1125,6 +1125,7 @@ class Ui(Response):
         
         # OPTIONS NAMING - TO CHANGE THE CURRENT PAGE FROM SEARCH PAGE
         self.deleteOptionBtn.setObjectName("deleteOptionBtn")
+        self.renameOptionBtn.setObjectName("renameOptionBtn")
         
         self.searchTypeComboBox.setObjectName("searchTypeComboBox")
         

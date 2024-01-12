@@ -257,7 +257,7 @@ class Table:
     def __init__(self) -> None:
         self.paths = Path()
         self.checkboxes: list[QCheckBox] = []
-        
+
         self.is_specs_set = False     # LIMIT TABLE DESIGN TO ONLY ONE TIME
         self.last_invoke_time = 0
 
@@ -344,7 +344,7 @@ class Table:
             SETS THE DATA FOR THE CURRENT ACCESSED OBJECT AND POPULATES THE TABLE WITH THAT
             - THIS SHOULD BE CALLED BEFORE CALLING ANY METHOD THAT REQUIRES THE DATA
         """
-        
+
         self.data = data
         data = data.values()
 
@@ -400,15 +400,14 @@ class Table:
             * On click header `3`         -> (De)Select Checkboxes
         """
 
-        # A FIX TO RESTRICT MULTIPLE METHOD INVOKES: A BUG RELATED TO SECTIONCLICK
-        if time() - self.last_invoke_time <= 0.08:
-            return
-
         if header_section == 3:
 
-            # SELECT/DESELCT ALL CHECKBOXES
-            for checkbox in self.checkboxes:
-                checkbox.toggle()
+            # A FIX TO RESTRICT MULTIPLE METHOD INVOKES: A BUG RELATED TO SECTIONCLICK
+            if time() - self.last_invoke_time >= 0.08:
+
+                # SELECT/DESELCT ALL CHECKBOXES
+                for checkbox in self.checkboxes:
+                    checkbox.toggle()
 
         else:
 
@@ -523,9 +522,11 @@ class Table:
         self.fill()
 
 
+# TABLES ACCESSABLE ANY WHERE AFTER IMPORTING
 tables = {
     "SEARCH": Table(),
-    "DELETE": Table()
+    "DELETE": Table(),
+    "RENAME": Table()
 }
 
 
@@ -549,12 +550,12 @@ class Worker(QObject):
     is_success = Signal(bool)
     progress_signal = Signal(float)
 
-    def __init__(self, parent: QObject | None = ...) -> None:
-        super().__init__(parent)
+    def __init__(self) -> None:
+        super().__init__()
 
         self.FILE_REMOVER = Delete.File()
         self.FOLDER_REMOVER = Delete.Folder()
-        
+
     def update_remover_param(self) -> None:
         """
             Set when remover object init

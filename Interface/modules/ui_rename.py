@@ -8,20 +8,21 @@ from PySide6.QtWidgets import (
 
 import os
 import json
-from Interface.environment import Common, RestoreWorker, Table
+from Interface.environment import Common, RestoreWorker, tables
+from Interface.constants import Dialog
 
 
 class Ui(Common):
 
     def __init__(self) -> None:
         super().__init__()
-        self.table = Table()
+        self.dialog = Dialog()
 
     def rename_content_clicked(self):
         # TODO: CHANGE METHOD
 
         # IF USER DID NOT ACCEPT DELETE PROCESS, TERMINATE
-        if not self.controller.show_dialog(
+        if not self.dialog.show(
             "ARE YOU SURE YOU WANT TO *REMOVE* THE SELECTED FILES?",
             "ARE YOU SURE?"
         ):
@@ -34,7 +35,7 @@ class Ui(Common):
     def restore_content_clicked(self) -> None:
 
         # PROMPT USER
-        if not self.controller.show_dialog(
+        if not self.dialog.show(
             "ARE YOU SURE YOU WANT TO *RESTORE* PREVIOUSLY REMOVED ITEMS?",
             "ARE YOU SURE?"
         ):
@@ -47,7 +48,7 @@ class Ui(Common):
             # FILE MUST EXIST AND NOT EMPTY, ELSE TERMINATE PROCESS
             if not os.path.exists(trash_file) or not os.path.getsize(trash_file) > 0:
 
-                self.controller.show_dialog(
+                self.dialog.show(
                     f"CANNOT FIND DELETED FILES.",
                     "I",
                     False
@@ -73,7 +74,7 @@ class Ui(Common):
 
             # UNSUCCESSFULL ITEMS REMOVAL MESSAGE
             worker.is_fail.connect(
-                lambda error: self.controller.show_dialog(
+                lambda error: self.dialog.show(
                     f"SOMTHING WENT WRONG WHILE RESTORING | ERROR <{error}>",
                     "C",
                     False
@@ -84,7 +85,7 @@ class Ui(Common):
 
         except Exception as e:
 
-            self.controller.show_dialog(
+            self.dialog.show(
                 f"CANNOT READ RESTORE FILE. ERROR| {e}",
                 "C",
                 is_dialog=False
@@ -95,14 +96,14 @@ class Ui(Common):
         # TODO: CHANGE METHOD
 
         if state:
-            self.controller.show_dialog(
+            self.dialog.show(
                 f"SUCCESSFULY REMOVED ALL ITEM(S)",
                 "OPERATION SUCCESSFULL",
                 False
             )
 
         else:
-            self.controller.show_dialog(
+            self.dialog.show(
                 f"SOME FILE(S) WEREN'T REMOVED SUCCESSFULY",
                 "OPERATION NOT FULLY SUCCESSFULL",
                 False
@@ -111,14 +112,14 @@ class Ui(Common):
     def restore_process_state(self, state: bool):
 
         if state:
-            self.controller.show_dialog(
+            self.dialog.show(
                 f"SUCCESSFULY RESTORED ALL ITEM(S)",
                 "OPERATION SUCCESSFULL",
                 False
             )
 
         else:
-            self.controller.show_dialog(
+            self.dialog.show(
                 f"SOME ITEM(S) WEREN'T RESTORED SUCCESSFULY",
                 "OPERATION PARTIALLY SUCCESSFULL",
                 False
@@ -356,7 +357,7 @@ class Ui(Common):
         )
         self.tableWidget.setSizePolicy(sizePolicy3)
 
-        self.table.render(self.tableWidget)
+        tables["RENAME"].render(self.tableWidget)
 
         self.startLookupBtn.setCursor(QCursor(Qt.PointingHandCursor))
         self.browsePathBtn.setCursor(QCursor(Qt.PointingHandCursor))
@@ -585,4 +586,4 @@ class Ui(Common):
         self.lookupByLineEdit.hide()
 
         self.tableWidget.setSortingEnabled(True)
-        self.table.retranslate_headers()
+        tables["RENAME"].retranslate_headers()
