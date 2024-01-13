@@ -22,15 +22,19 @@ class Path:
         self.TRASH_CONTENT_FILE = f"{self.TRASH_PATH}content.json"
 
 
-class Dialog(QDialog):
+class Dialog:
 
     def __init__(self):
-        super().__init__()
+        self.widget = None
 
     def get_response(self, msg: str,  mode: str = "I", is_dialog: bool = True) -> bool:
-
+        
+        # A FIX: CANNOT USE QDIALOG BEFORE INIT THE QAPPLICATION
+        if not self.widget:
+            self.widget = QDialog()     # CREATE OBJECT ONCE
+        
         layout = QVBoxLayout()
-        self.setLayout(layout)
+        self.widget.setLayout(layout)
         self.label = QLabel()
 
         match mode.upper():
@@ -61,15 +65,15 @@ class Dialog(QDialog):
                 QDialogButtonBox.Ok | QDialogButtonBox.Cancel
             )
 
-            self.options.rejected.connect(self.reject)
-            self.options.accepted.connect(self.accept)
+            self.options.rejected.connect(self.widget.reject)
+            self.options.accepted.connect(self.widget.accept)
             layout.addWidget(self.label)
             layout.addWidget(self.options)
             self.label.setText(msg.upper())
-            self.setWindowTitle(title)
+            self.widget.setWindowTitle(title)
 
             # RETURN USER PERMISSION
-            return True if self.exec() else False
+            return True if self.widget.exec() else False
 
         # INFORMATIONAL BASED DIALOG. NO OPTIONS OTHER THAN ACCEPT
         msg_box = QMessageBox()

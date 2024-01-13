@@ -81,7 +81,6 @@ class Remover:
             os.makedirs(dest, exist_ok=True)
 
             if not folder_name:
-
                 shutil.move(source, dest_with_filename)
 
             else:
@@ -106,7 +105,7 @@ class Remover:
 
         except FileNotFoundError:
             return f"{source} -> DOESNT EXIST"
-        
+
         except Exception as e:
             return str(e)
 

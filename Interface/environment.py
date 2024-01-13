@@ -159,10 +159,7 @@ class Common:
 
         return path if path else None
 
-    def get_progress_unit(
-        self,
-        total_files: int,
-    ) -> float:
+    def get_progress_unit(self, total_files: int) -> float:
         """
             Calculates the shunk to progress in percentage
         """
@@ -256,6 +253,7 @@ class Table:
 
     def __init__(self) -> None:
         self.paths = Path()
+        self.dialog = Dialog()
         self.checkboxes: list[QCheckBox] = []
 
         self.is_specs_set = False     # LIMIT TABLE DESIGN TO ONLY ONE TIME
@@ -430,21 +428,23 @@ class Table:
 
         self.last_invoke_time = time()
 
-    def remove_rows(self) -> None:
+    def remove_rows(self, rows: list, total_entries_label: QLabel) -> None:
         """
             DELETE ALL CHECKED ROWS AFTER REMOVING THE FILES
         """
 
-        if not self.rows_to_remove:
-            self.paths.show_dialog(
+        if not rows:
+            self.dialog.show(
                 "NO DATA HAS BEEN SELECTED", is_dialog=False
             )
             return None
 
         # REMOVE SELECTED CHECKBOXES
-        for row in reversed(self.rows_to_remove):
+        for row in reversed(rows):
             self.table.removeRow(row)
             self.checkboxes.pop(row)
+
+        total_entries_label.setText(str(len(self.checkboxes)))
 
     def get_path(self, file_extension="") -> str | None:
         """
@@ -553,21 +553,18 @@ class Worker(QObject):
     def __init__(self) -> None:
         super().__init__()
 
+        self.paths = Path()
         self.FILE_REMOVER = Delete.File()
         self.FOLDER_REMOVER = Delete.Folder()
 
-    def update_remover_param(self) -> None:
-        """
-            Set when remover object init
-        """
-
         self.FILE_REMOVER.set_remover_param(
-            self.TRASH_CONTENT_FILE,
-            self.TRASH_PATH
+            self.paths.TRASH_CONTENT_FILE,
+            self.paths.TRASH_PATH
         )
+
         self.FOLDER_REMOVER.set_remover_param(
-            self.TRASH_CONTENT_FILE,
-            self.TRASH_PATH
+            self.paths.TRASH_CONTENT_FILE,
+            self.paths.TRASH_PATH
         )
 
 
