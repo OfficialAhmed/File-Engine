@@ -33,10 +33,13 @@ File Engine is a powerful and flexible file management and automation tool that 
 
 # INTERFACE 
 
-![HOME_PAGE](Interface/images/main page.png) 
-![SEARCH_PAGE](Interface/images/search page.png) 
-![RESULT_PAGE](Interface/images/result page.png) 
-![DELETE_PAGE](Interface/images/delete page.png) 
+![HOME_PAGE](Interface/images/main%20page.png) 
+
+![SEARCH_PAGE](Interface/images/search%20page.png) 
+
+![RESULT_PAGE](Interface/images/result%20page.png) 
+
+![DELETE_PAGE](Interface/images/delete%20page.png) 
 
 # LICENSE
 
