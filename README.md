@@ -8,7 +8,7 @@ File Engine is a powerful and flexible file management and automation tool that 
 
 # FEATURES
 
-- **File Search:** Quickly search for files based on file format, name, or content.
+- **File Search:** Quickly search for files based on file format, name, or content. Supports REGEX format
 - **Cross-Platform:** Works seamlessly on Windows, macOS, and Linux.
 - **User-Friendly Interface:** A user-friendly interface makes it easy for both beginners and power users.
 - **Detect hidden attribute** Read Files/Folders flagged as hidden
@@ -33,8 +33,10 @@ File Engine is a powerful and flexible file management and automation tool that 
 
 # INTERFACE 
 
-![HOME](Interface/images//home_page.png) 
-![DELETE PAGE](Interface/images/delete_page.png) 
+![HOME_PAGE](Interface/images/main page.png) 
+![SEARCH_PAGE](Interface/images/search page.png) 
+![RESULT_PAGE](Interface/images/result page.png) 
+![DELETE_PAGE](Interface/images/delete page.png) 
 
 # LICENSE
 
