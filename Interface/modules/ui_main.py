@@ -10,9 +10,9 @@ from ..environment import Common, ProgressBar
 from .ui_delete import Ui as Ui_delete
 from .ui_rename import Ui as Ui_rename
 from .ui_search import Ui as Ui_search
-from Interface.constants import Dialog
+from Interface.constants import Dialog, Path
 
-class Func:
+class Feature:
     """
         Main Page interactions and functionality
     """
@@ -70,8 +70,9 @@ class Ui(object):
     def __init__(self) -> None:
         super().__init__()
 
-        self.ui_function = Func()
+        self.ui_function = Feature()
         self.common_functions = Common()
+        self.paths = Path()
 
     def setupUi(self, MainWindow):
 
@@ -297,13 +298,13 @@ class Ui(object):
         # SET SHARED WIDGETS AFTER RENDERING
         _UiDelete = Ui_delete()
         self.delete_widgets = _UiDelete.render_page()
-        
+
         _UiRename = Ui_rename()
         self.rename_widgets = _UiRename.render_page()
 
         _UiRename = Ui_rename()
         self.rename_widgets = _UiRename.render_page()
-        
+
         _UiSearch = Ui_search()
         self.search_widgets = _UiSearch.render_page()
 
@@ -479,54 +480,24 @@ class Ui(object):
         sizePolicy2.setVerticalStretch(0)
         sizePolicy3.setVerticalStretch(0)
 
-        sizePolicy.setHeightForWidth(
-            self.toggleButton.sizePolicy().hasHeightForWidth()
-        )
-        sizePolicy.setHeightForWidth(
-            self.home_page_btn.sizePolicy().hasHeightForWidth()
-        )
-        sizePolicy.setHeightForWidth(
-            self.delete_page_btn.sizePolicy().hasHeightForWidth()
-        )
-        sizePolicy.setHeightForWidth(
-            self.rename_page_btn.sizePolicy().hasHeightForWidth()
-        )
-        sizePolicy.setHeightForWidth(
-            self.move_page_btn.sizePolicy().hasHeightForWidth()
-        )
-        sizePolicy.setHeightForWidth(
-            self.search_page_btn.sizePolicy().hasHeightForWidth()
-        )
-        sizePolicy.setHeightForWidth(
-            self.toggleLeftBox.sizePolicy().hasHeightForWidth()
-        )
-        sizePolicy.setHeightForWidth(
-            self.displayModeOption.sizePolicy().hasHeightForWidth()
-        )
-        sizePolicy.setHeightForWidth(
-            self.btn_adjustments.sizePolicy().hasHeightForWidth()
-        )
-        sizePolicy.setHeightForWidth(
-            self.btn_more.sizePolicy().hasHeightForWidth()
-        )
-        sizePolicy1.setHeightForWidth(
-            self.leftBox.sizePolicy().hasHeightForWidth()
-        )
-        sizePolicy2.setHeightForWidth(
-            self.titleRightInfo.sizePolicy().hasHeightForWidth()
-        )
-        sizePolicy.setHeightForWidth(
-            self.removeTrashOption.sizePolicy().hasHeightForWidth()
-        )
-        sizePolicy.setHeightForWidth(
-            self.btn_print.sizePolicy().hasHeightForWidth()
-        )
-        sizePolicy.setHeightForWidth(
-            self.btn_logout.sizePolicy().hasHeightForWidth()
-        )
-        sizePolicy3.setHeightForWidth(
-            self.progressBar.sizePolicy().hasHeightForWidth()
-        )
+        # fmt: off
+        sizePolicy.setHeightForWidth(self.toggleButton.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(self.home_page_btn.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(self.delete_page_btn.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(self.rename_page_btn.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(self.move_page_btn.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(self.search_page_btn.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(self.toggleLeftBox.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(self.displayModeOption.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(self.btn_adjustments.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(self.btn_more.sizePolicy().hasHeightForWidth())
+        sizePolicy1.setHeightForWidth(self.leftBox.sizePolicy().hasHeightForWidth())
+        sizePolicy2.setHeightForWidth(self.titleRightInfo.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(self.removeTrashOption.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(self.btn_print.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(self.btn_logout.sizePolicy().hasHeightForWidth())
+        sizePolicy3.setHeightForWidth(self.progressBar.sizePolicy().hasHeightForWidth())
+        # fmt: on
 
         """
         ////////////////////////////////////////////////
@@ -785,30 +756,30 @@ class Ui(object):
         objs = {
             # OBJECT:                  (TEXT, TOOLTIP)
             self.displayModeOption:     ("LIGHT/DARK MODE", ""),
-            self.btn_adjustments:      ("-", ""),
-            self.btn_more:             ("-", ""),
-            self.removeTrashOption:    ("REMOVE TRASH", "Deletes cached trash."),
-            self.btn_print:            ("-", ""),
-            self.btn_logout:           ("-", ""),
-            self.toggleButton:         ("HIDE", ""),
-            self.home_page_btn:            ("HOME", ""),
-            self.move_page_btn:            ("MOVE", ""),
-            self.moreBtn:              ("", "More"),
-            self.closeAppBtn:          ("", "Close"),
-            self.delete_page_btn:          ("DELETE", ""),
-            self.rename_page_btn:          ("RENAME", ""),
-            self.version:              ("v1.2.1", ""),
-            self.search_page_btn:          ("SEARCH", ""),
-            self.toggleLeftBox:        ("Settings", ""),
-            self.extraLabel:           ("Settings", ""),
-            self.minimizeAppBtn:       ("", "Minimize"),
-            self.maximizeAppBtn:       ("", "Maximize"),
-            self.titleLeftApp:         ("File Engine", ""),
-            self.label:                ("NEW PAGE TEST", ""),
-            self.extraCloseColumnBtn:  ("", "Close Settings"),
-            self.titleLeftDescription: ("Dracula Dark Theme", ""),
-            self.creditsLabel:         ("Developed by @OfficialAhmed0", ""),
-            self.titleRightInfo:       ("File Engine - File management and automation tool", ""),
+            self.btn_adjustments:       ("-", ""),
+            self.btn_more:              ("-", ""),
+            self.removeTrashOption:     ("REMOVE TRASH", "Deletes cached trash."),
+            self.btn_print:             ("-", ""),
+            self.btn_logout:            ("-", ""),
+            self.toggleButton:          ("HIDE", ""),
+            self.home_page_btn:         ("HOME", ""),
+            self.move_page_btn:         ("MOVE", ""),
+            self.moreBtn:               ("", "More"),
+            self.closeAppBtn:           ("", "Close"),
+            self.delete_page_btn:       ("DELETE", ""),
+            self.rename_page_btn:       ("RENAME", ""),
+            self.version:               ("v1.2.1", ""),
+            self.search_page_btn:       ("SEARCH", ""),
+            self.toggleLeftBox:         ("Settings", ""),
+            self.extraLabel:            ("Settings", ""),
+            self.minimizeAppBtn:        ("", "Minimize"),
+            self.maximizeAppBtn:        ("", "Maximize"),
+            self.titleLeftApp:          ("File Engine", ""),
+            self.label:                 ("NEW PAGE TEST", ""),
+            self.extraCloseColumnBtn:   ("", "Close Settings"),
+            self.titleLeftDescription:  ("Dracula Dark Theme", ""),
+            self.creditsLabel:          ("Developed by @OfficialAhmed0", ""),
+            self.titleRightInfo:        ("File Engine - File management and automation tool", ""),
         }
 
         # TRANSLATE TEXT AND TOOLTIPS
@@ -862,17 +833,10 @@ class Ui(object):
         self.set_bg_image(self.search_page_btn, "search-outline")
 
         # LEFT MENU OPTIONS
-        # self.set_bg_image(self.btn_more, "")
-        # self.set_bg_image(self.btn_adjustments, "")
+        self.displayModeOption.pressed.connect(self.ui_function.set_display_mode)
+        self.removeTrashOption.pressed.connect(self.ui_function.empty_trash)
+        
         self.set_bg_image(self.displayModeOption, "display-mode-outline")
-
-        self.displayModeOption.pressed.connect(
-            self.ui_function.set_display_mode
-        )
-        self.removeTrashOption.pressed.connect(
-            self.ui_function.empty_trash
-        )
-
         self.common_functions.set_icon(self.extraCloseColumnBtn, "close")
 
         # RIGHT MENU OPTIONS
@@ -890,6 +854,6 @@ class Ui(object):
         ext = "svg" if is_icon else "png"
 
         widget.setStyleSheet(
-            f"background-image: url({self.common_functions.constant.get_resources_path()}{path}/{name}.{ext});\
+            f"background-image: url({self.paths.RESOURCES_PATH}{path}/{name}.{ext});\
             {extra_style}"
         )

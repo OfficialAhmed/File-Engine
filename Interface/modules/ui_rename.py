@@ -454,6 +454,21 @@ class Ui(Common):
 
         return self.widgets
 
+    def change_lookup_format(self) -> None:
+        """
+        Change lookup format options according to the lookup type
+        """
+
+        current_type = self.lookupType.currentText()
+
+        # REMOVE ALL TYPES
+        self.lookupFormat.clear()
+
+        # ADD THE OPTION 'EXTENSION' IF 'FILES' SELECTED
+        formats = ("NAME", "EXTENSION") if current_type == "FILES" else ("NAME",)
+
+        for format in formats:
+            self.lookupFormat.addItem(format)
     def lookup_input_2_changed(self):
 
         if self.lookupByComboBox3.currentText() != "CONTAIN":

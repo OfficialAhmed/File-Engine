@@ -41,15 +41,6 @@ import os
 import json
 
 
-class Constant:
-
-    _RESOURCES_PATH = ":/images/images/"
-
-    @classmethod
-    def get_resources_path(self):
-        return self._RESOURCES_PATH
-
-
 class Common:
     """
         COMMON METHODS BETWEEN FEATURES
@@ -58,7 +49,6 @@ class Common:
     def __init__(self) -> None:
         self.html = Html()
         self.paths = Path()
-        self.constant = Constant()
         self.progressBar = ProgressBar()
 
         self.data = {}
@@ -89,10 +79,7 @@ class Common:
         self.lookupFormat:     QComboBox = lookupFormat
         self.currentPathInput: QLineEdit = currentPath
 
-    def set_user_path(
-        self, path: str,
-        is_changed_manually: bool
-    ) -> None:
+    def set_user_path(self, path: str, is_changed_manually: bool) -> None:
         """
         Update user path input
         """
@@ -107,26 +94,10 @@ class Common:
         if not is_changed_manually:
             self.currentPathInput.setText(path)
 
-    def change_lookup_format(self) -> None:
-        """
-        Change lookup format options according to the lookup type
-        """
-
-        current_type = self.lookupType.currentText()
-
-        # REMOVE ALL TYPES
-        self.lookupFormat.clear()
-
-        # ADD THE OPTION 'EXTENSION' IF 'FILES' SELECTED
-        formats = ("NAME", "EXTENSION") if current_type == "FILES" else ("NAME",)
-
-        for format in formats:
-            self.lookupFormat.addItem(format)
-
     def set_icon(self, widget: QWidget, name: str, size=(18, 18)) -> str:
 
         widget.setIcon(
-            QIcon(f"{self.constant.get_resources_path()}icons/{name}.svg")
+            QIcon(f"{self.paths.RESOURCES_PATH}icons/{name}.svg")
         )
 
         widget.setIconSize(QSize(*size))
@@ -158,13 +129,6 @@ class Common:
             )
 
         return path if path else None
-
-    def get_progress_unit(self, total_files: int) -> float:
-        """
-            Calculates the shunk to progress in percentage
-        """
-
-        return 100 / total_files
 
 
 class Html:

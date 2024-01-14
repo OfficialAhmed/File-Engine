@@ -72,9 +72,6 @@ class MainWindow(QMainWindow):
             lambda: SharedPages.change(
                 self.widgets.search_page_btn, "search_page", self.widgets.search_widgets)
         )
-        # self.widgets.move_page_btn.clicked.connect(
-        #     lambda: SharedPages.change(self.widgets.move_page_btn, "move_page", self.widgets.move_widgets)
-        # )
 
         # TOGGLE MENU
         self.widgets.toggleButton.clicked.connect(

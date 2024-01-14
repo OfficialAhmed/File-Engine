@@ -16,6 +16,7 @@ from Interface.constants import Dialog
 
 from lib.find import File, Folder
 
+
 class Page(Common):
     """
         QWIDGETS STORED IN THIS CLASS TO BE SHARED TO ALL CHILDREN
@@ -571,9 +572,9 @@ class Ui(Response):
     def __init__(self) -> None:
         super().__init__()
 
-
     def render_page(self):
 
+        # fmt: off
         self.widgets = QWidget()
         self.topGL = QGridLayout()
         self.bottomHL = QHBoxLayout()
@@ -620,14 +621,11 @@ class Ui(Response):
         self.advancedTitleComboBox = QComboBox(self.advancedTitleGroupBox)
         self.advancedTitleComboBox2 = QComboBox(self.advancedTitleGroupBox)
         self.advancedTitleComboBox3 = QComboBox(self.advancedTitleGroupBox)
-        self.advancedIsRecuresiveCheckBox = QCheckBox(
-            self.advancedTitleGroupBox)
-        self.advancedIsCaseSensitiveCheckBox = QCheckBox(
-            self.advancedTitleGroupBox)
+        self.advancedIsRecuresiveCheckBox = QCheckBox(self.advancedTitleGroupBox)
+        self.advancedIsCaseSensitiveCheckBox = QCheckBox(self.advancedTitleGroupBox)
 
         self.advancedMetadataGroupBox = QGroupBox(self.ADVANCED)
-        self.advancedMetadataGroupBoxGL = QGridLayout(
-            self.advancedMetadataGroupBox)
+        self.advancedMetadataGroupBoxGL = QGridLayout(self.advancedMetadataGroupBox)
         self.metadataLineEdit = QLineEdit(self.advancedMetadataGroupBox)
         self.metadataComboBox = QComboBox(self.advancedMetadataGroupBox)
         self.metadataComboBox2 = QComboBox(self.advancedMetadataGroupBox)
@@ -651,29 +649,17 @@ class Ui(Response):
         self.verticalLayout4 = QVBoxLayout(self.RESULT)
         self.duplicateOptionBtn = QPushButton(self.RESULT)
 
-        self.titleLineEditHSpacer = QSpacerItem(
-            40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum
-        )
-
-        self.tabsVSpacer = QSpacerItem(
-            20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding
-        )
+        self.titleLineEditHSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.tabsVSpacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
         self.tabsWidget.addTab(self.BASIC, "")
         self.tabsWidget.addTab(self.ADVANCED, "")
         self.tabsWidget.addTab(self.RESULT, "")
 
-        self.advancedTitleLineEditeHSpacer = QSpacerItem(
-            40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.metadataLineEditHSpacer = QSpacerItem(
-            40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.otherLineEditHSpacer = QSpacerItem(
-            40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.advancedBottomVSpacer = QSpacerItem(
-            20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.advancedTitleLineEditeHSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.metadataLineEditHSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.otherLineEditHSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.advancedBottomVSpacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
         self.set_controller_widgets(
             self.searchTypeComboBox,
@@ -685,9 +671,8 @@ class Ui(Response):
         )
 
         tables["SEARCH"].render(self.tableWidget)
+        self.resultBottomLHSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
-        self.resultBottomLHSpacer = QSpacerItem(
-            40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         """
         ===================================================================
@@ -697,9 +682,7 @@ class Ui(Response):
 
         size = (20, 20)
 
-        self.set_icon(
-            self.browsePathBtn, "folder_outline", size
-        )
+        self.set_icon(self.browsePathBtn, "folder_outline", size)
 
         self.searchMainVL.setSpacing(5)
         self.verticalLayout.setSpacing(10)
@@ -749,233 +732,89 @@ class Ui(Response):
         self.renameOptionBtn.setCursor(QCursor(Qt.PointingHandCursor))
         self.duplicateOptionBtn.setCursor(QCursor(Qt.PointingHandCursor))
 
-        self.moveOptionBtn.setStyleSheet(
-            self.html.get_bg_color("light blue")
-        )
-        self.browsePathBtn.setStyleSheet(
-            self.html.get_bg_color("light blue")
-        )
-        self.startSearchBtn.setStyleSheet(
-            self.html.get_bg_color("light blue")
-        )
-        self.deleteOptionBtn.setStyleSheet(
-            self.html.get_bg_color("light blue")
-        )
-        self.renameOptionBtn.setStyleSheet(
-            self.html.get_bg_color("light blue")
-        )
-        self.duplicateOptionBtn.setStyleSheet(
-            self.html.get_bg_color("light blue")
-        )
-        self.pathLineEdit.setStyleSheet(
-            self.html.get_bg_color("dark blue")
-        )
-        self.otherComboBox.setStyleSheet(
-            self.html.get_bg_color("dark blue")
-        )
-        self.otherLineEdit.setStyleSheet(
-            self.html.get_bg_color("dark blue")
-        )
-        self.titleLineEdit.setStyleSheet(
-            self.html.get_bg_color("dark blue")
-        )
-        self.titleComboBox.setStyleSheet(
-            self.html.get_bg_color("dark blue")
-        )
-        self.otherComboBox3.setStyleSheet(
-            self.html.get_bg_color("dark blue")
-        )
-        self.otherComboBox2.setStyleSheet(
-            self.html.get_bg_color("dark blue")
-        )
-        self.titleComboBox2.setStyleSheet(
-            self.html.get_bg_color("dark blue")
-        )
-        self.titleComboBox3.setStyleSheet(
-            self.html.get_bg_color("dark blue")
-        )
-        self.metadataLineEdit.setStyleSheet(
-            self.html.get_bg_color("dark blue")
-        )
-        self.metadataComboBox.setStyleSheet(
-            self.html.get_bg_color("dark blue")
-        )
-        self.metadataComboBox2.setStyleSheet(
-            self.html.get_bg_color("dark blue")
-        )
-        self.metadataComboBox3.setStyleSheet(
-            self.html.get_bg_color("dark blue")
-        )
-        self.searchTypeComboBox.setStyleSheet(
-            self.html.get_bg_color("dark blue")
-        )
-        self.advancedTitleComboBox.setStyleSheet(
-            self.html.get_bg_color("dark blue")
-        )
-        self.advancedTitleLineEdit.setStyleSheet(
-            self.html.get_bg_color("dark blue")
-        )
-        self.advancedTitleComboBox2.setStyleSheet(
-            self.html.get_bg_color("dark blue")
-        )
-        self.advancedTitleComboBox3.setStyleSheet(
-            self.html.get_bg_color("dark blue")
-        )
+        color = self.html.get_bg_color("light blue")
+        self.moveOptionBtn.setStyleSheet(color)
+        self.browsePathBtn.setStyleSheet(color)
+        self.startSearchBtn.setStyleSheet(color)
+        self.deleteOptionBtn.setStyleSheet(color)
+        self.renameOptionBtn.setStyleSheet(color)
+        self.duplicateOptionBtn.setStyleSheet(color)
+
+        color = self.html.get_bg_color("dark blue")
+        self.pathLineEdit.setStyleSheet(color)
+        self.otherComboBox.setStyleSheet(color)
+        self.otherLineEdit.setStyleSheet(color)
+        self.titleLineEdit.setStyleSheet(color)
+        self.titleComboBox.setStyleSheet(color)
+        self.otherComboBox3.setStyleSheet(color)
+        self.otherComboBox2.setStyleSheet(color)
+        self.titleComboBox2.setStyleSheet(color)
+        self.titleComboBox3.setStyleSheet(color)
+        self.metadataLineEdit.setStyleSheet(color)
+        self.metadataComboBox.setStyleSheet(color)
+        self.metadataComboBox2.setStyleSheet(color)
+        self.metadataComboBox3.setStyleSheet(color)
+        self.searchTypeComboBox.setStyleSheet(color)
+        self.advancedTitleComboBox.setStyleSheet(color)
+        self.advancedTitleLineEdit.setStyleSheet(color)
+        self.advancedTitleComboBox2.setStyleSheet(color)
+        self.advancedTitleComboBox3.setStyleSheet(color)
 
         self.foundMatchLabel.setAlignment(Qt.AlignCenter)
+        self.verticalLayout3.addLayout(self.basicTabMainVL)
 
-        self.verticalLayout3.addLayout(
-            self.basicTabMainVL
-        )
-
-        self.searchMainVL.addLayout(
-            self.topGL
-        )
-        self.searchGroupBoxGL.addLayout(
-            self.searchMainVL, 1, 0, 1, 1
-        )
-        self.verticalLayout2.addLayout(
-            self.advancedTabMainVL
-        )
-        self.resultTabMainVL.addLayout(
-            self.bottomHL
-        )
-        self.verticalLayout4.addLayout(
-            self.resultTabMainVL
-        )
+        self.searchMainVL.addLayout(self.topGL)
+        self.searchGroupBoxGL.addLayout(self.searchMainVL, 1, 0, 1, 1)
+        self.verticalLayout2.addLayout(self.advancedTabMainVL)
+        self.resultTabMainVL.addLayout(self.bottomHL)
+        self.verticalLayout4.addLayout(self.resultTabMainVL)
 
         self.searchGroupBoxGL.setContentsMargins(10, 20, 10, 10)
         self.topGL.setContentsMargins(-1, 2, -1, 0)
 
-        self.titleGroupBoxGL.addWidget(
-            self.titleLineEdit, 0, 3, 1, 1
-        )
-        self.titleGroupBoxGL.addWidget(
-            self.titleComboBox, 0, 0, 1, 1
-        )
-        self.titleGroupBoxGL.addWidget(
-            self.titleComboBox2, 0, 1, 1, 1
-        )
-        self.titleGroupBoxGL.addWidget(
-            self.titleComboBox3, 0, 2, 1, 1
-        )
-        self.titleGroupBoxGL.addWidget(
-            self.isRecursiveCheckBox, 2, 0, 1, 1
-        )
-        self.titleGroupBoxGL.addWidget(
-            self.isCaseSensitiveCheckBox, 3, 0, 1, 1
-        )
-        self.basicTabMainVL.addWidget(
-            self.titleGroupBox
-        )
-        self.advancedTitleGroupBoxGL.addWidget(
-            self.advancedTitleLineEdit, 0, 3, 1, 1
-        )
-        self.advancedTitleGroupBoxGL.addWidget(
-            self.advancedTitleComboBox, 0, 0, 1, 1
-        )
-        self.advancedTitleGroupBoxGL.addWidget(
-            self.advancedTitleComboBox2, 0, 1, 1, 1
-        )
-        self.advancedTabMainVL.addWidget(
-            self.advancedTitleGroupBox
-        )
-        self.advancedTabMainVL.addWidget(
-            self.advancedMetadataGroupBox
-        )
-        self.advancedTitleGroupBoxGL.addWidget(
-            self.advancedTitleComboBox3, 0, 2, 1, 1
-        )
-        self.advancedTitleGroupBoxGL.addWidget(
-            self.advancedIsRecuresiveCheckBox, 2, 0, 1, 1
-        )
-        self.advancedTitleGroupBoxGL.addWidget(
-            self.advancedIsCaseSensitiveCheckBox, 3, 0, 1, 1
-        )
-        self.advancedMetadataGroupBoxGL.addWidget(
-            self.metadataComboBox2, 0, 1, 1, 1
-        )
-        self.advancedMetadataGroupBoxGL.addWidget(
-            self.metadataComboBox, 0, 0, 1, 1
-        )
-        self.advancedMetadataGroupBoxGL.addWidget(
-            self.metadataComboBox3, 0, 2, 1, 1
-        )
-        self.advancedMetadataGroupBoxGL.addWidget(
-            self.metadataLineEdit, 0, 3, 1, 1
-        )
-        self.advancedOtherGroupBoxGL.addWidget(
-            self.otherComboBox, 0, 0, 1, 1
-        )
-        self.advancedOtherGroupBoxGL.addWidget(
-            self.otherComboBox3, 0, 2, 1, 1
-        )
-        self.advancedOtherGroupBoxGL.addWidget(
-            self.otherLineEdit, 0, 4, 1, 1
-        )
-        self.advancedOtherGroupBoxGL.addWidget(
-            self.otherComboBox2, 0, 1, 1, 1
-        )
-        self.advancedTabMainVL.addWidget(
-            self.advancedOtherGroupBox
-        )
-        self.resultTabMainVL.addWidget(
-            self.tableWidget
-        )
-        self.bottomHL.addWidget(
-            self.deleteOptionBtn
-        )
-        self.bottomHL.addWidget(
-            self.renameOptionBtn
-        )
-        self.bottomHL.addWidget(
-            self.moveOptionBtn
-        )
-        self.bottomHL.addWidget(
-            self.duplicateOptionBtn
-        )
-        self.verticalLayout.addWidget(
-            self.tabsWidget
-        )
-        self.verticalLayout.addWidget(
-            self.searchGroupBox
-        )
-        self.searchMainVL.addWidget(
-            self.foundMatchLabel
-        )
-        self.topGL.addWidget(
-            self.pathLineEdit, 0, 1, 1, 1
-        )
-        self.topGL.addWidget(
-            self.browsePathBtn, 0, 2, 1, 1
-        )
-        self.topGL.addWidget(
-            self.startSearchBtn, 0, 3, 1, 1
-        )
-        self.topGL.addWidget(
-            self.searchTypeComboBox, 0, 0, 1, 1
-        )
-        self.bottomHL.addItem(
-            self.resultBottomLHSpacer
-        )
-        self.titleGroupBoxGL.addItem(
-            self.titleLineEditHSpacer, 2, 3, 1, 1
-        )
-        self.basicTabMainVL.addItem(
-            self.tabsVSpacer
-        )
-        self.advancedTitleGroupBoxGL.addItem(
-            self.advancedTitleLineEditeHSpacer, 2, 3, 1, 1
-        )
-        self.advancedMetadataGroupBoxGL.addItem(
-            self.metadataLineEditHSpacer, 1, 3, 1, 1
-        )
-        self.advancedOtherGroupBoxGL.addItem(
-            self.otherLineEditHSpacer, 1, 4, 1, 1
-        )
-        self.advancedTabMainVL.addItem(
-            self.advancedBottomVSpacer
-        )
+        self.titleGroupBoxGL.addWidget(self.titleLineEdit, 0, 3, 1, 1)
+        self.titleGroupBoxGL.addWidget(self.titleComboBox, 0, 0, 1, 1)
+        self.titleGroupBoxGL.addWidget(self.titleComboBox2, 0, 1, 1, 1)
+        self.titleGroupBoxGL.addWidget(self.titleComboBox3, 0, 2, 1, 1)
+        self.titleGroupBoxGL.addWidget(self.isRecursiveCheckBox, 2, 0, 1, 1)
+        self.titleGroupBoxGL.addWidget(self.isCaseSensitiveCheckBox, 3, 0, 1, 1)
+        self.basicTabMainVL.addWidget(self.titleGroupBox)
+        self.advancedTitleGroupBoxGL.addWidget(self.advancedTitleLineEdit, 0, 3, 1, 1)
+        self.advancedTitleGroupBoxGL.addWidget(self.advancedTitleComboBox, 0, 0, 1, 1)
+        self.advancedTitleGroupBoxGL.addWidget(self.advancedTitleComboBox2, 0, 1, 1, 1)
+        self.advancedTabMainVL.addWidget(self.advancedTitleGroupBox)
+        self.advancedTabMainVL.addWidget(self.advancedMetadataGroupBox)
+        self.advancedTitleGroupBoxGL.addWidget(self.advancedTitleComboBox3, 0, 2, 1, 1)
+        self.advancedTitleGroupBoxGL.addWidget(self.advancedIsRecuresiveCheckBox, 2, 0, 1, 1)
+        self.advancedTitleGroupBoxGL.addWidget(self.advancedIsCaseSensitiveCheckBox, 3, 0, 1, 1)
+        self.advancedMetadataGroupBoxGL.addWidget(self.metadataComboBox2, 0, 1, 1, 1)
+        self.advancedMetadataGroupBoxGL.addWidget(self.metadataComboBox, 0, 0, 1, 1)
+        self.advancedMetadataGroupBoxGL.addWidget(self.metadataComboBox3, 0, 2, 1, 1)
+        self.advancedMetadataGroupBoxGL.addWidget(self.metadataLineEdit, 0, 3, 1, 1)
+        self.advancedOtherGroupBoxGL.addWidget(self.otherComboBox, 0, 0, 1, 1)
+        self.advancedOtherGroupBoxGL.addWidget(self.otherComboBox3, 0, 2, 1, 1)
+        self.advancedOtherGroupBoxGL.addWidget(self.otherLineEdit, 0, 4, 1, 1)
+        self.advancedOtherGroupBoxGL.addWidget(self.otherComboBox2, 0, 1, 1, 1)
+        self.advancedTabMainVL.addWidget(self.advancedOtherGroupBox)
+        self.resultTabMainVL.addWidget(self.tableWidget)
+        self.bottomHL.addWidget(self.deleteOptionBtn)
+        self.bottomHL.addWidget(self.renameOptionBtn)
+        self.bottomHL.addWidget(self.moveOptionBtn)
+        self.bottomHL.addWidget(self.duplicateOptionBtn)
+        self.verticalLayout.addWidget(self.tabsWidget)
+        self.verticalLayout.addWidget(self.searchGroupBox)
+        self.searchMainVL.addWidget(self.foundMatchLabel)
+        self.topGL.addWidget(self.pathLineEdit, 0, 1, 1, 1)
+        self.topGL.addWidget(self.browsePathBtn, 0, 2, 1, 1)
+        self.topGL.addWidget(self.startSearchBtn, 0, 3, 1, 1)
+        self.topGL.addWidget(self.searchTypeComboBox, 0, 0, 1, 1)
+        self.bottomHL.addItem(self.resultBottomLHSpacer)
+        self.titleGroupBoxGL.addItem(self.titleLineEditHSpacer, 2, 3, 1, 1)
+        self.basicTabMainVL.addItem(self.tabsVSpacer)
+        self.advancedTitleGroupBoxGL.addItem(self.advancedTitleLineEditeHSpacer, 2, 3, 1, 1)
+        self.advancedMetadataGroupBoxGL.addItem(self.metadataLineEditHSpacer, 1, 3, 1, 1)
+        self.advancedOtherGroupBoxGL.addItem(self.otherLineEditHSpacer, 1, 4, 1, 1)
+        self.advancedTabMainVL.addItem(self.advancedBottomVSpacer)
 
         """
         ===================================================================
@@ -1122,13 +961,13 @@ class Ui(Response):
         self.otherComboBox3.currentTextChanged.connect(
             lambda: self.other_option_changed(3)
         )
-        
+
         # OPTIONS NAMING - TO CHANGE THE CURRENT PAGE FROM SEARCH PAGE
         self.deleteOptionBtn.setObjectName("deleteOptionBtn")
         self.renameOptionBtn.setObjectName("renameOptionBtn")
-        
         self.searchTypeComboBox.setObjectName("searchTypeComboBox")
-        
+
+        # fmt: on
         self.retranslate()
 
         return self.widgets
@@ -1145,119 +984,92 @@ class Ui(Response):
             QCoreApplication.translate(
                 "MainWindow", u"TITLE LOOKUP", None)
         )
-
         self.titleLineEdit.setPlaceholderText(
             QCoreApplication.translate(
                 "MainWindow", u"Enter values seperated by comma", None)
         )
-
         self.isRecursiveCheckBox.setText(
             QCoreApplication.translate("MainWindow", u"RECURSIVE", None)
         )
-
         self.isCaseSensitiveCheckBox.setText(
             QCoreApplication.translate("MainWindow", u"CASE SENSITIVE", None)
         )
-
         self.advancedTitleGroupBox.setTitle(
             QCoreApplication.translate("MainWindow", u"TITLE LOOKUP", None)
         )
-
         self.advancedTitleLineEdit.setPlaceholderText(
             QCoreApplication.translate(
                 "MainWindow", u"Enter values seperated by comma", None)
         )
-
         self.advancedIsRecuresiveCheckBox.setText(
             QCoreApplication.translate("MainWindow", u"RECURSIVE", None)
         )
-
         self.advancedIsCaseSensitiveCheckBox.setToolTip(
             QCoreApplication.translate(
                 "MainWindow", u"Find files recursively through the selected path", None)
         )
-
         self.advancedIsCaseSensitiveCheckBox.setText(
             QCoreApplication.translate("MainWindow", u"CASE SENSITIVE", None)
         )
-
         self.advancedMetadataGroupBox.setTitle(
             QCoreApplication.translate("MainWindow", u"METADATA LOOKUP", None)
         )
-
         self.metadataLineEdit.setPlaceholderText(
             QCoreApplication.translate(
                 "MainWindow", u"Enter values seperated by comma", None)
         )
-
         self.advancedOtherGroupBox.setTitle(
             QCoreApplication.translate("MainWindow", u"OTHER LOOKUPS", None)
         )
-
         self.otherLineEdit.setPlaceholderText(
             QCoreApplication.translate(
                 "MainWindow", u"Enter values seperated by comma", None)
         )
-
         self.deleteOptionBtn.setText(
             QCoreApplication.translate("MainWindow", u"DELETE", None)
         )
-
         self.renameOptionBtn.setText(
             QCoreApplication.translate("MainWindow", u"RENAME", None)
         )
-
         self.moveOptionBtn.setText(
             QCoreApplication.translate("MainWindow", u"MOVE", None)
         )
-
         self.duplicateOptionBtn.setText(
             QCoreApplication.translate("MainWindow", u"DUPLICATE", None)
         )
-
         self.searchGroupBox.setTitle(
             QCoreApplication.translate("MainWindow", u"SEARCH", None)
         )
-
         self.searchTypeComboBox.setItemText(
             0, QCoreApplication.translate("MainWindow", u"FILES", None)
         )
-
         self.searchTypeComboBox.setItemText(
             1, QCoreApplication.translate("MainWindow", u"FOLDERS", None)
         )
-
         self.browsePathBtn.setText(
             QCoreApplication.translate("MainWindow", u"OPEN", None)
         )
-
         self.pathLineEdit.setPlaceholderText(
             QCoreApplication.translate(
                 "MainWindow", u"DIRECTORY PATH...", None)
         )
-
         self.startSearchBtn.setText(
             QCoreApplication.translate("MainWindow", u"START ", None)
         )
-
         self.foundMatchLabel.setText(
             QCoreApplication.translate(
                 "MainWindow", u"FOUND 0 MATCHES ", None)
         )
-
         self.pathLineEdit.setToolTip(
             QCoreApplication.translate(
                 "MainWindow", u"Enter the path where should the lookup process begin", None)
         )
-
         self.isRecursiveCheckBox.setToolTip(
             QCoreApplication.translate(
                 "MainWindow", u"Find files recursively through the selected path", None)
         )
-
         self.advancedIsRecuresiveCheckBox.setToolTip(
             QCoreApplication.translate(
                 "MainWindow", u"Find files recursively through the selected path", None)
         )
-
         self.import_tab_cache()
