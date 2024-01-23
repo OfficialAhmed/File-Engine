@@ -25,20 +25,21 @@
     
 """
 
-import lib.delete as Delete
-import concurrent.futures
 from time import time
-
-from PySide6.QtCore import *
-from PySide6.QtCore import QObject
-from PySide6.QtGui import *
-from PySide6.QtWidgets import *
+from PySide6.QtCore import QSize, QCoreApplication, Signal, QObject
+from PySide6.QtGui import QIcon, QPalette, QBrush, QColor, Qt
+from PySide6.QtWidgets import (
+    QAbstractItemView, QAbstractScrollArea, QFrame, QCheckBox, QTableWidget,
+    QWidget, QLineEdit, QComboBox, QPushButton, QFileDialog, QProgressBar, QTableWidgetItem, QLabel
+)
 
 from Interface.constants import Path, Dialog
 from datetime import datetime
 
 import os
 import json
+import lib.delete as Delete
+import concurrent.futures
 
 
 class Common:
@@ -220,7 +221,6 @@ class Table:
         self.dialog = Dialog()
         self.checkboxes: list[QCheckBox] = []
 
-        self.is_specs_set = False     # LIMIT TABLE DESIGN TO ONLY ONE TIME
         self.last_invoke_time = 0
 
     def render(self, tableWidget: QTableWidget, rows=1, columns=4):
@@ -231,9 +231,7 @@ class Table:
 
         self.table = tableWidget
 
-        if not self.is_specs_set:
-            self.set_specs()
-            self.is_specs_set = True
+        self.set_specs()
 
         # CLEAR PREVIOUS ROWS
         self.checkboxes.clear()
