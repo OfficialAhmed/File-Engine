@@ -43,6 +43,6 @@ File Engine is a powerful and flexible file management and automation tool that 
 
 # LICENSE
 
-File Engine - Copyright (C) 2023 OfficialAhmed
+File Engine - Copyright (C) 2024 OfficialAhmed
 
 This software is free to use, distribute and/or modify it under the terms of the MIT License & Apache [READ](LICENSE)
