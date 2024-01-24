@@ -1,9 +1,6 @@
 
-from PySide6.QtWidgets import (
-    QLabel, QComboBox, QTableWidget
-)
+from PySide6.QtWidgets import QLabel, QComboBox
 
-from json import load as jsonLoad
 from Interface.modules.ui_settings import UiSettings
 from Interface.environment import tables
 from Interface.constants import Path
@@ -58,6 +55,9 @@ class Page:
                 table = tables["RENAME"]
                 self.widgets.rename_page_btn.click()
 
+                label:  QLabel = self.widgets.rename_widgets.findChild(QLabel, "totalRecordsLabel")
+                self.widgets.delete_widgets.findChild(QLabel, "searchTypeHiddenLabel").setText(search_type)
+
         # TAKE OUT THE CHECKED ITEMS TO THE SELECTED TABLE
         selected_data = {}
         searched = tables["SEARCH"]
@@ -72,5 +72,5 @@ class Page:
         # fmt: on
 
 
-# ONE OBJECT SHARED - TO EXCHANGE SAME OBJECT/WIDGETS ACCROSS MULTI SCREENS
-SharedPages = Page()
+# ONE OBJECT SHARED - TO EXCHANGE SAME OBJECT/WIDGETS ACROSS MULTI PAGES
+shared_pages = Page()

@@ -39,7 +39,7 @@ class MainWindow(QMainWindow):
 
         # global widgets
         self.widgets = self.ui
-        SharedPages.set_widgets(self.widgets, self.ui)
+        shared_pages.set_widgets(self.widgets, self.ui)
 
         # USE CUSTOM TITLE BAR | USE AS "False" FOR MAC OR LINUX
         self.ui.EENABLE_CUSTOM_TITLE_BAR = True if system() == "Windows" else False
@@ -57,19 +57,19 @@ class MainWindow(QMainWindow):
 
         # LEFT MENUS
         self.widgets.home_page_btn.clicked.connect(
-            lambda: SharedPages.change(
+            lambda: shared_pages.change(
                 self.widgets.home_page_btn, "home_page", self.widgets.home_widgets)
         )
         self.widgets.delete_page_btn.clicked.connect(
-            lambda: SharedPages.change(
+            lambda: shared_pages.change(
                 self.widgets.delete_page_btn, "delete_page", self.widgets.delete_widgets)
         )
         self.widgets.rename_page_btn.clicked.connect(
-            lambda: SharedPages.change(
+            lambda: shared_pages.change(
                 self.widgets.rename_page_btn, "rename_page", self.widgets.rename_widgets)
         )
         self.widgets.search_page_btn.clicked.connect(
-            lambda: SharedPages.change(
+            lambda: shared_pages.change(
                 self.widgets.search_page_btn, "search_page", self.widgets.search_widgets)
         )
 
@@ -112,10 +112,10 @@ class MainWindow(QMainWindow):
 
         # SIGNALS TO CHANGE PAGE FROM SEARCH PAGE
         self.widgets.search_widgets.findChild(QPushButton, "deleteOptionBtn").clicked.connect(
-            lambda: SharedPages.change_indirect("delete_page")
+            lambda: shared_pages.change_indirect("delete_page")
         )
         self.widgets.search_widgets.findChild(QPushButton, "renameOptionBtn").clicked.connect(
-            lambda: SharedPages.change_indirect("rename_page")
+            lambda: shared_pages.change_indirect("rename_page")
         )
 
     def resizeEvent(self, event):
@@ -163,7 +163,7 @@ class MainWindow(QMainWindow):
 
 
 if __name__ == "__main__":
-    from Interface.widgets.pages import SharedPages
+    from Interface.widgets.pages import shared_pages
 
     app = QApplication(argv)
     app.setWindowIcon(QIcon("icon.ico"))

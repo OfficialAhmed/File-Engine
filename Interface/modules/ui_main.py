@@ -768,7 +768,7 @@ class Ui(object):
             self.closeAppBtn:           ("", "Close"),
             self.delete_page_btn:       ("DELETE", ""),
             self.rename_page_btn:       ("RENAME", ""),
-            self.version:               ("v1.2.1", ""),
+            self.version:               ("v1.2.3", ""),
             self.search_page_btn:       ("SEARCH", ""),
             self.toggleLeftBox:         ("Settings", ""),
             self.extraLabel:            ("Settings", ""),

@@ -372,45 +372,45 @@ class Response(Page):
             STORE CURRENT SEARCH SETTINGS 
         """
 
-        match tab:
+        data = {
+            "BASIC": {
+                "titleComboBox":            self.titleComboBox.currentText(),
+                "titleComboBox2":           self.titleComboBox2.currentText(),
+                "titleComboBox3":           self.titleComboBox3.currentText(),
+                "titleLineEdit":            self.titleLineEdit.text(),
+                "isRecursiveCheckBox":      self.isRecursiveCheckBox.isChecked(),
+                "isCaseSensitiveCheckBox":  self.isCaseSensitiveCheckBox.isChecked()
+            },
 
-            case "BASIC":
-                data = {
-                    "titleComboBox":            self.titleComboBox.currentText(),
-                    "titleComboBox2":           self.titleComboBox2.currentText(),
-                    "titleComboBox3":           self.titleComboBox3.currentText(),
-                    "titleLineEdit":            self.titleLineEdit.text(),
-                    "isRecursiveCheckBox":      self.isRecursiveCheckBox.isChecked(),
-                    "isCaseSensitiveCheckBox":  self.isCaseSensitiveCheckBox.isChecked()
-                }
+            "ADVANCED": {
+                "metadataComboBox":         self.metadataComboBox.currentText(),
+                "metadataComboBox2":        self.metadataComboBox2.currentText(),
+                "metadataComboBox3":        self.metadataComboBox3.currentText(),
+                "metadataLineEdit":         self.metadataLineEdit.text(),
 
-            case "ADVANCED":
-                data = {
-                    "metadataComboBox":         self.metadataComboBox.currentText(),
-                    "metadataComboBox2":        self.metadataComboBox2.currentText(),
-                    "metadataComboBox3":        self.metadataComboBox3.currentText(),
-                    "metadataLineEdit":         self.metadataLineEdit.text(),
+                "otherComboBox":            self.otherComboBox.currentText(),
+                "otherComboBox2":           self.otherComboBox2.currentText(),
+                "otherComboBox3":           self.otherComboBox3.currentText(),
+                "otherLineEdit":            self.otherLineEdit.text(),
 
-                    "otherComboBox":            self.otherComboBox.currentText(),
-                    "otherComboBox2":           self.otherComboBox2.currentText(),
-                    "otherComboBox3":           self.otherComboBox3.currentText(),
-                    "otherLineEdit":            self.otherLineEdit.text(),
-
-                    "advancedTitleComboBox":            self.advancedTitleComboBox.currentText(),
-                    "advancedTitleComboBox2":           self.advancedTitleComboBox2.currentText(),
-                    "advancedTitleComboBox3":           self.advancedTitleComboBox3.currentText(),
-                    "advancedTitleLineEdit":            self.advancedTitleLineEdit.text(),
-                    "advancedIsRecuresiveCheckBox":     self.advancedIsRecuresiveCheckBox.isChecked(),
-                    "advancedIsCaseSensitiveCheckBox":  self.advancedIsCaseSensitiveCheckBox.isChecked(),
-                }
+                "advancedTitleComboBox":            self.advancedTitleComboBox.currentText(),
+                "advancedTitleComboBox2":           self.advancedTitleComboBox2.currentText(),
+                "advancedTitleComboBox3":           self.advancedTitleComboBox3.currentText(),
+                "advancedTitleLineEdit":            self.advancedTitleLineEdit.text(),
+                "advancedIsRecuresiveCheckBox":     self.advancedIsRecuresiveCheckBox.isChecked(),
+                "advancedIsCaseSensitiveCheckBox":  self.advancedIsCaseSensitiveCheckBox.isChecked(),
+            }
+        }
 
         cache: dict = {}
 
         # RETRIEVE EXISTING CACHE IF AVAILABLE
         if osPath.exists(self.cache_file):
             cache = jsonLoad(open(self.cache_file))
+            cache[tab] = data.get(tab)
+        else:
+            cache = data
 
-        cache[tab] = data
         cache["SEARCH"] = {
             "searchTypeComboBox":       self.searchTypeComboBox.currentText(),
             "pathLineEdit":             self.pathLineEdit.text()
@@ -478,8 +478,12 @@ class Response(Page):
         ):
             return
 
-        try:
+        # IF CACHE DOESNT EXIST CREATE ONE
+        if osPath.exists(self.cache_file):
+            self.export_tab_cache("BASIC")
+            self.export_tab_cache("ADVANCED")
 
+        try:
             match self.tabs[self.tabsWidget.currentIndex()]:
 
                 case "BASIC":
@@ -966,6 +970,14 @@ class Ui(Response):
         self.deleteOptionBtn.setObjectName("deleteOptionBtn")
         self.renameOptionBtn.setObjectName("renameOptionBtn")
         self.searchTypeComboBox.setObjectName("searchTypeComboBox")
+
+
+        # CASE-SENSITIVE NOT YET IMPLEMENTED -> ALWAYS CASE-SENSITIVE LOOKUP
+        self.isCaseSensitiveCheckBox.setEnabled(False)
+        self.advancedIsCaseSensitiveCheckBox.setEnabled(False)
+        self.isCaseSensitiveCheckBox.setChecked(True)
+        self.advancedIsCaseSensitiveCheckBox.setChecked(True)
+
 
         # fmt: on
         self.retranslate()

@@ -44,6 +44,9 @@ class Ui(Common):
         self.renameValueLineEdit = QLineEdit(self.groupBox)
         self.renameByComboBox = QComboBox(self.groupBox)
         self.renameBy2ComboBox = QComboBox(self.groupBox)
+        
+        self.searchTypeHiddenLabel = QLabel(self.groupBox)
+        self.searchTypeHiddenLabel.setHidden(True)
 
         self.verticalLayout.setSpacing(10)
         self.verticalLayout.setContentsMargins(10, 10, 10, 10)
@@ -137,6 +140,9 @@ class Ui(Common):
         for opt in renameBy2ComboBox_options:
             self.renameBy2ComboBox.addItem(opt)
 
+        self.totalRecordsLabel.setObjectName("totalRecordsLabel")
+        self.searchTypeHiddenLabel.setObjectName("searchTypeHiddenLabel")
+        
         self.retranslateUi()
 
         return self.widgets
