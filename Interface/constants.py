@@ -28,7 +28,7 @@ class Dialog:
     def __init__(self):
         self.widget = None
 
-    def get_response(self, msg: str,  mode: str = "I", is_dialog: bool = True) -> bool:
+    def __get_response(self, msg: str,  mode: str = "I", is_dialog: bool = True) -> bool:
         
         # A FIX: CANNOT USE QDIALOG BEFORE INIT THE QAPPLICATION
         if not self.widget:
@@ -100,6 +100,6 @@ class Dialog:
             RETURNS BOOL 
         """
 
-        return self.get_response(
+        return self.__get_response(
             msg, mode, is_dialog
         )

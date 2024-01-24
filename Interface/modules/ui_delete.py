@@ -9,16 +9,12 @@ from PySide6.QtWidgets import (
 import os
 import json
 from Interface.environment import Common, RestoreWorker, DeleteWorker, tables
-from Interface.constants import Dialog, Path
-
 
 class Ui(Common):
 
     def __init__(self) -> None:
         super().__init__()
 
-        self.paths = Path()
-        self.dialog = Dialog()
         self.rows_to_remove = []
 
     def restore_content_clicked(self) -> None:

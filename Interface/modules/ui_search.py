@@ -12,8 +12,6 @@ from PySide6.QtWidgets import (
 )
 
 from Interface.environment import Common, tables
-from Interface.constants import Dialog
-
 from lib.find import File, Folder
 
 
@@ -198,7 +196,6 @@ class Response(Page):
 
     def __init__(self) -> None:
         super().__init__()
-        self.dialog = Dialog()
 
     def title_cb_changed(self):
         """
