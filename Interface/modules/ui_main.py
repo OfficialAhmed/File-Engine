@@ -10,15 +10,15 @@ from ..environment import Common, ProgressBar
 from .ui_delete import Ui as Ui_delete
 from .ui_rename import Ui as Ui_rename
 from .ui_search import Ui as Ui_search
-from Interface.constants import Dialog, Path
 
-class Feature:
+
+class Feature(Common):
     """
         Main Page interactions and functionality
     """
 
     def __init__(self) -> None:
-        self.dialog = Dialog()
+        super().__init__()
 
     def set_display_mode(self):
         """
@@ -72,7 +72,6 @@ class Ui(object):
 
         self.ui_function = Feature()
         self.common_functions = Common()
-        self.paths = Path()
 
     def setupUi(self, MainWindow):
 
@@ -833,9 +832,10 @@ class Ui(object):
         self.set_bg_image(self.search_page_btn, "search-outline")
 
         # LEFT MENU OPTIONS
-        self.displayModeOption.pressed.connect(self.ui_function.set_display_mode)
+        self.displayModeOption.pressed.connect(
+            self.ui_function.set_display_mode)
         self.removeTrashOption.pressed.connect(self.ui_function.empty_trash)
-        
+
         self.set_bg_image(self.displayModeOption, "display-mode-outline")
         self.common_functions.set_icon(self.extraCloseColumnBtn, "close")
 
@@ -854,6 +854,6 @@ class Ui(object):
         ext = "svg" if is_icon else "png"
 
         widget.setStyleSheet(
-            f"background-image: url({self.paths.RESOURCES_PATH}{path}/{name}.{ext});\
+            f"background-image: url({self.common_functions.paths.RESOURCES_PATH}{path}/{name}.{ext});\
             {extra_style}"
         )

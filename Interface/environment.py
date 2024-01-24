@@ -50,6 +50,7 @@ class Common:
     def __init__(self) -> None:
         self.html = Html()
         self.paths = Path()
+        self.dialog = Dialog()
         self.progressBar = ProgressBar()
 
         self.data = {}
