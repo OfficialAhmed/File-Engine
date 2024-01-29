@@ -6,11 +6,8 @@ from PySide6.QtWidgets import (
     QTableWidget, QVBoxLayout, QWidget, QLineEdit, QComboBox
 )
 
-import os
-import json
-from Interface.environment import Common, RestoreWorker, DeleteWorker, tables
-# from Interface.constants import Dialog, Path
-
+from Interface.environment import Common, RenameWorker, tables
+from os import rename as Rename
 
 class Option:
 
@@ -40,6 +37,12 @@ class Option:
             ),
         }
 
+        self.custom_options = (
+            "START FROM CUSTOM",
+            "# AS PREFIX & START FROM CUSTOM",
+            "# AS SUFFIX & START FROM CUSTOM"
+        )
+
     def generate_default_options(self):
         """ GENERATE RENAMING OPTIONS FOR BOTH COMBOBOXES """
 
@@ -55,6 +58,13 @@ class Option:
         for option in self.options.get(self.cb.currentText()):
             self.cb2.addItem(option)
 
+    def toggle_custom_value(self):
+
+        self.custom_input.setEnabled(
+            self.cb2.currentText() in self.custom_options
+        )
+        
+
 
 class Ui(Common):
 
@@ -62,6 +72,99 @@ class Ui(Common):
         super().__init__()
 
         self.rows_to_remove = []
+
+    
+    def rename_content_clicked(self):
+
+        # IF USER DID NOT ACCEPT DELETE PROCESS, TERMINATE
+        if not self.dialog.show(
+            "ARE YOU SURE YOU WANT TO *RENAME* SELECTED FILES? THIS IS IRREVERSIBALE",
+            "ARE YOU SURE?"
+        ):
+            return
+
+        # RESET PROGRESS BAR
+        self.progressBar.update(0)
+
+        to_be_renamed = []
+
+        # FLAG SELECTED TABLE ITEMS
+        for indx, cb in enumerate(tables["DELETE"].checkboxes):
+
+            # IF CHECKBOX SELECTED
+            if cb.isChecked():
+
+                # FETCH DATA FROM TABLE
+                file = self.tableWidget.item(
+                    indx, 0                                 # EACH ROW, 1ST COLUMN
+                ).text()
+
+                root = self.tableWidget.item(
+                    indx, 1                                 # EACH ROW, 2ND COLUMN
+                ).text()
+
+                to_be_renamed.append(f"{root}//{file}")
+                self.rows_to_remove.append(indx)
+
+        if not to_be_renamed:
+            self.dialog.show(
+                "PLEASE SELECT AT LEAST ONE FILE",
+                "NO SELECTION!",
+                False
+            )
+            return
+
+        # DELETE FILES WITH THREADS
+        worker = RenameWorker(
+            to_be_renamed,
+            self.searchTypeHiddenLabel.text()
+        )
+
+        # UPDATE PROGRESS BAR
+        worker.progress_signal.connect(
+            self.progressBar.update
+        )
+
+        # DELETE ROWS FROM THE TABLE
+        worker.remove_rows_signal.connect(
+            tables["RENAME"].remove_rows(
+                self.rows_to_remove,
+                self.totalRecordsLabel
+            )
+        )
+        self.rows_to_remove.clear()
+
+        # SUCCESSFULL ITEMS REMOVAL MESSAGE
+        worker.is_success.connect(
+            self.renaming_process_state
+        )
+
+        # UNSUCCESSFULL ITEMS REMOVAL MESSAGE
+        worker.is_fail.connect(
+            lambda error: self.dialog.show(
+                f"SOMTHING WENT WRONG WHILE REMOVING | ERROR <{error}>",
+                "C",    # CRITICAL MESSAGE
+                False
+            )
+        )
+
+        worker.run()
+
+    def renaming_process_state(self, state: bool):
+
+        if state:
+            self.dialog.show(
+                f"SUCCESSFULY RENAMED ALL ITEM(S)",
+                "OPERATION SUCCESSFULL",
+                False
+            )
+
+        else:
+            self.dialog.show(
+                f"SOME ITEM(S) WEREN'T RENAMED SUCCESSFULY",
+                "OPERATION PARTIALLY SUCCESSFULL",
+                False
+            )
 
     def render_page(self):
 
@@ -94,6 +197,7 @@ class Ui(Common):
         )
 
         self.searchTypeHiddenLabel.setHidden(True)
+        self.renameValueLineEdit.setEnabled(False)
 
         self.mainFrameVL.setContentsMargins(0, 0, 0, 0)
         self.topGridLayout.setContentsMargins(-1, 10, -1, 0)
@@ -153,6 +257,9 @@ class Ui(Common):
         self.rename_options.generate_default_options()
         self.renameByComboBox.currentIndexChanged.connect(
             lambda: self.rename_options.generate_cb2_options()
+        )
+        self.renameBy2ComboBox.currentIndexChanged.connect(
+            lambda: self.rename_options.toggle_custom_value()
         )
 
         self.retranslateUi()
