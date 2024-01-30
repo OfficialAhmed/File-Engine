@@ -54,7 +54,8 @@ class Finder:
         size = os.path.getsize(f"{root}/{match}") / (1024*1024)
 
         # DICT LAYOUT - ACCESSABLE BY INDEX
-        self.detected_matches[match] = {
+        # i.e. {file:..., root:..., size:...}
+        self.detected_matches[f"{root}//{match}"] = {
             object_name: match,
             "root": root,
             "size": round(size, 3)

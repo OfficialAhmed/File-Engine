@@ -65,7 +65,9 @@ class Page:
         for row in range(searched.table.rowCount()):
             if searched.table.cellWidget(row, 3).isChecked():
                 file_name = searched.table.item(row, 0).text()
-                selected_data[file_name] = searched.data.get(file_name)
+                file_root = searched.table.item(row, 1).text()
+                key = f"{file_root}//{file_name}"
+                selected_data[key] = searched.data.get(key)
 
         table.fill(selected_data)
         label.setText(str(len(selected_data)))

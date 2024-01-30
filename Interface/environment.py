@@ -221,6 +221,7 @@ class Table:
         self.paths = Path()
         self.dialog = Dialog()
         self.checkboxes: list[QCheckBox] = []
+        self.data_type = "FILES"
 
         self.last_invoke_time = 0
 
@@ -663,50 +664,95 @@ class RenameWorker(Worker):
 
     remove_rows_signal = Signal()
 
-    def __init__(self, files: list, lookup_type: str) -> None:
+    def __init__(self, files: list, renaming_method: str, custom_value: str) -> None:
         super().__init__()
 
         self.files = files
-        self.lookup_type = lookup_type
+        self.renaming_method = renaming_method
+        self.data_type = tables["RENAME"].data_type
+        
+        # CONVERT STR TO INT IF ITS A DIGIT
+        self.custom_value = int(custom_value) if custom_value.isdigit() else 0 
 
-    def process(self, path: str) -> None:
+    def process(self, path: tuple) -> bool:
+        """ RENAMING FILES METHOD INVOKED BY THE THREADS """
 
-        os.rename(path, "test")
+        try:
+            os.rename(path[0], path[1])
+            return True
+        except:
+            return False
+
+    def generate_new_titles(self) -> list[tuple]:
+        """ GENERATE NEW TITELS BASED ON THE TECHNIQUE FROM THE 2ND COMBOBOX """
+
+        new_titles: list[tuple] = []
+        start_index = 0
+
+        # NUMBERING
+        match self.renaming_method[-1]:
+            case "0":
+                start_index = 0
+            case "1":
+                start_index = 1
+            case _:
+                start_index = self.custom_value
+
+        symbol = self.renaming_method[0]
+
+        for index, old in enumerate(self.files, start_index):
+
+            # SYMBOLS
+            if "AS PREFIX" in self.renaming_method:
+                title = f"{symbol}{index}"
+            elif "AS SUFFIX" in self.renaming_method:
+                title = f"{index}{symbol}"
+
+            if self.data_type == "FILES":
+                dot_index = old.rfind(".")
+                file_ext = "." + old[dot_index + 1:]
+                new = old[:old.rfind("/")] + title + file_ext
+
+            else:
+                new = old[:old.rfind("/")] + title
+
+            new_titles.append((old, new))
+
+        return new_titles
 
     def run(self) -> None:
-        """
-            WORK DECOMPOSITION - SUBTASKS
-        """
 
         if self.files:
 
             try:
 
+                new_titles = self.generate_new_titles()
+
                 # 'max_workers' SET TO MAX AVAILABLE CPU CORES
                 with concurrent.futures.ThreadPoolExecutor(max_workers=None) as executor:
                     tasks = [
-                        executor.submit(self.process, file)
-                        for file in self.files
+                        executor.submit(self.process, titles)
+                        for titles in new_titles
                     ]
 
                     # PROGRESS BAR CALCULATIONS
                     completed = 0
-                    total_files = len(self.files)
-                    is_removed_all = True
+                    total_titles = len(new_titles)
+                    is_renamed_all = True
 
                     # UPDATE THE PROGRESS BAR, UPON EACH FINISHED PROCESS
                     for task in concurrent.futures.as_completed(tasks):
 
                         if not task.result():
-                            is_removed_all = False
+                            is_renamed_all = False
 
                         completed += 1
-                        progress = completed / total_files
+                        progress = completed / total_titles
                         self.progress_signal.emit(progress)
 
                     # REMOVE ROWS & INVOKE PROCESS SUCESSFUL METHOD
                     self.remove_rows_signal.emit()
-                    self.is_success.emit(is_removed_all)
+                    self.is_success.emit(is_renamed_all)
 
             except Exception as e:
                 self.is_fail.emit(str(e))

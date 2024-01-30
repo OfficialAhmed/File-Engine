@@ -7,7 +7,7 @@ from PySide6.QtWidgets import (
 )
 
 from Interface.environment import Common, RenameWorker, tables
-from os import rename as Rename
+
 
 class Option:
 
@@ -22,9 +22,9 @@ class Option:
                 "START FROM 0",
                 "START FROM 1",
                 "START FROM CUSTOM",
-                "# AS PREFIX & START FROM 1",
-                "# AS SUFFIX & START FROM 1",
+                "# AS PREFIX & START FROM 0",
                 "# AS PREFIX & START FROM CUSTOM",
+                "# AS SUFFIX & START FROM 0",
                 "# AS SUFFIX & START FROM CUSTOM"
             ),
 
@@ -63,7 +63,6 @@ class Option:
         self.custom_input.setEnabled(
             self.cb2.currentText() in self.custom_options
         )
-        
 
 
 class Ui(Common):
@@ -73,7 +72,6 @@ class Ui(Common):
 
         self.rows_to_remove = []
 
-    
     def rename_content_clicked(self):
 
         # IF USER DID NOT ACCEPT DELETE PROCESS, TERMINATE
@@ -83,13 +81,23 @@ class Ui(Common):
         ):
             return
 
+        # ALLOW ONLY INTEGERS FOR THE CUSTOM INPUT
+        # IF THE OPTION DOESNT CONTAIN INT AND THE VALUE ISNT AN INT
+        if not self.renameBy2ComboBox.currentText()[-1].isdigit() and not self.renameValueLineEdit.text().isdigit():
+            self.dialog.show(
+                f"Please enter a valid integer!",
+                "W",   # CRITICAL MESSAGE
+                False
+            )
+            return
+
         # RESET PROGRESS BAR
         self.progressBar.update(0)
 
         to_be_renamed = []
 
         # FLAG SELECTED TABLE ITEMS
-        for indx, cb in enumerate(tables["DELETE"].checkboxes):
+        for indx, cb in enumerate(tables["RENAME"].checkboxes):
 
             # IF CHECKBOX SELECTED
             if cb.isChecked():
@@ -114,10 +122,11 @@ class Ui(Common):
             )
             return
 
-        # DELETE FILES WITH THREADS
+        # RENAME FILES WITH THREADS
         worker = RenameWorker(
             to_be_renamed,
-            self.searchTypeHiddenLabel.text()
+            self.renameBy2ComboBox.currentText(),
+            self.renameValueLineEdit.text()
         )
 
         # UPDATE PROGRESS BAR
@@ -125,7 +134,7 @@ class Ui(Common):
             self.progressBar.update
         )
 
-        # DELETE ROWS FROM THE TABLE
+        # RENAME ROWS FROM THE TABLE
         worker.remove_rows_signal.connect(
             tables["RENAME"].remove_rows(
                 self.rows_to_remove,
@@ -142,7 +151,7 @@ class Ui(Common):
         # UNSUCCESSFULL ITEMS REMOVAL MESSAGE
         worker.is_fail.connect(
             lambda error: self.dialog.show(
-                f"SOMTHING WENT WRONG WHILE REMOVING | ERROR <{error}>",
+                f"SOMETHING WENT WRONG WHILE RENAMING | ERROR < {error} >",
                 "C",    # CRITICAL MESSAGE
                 False
             )
@@ -188,7 +197,6 @@ class Ui(Common):
         self.renameValueLineEdit = QLineEdit(self.groupBox)
         self.renameByComboBox = QComboBox(self.groupBox)
         self.renameBy2ComboBox = QComboBox(self.groupBox)
-        self.searchTypeHiddenLabel = QLabel(self.groupBox)
         self.totalRecordsTextLabel = QLabel(self.groupBox)
 
         tables["RENAME"].render(self.tableWidget)
@@ -196,7 +204,6 @@ class Ui(Common):
             self.renameByComboBox, self.renameBy2ComboBox, self.renameValueLineEdit
         )
 
-        self.searchTypeHiddenLabel.setHidden(True)
         self.renameValueLineEdit.setEnabled(False)
 
         self.mainFrameVL.setContentsMargins(0, 0, 0, 0)
@@ -252,7 +259,6 @@ class Ui(Common):
         self.renameValueLineEdit.setStyleSheet(self.html.get_bg_color("dark blue"))
 
         self.totalRecordsLabel.setObjectName("totalRecordsLabel")
-        self.searchTypeHiddenLabel.setObjectName("searchTypeHiddenLabel")
 
         self.rename_options.generate_default_options()
         self.renameByComboBox.currentIndexChanged.connect(
@@ -260,6 +266,9 @@ class Ui(Common):
         )
         self.renameBy2ComboBox.currentIndexChanged.connect(
             lambda: self.rename_options.toggle_custom_value()
+        )
+        self.renameBtn.clicked.connect(
+            lambda: self.rename_content_clicked()
         )
 
         self.retranslateUi()
