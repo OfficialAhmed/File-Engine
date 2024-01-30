@@ -17,10 +17,10 @@ File Engine is a powerful and flexible file management and automation tool that 
 
 - [x] **Export/Import Processes:** Save current process eliminate the need of researching again
 - [ ] **Automation:** Set up automated tasks to streamline your file management workflows.
-- [ ] **Bulk Operations:** Perform batch operations such as:
+- [x] **Bulk Operations:** Perform batch operations such as:
   - [ ] Moving
   - [ ] Copying
-  - [ ] Renaming
+  - [x] Renaming
   - [x] Deleting
   - [x] Restoring files
 

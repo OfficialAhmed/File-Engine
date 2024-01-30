@@ -488,7 +488,10 @@ class Response(Page):
                     self.export_tab_cache("BASIC")
                     search_type: str = self.searchTypeComboBox.currentText()
                     custom_input: list = self.titleLineEdit.text().replace(" ", "").split(",")
-
+                    
+                    tables["RENAME"].data_type = search_type
+                    tables["DELETE"].data_type = search_type
+                    
                     finder = File()
                     if search_type == "FOLDERS":
                         finder = Folder()
