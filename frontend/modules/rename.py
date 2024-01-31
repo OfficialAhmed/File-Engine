@@ -6,7 +6,7 @@ from PySide6.QtWidgets import (
     QTableWidget, QVBoxLayout, QWidget, QLineEdit, QComboBox
 )
 
-from Interface.environment import Common, RenameWorker, tables
+from frontend.environment import Common, RenameWorker, tables
 
 
 class Option:

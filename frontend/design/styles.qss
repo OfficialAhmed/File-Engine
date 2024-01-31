@@ -99,7 +99,7 @@ QToolTip {
 
 #topLogo {
     background-color: rgb(33, 37, 43);
-    background-image: url('Interface/images/images/File Engine logo.png');
+    background-image: url('frontend/images/File Engine logo.png');
     background-position: center;
     background-repeat: no-repeat;
 }
@@ -198,7 +198,7 @@ QToolTip {
 #extraIcon {
     background-position: center;
     background-repeat: no-repeat;
-    background-image: url(:images/images/icons/settings.svg);
+    background-image: url("frontend/icons/settings.svg");
 }
 
 /*
@@ -569,13 +569,13 @@ QCheckBox::indicator:hover {
 QCheckBox::indicator:checked {
     background: 3px solid rgb(52, 59, 72);
     border: 3px solid rgb(52, 59, 72);
-    background-image: url(:/images/images/icons/tick-outline.svg);
+    background-image: url("frontend/icons/tick-outline.svg");
 }
 
 QCheckBox::indicator:unchecked {
     background: 3px solid rgb(52, 59, 72);
     border: 3px solid rgb(52, 59, 72);
-    background-image: url(:/images/images/icons/x-outline.svg);
+    background-image: url("frontend/icons/x-outline.svg");
 }
 
 /*
@@ -626,7 +626,7 @@ QComboBox::drop-down {
     border-left-style: solid;
     border-top-right-radius: 3px;
     border-bottom-right-radius: 3px;
-    background-image: url(:images/images/icons/arrow down.svg);
+    background-image: url("frontend/icons/arrow down.svg");
     background-position: center;
     background-repeat: no-reperat;
 }
@@ -765,11 +765,11 @@ QGroupBox::indicator {
 }
 
 QGroupBox::indicator:unchecked {
-    image: url(:/images/images/icons/x-outline.svg);
+    image: url("frontend/icons/x-outline.svg");
 }
 
 QGroupBox::indicator:checked {
-    image: url(:/images/images/icons/tick-outline.svg);
+    image: url("frontend/icons/tick-outline.svg");
 }
 
 /*

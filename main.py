@@ -18,8 +18,8 @@ from PySide6.QtCore import *
 from PySide6.QtGui import *
 
 # CUSTOME WIDGETS STYLING
-from Interface.modules.ui_main import *
-from Interface.modules.ui_settings import *
+from frontend.modules.main import *
+from frontend.modules.settings import *
 
 
 # FIX Problem for High DPI and Scale above 100%
@@ -163,7 +163,7 @@ class MainWindow(QMainWindow):
 
 
 if __name__ == "__main__":
-    from Interface.widgets.pages import shared_pages
+    from frontend.widgets.pages import shared_pages
 
     app = QApplication(argv)
     app.setWindowIcon(QIcon("icon.ico"))

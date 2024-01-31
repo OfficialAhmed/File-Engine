@@ -5,11 +5,11 @@ from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 
-from . resources_rc import *
+from .resources_rc import *
 from ..environment import Common, ProgressBar
-from .ui_delete import Ui as Ui_delete
-from .ui_rename import Ui as Ui_rename
-from .ui_search import Ui as Ui_search
+from .delete import Ui as Ui_delete
+from .rename import Ui as Ui_rename
+from .search import Ui as Ui_search
 
 
 class Feature(Common):
@@ -86,7 +86,7 @@ class Ui(object):
                     QSS UI STYLESHEET
         ////////////////////////////////////////////////
         """
-        qss_file = QFile("Interface\\Design\\styles.qss")
+        qss_file = QFile("frontend\\Design\\styles.qss")
         qss_file.open(QFile.ReadOnly | QFile.Text)
 
         # Apply the CSS stylesheet to the widget

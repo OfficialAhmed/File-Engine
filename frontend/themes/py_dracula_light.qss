@@ -99,7 +99,7 @@ QToolTip {
 
 #topLogo {
 	background-color: #6272a4;
-	background-image: url('Interface/images/images/File Engine logo.png');
+	background-image: url('frontend/images/File Engine logo.png');
 	background-position: center;
 	background-repeat: no-repeat;
 }

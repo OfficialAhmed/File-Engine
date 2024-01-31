@@ -15,7 +15,7 @@ from PySide6.QtWidgets import (
 class Path:
 
     def __init__(self) -> None:
-        self.RESOURCES_PATH = ":/images/images/"
+        self.RESOURCES_PATH = "frontend/"
         self.ROOT_PATH:  str = os.getcwd() + "\\"
         self.DATA_PATH:  str = self.ROOT_PATH + "data\\"
         self.TRASH_PATH: str = self.DATA_PATH + "trash\\"

@@ -1,9 +1,9 @@
 
 from PySide6.QtWidgets import QLabel, QComboBox
 
-from Interface.modules.ui_settings import UiSettings
-from Interface.environment import tables
-from Interface.constants import Path
+from frontend.modules.settings import UiSettings
+from frontend.environment import tables
+from frontend.constants import Path
 
 
 class Page:
