@@ -10,24 +10,25 @@ import re
 class Finder:
 
     def __init__(self) -> None:
-
+        
+        # fmt: off
         self.path = ""
         self.is_recursive = None
         self.is_case_sensitive = None
         self.detected_matches = {}
         self.regex = {
-            "SYMBOLS":              r"^[@#$%^&*(){}~'_+\-.]+$",
-            "ALPHABETS & SYMBOLS":  r'^[a-zA-Z!@#$%^&*()_+.\\-]+|^[^\s/\\:*?"<>|]+$',
-            "ALPHABETS & NUMBERS":  r'^[a-zA-Z0-9]+$',
-            "NUMBERS & SYMBOLS":    r"^[0-9!@#$%^&*(){}~'_+\-.]+$"
+            "SYMBOLS":              r"^[!@#$%^&*()_+{}\/| ~\-=+<>?\[\],;:'\".\\]+$",
+            "ALPHABETS & NUMBERS":  r"^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]+$",
+            "ALPHABETS & SYMBOLS":  r"^(?=.*[a-zA-Z])(?=.*[!@#$%^&*()_+{}\/| ~\-=+<>?\[\],;:'\".\\])[^0-9]+$",
+            "NUMBERS & SYMBOLS":    r"^(?=.*[0-9])(?=.*[!@#$%^&*()_+{}\/| ~\-=+<>?\[\],;:'\".\\])[\d!@#$%^&*()_+{}\/| ~\-=+<>?\[\],;:'\".\\]+$"
         }
 
-    def exclude_regex(self, exclude):
-        self.regex["NUMBERS EXCLUSION"] = f"^[{''.join(set('0-9') - exclude)}]+$"
-        self.regex["SYMBOLS EXCLUSION"] = "^[^" + "@" + \
-            "#$%^&*()" + "{}~'_+\-.]+$"  # FIXME: doesnt work
+    def exclude_regex(self, exclude: set):
+        self.regex["NUMBERS EXCLUSION"] = f"^[{''.join(set(0,1,2,3,4,5,6,7,8,9) - exclude)}]+$"
+        self.regex["SYMBOLS EXCLUSION"] = f"^[^{''.join(map(re.escape, exclude))}{self.regex['SYMBOLS']}]+$"
         self.regex["ALPHABETS EXCLUSION"] = f"^[{''.join(sorted(set('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') - exclude))}]+$"
-
+        # fmt: on
+        
     def set_path(self, path: str) -> None:
         self.path = path
 
@@ -60,7 +61,6 @@ class Finder:
             "root": root,
             "size": round(size, 3)
         }
-
 
     def get_files(self) -> str:
         """
