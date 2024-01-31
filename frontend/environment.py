@@ -33,7 +33,7 @@ from PySide6.QtWidgets import (
     QWidget, QLineEdit, QComboBox, QPushButton, QFileDialog, QProgressBar, QTableWidgetItem, QLabel
 )
 
-from Interface.constants import Path, Dialog
+from frontend.constants import Path, Dialog
 from datetime import datetime
 
 import os
@@ -701,8 +701,9 @@ class RenameWorker(Worker):
         symbol = self.renaming_method[0]
 
         for index, old in enumerate(self.files, start_index):
-
+            
             # SYMBOLS
+            title = f"{index}"
             if "AS PREFIX" in self.renaming_method:
                 title = f"{symbol}{index}"
             elif "AS SUFFIX" in self.renaming_method:

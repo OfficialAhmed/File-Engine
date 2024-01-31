@@ -4,7 +4,7 @@ from PySide6.QtGui import *
 from PySide6.QtCore import *
 from PySide6.QtWidgets import *
 
-from Interface.widgets.custom_grips import *
+from frontend.widgets.custom_grips import *
 
 
 class UiStyle:

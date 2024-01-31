@@ -1,9 +1,9 @@
 
 from PySide6.QtWidgets import QLabel, QComboBox
 
-from Interface.modules.ui_settings import UiSettings
-from Interface.environment import tables
-from Interface.constants import Path
+from frontend.modules.settings import UiSettings
+from frontend.environment import tables
+from frontend.constants import Path
 
 
 class Page:
@@ -41,7 +41,7 @@ class Page:
         search_type = self.widgets.search_widgets.findChild(QComboBox, "searchTypeComboBox").currentText()
 
         match page:
-            
+
             case "delete_page":
                 table = tables["DELETE"]
 
@@ -50,7 +50,7 @@ class Page:
 
                 # STORE SEARCH TYPE IN THE HIDDEN LABEL FOR DELETING METHOD 
                 self.widgets.delete_widgets.findChild(QLabel, "searchTypeHiddenLabel").setText(search_type)
-            
+
             case "rename_page":
                 table = tables["RENAME"]
                 self.widgets.rename_page_btn.click()
