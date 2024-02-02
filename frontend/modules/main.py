@@ -839,7 +839,7 @@ class Ui(object):
         # RIGHT MENU OPTIONS
         self.set_bg_image(self.btn_print, "home")
         self.set_bg_image(self.btn_logout, "home")
-        self.set_bg_image(self.removeTrashOption, "home")
+        self.set_bg_image(self.removeTrashOption, "empty_recycle_bin")
 
     def set_bg_image(self, widget: QWidget, name: str, is_icon=True, extra_style="") -> None:
         """

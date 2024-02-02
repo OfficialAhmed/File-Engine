@@ -48,7 +48,7 @@ class UiSettings(MainWindow):
             self.ui.appMargins.setContentsMargins(0, 0, 0, 0)
             self.ui.maximizeAppBtn.setToolTip("Restore")
             self.ui.maximizeAppBtn.setIcon(
-                QIcon(u":/icons/images/icons/icon_restore.png")
+                QIcon(u"frontend/icons/minimize_window.svg")
             )
 
             self.ui.frame_size_grip.hide()
@@ -66,7 +66,7 @@ class UiSettings(MainWindow):
             self.ui.appMargins.setContentsMargins(10, 10, 10, 10)
             self.ui.maximizeAppBtn.setToolTip("Maximize")
             self.ui.maximizeAppBtn.setIcon(
-                QIcon(u":/icons/images/icons/icon_maximize.png")
+                QIcon(u"frontend/icons/maximize.svg")
             )
 
             self.ui.frame_size_grip.show()
