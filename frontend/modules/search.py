@@ -19,8 +19,6 @@ class Ui(Response):
     def __init__(self) -> None:
         super().__init__()
 
-    def render_page(self):
-
         # fmt: off
         self.widgets = QWidget()
         self.topGL = QGridLayout()
@@ -425,6 +423,7 @@ class Ui(Response):
         # fmt: on
         self.retranslate()
 
+    def get_widgets(self):
         return self.widgets
 
     def retranslate(self):

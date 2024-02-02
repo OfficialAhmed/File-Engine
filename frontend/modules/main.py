@@ -296,16 +296,13 @@ class Ui(object):
         """
         # SET SHARED WIDGETS AFTER RENDERING
         _UiDelete = Ui_delete()
-        self.delete_widgets = _UiDelete.render_page()
+        self.delete_widgets = _UiDelete.get_widgets()
 
         _UiRename = Ui_rename()
-        self.rename_widgets = _UiRename.render_page()
-
-        _UiRename = Ui_rename()
-        self.rename_widgets = _UiRename.render_page()
+        self.rename_widgets = _UiRename.get_widgets()
 
         _UiSearch = Ui_search()
-        self.search_widgets = _UiSearch.render_page()
+        self.search_widgets = _UiSearch.get_widgets()
 
         """
         ////////////////////////////////////////////////
