@@ -100,6 +100,8 @@ class Ui(Response):
         self.tabsWidget.addTab(self.BASIC, "")
         self.tabsWidget.addTab(self.ADVANCED, "")
         self.tabsWidget.addTab(self.RESULT, "")
+        
+        self.tabsWidget.setTabEnabled(1, False)
 
         self.advancedTitleLineEditeHSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
         self.metadataLineEditHSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
@@ -446,7 +448,7 @@ class Ui(Response):
             QCoreApplication.translate("MainWindow", u"RECURSIVE", None)
         )
         self.isCaseSensitiveCheckBox.setText(
-            QCoreApplication.translate("MainWindow", u"CASE SENSITIVE", None)
+            QCoreApplication.translate("MainWindow", u"CASE SENSITIVE (ALWAYS ON)", None)
         )
         self.advancedTitleGroupBox.setTitle(
             QCoreApplication.translate("MainWindow", u"TITLE LOOKUP", None)

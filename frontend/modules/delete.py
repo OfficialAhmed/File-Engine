@@ -14,11 +14,8 @@ from backend.delete import Response
 class Ui(Response):
 
     def __init__(self) -> None:
-        """
-        ===================================================================
-                        SET WIDGETS (SENSITIVE LAYOUT)
-        ===================================================================
-        """
+
+        self.table = tables["DELETE"]
 
         self.widgets = QWidget()
         self.gridLayout = QGridLayout()
@@ -39,6 +36,7 @@ class Ui(Response):
         self.totalRecordsTxtLabel = QLabel(self.groupBox)
 
         self.searchTypeHiddenLabel = QLabel(self.groupBox)
+        self.table.set_total_records_widget(self.totalRecordsLabel)
 
         super().__init__(
             self.totalRecordsLabel,
@@ -97,7 +95,7 @@ class Ui(Response):
         ===================================================================
         """
 
-        tables["DELETE"].render(self.tableWidget)
+        self.table.render(self.tableWidget)
 
         """
         ===================================================================
@@ -143,20 +141,12 @@ class Ui(Response):
                         RENDER PAGE ICONS
         ===================================================================
         """
-        size = (20, 20)
 
-        self.set_icon(
-            self.deleteBtn, "delete sign", size
-        )
-        self.set_icon(
-            self.restoreBtn, "restore file", size
-        )
-        self.set_icon(
-            self.importBtn, "file upload", size
-        )
-        self.set_icon(
-            self.exportBtn, "file download", size
-        )
+        size = (20, 20)
+        self.set_icon(self.deleteBtn, "delete sign", size)
+        self.set_icon(self.importBtn, "file upload", size)
+        self.set_icon(self.restoreBtn, "restore file", size)
+        self.set_icon(self.exportBtn, "file download", size)
 
         """
         ===================================================================
@@ -169,11 +159,11 @@ class Ui(Response):
         )
 
         self.exportBtn.clicked.connect(
-            lambda: self.export_process_clicked()
+            lambda: self.table.export_process_clicked()
         )
 
         self.importBtn.clicked.connect(
-            lambda: self.import_process_clicked()
+            lambda: self.table.import_process_clicked()
         )
 
         self.restoreBtn.clicked.connect(
@@ -217,7 +207,7 @@ class Ui(Response):
         ////////////////////////////////////////////////
         """
         self.tableWidget.setSortingEnabled(True)
-        tables["DELETE"].retranslate_headers()
+        self.table.retranslate_headers()
 
         self.groupBox.setTitle(
             QCoreApplication.translate("MainWindow", u"DELETE", None)

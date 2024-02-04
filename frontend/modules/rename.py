@@ -7,68 +7,16 @@ from PySide6.QtWidgets import (
 )
 
 from frontend.environment import tables
-from backend.rename import Response
-
-
-class Option:
-
-    def __init__(self, cb: QComboBox, cb2: QComboBox, custom_input: QLineEdit) -> None:
-
-        self.cb:            QComboBox = cb
-        self.cb2:           QComboBox = cb2
-        self.custom_input:  QLineEdit = custom_input
-
-        self.options = {
-            "BULK": (
-                "START FROM 0",
-                "START FROM 1",
-                "START FROM CUSTOM",
-                "# AS PREFIX & START FROM 0",
-                "# AS PREFIX & START FROM CUSTOM",
-                "# AS SUFFIX & START FROM 0",
-                "# AS SUFFIX & START FROM CUSTOM"
-            ),
-
-            "TIMESTAMP": (
-                "DD_MM_YY-seed",
-                "DD_MM_YY_hh-seed",
-                "DD_MM_YY_hh_mm-seed",
-                "DD_MM_YY_hh_mm_ssss-seed",
-                "hh_mm_ssss-seed",
-            ),
-        }
-
-        self.custom_options = (
-            "START FROM CUSTOM",
-            "# AS PREFIX & START FROM CUSTOM",
-            "# AS SUFFIX & START FROM CUSTOM"
-        )
-
-    def generate_default_options(self):
-        """ GENERATE RENAMING OPTIONS FOR BOTH COMBOBOXES """
-
-        for option in self.options.keys():
-            self.cb.addItem(option)
-
-        self.generate_cb2_options()
-
-    def generate_cb2_options(self):
-        """ GENERATE RENAMING OPTIONS FOR 2ND COMBOBOX """
-
-        self.cb2.clear()
-        for option in self.options.get(self.cb.currentText()):
-            self.cb2.addItem(option)
-
-    def toggle_custom_value(self):
-
-        self.custom_input.setEnabled(
-            self.cb2.currentText() in self.custom_options
-        )
+from backend.rename import Response, Option
 
 
 class Ui(Response):
 
     def __init__(self) -> None:
+
+        self.table = tables["RENAME"]
+        
+
         self.widgets = QWidget()
         self.bottomHLayout = QHBoxLayout()
         self.topGridLayout = QGridLayout()
@@ -91,14 +39,19 @@ class Ui(Response):
         self.renameBy2ComboBox = QComboBox(self.groupBox)
         self.totalRecordsTextLabel = QLabel(self.groupBox)
 
+        """
+        ===================================================================
+                        SET BACKEND SPECS
+        ===================================================================
+        """
         super().__init__(
             tableWidget=self.tableWidget,
             renameBy2ComboBox=self.renameBy2ComboBox,
             totalRecordsLabel=self.totalRecordsLabel,
             renameValueLineEdit=self.renameValueLineEdit
         )
-
-        tables["RENAME"].render(self.tableWidget)
+        self.table.render(self.tableWidget)
+        self.table.set_total_records_widget(self.totalRecordsLabel)
         self.rename_options = Option(
             self.renameByComboBox, self.renameBy2ComboBox, self.renameValueLineEdit
         )
@@ -159,6 +112,22 @@ class Ui(Response):
 
         self.totalRecordsLabel.setObjectName("totalRecordsLabel")
 
+
+        """
+        ===================================================================
+                        RENDER PAGE ICONS
+        ===================================================================
+        """
+        size = (20, 20)
+        self.set_icon(self.importBtn, "file upload", size)
+        self.set_icon(self.exportBtn, "file download", size)
+
+        """
+        ===================================================================
+                        BUTTONS & EVENT/SIGNAL
+        ===================================================================
+        """
+
         self.rename_options.generate_default_options()
         self.renameByComboBox.currentIndexChanged.connect(
             lambda: self.rename_options.generate_cb2_options()
@@ -168,6 +137,12 @@ class Ui(Response):
         )
         self.renameBtn.clicked.connect(
             lambda: self.rename_content_clicked()
+        )
+        self.exportBtn.clicked.connect(
+            lambda: self.table.export_process_clicked()
+        )
+        self.importBtn.clicked.connect(
+            lambda: self.table.import_process_clicked()
         )
 
         self.retranslateUi()

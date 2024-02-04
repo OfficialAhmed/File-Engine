@@ -1,5 +1,6 @@
 
 from frontend.environment import Common, RenameWorker, tables
+from PySide6.QtWidgets import QLineEdit, QComboBox
 
 
 class Response(Common):
@@ -117,3 +118,59 @@ class Response(Common):
                 "OPERATION PARTIALLY SUCCESSFULL",
                 False
             )
+
+
+class Option:
+
+    def __init__(self, cb: QComboBox, cb2: QComboBox, custom_input: QLineEdit) -> None:
+
+        self.cb:            QComboBox = cb
+        self.cb2:           QComboBox = cb2
+        self.custom_input:  QLineEdit = custom_input
+
+        self.options = {
+            "BULK": (
+                "START FROM 0",
+                "START FROM 1",
+                "START FROM CUSTOM",
+                "# AS PREFIX & START FROM 0",
+                "# AS PREFIX & START FROM CUSTOM",
+                "# AS SUFFIX & START FROM 0",
+                "# AS SUFFIX & START FROM CUSTOM"
+            ),
+
+            "TIMESTAMP": (
+                "DD_MM_YY-seed",
+                "DD_MM_YY_hh-seed",
+                "DD_MM_YY_hh_mm-seed",
+                "DD_MM_YY_hh_mm_ssss-seed",
+                "hh_mm_ssss-seed",
+            ),
+        }
+
+        self.custom_options = (
+            "START FROM CUSTOM",
+            "# AS PREFIX & START FROM CUSTOM",
+            "# AS SUFFIX & START FROM CUSTOM"
+        )
+
+    def generate_default_options(self):
+        """ GENERATE RENAMING OPTIONS FOR BOTH COMBOBOXES """
+
+        for option in self.options.keys():
+            self.cb.addItem(option)
+
+        self.generate_cb2_options()
+
+    def generate_cb2_options(self):
+        """ GENERATE RENAMING OPTIONS FOR 2ND COMBOBOX """
+
+        self.cb2.clear()
+        for option in self.options.get(self.cb.currentText()):
+            self.cb2.addItem(option)
+
+    def toggle_custom_value(self):
+
+        self.custom_input.setEnabled(
+            self.cb2.currentText() in self.custom_options
+        )
