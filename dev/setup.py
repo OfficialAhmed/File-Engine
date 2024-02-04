@@ -15,7 +15,7 @@ target = Executable(
 # SETUP CX FREEZE
 setup(
     name = "File Engine",
-    version = "1.2",
+    version = "1.3",
     description = "File management & automation tool",
     author = "OfficialAhmed0",
     options = {'build_exe' : {'include_files' : files}},

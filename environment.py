@@ -33,9 +33,9 @@ from PySide6.QtWidgets import (
     QWidget, QLineEdit, QComboBox, QPushButton, QFileDialog, QProgressBar, QTableWidgetItem, QLabel
 )
 
-from frontend.constants import Path, Dialog
+from constants import Path, Dialog
 from datetime import datetime
-from frontend.constants import APP_VER
+from constants import APP_VER
 
 import os
 import json

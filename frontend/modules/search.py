@@ -8,7 +8,7 @@ from PySide6.QtWidgets import (
 )
 
 from backend.search import Response
-from frontend.environment import tables
+from environment import tables
 
 
 class Ui(Response):

@@ -4,7 +4,7 @@ from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 
 from .resources_rc import *
-from ..environment import Common, ProgressBar
+from environment import Common, ProgressBar
 from .delete import Ui as Ui_delete
 from .rename import Ui as Ui_rename
 from .search import Ui as Ui_search

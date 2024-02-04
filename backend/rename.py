@@ -1,5 +1,5 @@
 
-from frontend.environment import Common, RenameWorker, tables
+from environment import Common, RenameWorker, tables
 from PySide6.QtWidgets import QLineEdit, QComboBox
 
 

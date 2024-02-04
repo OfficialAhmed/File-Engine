@@ -2,7 +2,7 @@ import json
 import os
 import shutil
 
-from frontend.environment import Common
+from environment import Common
 
 class Feature(Common):
     """
