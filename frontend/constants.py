@@ -11,6 +11,7 @@ from PySide6.QtWidgets import (
     QDialog, QLabel, QVBoxLayout, QDialogButtonBox, QMessageBox
 )
 
+APP_VER = "1.3.0"
 
 class Path:
 

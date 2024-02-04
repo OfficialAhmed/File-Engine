@@ -77,7 +77,7 @@ class Page(Common):
     advancedIsRecuresiveCheckBox: QCheckBox = None
     advancedIsCaseSensitiveCheckBox: QCheckBox = None
 
-    tabs = ("BASIC", "ADVANCED", "RESULT")
+    tabs = ("BASIC", "ADVANCED (SOON!)", "RESULT")
 
     search_options = {
         "NAME": ("FILES", "FOLDERS"),

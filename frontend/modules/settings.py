@@ -1,9 +1,4 @@
 from main import MainWindow
-
-from PySide6.QtGui import *
-from PySide6.QtCore import *
-from PySide6.QtWidgets import *
-
 from frontend.widgets.custom_grips import *
 
 
@@ -48,7 +43,7 @@ class UiSettings(MainWindow):
             self.ui.appMargins.setContentsMargins(0, 0, 0, 0)
             self.ui.maximizeAppBtn.setToolTip("Restore")
             self.ui.maximizeAppBtn.setIcon(
-                QIcon(u":/icons/images/icons/icon_restore.png")
+                QIcon(u"frontend/icons/minimize_window.svg")
             )
 
             self.ui.frame_size_grip.hide()
@@ -66,7 +61,7 @@ class UiSettings(MainWindow):
             self.ui.appMargins.setContentsMargins(10, 10, 10, 10)
             self.ui.maximizeAppBtn.setToolTip("Maximize")
             self.ui.maximizeAppBtn.setIcon(
-                QIcon(u":/icons/images/icons/icon_maximize.png")
+                QIcon(u"frontend/icons/maximize.svg")
             )
 
             self.ui.frame_size_grip.show()
@@ -302,19 +297,3 @@ class UiSettings(MainWindow):
 
         # CLOSE APPLICATION
         self.ui.closeAppBtn.clicked.connect(lambda: UiSettings.close(self))
-
-    def resize_grips(self):
-        if UiStyle.ENABLE_CUSTOM_TITLE_BAR:
-            self.left_grip.setGeometry(
-                0, 10, 10, self.height()
-            )
-            self.right_grip.setGeometry(
-                self.width() - 10, 10, 10, self.height()
-            )
-            self.top_grip.setGeometry(
-                0, 0, self.width(), 10
-            )
-            self.bottom_grip.setGeometry(
-                0, self.height() - 10, self.width(), 10
-            )
-

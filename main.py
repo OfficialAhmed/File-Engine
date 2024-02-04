@@ -18,7 +18,7 @@ from PySide6.QtCore import *
 from PySide6.QtGui import *
 
 # CUSTOME WIDGETS STYLING
-from frontend.modules.main import *
+from frontend.modules.home import *
 from frontend.modules.settings import *
 
 
@@ -51,7 +51,7 @@ class MainWindow(QMainWindow):
         self.widgets.titleRightInfo.setText(
             "File Management & Automation Tool"
         )
-
+    
         # SET UI DEFINITIONS
         UiSettings.uiDefinitions(self)
 
@@ -124,7 +124,20 @@ class MainWindow(QMainWindow):
         """
 
         # Update Size Grips
-        UiSettings.resize_grips(self)
+        # UiSettings.resize_grips(self)
+        if UiStyle.ENABLE_CUSTOM_TITLE_BAR:
+            self.left_grip.setGeometry(
+                0, 10, 10, self.height()
+            )
+            self.right_grip.setGeometry(
+                self.width() - 10, 10, 10, self.height()
+            )
+            self.top_grip.setGeometry(
+                0, 0, self.width(), 10
+            )
+            self.bottom_grip.setGeometry(
+                0, self.height() - 10, self.width(), 10
+            )
 
     def mousePressEvent(self, event):
         """

@@ -1,6 +1,4 @@
-import json
-import os
-import shutil
+
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
@@ -10,59 +8,7 @@ from ..environment import Common, ProgressBar
 from .delete import Ui as Ui_delete
 from .rename import Ui as Ui_rename
 from .search import Ui as Ui_search
-
-
-class Feature(Common):
-    """
-        Main Page interactions and functionality
-    """
-
-    def __init__(self) -> None:
-        super().__init__()
-
-    def set_display_mode(self):
-        """
-            CHANGE DISPLAY MODE FROM DARK/LIGHT OR LIGHT/DARK
-            STORE THE BOOL VALUE IN THE DEFAULT SETTINGS
-        """
-
-        if self.dialog.show(
-            "THEME WILL BE CHANGED AFTER RESTARTING",
-            "Q"
-        ):
-            path = "data/settings/default.json"
-            settings: dict = json.load(open(path))
-
-            # INVERSE THE SAVED THEME MODE
-            is_light_theme = False if settings.get("is_light_theme") else True
-
-            settings["is_light_theme"] = is_light_theme
-
-            json.dump(settings, open(path, "w"))
-
-    def empty_trash(self):
-
-        if self.dialog.show(
-            "ATTENTION! THIS WILL EMPTY THE TRASH. YOU WILL NO LONGER ABLE TO RESTORE PREVIOUSLY EDITED FILES",
-            "W"
-        ):
-            path = "data/trash"
-
-            try:
-                shutil.rmtree(path)
-                os.mkdir(path)
-                self.dialog.show(
-                    f"TRASH REMOVED SUCCESSFULLY",
-                    "I",
-                    False
-                )
-
-            except Exception as e:
-                self.dialog.show(
-                    f"SOMTHING WENT WRONG. COULDN'T EMPTY TRASH | ERROR {e}",
-                    "C",
-                    False
-                )
+from backend.home import Feature
 
 
 class Ui(object):
@@ -296,16 +242,13 @@ class Ui(object):
         """
         # SET SHARED WIDGETS AFTER RENDERING
         _UiDelete = Ui_delete()
-        self.delete_widgets = _UiDelete.render_page()
+        self.delete_widgets = _UiDelete.get_widgets()
 
         _UiRename = Ui_rename()
-        self.rename_widgets = _UiRename.render_page()
-
-        _UiRename = Ui_rename()
-        self.rename_widgets = _UiRename.render_page()
+        self.rename_widgets = _UiRename.get_widgets()
 
         _UiSearch = Ui_search()
-        self.search_widgets = _UiSearch.render_page()
+        self.search_widgets = _UiSearch.get_widgets()
 
         """
         ////////////////////////////////////////////////
@@ -625,23 +568,8 @@ class Ui(object):
         self.contentSettings.setObjectName(u"contentSettings")
         self.frame_size_grip.setObjectName(u"frame_size_grip")
         self.btn_adjustments.setObjectName(u"btn_adjustments")
-        self.verticalLayout_6.setObjectName(u"verticalLayout_6")
         self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
-        self.verticalLayout_7.setObjectName(u"verticalLayout_7")
-        self.verticalLayout_8.setObjectName(u"verticalLayout_8")
-        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
-        self.verticalLayout_3.setObjectName(u"verticalLayout_3")
-        self.verticalLayout_5.setObjectName(u"verticalLayout_5")
         self.extraColumLayout.setObjectName(u"extraColumLayout")
-        self.verticalLayout_9.setObjectName(u"verticalLayout_9")
-        self.verticalLayout_20.setObjectName(u"verticalLayout_20")
-        self.verticalLayout_14.setObjectName(u"verticalLayout_14")
-        self.verticalLayout_13.setObjectName(u"verticalLayout_13")
-        self.verticalLayout_10.setObjectName(u"verticalLayout_10")
-        self.verticalLayout_11.setObjectName(u"verticalLayout_11")
-        self.verticalLayout_12.setObjectName(u"verticalLayout_12")
-        self.verticalLayout_15.setObjectName(u"verticalLayout_15")
         self.maximizeAppBtn.setObjectName(u"maximizeRestoreAppBtn")
         self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
         self.verticalMenuLayout.setObjectName(u"verticalMenuLayout")
@@ -739,9 +667,40 @@ class Ui(object):
         # SET TRASLATIONS
         self.retranslateUi(MainWindow)
 
-        self.set_images()
-        self.stackedWidget.setCurrentIndex(1)
+        # fmt: off
+        # WINDOW
+        self.common_functions.set_icon(self.moreBtn, "more")
+        self.common_functions.set_icon(self.closeAppBtn, "close")
+        self.common_functions.set_icon(self.minimizeAppBtn, "minimize")
+        self.common_functions.set_icon(self.maximizeAppBtn, "maximize")
+        self.common_functions.set_icon(self.extraCloseColumnBtn, "close")
 
+        # MAIN PAGE
+        self.set_bg_image(self.home_widgets,"File Engine vertical", False,"background-position: center; background-repeat: no-repeat")
+
+        # MAIN OPTIONS
+        self.set_bg_image(self.toggleButton, "menu")
+        self.set_bg_image(self.home_page_btn, "home")
+        self.set_bg_image(self.toggleLeftBox, "settings")
+        self.set_bg_image(self.move_page_btn, "file move")
+        self.set_bg_image(self.delete_page_btn, "trash-can")
+        self.set_bg_image(self.rename_page_btn, "rename-outline")
+        self.set_bg_image(self.search_page_btn, "search-outline")
+
+        # RIGHT MENU OPTIONS
+        self.set_bg_image(self.btn_print, "home")
+        self.set_bg_image(self.btn_logout, "home")
+        self.set_bg_image(self.removeTrashOption, "empty_recycle_bin")
+
+        # LEFT MENU OPTIONS
+        self.set_bg_image(self.displayModeOption, "display-mode-outline")
+
+        # CLICK ACTIONS
+        self.displayModeOption.pressed.connect(self.ui_function.set_display_mode)
+        self.removeTrashOption.pressed.connect(self.ui_function.empty_trash)
+        # fmt: on
+
+        self.stackedWidget.setCurrentIndex(1)
         QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -805,44 +764,6 @@ class Ui(object):
                 None
             )
         )
-
-    def set_images(self) -> None:
-
-        # WINDOW
-        self.common_functions.set_icon(self.moreBtn, "more")
-        self.common_functions.set_icon(self.closeAppBtn, "close")
-        self.common_functions.set_icon(self.minimizeAppBtn, "minimize")
-        self.common_functions.set_icon(self.maximizeAppBtn, "maximize")
-
-        # MAIN PAGE
-        self.set_bg_image(
-            is_icon=False,
-            widget=self.home_widgets,
-            name="File Engine vertical",
-            extra_style="background-position: center;\n" + "background-repeat: no-repeat;"
-        )
-
-        # MAIN OPTIONS
-        self.set_bg_image(self.home_page_btn, "home")
-        self.set_bg_image(self.toggleButton, "menu")
-        self.set_bg_image(self.move_page_btn, "file move")
-        self.set_bg_image(self.delete_page_btn, "trash-can")
-        self.set_bg_image(self.toggleLeftBox, "settings")
-        self.set_bg_image(self.rename_page_btn, "rename-outline")
-        self.set_bg_image(self.search_page_btn, "search-outline")
-
-        # LEFT MENU OPTIONS
-        self.displayModeOption.pressed.connect(
-            self.ui_function.set_display_mode)
-        self.removeTrashOption.pressed.connect(self.ui_function.empty_trash)
-
-        self.set_bg_image(self.displayModeOption, "display-mode-outline")
-        self.common_functions.set_icon(self.extraCloseColumnBtn, "close")
-
-        # RIGHT MENU OPTIONS
-        self.set_bg_image(self.btn_print, "home")
-        self.set_bg_image(self.btn_logout, "home")
-        self.set_bg_image(self.removeTrashOption, "home")
 
     def set_bg_image(self, widget: QWidget, name: str, is_icon=True, extra_style="") -> None:
         """

@@ -1,31 +1,34 @@
 <RCC>
   <qresource prefix="images">
-    <file>..\..\frontend\images\File Engine logo.png</file>
-    <file>..\..\frontend\icons\x-outline.svg</file>
-    <file>..\..\frontend\images\File Engine vertical.png</file>
-    <file>..\..\frontend\icons\tick-outline.svg</file>
-    <file>..\..\frontend\icons\menu.svg</file>
-    <file>..\..\frontend\icons\close.svg</file>
-    <file>..\..\frontend\icons\copy-outline.svg</file>
-    <file>..\..\frontend\icons\delete sign.svg</file>
-    <file>..\..\frontend\icons\file download.svg</file>
-    <file>..\..\frontend\icons\file upload.svg</file>
-    <file>..\..\frontend\icons\file move.svg</file>
-    <file>..\..\frontend\icons\folder_outline.svg</file>
-    <file>..\..\frontend\icons\home.svg</file>
-    <file>..\..\frontend\icons\maximize.svg</file>
-    <file>..\..\frontend\icons\minimize.svg</file>
-    <file>..\..\frontend\icons\more.svg</file>
-    <file>..\..\frontend\icons\remove-from-trash.svg</file>
-    <file>..\..\frontend\icons\rename-outline.svg</file>
-    <file>..\..\frontend\icons\restore file.svg</file>
-    <file>..\..\frontend\icons\save-outline.svg</file>
-    <file>..\..\frontend\icons\search-outline.svg</file>
-    <file>..\..\frontend\icons\settings.svg</file>
-    <file>..\..\frontend\icons\start.svg</file>
-    <file>..\..\frontend\icons\tick-outline.svg</file>
-    <file>..\..\frontend\icons\trash-can.svg</file>
-    <file>..\..\frontend\icons\arrow down.svg</file>
-    <file>..\..\frontend\icons\display-mode-outline.svg</file>
+    <file>../../../frontend/images/File Engine logo.png</file>
+    <file>../../../frontend/images/File Engine vertical.png</file>
+  </qresource>
+  <qresource prefix="icons">
+    <file>../../../frontend/icons/x-outline.svg</file>
+    <file>../../../frontend/icons/empty_recycle_bin.svg</file>
+    <file>../../../frontend/icons/tick-outline.svg</file>
+    <file>../../../frontend/icons/menu.svg</file>
+    <file>../../../frontend/icons/close.svg</file>
+    <file>../../../frontend/icons/copy-outline.svg</file>
+    <file>../../../frontend/icons/delete sign.svg</file>
+    <file>../../../frontend/icons/file download.svg</file>
+    <file>../../../frontend/icons/file upload.svg</file>
+    <file>../../../frontend/icons/file move.svg</file>
+    <file>../../../frontend/icons/folder_outline.svg</file>
+    <file>../../../frontend/icons/home.svg</file>
+    <file>../../../frontend/icons/maximize.svg</file>
+    <file>../../../frontend/icons/minimize.svg</file>
+    <file>../../../frontend/icons/more.svg</file>
+    <file>../../../frontend/icons/remove-from-trash.svg</file>
+    <file>../../../frontend/icons/rename-outline.svg</file>
+    <file>../../../frontend/icons/restore file.svg</file>
+    <file>../../../frontend/icons/save-outline.svg</file>
+    <file>../../../frontend/icons/search-outline.svg</file>
+    <file>../../../frontend/icons/settings.svg</file>
+    <file>../../../frontend/icons/start.svg</file>
+    <file>../../../frontend/icons/tick-outline.svg</file>
+    <file>../../../frontend/icons/trash-can.svg</file>
+    <file>../../../frontend/icons/arrow down.svg</file>
+    <file>../../../frontend/icons/display-mode-outline.svg</file>
   </qresource>
 </RCC>
