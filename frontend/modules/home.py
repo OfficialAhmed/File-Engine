@@ -4,11 +4,13 @@ from PySide6.QtGui import *
 from PySide6.QtWidgets import *
 
 from .resources_rc import *
-from ..environment import Common, ProgressBar
 from .delete import Ui as Ui_delete
 from .rename import Ui as Ui_rename
 from .search import Ui as Ui_search
+
 from backend.home import Feature
+from environment import Common, ProgressBar
+from constants import APP_VER
 
 
 class Ui(object):
@@ -724,9 +726,9 @@ class Ui(object):
             self.move_page_btn:         ("MOVE", ""),
             self.moreBtn:               ("", "More"),
             self.closeAppBtn:           ("", "Close"),
+            self.version:               (APP_VER, ""),
             self.delete_page_btn:       ("DELETE", ""),
             self.rename_page_btn:       ("RENAME", ""),
-            self.version:               ("v1.3.0", ""),
             self.search_page_btn:       ("SEARCH", ""),
             self.toggleLeftBox:         ("Settings", ""),
             self.extraLabel:            ("Settings", ""),

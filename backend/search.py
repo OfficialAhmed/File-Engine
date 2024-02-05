@@ -14,7 +14,7 @@ from json import load as jsonLoad
 from json import dump as jsonDump
 from json import JSONDecodeError
 
-from frontend.environment import Common, tables
+from environment import Common, tables
 
 class Page(Common):
     """

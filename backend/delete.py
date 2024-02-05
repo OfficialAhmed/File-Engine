@@ -1,6 +1,6 @@
 import os
 import json
-from frontend.environment import Common, RestoreWorker, DeleteWorker, tables
+from environment import Common, RestoreWorker, DeleteWorker, tables
 
 
 class Response(Common):

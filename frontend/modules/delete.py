@@ -7,7 +7,7 @@ from PySide6.QtWidgets import (
 )
 
 
-from frontend.environment import tables
+from environment import tables
 from backend.delete import Response
 
 

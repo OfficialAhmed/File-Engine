@@ -6,7 +6,7 @@ from PySide6.QtWidgets import (
     QTableWidget, QVBoxLayout, QWidget, QLineEdit, QComboBox
 )
 
-from frontend.environment import tables
+from environment import tables
 from backend.rename import Response, Option
 
 

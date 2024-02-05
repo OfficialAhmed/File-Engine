@@ -1,9 +1,13 @@
+"""
+    ### HANDLES THE LEFT SIDEBAR OF THE MAIN WINDOW (PAGES)
+        USED BY MAIN.PY TO RECIEVE ONCLICK-CHANGE AT ANY TIME
+"""
 
 from PySide6.QtWidgets import QLabel, QComboBox
 
 from frontend.modules.settings import UiSettings
-from frontend.environment import tables
-from frontend.constants import Path
+from environment import tables
+from constants import Path
 
 
 class Page:
