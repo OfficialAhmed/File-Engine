@@ -161,34 +161,16 @@ class Html:
     def get_credits_page(self) -> str:
         return \
             '<body style="font-family:"Segoe UI"; font-size:10pt; font-weight:400; font-style:normal">\n' +\
-            self.p_start +\
-            self.title_span_tag(
-                "CREDITS"
-            ) + self.p_end +\
-            self.title_span_tag(
-                "MAIN UI DESIGN : Wanderson M. Pimenta", "#ffffff", "9"
-            ) + self.p_end +\
-            self.title_span_tag(
-                "DRACULA THEME: Zeno Rocha", "#ffffff", "9"
-            ) + self.p_end +\
-            self.title_span_tag(
-                "LICENSE"
-            ) + self.p_end +\
-            self.title_span_tag(
-                "https://github.com/OfficialAhmed/File-Engine/blob/main/LICENSE", "#bd93f9", "9"
-            ) + self.p_end +\
-            self.title_span_tag(
-                "DEVELOPER"
-            ) + self.p_end +\
-            self.title_span_tag(
-                "@OfficialAhmed0", "#ffffff", "9"
-            ) + self.p_end +\
-            self.title_span_tag(
-                "GitHub"
-            ) + self.p_end +\
-            self.title_span_tag(
-                "https://github.com/OfficialAhmed/File-Engine", "#bd93f9", "9"
-            )+"</p>"
+            self.p_start + self.title_span_tag("CREDITS") + \
+            self.p_end + self.title_span_tag("MAIN UI DESIGN : Wanderson M. Pimenta", "#ffffff", "9") +\
+            self.p_end + self.title_span_tag("DRACULA THEME: Zeno Rocha", "#ffffff", "9") +\
+            self.p_end + self.title_span_tag("LICENSE") +\
+            self.p_end + self.title_span_tag("https://github.com/OfficialAhmed/File-Engine/blob/main/LICENSE", "#bd93f9", "9") +\
+            self.p_end + self.title_span_tag("DEVELOPER") +\
+            self.p_end + self.title_span_tag("@OfficialAhmed0", "#ffffff", "9") +\
+            self.p_end + self.title_span_tag("GitHub") +\
+            self.p_end + self.title_span_tag("https://github.com/OfficialAhmed/File-Engine", "#bd93f9", "9") +\
+            "</p>"
 
 
 class ProgressBar:
@@ -502,13 +484,13 @@ class Table:
         memory: dict = json.load(open(file))
 
         # READ ONLY FILE ENGINE EXPORTED JSON
-        if "meta" in memory and "data" in memory: 
+        if "meta" in memory and "data" in memory:
             if memory.get("meta").get("TITLE") == "File Engine":
                 self.data = memory.get("data")
                 self.totalRecordsLabel.setText(str(len(self.data)))
                 self.fill(self.data)
                 return None
-        
+
         # COULDN'T READ JSON
         self.dialog.show(
             f"INVALID PROCESS FILE.",

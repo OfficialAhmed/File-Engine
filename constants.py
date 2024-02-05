@@ -6,18 +6,16 @@
     
 """
 
-import os
-from PySide6.QtWidgets import (
-    QDialog, QLabel, QVBoxLayout, QDialogButtonBox, QMessageBox
-)
+from os import getcwd
+from PySide6.QtWidgets import QDialog, QLabel, QVBoxLayout, QDialogButtonBox, QMessageBox
 
-APP_VER = "1.3.0"
+APP_VER = "v1.3.0"
 
 class Path:
 
     def __init__(self) -> None:
         self.RESOURCES_PATH = "frontend/"
-        self.ROOT_PATH:  str = os.getcwd() + "\\"
+        self.ROOT_PATH:  str = getcwd() + "\\"
         self.DATA_PATH:  str = self.ROOT_PATH + "data\\"
         self.TRASH_PATH: str = self.DATA_PATH + "trash\\"
         self.CACHE_FILE: str = self.DATA_PATH + "Cache.json"
@@ -57,8 +55,8 @@ class Dialog:
                 icon = QMessageBox.Question
 
             case _:
-                icon = QMessageBox.Information
                 title = mode.upper()
+                icon = QMessageBox.NoIcon
 
         if is_dialog:
 

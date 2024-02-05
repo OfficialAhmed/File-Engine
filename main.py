@@ -176,7 +176,7 @@ class MainWindow(QMainWindow):
 
 
 if __name__ == "__main__":
-    from frontend.widgets.pages import shared_pages
+    from backend.pages import shared_pages
 
     app = QApplication(argv)
     app.setWindowIcon(QIcon("icon.ico"))
