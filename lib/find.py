@@ -28,7 +28,7 @@ class Finder:
             PREPARE REGEX:
                 ACCEPTS ANY STRING CONTAINS ATLEAST ONE OF THE CHOSEN CATEGORY BUT NOT IN THE EXCLUDE SET
         """
-        
+
         # EXCLUDE CHARACTERS -> str
         numbers = '|'.join(map(str, exclude))
         symbols = ''.join(map(re.escape, {x for x in "!@#$%^&*()_+{}\/| ~\-=+<>?\[\],;:'\".\\"}))
@@ -141,6 +141,36 @@ class Finder:
     def get_symbol_exclude(self, search: str, input) -> dict:
         return self.search(search, "SYMBOLS EXCLUSION", exclude=input)
 
+    def match_string(self, input: str | list, check: str, custom=""):
+
+        match input:
+
+            case "ALPHABETS":
+
+                if check.isalpha():
+                    return True
+
+            case "CUSTOM (REGEX)":
+
+                # (CONTAIN -> CUSTOM) OPTION CUSTOM INPUT LOOKING SPECIFIC INPUT IN TITLE
+                try:
+                    if re.match(re.compile(custom, re.IGNORECASE), check):
+                        return True
+                except re.error:
+                    print("regex invalid")
+
+            case _:
+
+                if isinstance(input, list):
+                    # (EQUAL TO) OPTION CUSTOM INPUT BY USER LOOKING FOR SPECIFIC INPUT
+                    if check in input:
+                        return True
+                else:
+                    if re.match(re.compile(self.regex.get(input), re.IGNORECASE), check):
+                        return True
+
+        return False
+
 
 class File(Finder):
 
@@ -166,33 +196,7 @@ class File(Finder):
             if by == "EXTENSION":
                 check = file_ext
 
-            match input:
-
-                case "ALPHABETS":
-
-                    if check.isalpha():
-                        return True
-
-                case "CUSTOM (REGEX)":
-
-                    # (CONTAIN -> CUSTOM) OPTION CUSTOM INPUT LOOKING SPECIFIC INPUT IN TITLE
-                    try:
-                        if re.match(re.compile(custom, re.IGNORECASE), check):
-                            return True
-                    except re.error:
-                        print("regex invalid")
-
-                case _:
-
-                    if isinstance(input, list):
-                        # (EQUAL TO) OPTION CUSTOM INPUT BY USER LOOKING FOR SPECIFIC INPUT
-                        if check in input:
-                            return True
-                    else:
-                        if re.match(re.compile(self.regex.get(input), re.IGNORECASE), check):
-                            return True
-
-            return False
+            return self.match_string(input, check, custom)
 
         if self.is_recursive:
 
@@ -227,46 +231,16 @@ class Folder(Finder):
             exclude = set(exclude)
             self.exclude_regex(exclude)
 
-        def is_match(folder: str, input: str | list) -> bool:
-
-            match input:
-
-                case "ALPHABETS":
-
-                    if folder.isalpha():
-                        return True
-
-                case "CUSTOM (REGEX)":
-
-                    # (CONTAIN -> CUSTOM) OPTION CUSTOM INPUT LOOKING SPECIFIC INPUT IN TITLE
-                    try:
-                        if re.match(re.compile(custom, re.IGNORECASE), folder):
-                            return True
-                    except re.error:
-                        print("regex invalid")
-
-                case _:
-
-                    if isinstance(input, list):
-                        # (EQUAL TO) OPTION CUSTOM INPUT BY USER LOOKING FOR SPECIFIC INPUT
-                        if folder in input:
-                            return True
-                    else:
-                        if re.match(re.compile(self.regex.get(input), re.IGNORECASE), folder):
-                            return True
-
-            return False
-
         if self.is_recursive:
 
-            for root, file in self.get_recursive():
-                if is_match(file, input):
+            for root, file in self.get_folders_recursive():
+                if self.match_string(input, file, custom):
                     self.add_detected_match("folder", file, root)
 
         else:
 
-            for file in self.get_files():
-                if is_match(file, input):
+            for file in self.get_folders():
+                if self.match_string(input, file, custom):
                     self.add_detected_match("folder", file)
 
         return self.detected_matches
