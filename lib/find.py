@@ -10,7 +10,7 @@ import re
 class Finder:
 
     def __init__(self) -> None:
-        
+
         # fmt: off
         self.path = ""
         self.is_recursive = None
@@ -24,11 +24,21 @@ class Finder:
         }
 
     def exclude_regex(self, exclude: set):
-        self.regex["NUMBERS EXCLUSION"] = f"^[{''.join(set(0,1,2,3,4,5,6,7,8,9) - exclude)}]+$"
-        self.regex["SYMBOLS EXCLUSION"] = f"^[^{''.join(map(re.escape, exclude))}{self.regex['SYMBOLS']}]+$"
-        self.regex["ALPHABETS EXCLUSION"] = f"^[{''.join(sorted(set('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') - exclude))}]+$"
-        # fmt: on
+        """
+            PREPARE REGEX:
+                ACCEPTS ANY STRING CONTAINS ATLEAST ONE OF THE CHOSEN CATEGORY BUT NOT IN THE EXCLUDE SET
+        """
         
+        # EXCLUDE CHARACTERS -> str
+        numbers = '|'.join(map(str, exclude))
+        symbols = ''.join(map(re.escape, {x for x in "!@#$%^&*()_+{}\/| ~\-=+<>?\[\],;:'\".\\"}))
+        alphabets = ''.join(map(re.escape, {x for x in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"}))
+
+        # REGEX FORM
+        self.regex["NUMBERS EXCLUSION"] = f"^(?=.*\\d)(?!.*({numbers})).+$"
+        self.regex["SYMBOLS EXCLUSION"] = f"^(?=.*[{symbols}])(?!.*[{''.join(map(re.escape, exclude))}]).+$"
+        self.regex["ALPHABETS EXCLUSION"] = f"^(?=.*[{alphabets}])(?!.*[{''.join(map(re.escape, exclude))}]).+$"
+
     def set_path(self, path: str) -> None:
         self.path = path
 
@@ -47,6 +57,7 @@ class Finder:
             Store the detected file in a dict along its size and root
         """
 
+        # fmt: on
         # SET DEFAULT PATH - FOR FOLDER DETECTION
         if not root:
             root = self.path
@@ -142,6 +153,7 @@ class File(Finder):
         self.reset_detected_matches()
 
         if exclude:
+            # self.exclude = set(exclude)
             exclude = set(exclude)
             self.exclude_regex(exclude)
 
@@ -165,7 +177,7 @@ class File(Finder):
 
                     # (CONTAIN -> CUSTOM) OPTION CUSTOM INPUT LOOKING SPECIFIC INPUT IN TITLE
                     try:
-                        if re.match(re.compile(custom), check):
+                        if re.match(re.compile(custom, re.IGNORECASE), check):
                             return True
                     except re.error:
                         print("regex invalid")
@@ -177,7 +189,7 @@ class File(Finder):
                         if check in input:
                             return True
                     else:
-                        if re.match(re.compile(self.regex.get(input)), check):
+                        if re.match(re.compile(self.regex.get(input), re.IGNORECASE), check):
                             return True
 
             return False
@@ -228,7 +240,7 @@ class Folder(Finder):
 
                     # (CONTAIN -> CUSTOM) OPTION CUSTOM INPUT LOOKING SPECIFIC INPUT IN TITLE
                     try:
-                        if re.match(re.compile(custom), folder):
+                        if re.match(re.compile(custom, re.IGNORECASE), folder):
                             return True
                     except re.error:
                         print("regex invalid")
@@ -240,7 +252,7 @@ class Folder(Finder):
                         if folder in input:
                             return True
                     else:
-                        if re.match(re.compile(self.regex.get(input)), folder):
+                        if re.match(re.compile(self.regex.get(input), re.IGNORECASE), folder):
                             return True
 
             return False
