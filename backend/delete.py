@@ -104,7 +104,7 @@ class Response(Common):
         # RESET PROGRESS BAR
         self.progressBar.update(0)
 
-        files_to_remove = []
+        to_be_removed = []
 
         # FLAG SELECTED TABLE ITEMS
         for indx, cb in enumerate(tables["DELETE"].checkboxes):
@@ -121,10 +121,10 @@ class Response(Common):
                     indx, 1                                 # EACH ROW, 2ND COLUMN
                 ).text()
 
-                files_to_remove.append(f"{root}//{file}")
+                to_be_removed.append(f"{root}//{file}")
                 self.rows_to_remove.append(indx)
 
-        if not files_to_remove:
+        if not to_be_removed:
             self.dialog.show(
                 "PLEASE SELECT AT LEAST ONE FILE",
                 "NO SELECTION!",
@@ -134,7 +134,7 @@ class Response(Common):
 
         # DELETE FILES WITH THREADS
         worker = DeleteWorker(
-            files_to_remove,
+            to_be_removed,
             self.searchTypeHiddenLabel.text()
         )
 

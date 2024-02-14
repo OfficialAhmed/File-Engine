@@ -121,6 +121,10 @@ class Response(Common):
 
 
 class Option:
+    """
+        AVAILABLE OPTIONS FOR DIFFIRENT CATEGORY.
+        AUTOMATED BASED ON THE CATEGORY PICKED
+    """
 
     def __init__(self, cb: QComboBox, cb2: QComboBox, custom_input: QLineEdit) -> None:
 
