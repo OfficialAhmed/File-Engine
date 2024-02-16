@@ -40,6 +40,7 @@ from constants import APP_VER
 import os
 import json
 import lib.delete as Delete
+import lib.rename as Rename
 import concurrent.futures
 
 
@@ -531,6 +532,7 @@ class Worker(QObject):
         super().__init__()
 
         self.paths = Path()
+
         self.FILE_REMOVER = Delete.File()
         self.FOLDER_REMOVER = Delete.Folder()
 
@@ -677,18 +679,42 @@ class RenameWorker(Worker):
 
     remove_rows_signal = Signal()
 
-    def __init__(self, files: list, renaming_method: str, custom_value: str) -> None:
+    def __init__(self, files: list, renaming_algo: str, renaming_method: str, custom_value: str) -> None:
         super().__init__()
 
         self.files = files
+        self.renaming_algo = renaming_algo
         self.renaming_method = renaming_method
-        self.data_type = tables["RENAME"].data_type
+        self.data_type = tables["RENAME"].data_type     # FILES OR FOLDERS
+
+        self.FILE_RENAME = Rename.File()
+        self.FOLDER_RENAME = Rename.Folder()
+
+        self.FILE_RENAME._set_renaming_param(
+            content_file_path=self.paths.TRASH_CONTENT_FILE,
+            trash_folder_path=self.paths.TRASH_PATH,
+            renaming_method=renaming_method,
+            renaming_algo=renaming_algo,
+            custom_val=custom_value,
+            files=files
+        )
+
+        self.FOLDER_RENAME._set_renaming_param(
+            content_file_path=self.paths.TRASH_CONTENT_FILE,
+            trash_folder_path=self.paths.TRASH_PATH,
+            renaming_method=renaming_method,
+            renaming_algo=renaming_algo,
+            custom_val=custom_value,
+            files=files
+        )
 
         # CONVERT STR TO INT IF ITS A DIGIT
         self.custom_value = int(custom_value) if custom_value.isdigit() else 0
 
     def process(self, path: tuple) -> bool:
-        """ RENAMING FILES METHOD INVOKED BY THE THREADS """
+        """ 
+            RENAMING FILES METHOD INVOKED BY THE THREADS 
+        """
 
         try:
             os.rename(path[0], path[1])
@@ -696,51 +722,19 @@ class RenameWorker(Worker):
         except:
             return False
 
-    def generate_new_titles(self) -> list[tuple]:
-        """ GENERATE NEW TITELS BASED ON THE TECHNIQUE FROM THE 2ND COMBOBOX """
-
-        new_titles: list[tuple] = []
-        start_index = 0
-
-        # NUMBERING
-        match self.renaming_method[-1]:
-            case "0":
-                start_index = 0
-            case "1":
-                start_index = 1
-            case _:
-                start_index = self.custom_value
-
-        symbol = self.renaming_method[0]
-
-        for index, old in enumerate(self.files, start_index):
-
-            # SYMBOLS
-            title = f"{index}"
-            if "AS PREFIX" in self.renaming_method:
-                title = f"{symbol}{index}"
-            elif "AS SUFFIX" in self.renaming_method:
-                title = f"{index}{symbol}"
-
-            if self.data_type == "FILES":
-                dot_index = old.rfind(".")
-                file_ext = "." + old[dot_index + 1:]
-                new = old[:old.rfind("/")] + title + file_ext
-
-            else:
-                new = old[:old.rfind("/")] + title
-
-            new_titles.append((old, new))
-
-        return new_titles
-
     def run(self) -> None:
 
         if self.files:
 
             try:
-
-                new_titles = self.generate_new_titles()
+                
+                handler: Rename.File | Rename.Folder = self.FILE_RENAME if self.data_type == "FILES" else self.FOLDER_RENAME
+                
+                match self.renaming_algo:
+                    case "BULK":
+                        new_titles = handler.get_bulk_titles()        
+                    case "TIMESTAMP":
+                        new_titles = handler.get_timestamp_titles()        
 
                 # 'max_workers' SET TO MAX AVAILABLE CPU CORES
                 with concurrent.futures.ThreadPoolExecutor(max_workers=None) as executor:

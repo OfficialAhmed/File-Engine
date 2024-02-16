@@ -480,7 +480,7 @@ class UiSettings(MainWindow):
 
         if is_light_theme:
 
-            str = open("Interface\\themes\\py_dracula_light.qss").read()
+            str = open("frontend\\themes\\py_dracula_light.qss").read()
             self.ui.styleSheet.setStyleSheet(str)
 
     # START - GUI DEFINITIONS
