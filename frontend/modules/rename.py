@@ -15,7 +15,6 @@ class Ui(Response):
     def __init__(self) -> None:
 
         self.table = tables["RENAME"]
-        
 
         self.widgets = QWidget()
         self.bottomHLayout = QHBoxLayout()
@@ -46,6 +45,7 @@ class Ui(Response):
         """
         super().__init__(
             tableWidget=self.tableWidget,
+            renameByComboBox=self.renameByComboBox,
             renameBy2ComboBox=self.renameBy2ComboBox,
             totalRecordsLabel=self.totalRecordsLabel,
             renameValueLineEdit=self.renameValueLineEdit

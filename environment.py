@@ -679,39 +679,37 @@ class RenameWorker(Worker):
 
     remove_rows_signal = Signal()
 
-    def __init__(self, files: list, renaming_method: str, custom_value: str) -> None:
+    def __init__(self, files: list, renaming_algo: str, renaming_method: str, custom_value: str) -> None:
         super().__init__()
 
         self.files = files
+        self.renaming_algo = renaming_algo
+        self.renaming_method = renaming_method
         self.data_type = tables["RENAME"].data_type     # FILES OR FOLDERS
 
         self.FILE_RENAME = Rename.File()
         self.FOLDER_RENAME = Rename.Folder()
 
-        self.FILE_RENAME.set_renaming_param(
+        self.FILE_RENAME._set_renaming_param(
             content_file_path=self.paths.TRASH_CONTENT_FILE,
             trash_folder_path=self.paths.TRASH_PATH,
             renaming_method=renaming_method,
+            renaming_algo=renaming_algo,
             custom_val=custom_value,
             files=files
         )
 
-        self.FOLDER_RENAME.set_renaming_param(
+        self.FOLDER_RENAME._set_renaming_param(
             content_file_path=self.paths.TRASH_CONTENT_FILE,
             trash_folder_path=self.paths.TRASH_PATH,
             renaming_method=renaming_method,
+            renaming_algo=renaming_algo,
             custom_val=custom_value,
             files=files
         )
 
         # CONVERT STR TO INT IF ITS A DIGIT
         self.custom_value = int(custom_value) if custom_value.isdigit() else 0
-
-    def rename_file(self, file_path: str) -> None | str:
-        self.FILE_REMOVER.remove(file_path)
-
-    def rename_folder(self, folder_path: str, folder_name: str) -> None | str:
-        self.FOLDER_REMOVER.remove(folder_path, folder_name)
 
     def process(self, path: tuple) -> bool:
         """ 
@@ -729,11 +727,14 @@ class RenameWorker(Worker):
         if self.files:
 
             try:
-
-                if self.data_type == "FILES":
-                    new_titles = self.FILE_RENAME.get_titles()
-                else:
-                    new_titles = self.FOLDER_RENAME.get_titles()
+                
+                handler: Rename.File | Rename.Folder = self.FILE_RENAME if self.data_type == "FILES" else self.FOLDER_RENAME
+                
+                match self.renaming_algo:
+                    case "BULK":
+                        new_titles = handler.get_bulk_titles()        
+                    case "TIMESTAMP":
+                        new_titles = handler.get_timestamp_titles()        
 
                 # 'max_workers' SET TO MAX AVAILABLE CPU CORES
                 with concurrent.futures.ThreadPoolExecutor(max_workers=None) as executor:

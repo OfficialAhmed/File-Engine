@@ -5,12 +5,13 @@ from PySide6.QtWidgets import QLineEdit, QComboBox
 
 class Response(Common):
 
-    def __init__(self, renameBy2ComboBox, renameValueLineEdit, tableWidget, totalRecordsLabel) -> None:
+    def __init__(self, renameByComboBox, renameBy2ComboBox, renameValueLineEdit, tableWidget, totalRecordsLabel) -> None:
         super().__init__()
 
         # WIDGETS REQUIRED FROM THE FRONT-END
         self.tableWidget = tableWidget
         self.totalRecordsLabel = totalRecordsLabel
+        self.renameByComboBox = renameByComboBox
         self.renameBy2ComboBox = renameBy2ComboBox
         self.renameValueLineEdit = renameValueLineEdit
 
@@ -25,9 +26,11 @@ class Response(Common):
         ):
             return
 
-        # ALLOW ONLY INTEGERS FOR THE CUSTOM INPUT
+        # WHEN BULK ALGO IS PICKED ALLOW ONLY INTEGERS FOR THE CUSTOM INPUT 
         # IF THE OPTION DOESNT CONTAIN INT AND THE VALUE ISNT AN INT
-        if not self.renameBy2ComboBox.currentText()[-1].isdigit() and not self.renameValueLineEdit.text().isdigit():
+        if self.renameByComboBox.currentText() == "BULK" \
+            and not self.renameBy2ComboBox.currentText()[-1].isdigit() \
+            and not self.renameValueLineEdit.text().isdigit():
             self.dialog.show(
                 f"Please enter a valid integer!",
                 "W",   # CRITICAL MESSAGE
@@ -69,6 +72,7 @@ class Response(Common):
         # RENAME FILES WITH THREADS
         worker = RenameWorker(
             to_be_renamed,
+            self.renameByComboBox.currentText(),
             self.renameBy2ComboBox.currentText(),
             self.renameValueLineEdit.text()
         )
@@ -144,11 +148,11 @@ class Option:
             ),
 
             "TIMESTAMP": (
-                "DD_MM_YY-seed",
-                "DD_MM_YY_hh-seed",
-                "DD_MM_YY_hh_mm-seed",
-                "DD_MM_YY_hh_mm_ssss-seed",
-                "hh_mm_ssss-seed",
+                "[hh_mm_ss] ~ seed",
+                "[DD_MM_YY] ~ seed",
+                "[DD_MM_YY] [hh] ~ seed",
+                "[DD_MM_YY] [hh_mm] ~ seed",
+                "[DD_MM_YY] [hh_mm_ss] ~ seed",
             ),
         }
 
