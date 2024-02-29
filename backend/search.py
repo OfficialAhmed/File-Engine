@@ -504,7 +504,6 @@ class Response(Page):
                     )
 
                     search = self.titleComboBox.currentText()
-
                     if self.titleComboBox2.currentText() != "CONTAIN":
 
                         if search == "NAME":
