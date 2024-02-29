@@ -141,13 +141,14 @@ class Finder:
     def get_symbol_exclude(self, search: str, input) -> dict:
         return self.search(search, "SYMBOLS EXCLUSION", exclude=input)
 
-    def match_string(self, input: str | list, check: str, custom=""):
+    def match_string(self, input: str | list, check: str, custom="") -> bool:
 
         match input:
 
             case "ALPHABETS":
-
-                if check.isalpha():
+                
+                # SPACES ARE IGNORED
+                if check.replace(" ", "").isalpha():
                     return True
 
             case "CUSTOM (REGEX)":
@@ -170,7 +171,6 @@ class Finder:
                         return True
 
         return False
-
 
 class File(Finder):
 

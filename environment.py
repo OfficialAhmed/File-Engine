@@ -546,6 +546,9 @@ class Worker(QObject):
             self.paths.TRASH_PATH
         )
 
+    def empty_trash(self) -> None:
+        self.FILE_REMOVER.empty_trash()
+
 
 class DeleteWorker(Worker):
     """
@@ -626,9 +629,6 @@ class RestoreWorker(Worker):
         super().__init__()
 
         self.data = data
-
-    def empty_trash(self) -> None:
-        self.FILE_REMOVER.empty_trash()
 
     def restore_removed_content(self, destination: str) -> None:
         return self.FILE_REMOVER.restore(destination)
@@ -727,14 +727,14 @@ class RenameWorker(Worker):
         if self.files:
 
             try:
-                
+
                 handler: Rename.File | Rename.Folder = self.FILE_RENAME if self.data_type == "FILES" else self.FOLDER_RENAME
-                
+
                 match self.renaming_algo:
                     case "BULK":
-                        new_titles = handler.get_bulk_titles()        
+                        new_titles = handler.get_bulk_titles()
                     case "TIMESTAMP":
-                        new_titles = handler.get_timestamp_titles()        
+                        new_titles = handler.get_timestamp_titles()
 
                 # 'max_workers' SET TO MAX AVAILABLE CPU CORES
                 with concurrent.futures.ThreadPoolExecutor(max_workers=None) as executor:
