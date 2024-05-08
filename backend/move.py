@@ -3,16 +3,15 @@ import json
 from environment import Common, RestoreWorker, DeleteWorker, tables
 
 
-# FIXME: RESPONSE CLASS DUPLICATED FOR TESTING ONLY
 class Response(Common):
 
-    def __init__(self, totalRecordsLabel, tableWidget, searchTypeHiddenLabel) -> None:
+    def __init__(self, totalRecordsLabel, tableWidget) -> None:
         super().__init__()
 
         # WIDGETS REQUIRED FROM THE FRONT-END
         self.tableWidget = tableWidget
         self.totalRecordsLabel = totalRecordsLabel
-        self.searchTypeHiddenLabel = searchTypeHiddenLabel
+        self.table = tables["MOVE"]
 
         self.rows_to_remove = []
 
@@ -81,7 +80,7 @@ class Response(Common):
                     "size": file_size
                 }
 
-            tables["DELETE"].fill(table_data)
+            self.table.fill(table_data)
             self.totalRecordsLabel.setText(str(len(table_data)))
 
         except Exception as e:
@@ -105,10 +104,10 @@ class Response(Common):
         # RESET PROGRESS BAR
         self.progressBar.update(0)
 
-        to_be_removed = []
+        to_be_moved = []
 
         # FLAG SELECTED TABLE ITEMS
-        for indx, cb in enumerate(tables["DELETE"].checkboxes):
+        for indx, cb in enumerate(self.table.checkboxes):
 
             # IF CHECKBOX SELECTED
             if cb.isChecked():
@@ -122,10 +121,10 @@ class Response(Common):
                     indx, 1                                 # EACH ROW, 2ND COLUMN
                 ).text()
 
-                to_be_removed.append(f"{root}//{file}")
+                to_be_moved.append(f"{root}//{file}")
                 self.rows_to_remove.append(indx)
 
-        if not to_be_removed:
+        if not to_be_moved:
             self.dialog.show(
                 "PLEASE SELECT AT LEAST ONE FILE",
                 "NO SELECTION!",
@@ -133,10 +132,11 @@ class Response(Common):
             )
             return
 
-        # DELETE FILES WITH THREADS
+        return
+        # MOVE FILES WITH THREADS
         worker = DeleteWorker(
-            to_be_removed,
-            self.searchTypeHiddenLabel.text()
+            to_be_moved,
+            self.table.data_type
         )
 
         # UPDATE PROGRESS BAR
@@ -146,7 +146,7 @@ class Response(Common):
 
         # DELETE ROWS FROM THE TABLE
         worker.remove_rows_signal.connect(
-            tables["DELETE"].remove_rows(
+            self.table.remove_rows(
                 self.rows_to_remove,
                 self.totalRecordsLabel
             )

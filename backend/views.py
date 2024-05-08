@@ -3,7 +3,7 @@
         USED BY MAIN.PY TO RECIEVE ONCLICK-CHANGE AT ANY TIME
 """
 
-from PySide6.QtWidgets import QLabel, QComboBox, QWidget
+from PySide6.QtWidgets import QLabel, QWidget
 
 from frontend.modules.settings import UiSettings
 from environment import tables
@@ -42,7 +42,6 @@ class View:
         """
 
         # fmt: off
-        search_type = self.widgets.search_widgets.findChild(QComboBox, "searchTypeComboBox").currentText()
 
         match page:
 
@@ -67,10 +66,6 @@ class View:
             case _:
                 print("change indirect - unhandled page clicked!")
                 return
-
-
-        # STORE SEARCH TYPE IN THE HIDDEN LABEL FOR DELETING METHOD 
-        widget.findChild(QLabel, "searchTypeHiddenLabel").setText(search_type)
 
         # TAKE OUT THE CHECKED ITEMS TO THE SELECTED TABLE
         selected_data = {}

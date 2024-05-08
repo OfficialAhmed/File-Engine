@@ -490,9 +490,9 @@ class Response(Page):
                     search_type: str = self.searchTypeComboBox.currentText()
                     custom_input: list = self.titleLineEdit.text().replace(" ", "").split(",")
                     
+                    tables["MOVE"].data_type = search_type
                     tables["RENAME"].data_type = search_type
                     tables["DELETE"].data_type = search_type
-                    tables["MOVE"].data_type = search_type
                     
                     finder = File()
                     if search_type == "FOLDERS":

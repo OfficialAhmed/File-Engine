@@ -35,16 +35,12 @@ class Ui(Response):
         self.verticalLayout = QVBoxLayout(self.widgets)
         self.totalRecordsTxtLabel = QLabel(self.groupBox)
 
-        self.searchTypeHiddenLabel = QLabel(self.groupBox)
         self.table.set_total_records_widget(self.totalRecordsLabel)
 
         super().__init__(
             self.totalRecordsLabel,
-            self.tableWidget,
-            self.searchTypeHiddenLabel
+            self.tableWidget
         )
-
-        self.searchTypeHiddenLabel.setHidden(True)
 
         self.mainFrameVL.setContentsMargins(0, 0, 0, 0)
         self.gridLayout.setContentsMargins(0, 15, 0, 0)
@@ -118,7 +114,6 @@ class Ui(Response):
         self.totalRecordsHL.setObjectName(u"totalRecordsHL")
         self.totalRecordsLabel.setObjectName(u"totalRecordsLabel")
         self.totalRecordsTxtLabel.setObjectName(u"totalRecordsTxtLabel")
-        self.searchTypeHiddenLabel.setObjectName(u"searchTypeHiddenLabel")
 
         # BUTTONS DESIGN
         btns = {

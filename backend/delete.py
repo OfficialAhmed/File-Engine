@@ -5,13 +5,13 @@ from environment import Common, RestoreWorker, DeleteWorker, tables
 
 class Response(Common):
 
-    def __init__(self, totalRecordsLabel, tableWidget, searchTypeHiddenLabel) -> None:
+    def __init__(self, totalRecordsLabel, tableWidget) -> None:
         super().__init__()
 
         # WIDGETS REQUIRED FROM THE FRONT-END
         self.tableWidget = tableWidget
         self.totalRecordsLabel = totalRecordsLabel
-        self.searchTypeHiddenLabel = searchTypeHiddenLabel
+        self.table = tables["DELETE"]
 
         self.rows_to_remove = []
 
@@ -107,7 +107,7 @@ class Response(Common):
         to_be_removed = []
 
         # FLAG SELECTED TABLE ITEMS
-        for indx, cb in enumerate(tables["DELETE"].checkboxes):
+        for indx, cb in enumerate(self.table.checkboxes):
 
             # IF CHECKBOX SELECTED
             if cb.isChecked():
@@ -135,7 +135,7 @@ class Response(Common):
         # DELETE FILES WITH THREADS
         worker = DeleteWorker(
             to_be_removed,
-            self.searchTypeHiddenLabel.text()
+            self.table.data_type
         )
 
         # UPDATE PROGRESS BAR
@@ -145,7 +145,7 @@ class Response(Common):
 
         # DELETE ROWS FROM THE TABLE
         worker.remove_rows_signal.connect(
-            tables["DELETE"].remove_rows(
+            self.table.remove_rows(
                 self.rows_to_remove,
                 self.totalRecordsLabel
             )
