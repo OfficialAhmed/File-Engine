@@ -7,6 +7,7 @@ from .resources_rc import *
 from .delete import Ui as Ui_delete
 from .rename import Ui as Ui_rename
 from .search import Ui as Ui_search
+from .move import Ui as Ui_move
 
 from backend.home import Feature
 from environment import Common, ProgressBar
@@ -251,6 +252,9 @@ class Ui(object):
 
         _UiSearch = Ui_search()
         self.search_widgets = _UiSearch.get_widgets()
+        
+        _UiMove = Ui_move()
+        self.move_widgets = _UiMove.get_widgets()
 
         """
         ////////////////////////////////////////////////
@@ -620,6 +624,7 @@ class Ui(object):
         self.stackedWidget.addWidget(self.search_widgets)
         self.stackedWidget.addWidget(self.delete_widgets)
         self.stackedWidget.addWidget(self.rename_widgets)
+        self.stackedWidget.addWidget(self.move_widgets)
         self.verticalLayout_20.addWidget(self.label)
         self.verticalLayout_7.addWidget(self.themeSettingsTopDetail)
         self.verticalLayout_14.addWidget(self.removeTrashOption)

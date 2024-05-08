@@ -37,6 +37,9 @@ class Ui(Response):
         self.renameByComboBox = QComboBox(self.groupBox)
         self.renameBy2ComboBox = QComboBox(self.groupBox)
         self.totalRecordsTextLabel = QLabel(self.groupBox)
+        self.searchTypeHiddenLabel = QLabel(self.groupBox)
+
+        self.searchTypeHiddenLabel.setHidden(True)
 
         """
         ===================================================================
@@ -111,7 +114,7 @@ class Ui(Response):
         self.renameValueLineEdit.setStyleSheet(self.html.get_bg_color("dark blue"))
 
         self.totalRecordsLabel.setObjectName("totalRecordsLabel")
-
+        self.searchTypeHiddenLabel.setObjectName(u"searchTypeHiddenLabel")
 
         """
         ===================================================================

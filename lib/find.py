@@ -74,7 +74,7 @@ class Finder:
             "size": round(size, 3)
         }
 
-    def get_files(self) -> Generator[str]:
+    def get_files(self):
         """
             Yield files in parent folder
         """
@@ -82,7 +82,7 @@ class Finder:
         for file in os.listdir(self.path):
             yield file
 
-    def get_recursive(self) -> Generator[str,str]:
+    def get_recursive(self):
         """
             Yields tuple (root, file) recursively thorugh all folders
         """
@@ -92,12 +92,12 @@ class Finder:
             for file in files:
                 yield (root, file)
 
-    def get_folders(self) -> Generator[str]:
+    def get_folders(self):
 
         for file in os.listdir(self.path):
             yield file
 
-    def get_folders_recursive(self) -> Generator[str,str]:
+    def get_folders_recursive(self):
 
         for root, folders, _ in os.walk(self.path):
 
