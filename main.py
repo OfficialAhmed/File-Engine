@@ -39,7 +39,7 @@ class MainWindow(QMainWindow):
 
         # global widgets
         self.widgets = self.ui
-        shared_pages.set_widgets(self.widgets, self.ui)
+        shared_views.set_widgets(self.widgets, self.ui)
 
         # USE CUSTOM TITLE BAR | USE AS "False" FOR MAC OR LINUX
         self.ui.EENABLE_CUSTOM_TITLE_BAR = True if system() == "Windows" else False
@@ -57,20 +57,24 @@ class MainWindow(QMainWindow):
 
         # LEFT MENUS
         self.widgets.home_page_btn.clicked.connect(
-            lambda: shared_pages.change(
+            lambda: shared_views.change(
                 self.widgets.home_page_btn, "home_page", self.widgets.home_widgets)
         )
         self.widgets.delete_page_btn.clicked.connect(
-            lambda: shared_pages.change(
+            lambda: shared_views.change(
                 self.widgets.delete_page_btn, "delete_page", self.widgets.delete_widgets)
         )
         self.widgets.rename_page_btn.clicked.connect(
-            lambda: shared_pages.change(
+            lambda: shared_views.change(
                 self.widgets.rename_page_btn, "rename_page", self.widgets.rename_widgets)
         )
         self.widgets.search_page_btn.clicked.connect(
-            lambda: shared_pages.change(
+            lambda: shared_views.change(
                 self.widgets.search_page_btn, "search_page", self.widgets.search_widgets)
+        )
+        self.widgets.move_page_btn.clicked.connect(
+            lambda: shared_views.change(
+                self.widgets.move_page_btn, "move_page", self.widgets.move_widgets)
         )
 
         # TOGGLE MENU
@@ -112,10 +116,13 @@ class MainWindow(QMainWindow):
 
         # SIGNALS TO CHANGE PAGE FROM SEARCH PAGE
         self.widgets.search_widgets.findChild(QPushButton, "deleteOptionBtn").clicked.connect(
-            lambda: shared_pages.change_indirect("delete_page")
+            lambda: shared_views.change_indirect("delete_page")
         )
         self.widgets.search_widgets.findChild(QPushButton, "renameOptionBtn").clicked.connect(
-            lambda: shared_pages.change_indirect("rename_page")
+            lambda: shared_views.change_indirect("rename_page")
+        )
+        self.widgets.search_widgets.findChild(QPushButton, "moveOptionBtn").clicked.connect(
+            lambda: shared_views.change_indirect("move_page")
         )
 
     def resizeEvent(self, event):
@@ -176,7 +183,7 @@ class MainWindow(QMainWindow):
 
 
 if __name__ == "__main__":
-    from backend.pages import shared_pages
+    from backend.views import shared_views
 
     app = QApplication(argv)
     app.setWindowIcon(QIcon("icon.ico"))

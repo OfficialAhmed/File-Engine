@@ -1,34 +1,27 @@
 <RCC>
   <qresource prefix="images">
-    <file>../../../frontend/images/File Engine logo.png</file>
-    <file>../../../frontend/images/File Engine vertical.png</file>
+    <file>C:/Users/ahmed/Desktop/pngegg.png</file>
   </qresource>
-  <qresource prefix="icons">
-    <file>../../../frontend/icons/x-outline.svg</file>
-    <file>../../../frontend/icons/empty_recycle_bin.svg</file>
-    <file>../../../frontend/icons/tick-outline.svg</file>
-    <file>../../../frontend/icons/menu.svg</file>
-    <file>../../../frontend/icons/close.svg</file>
-    <file>../../../frontend/icons/copy-outline.svg</file>
-    <file>../../../frontend/icons/delete sign.svg</file>
-    <file>../../../frontend/icons/file download.svg</file>
-    <file>../../../frontend/icons/file upload.svg</file>
-    <file>../../../frontend/icons/file move.svg</file>
-    <file>../../../frontend/icons/folder_outline.svg</file>
-    <file>../../../frontend/icons/home.svg</file>
-    <file>../../../frontend/icons/maximize.svg</file>
-    <file>../../../frontend/icons/minimize.svg</file>
-    <file>../../../frontend/icons/more.svg</file>
-    <file>../../../frontend/icons/remove-from-trash.svg</file>
-    <file>../../../frontend/icons/rename-outline.svg</file>
-    <file>../../../frontend/icons/restore file.svg</file>
-    <file>../../../frontend/icons/save-outline.svg</file>
-    <file>../../../frontend/icons/search-outline.svg</file>
-    <file>../../../frontend/icons/settings.svg</file>
-    <file>../../../frontend/icons/start.svg</file>
-    <file>../../../frontend/icons/tick-outline.svg</file>
-    <file>../../../frontend/icons/trash-can.svg</file>
-    <file>../../../frontend/icons/arrow down.svg</file>
-    <file>../../../frontend/icons/display-mode-outline.svg</file>
+  <qresource prefix="Icons">
+    <file>C:/Users/ahmed/Desktop/checked-box.svg</file>
+    <file>C:/Users/ahmed/Desktop/unchecked-box.svg</file>
+    <file>C:/Users/ahmed/Desktop/add.svg</file>
+    <file>C:/Users/ahmed/Desktop/edit.svg</file>
+    <file>C:/Users/ahmed/Desktop/remove.svg</file>
+    <file>C:/Users/ahmed/Desktop/view.svg</file>
+    <file>../../../../POS-System-Python/Libs/Frontend/icons/account.svg</file>
+    <file>../../../../POS-System-Python/Libs/Frontend/icons/arrow down.svg</file>
+    <file>../../../../POS-System-Python/Libs/Frontend/icons/close.svg</file>
+    <file>../../../../POS-System-Python/Libs/Frontend/icons/folder_outline.svg</file>
+    <file>../../../../POS-System-Python/Libs/Frontend/icons/login.svg</file>
+    <file>../../../../POS-System-Python/Libs/Frontend/icons/maximize.svg</file>
+    <file>../../../../POS-System-Python/Libs/Frontend/icons/menu.svg</file>
+    <file>../../../../POS-System-Python/Libs/Frontend/icons/minimize.svg</file>
+    <file>../../../../POS-System-Python/Libs/Frontend/icons/minimize_window.svg</file>
+    <file>../../../../POS-System-Python/Libs/Frontend/icons/rename-outline.svg</file>
+    <file>../../../../POS-System-Python/Libs/Frontend/icons/search-outline.svg</file>
+    <file>../../../../POS-System-Python/Libs/Frontend/icons/settings.svg</file>
+    <file>../../../../POS-System-Python/Libs/Frontend/icons/tick-outline.svg</file>
+    <file>../../../../POS-System-Python/Libs/Frontend/icons/x-outline.svg</file>
   </qresource>
 </RCC>

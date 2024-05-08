@@ -31,7 +31,6 @@ class Page(Common):
     tableWidget: QTableWidget = None
     searchMainVL = None
     pathLineEdit: QLineEdit = None
-    moveOptionBtn: QPushButton = None
     browsePathBtn: QPushButton = None
     titleGroupBox = None
     titleLineEdit: QLineEdit = None
@@ -50,6 +49,7 @@ class Page(Common):
     resultTabMainVL = None
     deleteOptionBtn: QPushButton = None
     renameOptionBtn: QPushButton = None
+    moveOptionBtn: QPushButton = None
     verticalLayout2 = None
     verticalLayout3 = None
     verticalLayout4 = None
@@ -490,6 +490,7 @@ class Response(Page):
                     search_type: str = self.searchTypeComboBox.currentText()
                     custom_input: list = self.titleLineEdit.text().replace(" ", "").split(",")
                     
+                    tables["MOVE"].data_type = search_type
                     tables["RENAME"].data_type = search_type
                     tables["DELETE"].data_type = search_type
                     

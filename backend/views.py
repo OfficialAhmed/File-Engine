@@ -3,14 +3,14 @@
         USED BY MAIN.PY TO RECIEVE ONCLICK-CHANGE AT ANY TIME
 """
 
-from PySide6.QtWidgets import QLabel, QComboBox
+from PySide6.QtWidgets import QLabel, QWidget
 
 from frontend.modules.settings import UiSettings
 from environment import tables
 from constants import Path
 
 
-class Page:
+class View:
     """
         ## SHARED PAGE WIDGETS 
             ACCESSIBLE TO ALL CHILDREN USE THE SHARED VAR `SharedPages`
@@ -42,7 +42,6 @@ class Page:
         """
 
         # fmt: off
-        search_type = self.widgets.search_widgets.findChild(QComboBox, "searchTypeComboBox").currentText()
 
         match page:
 
@@ -50,17 +49,23 @@ class Page:
                 table = tables["DELETE"]
 
                 self.widgets.delete_page_btn.click()
-                label:  QLabel = self.widgets.delete_widgets.findChild(QLabel, "totalRecordsLabel")
-
-                # STORE SEARCH TYPE IN THE HIDDEN LABEL FOR DELETING METHOD 
-                self.widgets.delete_widgets.findChild(QLabel, "searchTypeHiddenLabel").setText(search_type)
+                widget:  QWidget = self.widgets.delete_widgets
 
             case "rename_page":
                 table = tables["RENAME"]
-                self.widgets.rename_page_btn.click()
 
-                label:  QLabel = self.widgets.rename_widgets.findChild(QLabel, "totalRecordsLabel")
-                self.widgets.delete_widgets.findChild(QLabel, "searchTypeHiddenLabel").setText(search_type)
+                self.widgets.rename_page_btn.click()
+                widget:  QWidget = self.widgets.rename_widgets
+
+            case "move_page":
+                table = tables["MOVE"]
+
+                self.widgets.move_page_btn.click()
+                widget:  QWidget = self.widgets.move_widgets
+
+            case _:
+                print("change indirect - unhandled page clicked!")
+                return
 
         # TAKE OUT THE CHECKED ITEMS TO THE SELECTED TABLE
         selected_data = {}
@@ -74,9 +79,12 @@ class Page:
                 selected_data[key] = searched.data.get(key)
 
         table.fill(selected_data)
-        label.setText(str(len(selected_data)))
+
+        # SET TOTAL RECORDS
+        widget.findChild(QLabel, "totalRecordsLabel").setText(str(len(selected_data)))
+
         # fmt: on
 
 
 # ONE OBJECT SHARED - TO EXCHANGE SAME OBJECT/WIDGETS ACROSS MULTI PAGES
-shared_pages = Page()
+shared_views = View()

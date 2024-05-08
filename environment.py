@@ -504,7 +504,8 @@ class Table:
 tables = {
     "SEARCH": Table(),
     "DELETE": Table(),
-    "RENAME": Table()
+    "RENAME": Table(),
+    "MOVE": Table()
 }
 
 

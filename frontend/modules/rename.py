@@ -112,7 +112,6 @@ class Ui(Response):
 
         self.totalRecordsLabel.setObjectName("totalRecordsLabel")
 
-
         """
         ===================================================================
                         RENDER PAGE ICONS

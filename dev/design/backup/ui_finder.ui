@@ -8,7 +8,7 @@
     <x>0</x>
     <y>0</y>
     <width>940</width>
-    <height>630</height>
+    <height>658</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -3214,6 +3214,15 @@ QTabBar {
                                     </color>
                                    </brush>
                                   </colorrole>
+                                  <colorrole role="PlaceholderText">
+                                   <brush brushstyle="NoBrush">
+                                    <color alpha="128">
+                                     <red>221</red>
+                                     <green>221</green>
+                                     <blue>221</blue>
+                                    </color>
+                                   </brush>
+                                  </colorrole>
                                  </active>
                                  <inactive>
                                   <colorrole role="WindowText">
@@ -3270,6 +3279,15 @@ QTabBar {
                                     </color>
                                    </brush>
                                   </colorrole>
+                                  <colorrole role="PlaceholderText">
+                                   <brush brushstyle="NoBrush">
+                                    <color alpha="128">
+                                     <red>221</red>
+                                     <green>221</green>
+                                     <blue>221</blue>
+                                    </color>
+                                   </brush>
+                                  </colorrole>
                                  </inactive>
                                  <disabled>
                                   <colorrole role="WindowText">
@@ -3323,6 +3341,15 @@ QTabBar {
                                      <red>0</red>
                                      <green>0</green>
                                      <blue>0</blue>
+                                    </color>
+                                   </brush>
+                                  </colorrole>
+                                  <colorrole role="PlaceholderText">
+                                   <brush brushstyle="NoBrush">
+                                    <color alpha="128">
+                                     <red>221</red>
+                                     <green>221</green>
+                                     <blue>221</blue>
                                     </color>
                                    </brush>
                                   </colorrole>
@@ -4247,22 +4274,6 @@ QGroupBox::title {
   <connection>
    <sender>titleGroupBox</sender>
    <signal>toggled(bool)</signal>
-   <receiver>titleComboBox3</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>125</x>
-     <y>170</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>414</x>
-     <y>197</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>titleGroupBox</sender>
-   <signal>toggled(bool)</signal>
    <receiver>titleLineEdit</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
@@ -4279,16 +4290,16 @@ QGroupBox::title {
   <connection>
    <sender>titleGroupBox</sender>
    <signal>toggled(bool)</signal>
-   <receiver>isRecursiveCheckBox</receiver>
+   <receiver>titleComboBox3</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>190</x>
-     <y>167</y>
+     <x>125</x>
+     <y>170</y>
     </hint>
     <hint type="destinationlabel">
-     <x>107</x>
-     <y>234</y>
+     <x>414</x>
+     <y>197</y>
     </hint>
    </hints>
   </connection>
@@ -4305,6 +4316,22 @@ QGroupBox::title {
     <hint type="destinationlabel">
      <x>108</x>
      <y>265</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>titleGroupBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>isRecursiveCheckBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>190</x>
+     <y>167</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>107</x>
+     <y>234</y>
     </hint>
    </hints>
   </connection>

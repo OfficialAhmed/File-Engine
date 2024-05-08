@@ -11,7 +11,7 @@ class Response(Common):
         # WIDGETS REQUIRED FROM THE FRONT-END
         self.tableWidget = tableWidget
         self.totalRecordsLabel = totalRecordsLabel
-        self.table = tables["DELETE"]
+        self.table = tables["MOVE"]
 
         self.rows_to_remove = []
 
@@ -32,7 +32,7 @@ class Response(Common):
             if not os.path.exists(trash_file) or not os.path.getsize(trash_file) > 0:
 
                 self.dialog.show(
-                    f"CANNOT FIND DELETED FILES.",
+                    f"CANNOT FIND PREVIOUSLY MOVED FILES.",
                     "I",
                     False
                 )
@@ -80,7 +80,7 @@ class Response(Common):
                     "size": file_size
                 }
 
-            tables["DELETE"].fill(table_data)
+            self.table.fill(table_data)
             self.totalRecordsLabel.setText(str(len(table_data)))
 
         except Exception as e:
@@ -92,7 +92,7 @@ class Response(Common):
             )
             return None
 
-    def delete_content_clicked(self):
+    def move_content_clicked(self):
 
         # IF USER DID NOT ACCEPT DELETE PROCESS, TERMINATE
         if not self.dialog.show(
@@ -104,7 +104,7 @@ class Response(Common):
         # RESET PROGRESS BAR
         self.progressBar.update(0)
 
-        to_be_removed = []
+        to_be_moved = []
 
         # FLAG SELECTED TABLE ITEMS
         for indx, cb in enumerate(self.table.checkboxes):
@@ -121,10 +121,10 @@ class Response(Common):
                     indx, 1                                 # EACH ROW, 2ND COLUMN
                 ).text()
 
-                to_be_removed.append(f"{root}//{file}")
+                to_be_moved.append(f"{root}//{file}")
                 self.rows_to_remove.append(indx)
 
-        if not to_be_removed:
+        if not to_be_moved:
             self.dialog.show(
                 "PLEASE SELECT AT LEAST ONE FILE",
                 "NO SELECTION!",
@@ -132,9 +132,10 @@ class Response(Common):
             )
             return
 
-        # DELETE FILES WITH THREADS
+        return
+        # MOVE FILES WITH THREADS
         worker = DeleteWorker(
-            to_be_removed,
+            to_be_moved,
             self.table.data_type
         )
 
@@ -154,7 +155,7 @@ class Response(Common):
 
         # SUCCESSFULL ITEMS REMOVAL MESSAGE
         worker.is_success.connect(
-            self.removing_process_state
+            self.moving_process_state
         )
 
         # UNSUCCESSFULL ITEMS REMOVAL MESSAGE
@@ -168,7 +169,7 @@ class Response(Common):
 
         worker.run()
 
-    def removing_process_state(self, state: bool):
+    def moving_process_state(self, state: bool):
 
         if state:
             self.dialog.show(

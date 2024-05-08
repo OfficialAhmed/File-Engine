@@ -5,6 +5,7 @@
 
 import os
 import re
+from typing import Generator
 
 
 class Finder:
@@ -73,7 +74,7 @@ class Finder:
             "size": round(size, 3)
         }
 
-    def get_files(self) -> str:
+    def get_files(self):
         """
             Yield files in parent folder
         """
@@ -81,7 +82,7 @@ class Finder:
         for file in os.listdir(self.path):
             yield file
 
-    def get_recursive(self) -> tuple[str:str]:
+    def get_recursive(self):
         """
             Yields tuple (root, file) recursively thorugh all folders
         """
@@ -91,12 +92,12 @@ class Finder:
             for file in files:
                 yield (root, file)
 
-    def get_folders(self) -> str:
+    def get_folders(self):
 
         for file in os.listdir(self.path):
             yield file
 
-    def get_folders_recursive(self) -> tuple[str:str]:
+    def get_folders_recursive(self):
 
         for root, folders, _ in os.walk(self.path):
 
@@ -183,7 +184,6 @@ class File(Finder):
         self.reset_detected_matches()
 
         if exclude:
-            # self.exclude = set(exclude)
             exclude = set(exclude)
             self.exclude_regex(exclude)
 

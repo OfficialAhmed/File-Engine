@@ -8,14 +8,14 @@ from PySide6.QtWidgets import (
 
 
 from environment import tables
-from backend.delete import Response
+from backend.move import Response
 
 
 class Ui(Response):
 
     def __init__(self) -> None:
 
-        self.table = tables["DELETE"]
+        self.table = tables["MOVE"]
 
         self.widgets = QWidget()
         self.gridLayout = QGridLayout()
@@ -24,7 +24,7 @@ class Ui(Response):
 
         self.mainFrame = QFrame(self.widgets)
         self.groupBox = QGroupBox(self.mainFrame)
-        self.deleteBtn = QPushButton(self.groupBox)
+        self.moveBtn = QPushButton(self.groupBox)
         self.exportBtn = QPushButton(self.groupBox)
         self.importBtn = QPushButton(self.groupBox)
         self.restoreBtn = QPushButton(self.groupBox)
@@ -47,17 +47,17 @@ class Ui(Response):
         self.bottomHLayout.setContentsMargins(40, -1, 40, -1)
         self.verticalLayout.setContentsMargins(10, 10, 10, 10)
 
-        self.deleteBtn.setIconSize(QSize(30, 30))
+        self.moveBtn.setIconSize(QSize(30, 30))
         self.exportBtn.setIconSize(QSize(30, 30))
         self.importBtn.setIconSize(QSize(30, 30))
         self.restoreBtn.setIconSize(QSize(30, 30))
 
-        self.deleteBtn.setMinimumSize(QSize(150, 30))
+        self.moveBtn.setMinimumSize(QSize(150, 30))
         self.exportBtn.setMinimumSize(QSize(150, 30))
         self.importBtn.setMinimumSize(QSize(150, 30))
         self.restoreBtn.setMinimumSize(QSize(150, 30))
 
-        self.deleteBtn.setCursor(QCursor(Qt.PointingHandCursor))
+        self.moveBtn.setCursor(QCursor(Qt.PointingHandCursor))
         self.exportBtn.setCursor(QCursor(Qt.PointingHandCursor))
         self.importBtn.setCursor(QCursor(Qt.PointingHandCursor))
         self.restoreBtn.setCursor(QCursor(Qt.PointingHandCursor))
@@ -71,7 +71,7 @@ class Ui(Response):
                                 SET WIDGETS LAYOUT
         ===================================================================
         """
-        self.gridLayout.addWidget(self.deleteBtn, 2, 0, 1, 1)
+        self.gridLayout.addWidget(self.moveBtn, 2, 0, 1, 1)
         self.gridLayout.addWidget(self.exportBtn, 2, 2, 1, 1)
         self.gridLayout.addWidget(self.importBtn, 2, 3, 1, 1)
         self.gridLayout.addWidget(self.restoreBtn, 2, 1, 1, 1)
@@ -102,7 +102,7 @@ class Ui(Response):
         self.groupBox.setObjectName(u"groupBox")
         self.importBtn.setObjectName(u"importBtn")
         self.exportBtn.setObjectName(u"exportBtn")
-        self.deleteBtn.setObjectName(u"deleteBtn")
+        self.moveBtn.setObjectName(u"moveBtn")
         self.mainFrame.setObjectName(u"mainFrame")
         self.restoreBtn.setObjectName(u"restoreBtn")
         self.gridLayout.setObjectName(u"gridLayout")
@@ -117,7 +117,7 @@ class Ui(Response):
 
         # BUTTONS DESIGN
         btns = {
-            "deleteBtn":    self.deleteBtn,
+            "moveBtn":    self.moveBtn,
             "restoreBtn":   self.restoreBtn,
             "exportBtn":    self.exportBtn,
             "importBtn":    self.importBtn
@@ -138,7 +138,6 @@ class Ui(Response):
         """
 
         size = (20, 20)
-        self.set_icon(self.deleteBtn, "delete sign", size)
         self.set_icon(self.importBtn, "file upload", size)
         self.set_icon(self.restoreBtn, "restore file", size)
         self.set_icon(self.exportBtn, "file download", size)
@@ -149,8 +148,8 @@ class Ui(Response):
         ===================================================================
         """
 
-        self.deleteBtn.clicked.connect(
-            lambda: self.delete_content_clicked()
+        self.moveBtn.clicked.connect(
+            lambda: self.move_content_clicked()
         )
 
         self.exportBtn.clicked.connect(
@@ -170,7 +169,7 @@ class Ui(Response):
 
     def retranslateUi(self):
         """
-        TRANSLATE UI TEXT
+            TRANSLATE UI TEXT
         """
 
         """
@@ -180,20 +179,22 @@ class Ui(Response):
         """
 
         data = {
-            self.deleteBtn:           ("DELETE", "Delete All Selected Items"),
-            self.restoreBtn:          ("RESTORE", "Restore Last Deleted Process"),
+            self.moveBtn:             ("MOVE", "Move All Selected Items"),
+            self.restoreBtn:          ("RESTORE", "Restore Last Moved Process"),
             self.exportBtn:           ("EXPORT", "Store Current Lookup"),
             self.importBtn:           ("IMPORT", "Load Previous Lookup")
         }
 
         for widget, info in data.items():
-            widget.setText(QCoreApplication.translate(
-                "MainWindow", info[0], None
+            widget.setText(
+                QCoreApplication.translate(
+                    "MainWindow", info[0], None
+                )
             )
-            )
-            widget.setToolTip(QCoreApplication.translate(
-                "MainWindow", info[1], None
-            )
+            widget.setToolTip(
+                QCoreApplication.translate(
+                    "MainWindow", info[1], None
+                )
             )
 
         """
@@ -205,9 +206,11 @@ class Ui(Response):
         self.table.retranslate_headers()
 
         self.groupBox.setTitle(
-            QCoreApplication.translate("MainWindow", u"DELETE", None)
+            QCoreApplication.translate("MainWindow", u"MOVE", None)
         )
         self.totalRecordsTxtLabel.setText(
-            QCoreApplication.translate("MainWindow", "TOTAL RECORDS: ", None))
+            QCoreApplication.translate("MainWindow", "TOTAL RECORDS: ", None)
+        )
         self.totalRecordsLabel.setText(
-            QCoreApplication.translate("MainWindow", "0", None))
+            QCoreApplication.translate("MainWindow", "0", None)
+        )
