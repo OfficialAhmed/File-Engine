@@ -1,6 +1,6 @@
 import os
 import json
-from environment import Common, RestoreWorker, DeleteWorker, tables
+from environment import Common, RestoreWorker, MoveWorker, tables
 
 
 class Response(Common):
@@ -132,9 +132,8 @@ class Response(Common):
             )
             return
 
-        return
         # MOVE FILES WITH THREADS
-        worker = DeleteWorker(
+        worker = MoveWorker(
             to_be_moved,
             self.table.data_type
         )
@@ -145,7 +144,7 @@ class Response(Common):
         )
 
         # DELETE ROWS FROM THE TABLE
-        worker.remove_rows_signal.connect(
+        worker.move_rows_signal.connect(
             self.table.remove_rows(
                 self.rows_to_remove,
                 self.totalRecordsLabel
@@ -167,6 +166,7 @@ class Response(Common):
             )
         )
 
+        # TODO: pass folder path from user input
         worker.run()
 
     def moving_process_state(self, state: bool):

@@ -39,7 +39,7 @@ from constants import APP_VER
 
 import os
 import json
-import lib.delete as Delete
+import lib.move as Move
 import lib.rename as Rename
 import concurrent.futures
 
@@ -534,32 +534,32 @@ class Worker(QObject):
 
         self.paths = Path()
 
-        self.FILE_REMOVER = Delete.File()
-        self.FOLDER_REMOVER = Delete.Folder()
+        self.FILE_MOVER = Move.File()
+        self.FOLDER_MOVER = Move.Folder()
 
-        self.FILE_REMOVER.set_remover_param(
+        self.FILE_MOVER.set_mover_param(
             self.paths.TRASH_CONTENT_FILE,
             self.paths.TRASH_PATH
         )
 
-        self.FOLDER_REMOVER.set_remover_param(
+        self.FOLDER_MOVER.set_mover_param(
             self.paths.TRASH_CONTENT_FILE,
             self.paths.TRASH_PATH
         )
 
     def empty_trash(self) -> None:
-        self.FILE_REMOVER.empty_trash()
+        self.FILE_MOVER.empty_trash()
 
 
-class DeleteWorker(Worker):
+class MoveWorker(Worker):
     """
-        DELETE FILES IN SEPERATE THREADs FROM THE UI CONCURRENTLY
+        MVOE FILES IN SEPERATE THREADs FROM THE UI CONCURRENTLY
 
         - Inherits `QObject` for a thread-safe communicate with the main thread
         through signals with Qt framework
     """
 
-    remove_rows_signal = Signal()
+    move_rows_signal = Signal()
 
     def __init__(self, files: list, lookup_type: str) -> None:
         super().__init__()
@@ -567,28 +567,26 @@ class DeleteWorker(Worker):
         self.files = files
         self.lookup_type = lookup_type
 
-    def remove_file(self, file_path: str) -> None | str:
-        self.FILE_REMOVER.remove(file_path)
-
-    def remove_folder(self, folder_path: str, folder_name: str) -> None | str:
-        self.FOLDER_REMOVER.remove(folder_path, folder_name)
-
-    def process(self, path: str) -> None:
+    def process(self, src: str) -> bool:
 
         if self.lookup_type == "FOLDERS":
-            if self.remove_folder(path, path[:path.rfind("\\")]):
+            if self.FOLDER_MOVER.move_to(src, src[:src.rfind("\\")]):
                 return False
 
         else:
-            if self.remove_file(path):
+            if self.FILE_MOVER.move_to(src):
                 return False
 
         return True
 
-    def run(self) -> None:
+    def run(self, dest_folder:str) -> None:
         """
             WORK DECOMPOSITION - SUBTASKS
+            
+            `dest_folder` THE FOLDER TO WHICH THE FILES ARE GOING TO BE COPIED TO
         """
+        
+        self.dest_folder = dest_folder
 
         if self.files:
 
@@ -604,21 +602,21 @@ class DeleteWorker(Worker):
                     # PROGRESS BAR CALCULATIONS
                     completed = 0
                     total_files = len(self.files)
-                    is_removed_all = True
+                    is_moved_all = True
 
                     # UPDATE THE PROGRESS BAR, UPON EACH FINISHED PROCESS
                     for task in concurrent.futures.as_completed(tasks):
 
                         if not task.result():
-                            is_removed_all = False
+                            is_moved_all = False
 
                         completed += 1
                         progress = completed / total_files
                         self.progress_signal.emit(progress)
 
-                    # REMOVE ROWS & INVOKE PROCESS SUCESSFUL METHOD
-                    self.remove_rows_signal.emit()
-                    self.is_success.emit(is_removed_all)
+                    # MOVE ROWS & INVOKE PROCESS SUCESSFUL METHOD
+                    self.move_rows_signal.emit()
+                    self.is_success.emit(is_moved_all)
 
             except Exception as e:
                 self.is_fail.emit(str(e))
@@ -632,7 +630,7 @@ class RestoreWorker(Worker):
         self.data = data
 
     def restore_removed_content(self, destination: str) -> None:
-        return self.FILE_REMOVER.restore(destination)
+        return self.FILE_MOVER.restore(destination)
 
     def process(self, dest_with_filename: str) -> None:
 
