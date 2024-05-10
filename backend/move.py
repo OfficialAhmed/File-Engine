@@ -19,17 +19,17 @@ class Response(Common):
 
         # PROMPT USER
         if not self.dialog.show(
-            "ARE YOU SURE YOU WANT TO *RESTORE* PREVIOUSLY REMOVED ITEMS?",
+            "ARE YOU SURE YOU WANT TO *RESTORE* PREVIOUSLY MOVED ITEMS?",
             "ARE YOU SURE?"
         ):
             return None
 
         try:
 
-            trash_file = self.paths.TRASH_CONTENT_FILE
+            moved_content_file = self.paths.MOVED_CONTENT_FILE
 
             # FILE MUST EXIST AND NOT EMPTY, ELSE TERMINATE PROCESS
-            if not os.path.exists(trash_file) or not os.path.getsize(trash_file) > 0:
+            if not os.path.exists(moved_content_file) or not os.path.getsize(moved_content_file) > 0:
 
                 self.dialog.show(
                     f"CANNOT FIND PREVIOUSLY MOVED FILES.",
@@ -40,7 +40,7 @@ class Response(Common):
                 return None
 
             # FETCH CONTENT RESTORE DATA
-            data: dict = json.load(open(trash_file))
+            data: dict = json.load(open(moved_content_file))
 
             # RESTORE FILES WITH THREADS
             future_process = RestoreWorker(data)
@@ -51,12 +51,12 @@ class Response(Common):
             )
 
             # SUCCESSFULL ITEMS REMOVAL MESSAGE
-            future_process.is_success.connect(
+            future_process.is_success_signal.connect(
                 self.restore_process_state
             )
 
             # UNSUCCESSFULL ITEMS REMOVAL MESSAGE
-            future_process.is_fail.connect(
+            future_process.failed_signal.connect(
                 lambda error: self.dialog.show(
                     f"SOMTHING WENT WRONG WHILE RESTORING | ERROR <{error}>",
                     "C",
@@ -64,7 +64,7 @@ class Response(Common):
                 )
             )
 
-            future_process.run()
+            future_process.restore("moved")
 
             # REFORMAT RESTORED DATA FOR THE TABLE
             table_data = {}
@@ -144,7 +144,7 @@ class Response(Common):
         )
 
         # DELETE ROWS FROM THE TABLE
-        worker.move_rows_signal.connect(
+        worker.remove_rows_signal.connect(
             self.table.remove_rows(
                 self.rows_to_remove,
                 self.totalRecordsLabel
@@ -153,12 +153,12 @@ class Response(Common):
         self.rows_to_remove.clear()
 
         # SUCCESSFULL ITEMS REMOVAL MESSAGE
-        worker.is_success.connect(
+        worker.is_success_signal.connect(
             self.moving_process_state
         )
 
         # UNSUCCESSFULL ITEMS REMOVAL MESSAGE
-        worker.is_fail.connect(
+        worker.failed_signal.connect(
             lambda error: self.dialog.show(
                 f"SOMTHING WENT WRONG WHILE REMOVING | ERROR <{error}>",
                 "C",    # CRITICAL MESSAGE
@@ -166,8 +166,8 @@ class Response(Common):
             )
         )
 
-        # TODO: pass folder path from user input
-        worker.run()
+        path = self.get_path()
+        worker.run(path, "move") if path else None
 
     def moving_process_state(self, state: bool):
 

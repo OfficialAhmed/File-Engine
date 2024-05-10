@@ -51,12 +51,12 @@ class Response(Common):
             )
 
             # SUCCESSFULL ITEMS REMOVAL MESSAGE
-            future_process.is_success.connect(
+            future_process.is_success_signal.connect(
                 self.restore_process_state
             )
 
             # UNSUCCESSFULL ITEMS REMOVAL MESSAGE
-            future_process.is_fail.connect(
+            future_process.failed_signal.connect(
                 lambda error: self.dialog.show(
                     f"SOMTHING WENT WRONG WHILE RESTORING | ERROR <{error}>",
                     "C",
@@ -64,7 +64,7 @@ class Response(Common):
                 )
             )
 
-            future_process.run()
+            future_process.restore("deleted")
 
             # REFORMAT RESTORED DATA FOR THE TABLE
             table_data = {}
@@ -144,7 +144,7 @@ class Response(Common):
         )
 
         # DELETE ROWS FROM THE TABLE
-        worker.move_rows_signal.connect(
+        worker.remove_rows_signal.connect(
             self.table.remove_rows(
                 self.rows_to_remove,
                 self.totalRecordsLabel
@@ -153,12 +153,12 @@ class Response(Common):
         self.rows_to_remove.clear()
 
         # SUCCESSFULL ITEMS REMOVAL MESSAGE
-        worker.is_success.connect(
+        worker.is_success_signal.connect(
             self.removing_process_state
         )
 
         # UNSUCCESSFULL ITEMS REMOVAL MESSAGE
-        worker.is_fail.connect(
+        worker.failed_signal.connect(
             lambda error: self.dialog.show(
                 f"SOMTHING WENT WRONG WHILE REMOVING | ERROR <{error}>",
                 "C",    # CRITICAL MESSAGE

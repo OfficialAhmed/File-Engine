@@ -525,9 +525,9 @@ tables = {
 class Worker(QObject):
 
     # SIGNALS TO COMMUNICATE TO THE MAIN THREAD
-    is_fail = Signal(str)
-    is_success = Signal(bool)
+    failed_signal = Signal(str)
     progress_signal = Signal(float)
+    is_success_signal = Signal(bool)
 
     def __init__(self) -> None:
         super().__init__()
@@ -537,15 +537,7 @@ class Worker(QObject):
         self.FILE_MOVER = Move.File()
         self.FOLDER_MOVER = Move.Folder()
 
-        self.FILE_MOVER.set_mover_param(
-            self.paths.TRASH_CONTENT_FILE,
-            self.paths.TRASH_PATH
-        )
-
-        self.FOLDER_MOVER.set_mover_param(
-            self.paths.TRASH_CONTENT_FILE,
-            self.paths.TRASH_PATH
-        )
+        
 
     def empty_trash(self) -> None:
         self.FILE_MOVER.empty_trash()
@@ -559,7 +551,7 @@ class MoveWorker(Worker):
         through signals with Qt framework
     """
 
-    move_rows_signal = Signal()
+    remove_rows_signal = Signal()
 
     def __init__(self, files: list, lookup_type: str) -> None:
         super().__init__()
@@ -567,28 +559,49 @@ class MoveWorker(Worker):
         self.files = files
         self.lookup_type = lookup_type
 
-    def process(self, src: str) -> bool:
+    def process(self, path: str) -> bool:
 
         if self.lookup_type == "FOLDERS":
-            if self.FOLDER_MOVER.move_to(src, src[:src.rfind("\\")]):
+            if self.FOLDER_MOVER.move(path, self.dest_folder):
                 return False
-
         else:
-            if self.FILE_MOVER.move_to(src):
+            if self.FILE_MOVER.move(path, self.dest_folder):
                 return False
 
         return True
 
-    def run(self, dest_folder:str) -> None:
+    def run(self, dest_folder = "trash", method = "delete") -> None:
         """
-            WORK DECOMPOSITION - SUBTASKS
-            
-            `dest_folder` THE FOLDER TO WHICH THE FILES ARE GOING TO BE COPIED TO
+            #### START TO SUBTASK 
+
+                `dest_folder` THE FOLDER TO WHICH THE FILES ARE GOING TO BE MOVED INTO. `DEFAULT: TRASH`
         """
-        
+
         self.dest_folder = dest_folder
+        
+            
 
         if self.files:
+            
+            if method == "delete":
+                self.FILE_MOVER.set_mover_param(
+                    self.paths.TRASH_CONTENT_FILE,
+                    self.paths.TRASH_PATH
+                )
+
+                self.FOLDER_MOVER.set_mover_param(
+                    self.paths.TRASH_CONTENT_FILE,
+                    self.paths.TRASH_PATH
+                )
+                
+            else:
+                self.FILE_MOVER.set_mover_param(
+                    self.paths.MOVED_CONTENT_FILE
+                )
+
+                self.FOLDER_MOVER.set_mover_param(
+                    self.paths.MOVED_CONTENT_FILE
+                )
 
             try:
 
@@ -614,12 +627,12 @@ class MoveWorker(Worker):
                         progress = completed / total_files
                         self.progress_signal.emit(progress)
 
-                    # MOVE ROWS & INVOKE PROCESS SUCESSFUL METHOD
-                    self.move_rows_signal.emit()
-                    self.is_success.emit(is_moved_all)
+                    # REMOVE TABLE ROWS & INVOKE PROCESS SUCESSFUL METHOD
+                    self.remove_rows_signal.emit()
+                    self.is_success_signal.emit(is_moved_all)
 
             except Exception as e:
-                self.is_fail.emit(str(e))
+                self.failed_signal.emit(str(e))
 
 
 class RestoreWorker(Worker):
@@ -629,16 +642,16 @@ class RestoreWorker(Worker):
 
         self.data = data
 
-    def restore_removed_content(self, destination: str) -> None:
-        return self.FILE_MOVER.restore(destination)
+    def process(self, dest: str) -> None:
 
-    def process(self, dest_with_filename: str) -> None:
+        if self.restore_method == "deleted":
+            return self.FILE_MOVER.restore_deleted(dest)
+        else:
+            return self.FILE_MOVER.restore_moved(dest)
 
-        self.restore_removed_content(
-            dest_with_filename
-        )
+    def restore(self, restore_method: str) -> None:
 
-    def run(self) -> None:
+        self.restore_method = restore_method
 
         completed = 0
         self.progress_signal.emit(0)
@@ -668,10 +681,10 @@ class RestoreWorker(Worker):
                     self.progress_signal.emit(progress)
 
             self.empty_trash()
-            self.is_success.emit(is_all_removed)
+            self.is_success_signal.emit(is_all_removed)
 
         except Exception as error:
-            self.is_fail.emit(str(error))
+            self.failed_signal.emit(str(error))
 
 
 class RenameWorker(Worker):
@@ -759,7 +772,7 @@ class RenameWorker(Worker):
 
                     # REMOVE ROWS & INVOKE PROCESS SUCESSFUL METHOD
                     self.remove_rows_signal.emit()
-                    self.is_success.emit(is_renamed_all)
+                    self.is_success_signal.emit(is_renamed_all)
 
             except Exception as e:
-                self.is_fail.emit(str(e))
+                self.failed_signal.emit(str(e))

@@ -20,6 +20,7 @@ class Path:
         self.TRASH_PATH: str = self.DATA_PATH + "trash\\"
         self.CACHE_FILE: str = self.DATA_PATH + "Cache.json"
         self.TRASH_CONTENT_FILE = f"{self.TRASH_PATH}content.json"
+        self.MOVED_CONTENT_FILE = f"{self.DATA_PATH}\\moved_content.json"
 
 
 class Dialog:
