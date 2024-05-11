@@ -1,5 +1,6 @@
 import os
 import json
+from constants import Path
 from environment import Common, RestoreWorker, MoveWorker, tables
 
 
@@ -26,7 +27,7 @@ class Response(Common):
 
         try:
 
-            trash_file = self.paths.TRASH_CONTENT_FILE
+            trash_file = Path.TRASH_CONTENT_FILE
 
             # FILE MUST EXIST AND NOT EMPTY, ELSE TERMINATE PROCESS
             if not os.path.exists(trash_file) or not os.path.getsize(trash_file) > 0:

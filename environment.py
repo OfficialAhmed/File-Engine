@@ -530,8 +530,6 @@ class Worker(QObject):
     def __init__(self) -> None:
         super().__init__()
 
-        Path = Path()
-
         self.FILE_MOVER = Move.File()
         self.FOLDER_MOVER = Move.Folder()
 
@@ -643,7 +641,7 @@ class RestoreWorker(Worker):
     def process(self, src, dest) -> None:
 
         if self.restore_method == "deleted":
-            self.FILE_MOVER.restore_deleted(src, dest)
+            self.FILE_MOVER.restore_deleted(src)
         else:
             self.FILE_MOVER.restore_moved(src, dest)
         self.FILE_MOVER.moved_content.clear()

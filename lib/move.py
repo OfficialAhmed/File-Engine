@@ -41,14 +41,14 @@ class Mover:
             with open(self.moved_content_file, "w+") as file:
                 json.dump(self.moved_content, file)
 
-    def restore_deleted(self, destination: str) -> None:
+    def restore_deleted(self, dest: str) -> None:
         """
             Redo moving from trash to original content's destination by reading the generated JSON
         """
 
         shutil.move(
-            f"{self.trash_folder_path}{destination.replace(':', '')}",
-            destination
+            f"{Path.TRASH_PATH}{dest.replace(':', '')}",
+            dest
         )
 
         # Reset JSON content by overwriting the file
@@ -154,10 +154,11 @@ class Folder(Mover):
             if self.method == "delete":
                 if src not in self.moved_content.values():
                     self.moved_content[len(self.moved_content) + 1] = src
+
             else:
                 # {src : dest} JSON FORM BEFORE MOVING
                 if src not in self.moved_content:
-                    self.moved_content[src] = dest
+                    self.moved_content[src] = new_dest
 
         except Exception as e:
             return str(e)

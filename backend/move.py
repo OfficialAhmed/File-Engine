@@ -1,5 +1,6 @@
 import os
 import json
+from constants import Path
 from environment import Common, RestoreWorker, MoveWorker, tables
 
 
@@ -26,7 +27,7 @@ class Response(Common):
 
         try:
 
-            moved_content_file = self.paths.MOVED_CONTENT_FILE
+            moved_content_file = Path.MOVED_CONTENT_FILE
 
             # FILE MUST EXIST AND NOT EMPTY, ELSE TERMINATE PROCESS
             if not os.path.exists(moved_content_file) or not os.path.getsize(moved_content_file) > 0:
@@ -96,7 +97,7 @@ class Response(Common):
 
         # IF USER DID NOT ACCEPT DELETE PROCESS, TERMINATE
         if not self.dialog.show(
-            "ARE YOU SURE YOU WANT TO *REMOVE* THE SELECTED FILES?",
+            "ARE YOU SURE YOU WANT TO *MOVE* THE SELECTED FILES?",
             "ARE YOU SURE?"
         ):
             return
@@ -160,7 +161,7 @@ class Response(Common):
         # UNSUCCESSFULL ITEMS REMOVAL MESSAGE
         worker.failed_signal.connect(
             lambda error: self.dialog.show(
-                f"SOMTHING WENT WRONG WHILE REMOVING | ERROR <{error}>",
+                f"SOMTHING WENT WRONG WHILE MOVING | ERROR <{error}>",
                 "C",    # CRITICAL MESSAGE
                 False
             )
@@ -173,14 +174,14 @@ class Response(Common):
 
         if state:
             self.dialog.show(
-                f"SUCCESSFULY REMOVED ALL ITEM(S)",
+                f"SUCCESSFULY MOVED ALL ITEM(S)",
                 "OPERATION SUCCESSFULL",
                 False
             )
 
         else:
             self.dialog.show(
-                f"SOME ITEM(S) WEREN'T REMOVED SUCCESSFULY",
+                f"SOME ITEM(S) WEREN'T MOVED SUCCESSFULY",
                 "OPERATION PARTIALLY SUCCESSFULL",
                 False
             )
