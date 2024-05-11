@@ -51,18 +51,17 @@ class Common:
 
     def __init__(self) -> None:
         self.html = Html()
-        self.paths = Path()
         self.dialog = Dialog()
         self.progressBar = ProgressBar()
 
         self.data = {}
 
         self.path_input = ""
-        self.cache_file = self.paths.CACHE_FILE
+        self.cache_file = Path.CACHE_FILE
 
         # CREATE DATA FOLDER IF NOT FOUND
         if not os.path.exists("data"):
-            os.mkdir(self.paths.DATA_PATH)
+            os.mkdir(Path.DATA_PATH)
 
     def set_controller_widgets(
         self,
@@ -101,7 +100,7 @@ class Common:
     def set_icon(self, widget: QWidget, name: str, size=(18, 18)) -> str:
 
         widget.setIcon(
-            QIcon(f"{self.paths.RESOURCES_PATH}icons/{name}.svg")
+            QIcon(f"{Path.RESOURCES_PATH}icons/{name}.svg")
         )
 
         widget.setIconSize(QSize(*size))
@@ -202,7 +201,6 @@ class Table:
     )
 
     def __init__(self) -> None:
-        self.paths = Path()
         self.dialog = Dialog()
         self.checkboxes: list[QCheckBox] = []
         self.data_type = "FILES"
@@ -532,12 +530,10 @@ class Worker(QObject):
     def __init__(self) -> None:
         super().__init__()
 
-        self.paths = Path()
+        Path = Path()
 
         self.FILE_MOVER = Move.File()
         self.FOLDER_MOVER = Move.Folder()
-
-        
 
     def empty_trash(self) -> None:
         self.FILE_MOVER.empty_trash()
@@ -570,7 +566,7 @@ class MoveWorker(Worker):
 
         return True
 
-    def run(self, dest_folder = "trash", method = "delete") -> None:
+    def run(self, dest_folder="trash", method="delete") -> None:
         """
             #### START TO SUBTASK 
 
@@ -578,29 +574,31 @@ class MoveWorker(Worker):
         """
 
         self.dest_folder = dest_folder
-        
-            
 
         if self.files:
-            
+
             if method == "delete":
                 self.FILE_MOVER.set_mover_param(
-                    self.paths.TRASH_CONTENT_FILE,
-                    self.paths.TRASH_PATH
+                    Path.TRASH_CONTENT_FILE,
+                    Path.TRASH_PATH,
+                    method
                 )
 
                 self.FOLDER_MOVER.set_mover_param(
-                    self.paths.TRASH_CONTENT_FILE,
-                    self.paths.TRASH_PATH
+                    Path.TRASH_CONTENT_FILE,
+                    Path.TRASH_PATH,
+                    method
                 )
-                
+
             else:
                 self.FILE_MOVER.set_mover_param(
-                    self.paths.MOVED_CONTENT_FILE
+                    content_file_path=Path.MOVED_CONTENT_FILE,
+                    method=method
                 )
 
                 self.FOLDER_MOVER.set_mover_param(
-                    self.paths.MOVED_CONTENT_FILE
+                    content_file_path=Path.MOVED_CONTENT_FILE,
+                    method=method
                 )
 
             try:
@@ -642,12 +640,13 @@ class RestoreWorker(Worker):
 
         self.data = data
 
-    def process(self, dest: str) -> None:
+    def process(self, src, dest) -> None:
 
         if self.restore_method == "deleted":
-            return self.FILE_MOVER.restore_deleted(dest)
+            self.FILE_MOVER.restore_deleted(src, dest)
         else:
-            return self.FILE_MOVER.restore_moved(dest)
+            self.FILE_MOVER.restore_moved(src, dest)
+        self.FILE_MOVER.moved_content.clear()
 
     def restore(self, restore_method: str) -> None:
 
@@ -662,8 +661,8 @@ class RestoreWorker(Worker):
 
             with concurrent.futures.ThreadPoolExecutor(max_workers=None) as executor:
                 futures = [
-                    executor.submit(self.process, file)
-                    for file in self.data.values()
+                    executor.submit(self.process, src, dest)
+                    for dest, src in self.data.items()
                 ]
 
                 # PROGRESS BAR CALCULATIONS
@@ -703,8 +702,8 @@ class RenameWorker(Worker):
         self.FOLDER_RENAME = Rename.Folder()
 
         self.FILE_RENAME._set_renaming_param(
-            content_file_path=self.paths.TRASH_CONTENT_FILE,
-            trash_folder_path=self.paths.TRASH_PATH,
+            content_file_path=Path.TRASH_CONTENT_FILE,
+            trash_folder_path=Path.TRASH_PATH,
             renaming_method=renaming_method,
             renaming_algo=renaming_algo,
             custom_val=custom_value,
@@ -712,8 +711,8 @@ class RenameWorker(Worker):
         )
 
         self.FOLDER_RENAME._set_renaming_param(
-            content_file_path=self.paths.TRASH_CONTENT_FILE,
-            trash_folder_path=self.paths.TRASH_PATH,
+            content_file_path=Path.TRASH_CONTENT_FILE,
+            trash_folder_path=Path.TRASH_PATH,
             renaming_method=renaming_method,
             renaming_algo=renaming_algo,
             custom_val=custom_value,
