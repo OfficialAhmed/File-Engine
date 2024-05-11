@@ -1,6 +1,7 @@
 import os
 import json
-from environment import Common, RestoreWorker, DeleteWorker, tables
+from constants import Path
+from environment import Common, RestoreWorker, MoveWorker, tables
 
 
 class Response(Common):
@@ -26,7 +27,7 @@ class Response(Common):
 
         try:
 
-            trash_file = self.paths.TRASH_CONTENT_FILE
+            trash_file = Path.TRASH_CONTENT_FILE
 
             # FILE MUST EXIST AND NOT EMPTY, ELSE TERMINATE PROCESS
             if not os.path.exists(trash_file) or not os.path.getsize(trash_file) > 0:
@@ -51,12 +52,12 @@ class Response(Common):
             )
 
             # SUCCESSFULL ITEMS REMOVAL MESSAGE
-            future_process.is_success.connect(
+            future_process.is_success_signal.connect(
                 self.restore_process_state
             )
 
             # UNSUCCESSFULL ITEMS REMOVAL MESSAGE
-            future_process.is_fail.connect(
+            future_process.failed_signal.connect(
                 lambda error: self.dialog.show(
                     f"SOMTHING WENT WRONG WHILE RESTORING | ERROR <{error}>",
                     "C",
@@ -64,7 +65,7 @@ class Response(Common):
                 )
             )
 
-            future_process.run()
+            future_process.restore("deleted")
 
             # REFORMAT RESTORED DATA FOR THE TABLE
             table_data = {}
@@ -133,7 +134,7 @@ class Response(Common):
             return
 
         # DELETE FILES WITH THREADS
-        worker = DeleteWorker(
+        worker = MoveWorker(
             to_be_removed,
             self.table.data_type
         )
@@ -153,12 +154,12 @@ class Response(Common):
         self.rows_to_remove.clear()
 
         # SUCCESSFULL ITEMS REMOVAL MESSAGE
-        worker.is_success.connect(
+        worker.is_success_signal.connect(
             self.removing_process_state
         )
 
         # UNSUCCESSFULL ITEMS REMOVAL MESSAGE
-        worker.is_fail.connect(
+        worker.failed_signal.connect(
             lambda error: self.dialog.show(
                 f"SOMTHING WENT WRONG WHILE REMOVING | ERROR <{error}>",
                 "C",    # CRITICAL MESSAGE

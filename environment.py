@@ -39,7 +39,7 @@ from constants import APP_VER
 
 import os
 import json
-import lib.delete as Delete
+import lib.move as Move
 import lib.rename as Rename
 import concurrent.futures
 
@@ -51,18 +51,17 @@ class Common:
 
     def __init__(self) -> None:
         self.html = Html()
-        self.paths = Path()
         self.dialog = Dialog()
         self.progressBar = ProgressBar()
 
         self.data = {}
 
         self.path_input = ""
-        self.cache_file = self.paths.CACHE_FILE
+        self.cache_file = Path.CACHE_FILE
 
         # CREATE DATA FOLDER IF NOT FOUND
         if not os.path.exists("data"):
-            os.mkdir(self.paths.DATA_PATH)
+            os.mkdir(Path.DATA_PATH)
 
     def set_controller_widgets(
         self,
@@ -101,7 +100,7 @@ class Common:
     def set_icon(self, widget: QWidget, name: str, size=(18, 18)) -> str:
 
         widget.setIcon(
-            QIcon(f"{self.paths.RESOURCES_PATH}icons/{name}.svg")
+            QIcon(f"{Path.RESOURCES_PATH}icons/{name}.svg")
         )
 
         widget.setIconSize(QSize(*size))
@@ -202,7 +201,6 @@ class Table:
     )
 
     def __init__(self) -> None:
-        self.paths = Path()
         self.dialog = Dialog()
         self.checkboxes: list[QCheckBox] = []
         self.data_type = "FILES"
@@ -525,35 +523,23 @@ tables = {
 class Worker(QObject):
 
     # SIGNALS TO COMMUNICATE TO THE MAIN THREAD
-    is_fail = Signal(str)
-    is_success = Signal(bool)
+    failed_signal = Signal(str)
     progress_signal = Signal(float)
+    is_success_signal = Signal(bool)
 
     def __init__(self) -> None:
         super().__init__()
 
-        self.paths = Path()
-
-        self.FILE_REMOVER = Delete.File()
-        self.FOLDER_REMOVER = Delete.Folder()
-
-        self.FILE_REMOVER.set_remover_param(
-            self.paths.TRASH_CONTENT_FILE,
-            self.paths.TRASH_PATH
-        )
-
-        self.FOLDER_REMOVER.set_remover_param(
-            self.paths.TRASH_CONTENT_FILE,
-            self.paths.TRASH_PATH
-        )
+        self.FILE_MOVER = Move.File()
+        self.FOLDER_MOVER = Move.Folder()
 
     def empty_trash(self) -> None:
-        self.FILE_REMOVER.empty_trash()
+        self.FILE_MOVER.empty_trash()
 
 
-class DeleteWorker(Worker):
+class MoveWorker(Worker):
     """
-        DELETE FILES IN SEPERATE THREADs FROM THE UI CONCURRENTLY
+        MVOE FILES IN SEPERATE THREADs FROM THE UI CONCURRENTLY
 
         - Inherits `QObject` for a thread-safe communicate with the main thread
         through signals with Qt framework
@@ -567,30 +553,51 @@ class DeleteWorker(Worker):
         self.files = files
         self.lookup_type = lookup_type
 
-    def remove_file(self, file_path: str) -> None | str:
-        self.FILE_REMOVER.remove(file_path)
-
-    def remove_folder(self, folder_path: str, folder_name: str) -> None | str:
-        self.FOLDER_REMOVER.remove(folder_path, folder_name)
-
-    def process(self, path: str) -> None:
+    def process(self, path: str) -> bool:
 
         if self.lookup_type == "FOLDERS":
-            if self.remove_folder(path, path[:path.rfind("\\")]):
+            if self.FOLDER_MOVER.move(path, self.dest_folder):
                 return False
-
         else:
-            if self.remove_file(path):
+            if self.FILE_MOVER.move(path, self.dest_folder):
                 return False
 
         return True
 
-    def run(self) -> None:
+    def run(self, dest_folder="trash", method="delete") -> None:
         """
-            WORK DECOMPOSITION - SUBTASKS
+            #### START TO SUBTASK 
+
+                `dest_folder` THE FOLDER TO WHICH THE FILES ARE GOING TO BE MOVED INTO. `DEFAULT: TRASH`
         """
 
+        self.dest_folder = dest_folder
+
         if self.files:
+
+            if method == "delete":
+                self.FILE_MOVER.set_mover_param(
+                    Path.TRASH_CONTENT_FILE,
+                    Path.TRASH_PATH,
+                    method
+                )
+
+                self.FOLDER_MOVER.set_mover_param(
+                    Path.TRASH_CONTENT_FILE,
+                    Path.TRASH_PATH,
+                    method
+                )
+
+            else:
+                self.FILE_MOVER.set_mover_param(
+                    content_file_path=Path.MOVED_CONTENT_FILE,
+                    method=method
+                )
+
+                self.FOLDER_MOVER.set_mover_param(
+                    content_file_path=Path.MOVED_CONTENT_FILE,
+                    method=method
+                )
 
             try:
 
@@ -604,24 +611,24 @@ class DeleteWorker(Worker):
                     # PROGRESS BAR CALCULATIONS
                     completed = 0
                     total_files = len(self.files)
-                    is_removed_all = True
+                    is_moved_all = True
 
                     # UPDATE THE PROGRESS BAR, UPON EACH FINISHED PROCESS
                     for task in concurrent.futures.as_completed(tasks):
 
                         if not task.result():
-                            is_removed_all = False
+                            is_moved_all = False
 
                         completed += 1
                         progress = completed / total_files
                         self.progress_signal.emit(progress)
 
-                    # REMOVE ROWS & INVOKE PROCESS SUCESSFUL METHOD
+                    # REMOVE TABLE ROWS & INVOKE PROCESS SUCESSFUL METHOD
                     self.remove_rows_signal.emit()
-                    self.is_success.emit(is_removed_all)
+                    self.is_success_signal.emit(is_moved_all)
 
             except Exception as e:
-                self.is_fail.emit(str(e))
+                self.failed_signal.emit(str(e))
 
 
 class RestoreWorker(Worker):
@@ -631,16 +638,17 @@ class RestoreWorker(Worker):
 
         self.data = data
 
-    def restore_removed_content(self, destination: str) -> None:
-        return self.FILE_REMOVER.restore(destination)
+    def process(self, src, dest) -> None:
 
-    def process(self, dest_with_filename: str) -> None:
+        if self.restore_method == "deleted":
+            self.FILE_MOVER.restore_deleted(src)
+        else:
+            self.FILE_MOVER.restore_moved(src, dest)
+        self.FILE_MOVER.moved_content.clear()
 
-        self.restore_removed_content(
-            dest_with_filename
-        )
+    def restore(self, restore_method: str) -> None:
 
-    def run(self) -> None:
+        self.restore_method = restore_method
 
         completed = 0
         self.progress_signal.emit(0)
@@ -651,8 +659,8 @@ class RestoreWorker(Worker):
 
             with concurrent.futures.ThreadPoolExecutor(max_workers=None) as executor:
                 futures = [
-                    executor.submit(self.process, file)
-                    for file in self.data.values()
+                    executor.submit(self.process, src, dest)
+                    for dest, src in self.data.items()
                 ]
 
                 # PROGRESS BAR CALCULATIONS
@@ -670,10 +678,10 @@ class RestoreWorker(Worker):
                     self.progress_signal.emit(progress)
 
             self.empty_trash()
-            self.is_success.emit(is_all_removed)
+            self.is_success_signal.emit(is_all_removed)
 
         except Exception as error:
-            self.is_fail.emit(str(error))
+            self.failed_signal.emit(str(error))
 
 
 class RenameWorker(Worker):
@@ -692,8 +700,8 @@ class RenameWorker(Worker):
         self.FOLDER_RENAME = Rename.Folder()
 
         self.FILE_RENAME._set_renaming_param(
-            content_file_path=self.paths.TRASH_CONTENT_FILE,
-            trash_folder_path=self.paths.TRASH_PATH,
+            content_file_path=Path.TRASH_CONTENT_FILE,
+            trash_folder_path=Path.TRASH_PATH,
             renaming_method=renaming_method,
             renaming_algo=renaming_algo,
             custom_val=custom_value,
@@ -701,8 +709,8 @@ class RenameWorker(Worker):
         )
 
         self.FOLDER_RENAME._set_renaming_param(
-            content_file_path=self.paths.TRASH_CONTENT_FILE,
-            trash_folder_path=self.paths.TRASH_PATH,
+            content_file_path=Path.TRASH_CONTENT_FILE,
+            trash_folder_path=Path.TRASH_PATH,
             renaming_method=renaming_method,
             renaming_algo=renaming_algo,
             custom_val=custom_value,
@@ -761,7 +769,7 @@ class RenameWorker(Worker):
 
                     # REMOVE ROWS & INVOKE PROCESS SUCESSFUL METHOD
                     self.remove_rows_signal.emit()
-                    self.is_success.emit(is_renamed_all)
+                    self.is_success_signal.emit(is_renamed_all)
 
             except Exception as e:
-                self.is_fail.emit(str(e))
+                self.failed_signal.emit(str(e))

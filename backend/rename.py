@@ -92,12 +92,12 @@ class Response(Common):
         self.rows_to_remove.clear()
 
         # SUCCESSFULL ITEMS REMOVAL MESSAGE
-        worker.is_success.connect(
+        worker.is_success_signal.connect(
             self.renaming_process_state
         )
 
         # UNSUCCESSFULL ITEMS REMOVAL MESSAGE
-        worker.is_fail.connect(
+        worker.failed_signal.connect(
             lambda error: self.dialog.show(
                 f"SOMETHING WENT WRONG WHILE RENAMING | ERROR < {error} >",
                 "C",    # CRITICAL MESSAGE

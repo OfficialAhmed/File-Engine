@@ -11,7 +11,7 @@ from .move import Ui as Ui_move
 
 from backend.home import Feature
 from environment import Common, ProgressBar
-from constants import APP_VER
+from constants import APP_VER, Path
 
 
 class Ui(object):
@@ -782,6 +782,6 @@ class Ui(object):
         ext = "svg" if is_icon else "png"
 
         widget.setStyleSheet(
-            f"background-image: url({self.common_functions.paths.RESOURCES_PATH}{path}/{name}.{ext});\
+            f"background-image: url({Path.RESOURCES_PATH}{path}/{name}.{ext});\
             {extra_style}"
         )

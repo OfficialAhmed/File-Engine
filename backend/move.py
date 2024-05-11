@@ -1,6 +1,7 @@
 import os
 import json
-from environment import Common, RestoreWorker, DeleteWorker, tables
+from constants import Path
+from environment import Common, RestoreWorker, MoveWorker, tables
 
 
 class Response(Common):
@@ -19,17 +20,17 @@ class Response(Common):
 
         # PROMPT USER
         if not self.dialog.show(
-            "ARE YOU SURE YOU WANT TO *RESTORE* PREVIOUSLY REMOVED ITEMS?",
+            "ARE YOU SURE YOU WANT TO *RESTORE* PREVIOUSLY MOVED ITEMS?",
             "ARE YOU SURE?"
         ):
             return None
 
         try:
 
-            trash_file = self.paths.TRASH_CONTENT_FILE
+            moved_content_file = Path.MOVED_CONTENT_FILE
 
             # FILE MUST EXIST AND NOT EMPTY, ELSE TERMINATE PROCESS
-            if not os.path.exists(trash_file) or not os.path.getsize(trash_file) > 0:
+            if not os.path.exists(moved_content_file) or not os.path.getsize(moved_content_file) > 0:
 
                 self.dialog.show(
                     f"CANNOT FIND PREVIOUSLY MOVED FILES.",
@@ -40,7 +41,7 @@ class Response(Common):
                 return None
 
             # FETCH CONTENT RESTORE DATA
-            data: dict = json.load(open(trash_file))
+            data: dict = json.load(open(moved_content_file))
 
             # RESTORE FILES WITH THREADS
             future_process = RestoreWorker(data)
@@ -51,12 +52,12 @@ class Response(Common):
             )
 
             # SUCCESSFULL ITEMS REMOVAL MESSAGE
-            future_process.is_success.connect(
+            future_process.is_success_signal.connect(
                 self.restore_process_state
             )
 
             # UNSUCCESSFULL ITEMS REMOVAL MESSAGE
-            future_process.is_fail.connect(
+            future_process.failed_signal.connect(
                 lambda error: self.dialog.show(
                     f"SOMTHING WENT WRONG WHILE RESTORING | ERROR <{error}>",
                     "C",
@@ -64,7 +65,7 @@ class Response(Common):
                 )
             )
 
-            future_process.run()
+            future_process.restore("moved")
 
             # REFORMAT RESTORED DATA FOR THE TABLE
             table_data = {}
@@ -96,7 +97,7 @@ class Response(Common):
 
         # IF USER DID NOT ACCEPT DELETE PROCESS, TERMINATE
         if not self.dialog.show(
-            "ARE YOU SURE YOU WANT TO *REMOVE* THE SELECTED FILES?",
+            "ARE YOU SURE YOU WANT TO *MOVE* THE SELECTED FILES?",
             "ARE YOU SURE?"
         ):
             return
@@ -132,9 +133,8 @@ class Response(Common):
             )
             return
 
-        return
         # MOVE FILES WITH THREADS
-        worker = DeleteWorker(
+        worker = MoveWorker(
             to_be_moved,
             self.table.data_type
         )
@@ -154,33 +154,34 @@ class Response(Common):
         self.rows_to_remove.clear()
 
         # SUCCESSFULL ITEMS REMOVAL MESSAGE
-        worker.is_success.connect(
+        worker.is_success_signal.connect(
             self.moving_process_state
         )
 
         # UNSUCCESSFULL ITEMS REMOVAL MESSAGE
-        worker.is_fail.connect(
+        worker.failed_signal.connect(
             lambda error: self.dialog.show(
-                f"SOMTHING WENT WRONG WHILE REMOVING | ERROR <{error}>",
+                f"SOMTHING WENT WRONG WHILE MOVING | ERROR <{error}>",
                 "C",    # CRITICAL MESSAGE
                 False
             )
         )
 
-        worker.run()
+        path = self.get_path()
+        worker.run(path, "move") if path else None
 
     def moving_process_state(self, state: bool):
 
         if state:
             self.dialog.show(
-                f"SUCCESSFULY REMOVED ALL ITEM(S)",
+                f"SUCCESSFULY MOVED ALL ITEM(S)",
                 "OPERATION SUCCESSFULL",
                 False
             )
 
         else:
             self.dialog.show(
-                f"SOME ITEM(S) WEREN'T REMOVED SUCCESSFULY",
+                f"SOME ITEM(S) WEREN'T MOVED SUCCESSFULY",
                 "OPERATION PARTIALLY SUCCESSFULL",
                 False
             )

@@ -13,13 +13,13 @@ APP_VER = "v1.3.4"
 
 class Path:
 
-    def __init__(self) -> None:
-        self.RESOURCES_PATH = "frontend/"
-        self.ROOT_PATH:  str = getcwd() + "\\"
-        self.DATA_PATH:  str = self.ROOT_PATH + "data\\"
-        self.TRASH_PATH: str = self.DATA_PATH + "trash\\"
-        self.CACHE_FILE: str = self.DATA_PATH + "Cache.json"
-        self.TRASH_CONTENT_FILE = f"{self.TRASH_PATH}content.json"
+    RESOURCES_PATH = "frontend/"
+    ROOT_PATH:  str = getcwd() + "\\"
+    DATA_PATH:  str = ROOT_PATH + "data\\"
+    TRASH_PATH: str = DATA_PATH + "trash\\"
+    CACHE_FILE: str = DATA_PATH + "Cache.json"
+    TRASH_CONTENT_FILE = f"{TRASH_PATH}content.json"
+    MOVED_CONTENT_FILE = f"{DATA_PATH}\\moved_content.json"
 
 
 class Dialog:
