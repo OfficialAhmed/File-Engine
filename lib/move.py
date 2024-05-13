@@ -4,12 +4,13 @@ import json
 import shutil
 from constants import Path
 
+
 class Mover:
     """ 
         Parent class for removing. 
         Hold the common data processing between files and folders 
     """
-    
+
     def __init__(self) -> None:
 
         # MOVED CONTENT TRACKER - FOR RESTORE FEATURE
@@ -23,7 +24,7 @@ class Mover:
         self.trash_folder_path = trash_folder_path
         self.method = method
 
-        # READ DELETED CONTENT IF EXIST
+        # READ MOVED CONTENT IF EXISTS
         if os.path.exists(self.moved_content_file) and os.path.getsize(self.moved_content_file) > 0:
             self.moved_content = json.load(open(self.moved_content_file))
 
@@ -31,8 +32,6 @@ class Mover:
         """
             Delete all "trash" content
         """
-        # TODO: REMOVE RETURN
-        return
         shutil.rmtree(self.trash_folder_path)
 
     def dump_moved_content(self) -> None | str:
@@ -133,8 +132,6 @@ class Folder(Mover):
 
             else:
                 new_dest = f"{dest}/{os.path.basename(src)}"
-
-            return
 
             # IF FOLDER EXIST COPY FILES MANUALLY,
             # ELSE MOVE THE ENTIRE FOLDER

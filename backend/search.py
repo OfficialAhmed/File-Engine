@@ -488,7 +488,7 @@ class Response(Page):
 
                     self.export_tab_cache("BASIC")
                     search_type: str = self.searchTypeComboBox.currentText()
-                    custom_input: list = self.titleLineEdit.text().replace(" ", "").split(",")
+                    custom_input: list = self.titleLineEdit.text().strip().split(",")
                     
                     tables["MOVE"].data_type = search_type
                     tables["RENAME"].data_type = search_type
