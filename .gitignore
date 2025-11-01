@@ -7,3 +7,4 @@ env
 data
 dev/design/resources/resources_rc.py
 test.json
+tmp

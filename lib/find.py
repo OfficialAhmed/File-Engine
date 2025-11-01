@@ -1,24 +1,30 @@
 """
 ### Classes handle Searching for file/folder if exist(s)
     * Built-in search algorithms used from lib os
+    ________________________________________________________________________________
+
+    FILE(CLASS) HANDLES GENERAL FILE SEARCHING
+    FOLDER(CLASS) HANDLES GENERAL FOLDER SEARCHING
+    OBJECT(CLASS) HANDLES SPECIFIC FILE TYPE SEARCHING
 """
 
 import os
-from pathlib import Path
+import pathlib
 import re
-from typing import Generator
-
 import cv2
+
+from pathlib import Path
+from param import Video
 
 
 class Finder:
 
-    def __init__(self) -> None:
+    def __init__(self, path: str, is_recursive: bool, is_case_sensetive: bool) -> None:
 
         # fmt: off
-        self.path = ""
-        self.is_recursive = None
-        self.is_case_sensitive = None
+        self.path = path
+        self.is_recursive = is_recursive
+        self.is_case_sensitive = is_case_sensetive
         self.detected_matches = {}
         self.regex = {
             "SYMBOLS":              r"^[!@#$%^&*()_+{}\/| ~\-=+<>?\[\],;:'\".\\]+$",
@@ -54,18 +60,9 @@ class Finder:
             f"^(?=.*[{alphabets}])(?!.*[{''.join(map(re.escape, exclude))}]).+$"
         )
 
-    def set_path(self, path: str) -> None:
-        self.path = path
-
     def reset_detected_matches(self) -> None:
         self.folder_counter = 0
         self.detected_folders = {}
-
-    def set_recursive(self, rec: bool):
-        self.is_recursive = rec
-
-    def set_case_sensitive(self, cs: bool) -> None:
-        self.is_case_sensitive = cs
 
     def add_detected_match(self, object_name: str, match: str, root="") -> None:
         """
@@ -117,13 +114,6 @@ class Finder:
 
             for folder in folders:
                 yield (root, folder)
-
-    def update_finder_param(
-        self, path: str, is_recursive: bool, is_case_sensetive: bool
-    ) -> None:
-        self.set_path(path)
-        self.set_recursive(is_recursive)
-        self.set_case_sensitive(is_case_sensetive)
 
     def get_by_title(self, input: list) -> dict:
         return self.search("TITLE", input)
@@ -194,8 +184,8 @@ class Finder:
 
 class File(Finder):
 
-    def __init__(self) -> None:
-        super().__init__()
+    def __init__(self, path: str, is_recursive: bool, is_case_sensetive: bool) -> None:
+        super().__init__(path, is_recursive, is_case_sensetive)
 
     def search(self, by: str, input: str | list, exclude=[], custom="") -> dict:
 
@@ -231,44 +221,11 @@ class File(Finder):
 
         return self.detected_matches
 
-    def match_by_dimension(self, folder: str, min_width: int) -> None:
 
-        folder_path = Path(folder)
-        data = {}
-
-        if not folder_path.is_dir():
-            raise NotADirectoryError(f"{folder!r} is not a valid directory")
-
-        # Walk through the directory (non‑recursive, like os.listdir)
-        for entry in folder_path.iterdir():
-            if not entry.is_file():
-                continue
-
-            # Try to open the file with OpenCV
-            cap = cv2.VideoCapture(str(entry))
-            if not cap.isOpened():
-                # Not a readable video – skip silently or log if you wish
-                cap.release()
-                continue
-
-            # Grab width and height from the capture properties
-            width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-
-            cap.release()
-
-            # Report videos that are narrower than the threshold
-            if width < min_width:
-                data[entry.name] = {
-                    "File": f"{entry.name} - {width}px",
-                    "Source": str(entry),
-                    "Size": os.path.getsize(entry) / (1024 * 1024),
-                }
-        return data
-        
 class Folder(Finder):
 
-    def __init__(self) -> None:
-        super().__init__()
+    def __init__(self, path: str, is_recursive: bool, is_case_sensetive: bool) -> None:
+        super().__init__(path, is_recursive, is_case_sensetive)
 
     def search(self, by, input: str | list, exclude=[], custom="") -> dict:
         """
@@ -296,3 +253,71 @@ class Folder(Finder):
                     self.add_detected_match("folder", file)
 
         return self.detected_matches
+
+
+class Object(Finder):
+
+    def __init__(self, path: str, is_recursive: bool, is_case_sensetive: bool):
+        super().__init__(path, is_recursive, is_case_sensetive)
+
+    # fmt: off
+    def match_by_aspect_ratio(self, folder: str, filetype: str, aspect_ratio: str) -> dict:
+        """SEARCH FOR VIDEOS/IMAGES BY DIMENSIONS"""
+
+        match = {}
+        folder_path = Path(folder)
+
+        if not folder_path.is_dir():
+            raise NotADirectoryError(f"{folder!r} is not a valid directory")
+
+        if self.is_recursive:
+            iterator = folder_path.rglob("*")
+        else:
+            iterator = folder_path.iterdir()
+
+        # ITERATE THROUGH ALL FILES IN THE DIRECTORY
+        for entry in iterator:
+            if not entry.is_file():
+                continue
+
+            entry_path = str(entry)
+
+
+            match filetype:                
+                case "VIDEO":
+                    
+                    # TRY OPENING VIDEO FILE
+                    cap = cv2.VideoCapture(entry_path)
+                    if not cap.isOpened():
+                        # NOT READABLE VIDEO FILE, CLOSE SILENTLY AND CONTINUE
+                        # TODO: SHOW NUMBER OF SKIPPED FILES TO USER LATER
+                        cap.release()
+                        continue
+
+                    # FETCH VIDEO DIMENSIONS
+                    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+                    hight = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+                    cap.release()
+
+                    object = Video(entry_path, width, hight)
+
+                case _:
+                    # HERE WE IMPLEMENT IMAGE DIMENSION LOGIC LATER 
+                    continue
+
+            match aspect_ratio:
+                case "Portrait":
+                    if not object.is_portrait:  continue
+                case "Landscape":
+                    if not object.is_landscape: continue
+                case "Custom":  # HERE WE IMPLEMENT CUSTOM DIMENSION LOGIC LATER
+                    continue
+                case _:         # INVALID OPTION
+                    continue
+
+            match[pathlib.Path(entry_path)] = {
+                "File": entry.name,
+                "Source": entry.parent,
+                "Size": round(os.path.getsize(entry_path) / (1024 * 1024), 4),
+            }
+        return match

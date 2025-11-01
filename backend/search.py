@@ -1,12 +1,17 @@
 """
 
-    # HANDLES THE RESPONSE OF THE SEARCH FRONT-END 
+# HANDLES THE RESPONSE OF THE SEARCH FRONT-END
 
 """
 
-from lib.find import File, Folder
+from lib.find import File, Folder, Object
 from PySide6.QtWidgets import (
-    QCheckBox, QComboBox, QLineEdit, QPushButton, QTabWidget, QTableWidget
+    QCheckBox,
+    QComboBox,
+    QLineEdit,
+    QPushButton,
+    QTabWidget,
+    QTableWidget,
 )
 
 from os import path as osPath
@@ -16,9 +21,10 @@ from json import JSONDecodeError
 
 from environment import Common, tables
 
+
 class Page(Common):
     """
-        QWIDGETS STORED IN THIS CLASS TO BE SHARED TO ALL CHILDREN
+    QWIDGETS STORED IN THIS CLASS TO BE SHARED TO ALL CHILDREN
     """
 
     topGL = None
@@ -79,10 +85,7 @@ class Page(Common):
 
     tabs = ("BASIC", "ADVANCED", "RESULT")
 
-    search_options = {
-        "NAME": ("FILES", "FOLDERS"),
-        "EXTENSION": ("FILES",)
-    }
+    search_options = {"NAME": ("FILES", "FOLDERS"), "EXTENSION": ("FILES",)}
 
     title_options = {
         "NAME": {
@@ -95,9 +98,9 @@ class Page(Common):
                 "Numbers Excluding",
                 "Symbols only",
                 "Symbols Excluding",
-                "Custom (REGEX)"
+                "Custom (REGEX)",
             ),
-            "EQUAL TO": ()
+            "EQUAL TO": (),
         },
         "EXTENSION": {
             "CONTAIN": (
@@ -109,81 +112,39 @@ class Page(Common):
                 "Numbers Excluding",
                 "Symbols only",
                 "Symbols Excluding",
-                "Custom (REGEX)"
+                "Custom (REGEX)",
             ),
-            "EQUAL TO": ()
-        }
+            "EQUAL TO": (),
+        },
     }
 
     metadata_options = {
         "VIDEO": {
-            "DIMENSIONS": (
-                "1920x1080",
-                "720x420",
-                "Custom"
-            ),
-            "DURATION": (
-                "Custom",
-            ),
-            "BIT RATE": (
-                "Custom",
-            ),
-            "FRAME RATE": (
-                "Custom",
-            ),
-            "FPS": (
-                "Custom",
-            )
+            "DIMENSIONS": ("Portrait", "Landscape", "Custom"),
+            "DURATION": ("Custom",),
+            "BIT RATE": ("Custom",),
+            "FRAME RATE": ("Custom",),
+            "FPS": ("Custom",),
         },
         "IMAGE": {
-            "DIMENSIONS": (
-                "Custom",
-            ),
+            "DIMENSIONS": ("Portrait", "Landscape", "Custom"),
         },
-        "AUDIO": {
-            "ALBUM": (
-                "Custom",
-            ),
-            "AUTHOR": (
-                "Custom",
-            ),
-            "DURATION": (
-                "Custom",
-            )
-        },
-        "DOCS": {
-            "AUTHOR": (
-                "Custom",
-            )
-        }
+        "AUDIO": {"ALBUM": ("Custom",), "AUTHOR": ("Custom",), "DURATION": ("Custom",)},
+        "DOCS": {"AUTHOR": ("Custom",)},
     }
 
     other_options = {
         "SIZE": {
-            "BYTES": (
-                "Custom",
-            ),
-            "KILOBYTES": (
-                "Custom",
-            ),
-            "MEGABYTES": (
-                "Custom",
-            ),
-            "GIGABYTES": (
-                "Custom",
-            )
+            "BYTES": ("Custom",),
+            "KILOBYTES": ("Custom",),
+            "MEGABYTES": ("Custom",),
+            "GIGABYTES": ("Custom",),
         },
         "DATE CREATED": {
-            "EQUAL TO": (
-                "Custom",
-            ),
-            "LESS THAN": (
-                "Custom",
-            ),
-            "GREATER THAN": (
-                "Custom",
-            )
-        }
+            "EQUAL TO": ("Custom",),
+            "LESS THAN": ("Custom",),
+            "GREATER THAN": ("Custom",),
+        },
     }
 
     def __init__(self) -> None:
@@ -192,7 +153,7 @@ class Page(Common):
 
 class Response(Page):
     """
-        SIGNALS HANDLING AND UI BEHAVIOUR
+    SIGNALS HANDLING AND UI BEHAVIOUR
     """
 
     def __init__(self) -> None:
@@ -200,7 +161,7 @@ class Response(Page):
 
     def title_cb_changed(self):
         """
-            ### CHANGE SEARCH TYPE OPTIONS 
+        ### CHANGE SEARCH TYPE OPTIONS
         """
 
         self.searchTypeComboBox.clear()
@@ -209,12 +170,12 @@ class Response(Page):
 
     def title_cb2_changed(self, type=""):
         """
-            ### BASIC TITLE GROUP OPTIONS CHANGED
-            GENERATE AVAILABLE OPTIONS BASED ON TITLE CHECKBOX2
+        ### BASIC TITLE GROUP OPTIONS CHANGED
+        GENERATE AVAILABLE OPTIONS BASED ON TITLE CHECKBOX2
         """
-        le = self.titleLineEdit     # LINE EDIT
-        cb = self.titleComboBox2    # CHECKBOX
-        cb3 = self.titleComboBox3   # CHECKBOX TO HIDE
+        le = self.titleLineEdit  # LINE EDIT
+        cb = self.titleComboBox2  # CHECKBOX
+        cb3 = self.titleComboBox3  # CHECKBOX TO HIDE
 
         if type == "advanced":
             le = self.advancedTitleLineEdit
@@ -235,11 +196,11 @@ class Response(Page):
 
     def title_cb3_changed(self, type=""):
         """
-            RERENDER OPTIONS BASED ON TITLE CHECKBOX3
+        RERENDER OPTIONS BASED ON TITLE CHECKBOX3
         """
 
-        cb = self.titleComboBox3    # CHECKBOX
-        le = self.titleLineEdit     # LINE EDIT
+        cb = self.titleComboBox3  # CHECKBOX
+        le = self.titleLineEdit  # LINE EDIT
 
         if type == "advanced":
             cb = self.advancedTitleComboBox3
@@ -252,8 +213,8 @@ class Response(Page):
 
     def md_option_changed(self, changed_cb: int):
         """
-            ### METADATA GROUP OPTIONS CHANGED
-            GENERATE AVAILABLE OPTIONS BASED ON CURRENT OPTION
+        ### METADATA GROUP OPTIONS CHANGED
+        GENERATE AVAILABLE OPTIONS BASED ON CURRENT OPTION
         """
 
         # DISABLE THE FUNCTION TEMPORARLY
@@ -265,9 +226,7 @@ class Response(Page):
 
             case 1:
 
-                options = self.metadata_options[
-                    self.filetypeComboBox.currentText()
-                ]
+                options = self.metadata_options[self.filetypeComboBox.currentText()]
 
                 # 2nd COMBOBOX OPTIONS
                 self.metadataComboBox2.clear()
@@ -278,13 +237,16 @@ class Response(Page):
 
             case 2:
 
-                options = self.metadata_options[
-                    self.filetypeComboBox.currentText()
-                ][self.metadataComboBox2.currentText()]
+                options = self.metadata_options[self.filetypeComboBox.currentText()][
+                    self.metadataComboBox2.currentText()
+                ]
 
             case 3:
 
-                if self.metadataComboBox3.currentText().split(" ")[-1] in ("(REGEX)", "Excluding"):
+                if self.metadataComboBox3.currentText().split(" ")[-1] in (
+                    "(REGEX)",
+                    "Excluding",
+                ):
                     self.metadataLineEdit.setHidden(False)
                 else:
                     self.metadataLineEdit.setHidden(True)
@@ -298,16 +260,19 @@ class Response(Page):
 
         # ENABLE THE FUNCTION AGAIN
         self.filetypeComboBox.currentTextChanged.connect(
-            lambda: self.md_option_changed(1))
+            lambda: self.md_option_changed(1)
+        )
         self.metadataComboBox2.currentTextChanged.connect(
-            lambda: self.md_option_changed(2))
+            lambda: self.md_option_changed(2)
+        )
         self.metadataComboBox3.currentTextChanged.connect(
-            lambda: self.md_option_changed(3))
+            lambda: self.md_option_changed(3)
+        )
 
     def other_option_changed(self, changed_cb: int):
         """
-            ### METADATA GROUP OPTIONS CHANGED
-            GENERATE AVAILABLE OPTIONS BASED ON CURRENT OPTION
+        ### METADATA GROUP OPTIONS CHANGED
+        GENERATE AVAILABLE OPTIONS BASED ON CURRENT OPTION
         """
 
         # DISABLE THE FUNCTION TEMPORARLY
@@ -319,9 +284,7 @@ class Response(Page):
 
             case 1:
 
-                options = self.other_options[
-                    self.otherComboBox.currentText()
-                ]
+                options = self.other_options[self.otherComboBox.currentText()]
 
                 # 2nd COMBOBOX OPTIONS
                 self.otherComboBox2.clear()
@@ -332,13 +295,16 @@ class Response(Page):
 
             case 2:
 
-                options = self.other_options[
-                    self.otherComboBox.currentText()
-                ][self.otherComboBox2.currentText()]
+                options = self.other_options[self.otherComboBox.currentText()][
+                    self.otherComboBox2.currentText()
+                ]
 
             case 3:
 
-                if self.otherComboBox3.currentText().split(" ")[-1] in ("(REGEX)", "Excluding"):
+                if self.otherComboBox3.currentText().split(" ")[-1] in (
+                    "(REGEX)",
+                    "Excluding",
+                ):
                     self.otherLineEdit.setHidden(False)
                 else:
                     self.otherLineEdit.setHidden(True)
@@ -352,11 +318,14 @@ class Response(Page):
 
         # ENABLE THE FUNCTION AGAIN
         self.otherComboBox.currentTextChanged.connect(
-            lambda: self.other_option_changed(1))
+            lambda: self.other_option_changed(1)
+        )
         self.otherComboBox2.currentTextChanged.connect(
-            lambda: self.other_option_changed(2))
+            lambda: self.other_option_changed(2)
+        )
         self.otherComboBox3.currentTextChanged.connect(
-            lambda: self.other_option_changed(3))
+            lambda: self.other_option_changed(3)
+        )
 
     def set_clickable_options(self, is_enable: bool) -> None:
 
@@ -367,37 +336,34 @@ class Response(Page):
 
     def export_tab_cache(self, tab) -> None:
         """
-            STORE CURRENT SEARCH SETTINGS 
+        STORE CURRENT SEARCH SETTINGS
         """
 
         data = {
             "BASIC": {
-                "titleComboBox":            self.titleComboBox.currentText(),
-                "titleComboBox2":           self.titleComboBox2.currentText(),
-                "titleComboBox3":           self.titleComboBox3.currentText(),
-                "titleLineEdit":            self.titleLineEdit.text(),
-                "isRecursiveCheckBox":      self.isRecursiveCheckBox.isChecked(),
-                "isCaseSensitiveCheckBox":  self.isCaseSensitiveCheckBox.isChecked()
+                "titleComboBox": self.titleComboBox.currentText(),
+                "titleComboBox2": self.titleComboBox2.currentText(),
+                "titleComboBox3": self.titleComboBox3.currentText(),
+                "titleLineEdit": self.titleLineEdit.text(),
+                "isRecursiveCheckBox": self.isRecursiveCheckBox.isChecked(),
+                "isCaseSensitiveCheckBox": self.isCaseSensitiveCheckBox.isChecked(),
             },
-
             "ADVANCED": {
-                "filetypeComboBox":         self.filetypeComboBox.currentText(),
-                "metadataComboBox2":        self.metadataComboBox2.currentText(),
-                "metadataComboBox3":        self.metadataComboBox3.currentText(),
-                "metadataLineEdit":         self.metadataLineEdit.text(),
-
-                "otherComboBox":            self.otherComboBox.currentText(),
-                "otherComboBox2":           self.otherComboBox2.currentText(),
-                "otherComboBox3":           self.otherComboBox3.currentText(),
-                "otherLineEdit":            self.otherLineEdit.text(),
-
-                "advancedTitleComboBox":            self.advancedTitleComboBox.currentText(),
-                "advancedTitleComboBox2":           self.advancedTitleComboBox2.currentText(),
-                "advancedTitleComboBox3":           self.advancedTitleComboBox3.currentText(),
-                "advancedTitleLineEdit":            self.advancedTitleLineEdit.text(),
-                "advancedIsRecuresiveCheckBox":     self.advancedIsRecuresiveCheckBox.isChecked(),
-                "advancedIsCaseSensitiveCheckBox":  self.advancedIsCaseSensitiveCheckBox.isChecked(),
-            }
+                "filetypeComboBox": self.filetypeComboBox.currentText(),
+                "metadataComboBox2": self.metadataComboBox2.currentText(),
+                "metadataComboBox3": self.metadataComboBox3.currentText(),
+                "metadataLineEdit": self.metadataLineEdit.text(),
+                "otherComboBox": self.otherComboBox.currentText(),
+                "otherComboBox2": self.otherComboBox2.currentText(),
+                "otherComboBox3": self.otherComboBox3.currentText(),
+                "otherLineEdit": self.otherLineEdit.text(),
+                "advancedTitleComboBox": self.advancedTitleComboBox.currentText(),
+                "advancedTitleComboBox2": self.advancedTitleComboBox2.currentText(),
+                "advancedTitleComboBox3": self.advancedTitleComboBox3.currentText(),
+                "advancedTitleLineEdit": self.advancedTitleLineEdit.text(),
+                "advancedIsRecuresiveCheckBox": self.advancedIsRecuresiveCheckBox.isChecked(),
+                "advancedIsCaseSensitiveCheckBox": self.advancedIsCaseSensitiveCheckBox.isChecked(),
+            },
         }
 
         cache: dict = {}
@@ -410,8 +376,8 @@ class Response(Page):
             cache = data
 
         cache["SEARCH"] = {
-            "searchTypeComboBox":       self.searchTypeComboBox.currentText(),
-            "pathLineEdit":             self.pathLineEdit.text()
+            "searchTypeComboBox": self.searchTypeComboBox.currentText(),
+            "pathLineEdit": self.pathLineEdit.text(),
         }
 
         with open(self.cache_file, "w+") as file:
@@ -463,16 +429,11 @@ class Response(Page):
         path = self.pathLineEdit.text()
 
         if not path:
-            self.dialog.show(
-                msg="PATH IS EMPTY!",
-                mode="w",
-                is_dialog=False
-            )
+            self.dialog.show(msg="PATH IS EMPTY!", mode="w", is_dialog=False)
             return
 
         if not self.dialog.show(
-            "WOULD YOU LIKE TO START THE SEARCHING PROCESS?",
-            "ARE YOU SURE?"
+            "WOULD YOU LIKE TO START THE SEARCHING PROCESS?", "ARE YOU SURE?"
         ):
             return
 
@@ -489,20 +450,22 @@ class Response(Page):
                     self.export_tab_cache("BASIC")
                     search_type: str = self.searchTypeComboBox.currentText()
                     custom_input: list = self.titleLineEdit.text().strip().split(",")
-                    
+
                     tables["MOVE"].data_type = search_type
                     tables["RENAME"].data_type = search_type
                     tables["DELETE"].data_type = search_type
-                    
-                    finder = File()
-                    if search_type == "FOLDERS":
-                        finder = Folder()
 
-                    finder.update_finder_param(
+                    finder = File(
                         path,
                         self.isRecursive.isChecked(),
-                        self.isCaseSensitiveCheckBox.isChecked()
+                        self.isCaseSensitiveCheckBox.isChecked(),
                     )
+                    if search_type == "FOLDERS":
+                        finder = Folder(
+                            path,
+                            self.isRecursive.isChecked(),
+                            self.isCaseSensitiveCheckBox.isChecked(),
+                        )
 
                     search = self.titleComboBox.currentText()
                     if self.titleComboBox2.currentText() != "CONTAIN":
@@ -513,32 +476,30 @@ class Response(Page):
                             self.data = finder.get_by_extension(custom_input)
 
                     else:
-
+                        # fmt: off
                         match self.titleComboBox3.currentText():
-                            case "Symbols only":        self.data = finder.get_only_symbols(search)
-                            case "Alphabets only":      self.data = finder.get_only_alphabets(search)
-                            case "Numbers & Symbols":   self.data = finder.get_num_symbol(search)
-                            case "Numbers Excluding":   self.data = finder.get_num_exclude(search, custom_input)
-                            case "Symbols Excluding":   self.data = finder.get_symbol_exclude(search, custom_input)
-                            case "Alphabets Excluding": self.data = finder.get_alpha_exclude(search, custom_input)
-                            case "Alphabets & Numbers": self.data = finder.get_alpha_num(search)
-                            case "Alphabets & Symbols": self.data = finder.get_alpha_symbol(search)
-                            case "Custom (REGEX)":      self.data = finder.get_custom(search, self.titleLineEdit.text().strip())
+                            case "Symbols only":self.data = finder.get_only_symbols(search)
+                            case "Alphabets only":self.data = finder.get_only_alphabets(search)
+                            case "Numbers & Symbols":self.data = finder.get_num_symbol(search)
+                            case "Numbers Excluding":self.data = finder.get_num_exclude(search, custom_input)
+                            case "Symbols Excluding":self.data = finder.get_symbol_exclude(search, custom_input)
+                            case "Alphabets Excluding":self.data = finder.get_alpha_exclude(search, custom_input)
+                            case "Alphabets & Numbers":self.data = finder.get_alpha_num(search)
+                            case "Alphabets & Symbols":self.data = finder.get_alpha_symbol(search)
+                            case "Custom (REGEX)":self.data = finder.get_custom(search, self.titleLineEdit.text().strip())
 
                     tables["SEARCH"].fill(self.data)
 
                     # SHOW THE RESULT PAGE AFTER RENDERING TABLE
-                    self.foundMatchLabel.setText(
-                        f"{len(self.data)} MATCHES FOUND"
-                    )
+                    self.foundMatchLabel.setText(f"{len(self.data)} MATCHES FOUND")
                     self.tabsWidget.setCurrentIndex(self.tabs.index("RESULT"))
 
                     if not self.data:
                         self.set_clickable_options(False)
                         self.dialog.show(
                             "NO DATA HAS BEEN FOUND!",  # MESSAGE
-                            "ITEMS CANNOT BE FOUND!",   # WINDOW TITLE
-                            is_dialog=False             # FALSE = INFORMATIONAL
+                            "ITEMS CANNOT BE FOUND!",  # WINDOW TITLE
+                            is_dialog=False,  # FALSE = INFORMATIONAL
                         )
                         return
 
@@ -546,56 +507,59 @@ class Response(Page):
 
                 case "ADVANCED":
                     self.export_tab_cache("ADVANCED")
+                    search_type: str = self.searchTypeComboBox.currentText()
+
+                    tables["MOVE"].data_type = search_type
+                    tables["RENAME"].data_type = search_type
+                    tables["DELETE"].data_type = search_type
+                    
                     self.set_clickable_options(False)
-                    
-                    finder = File()
-                    
+
+                    finder = Object(
+                        path,
+                        self.isRecursive.isChecked(),
+                        self.isCaseSensitiveCheckBox.isChecked(),
+                    )
+
                     # EXPERIMENTAL FEATURE ONLY - DIMENSION BASED SEARCH
                     match self.metadataComboBox2.currentText().strip():
-                        
+
                         case "DIMENSIONS":
-                            self.data = finder.match_by_dimension(
+                            self.data = finder.match_by_aspect_ratio(
                                 path,
-                                int(self.metadataComboBox3.currentText().split("x")[0])
+                                self.filetypeComboBox.currentText(),
+                                self.metadataComboBox3.currentText(),
                             )
-                    
+
                     tables["SEARCH"].fill(self.data)
-                                        
-                    self.foundMatchLabel.setText(
-                        f"{len(self.data)} MATCHES FOUND"
-                    )
+
+                    self.foundMatchLabel.setText(f"{len(self.data)} MATCHES FOUND")
                     self.tabsWidget.setCurrentIndex(self.tabs.index("RESULT"))
 
                     if not self.data:
                         self.set_clickable_options(False)
                         self.dialog.show(
                             "NO DATA HAS BEEN FOUND!",  # MESSAGE
-                            "ITEMS CANNOT BE FOUND!",   # WINDOW TITLE
-                            is_dialog=False             # FALSE = INFORMATIONAL
+                            "ITEMS CANNOT BE FOUND!",  # WINDOW TITLE
+                            is_dialog=False,  # FALSE = INFORMATIONAL
                         )
                         return
-                    
+
                     self.set_clickable_options(True)
-                    
 
                 case "RESULT":
                     self.dialog.show(
                         "CANNOT START THE PROCESS. CHANGE THE TAB TO BASIC OR ADVANCED",
                         "INVALID TAB SELECTED",
-                        is_dialog=False
+                        is_dialog=False,
                     )
 
         except JSONDecodeError:
             self.dialog.show(
                 f"THE CACHE FILE WAS CURRUPTED. PLEASE CLOSE THE APP AND REMOVE IT FROM ({self.cache_file})",
                 "c",
-                is_dialog=False
+                is_dialog=False,
             )
 
         except Exception as e:
-            self.dialog.show(
-                f"UNKNOWN ERROR OCCURED | {str(e)}",
-                "c",
-                is_dialog=False
-            )
-
+            self.dialog.show(f"UNKNOWN ERROR OCCURED | {str(e)}", "c", is_dialog=False)
