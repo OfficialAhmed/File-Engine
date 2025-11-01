@@ -55,7 +55,7 @@ class Page(Common):
     verticalLayout4 = None
     foundMatchLabel = None
     metadataLineEdit: QLineEdit = None
-    metadataComboBox: QComboBox = None
+    filetypeComboBox: QComboBox = None
     searchGroupBoxGL = None
     advancedTabMainVL = None
     metadataComboBox2: QComboBox = None
@@ -77,7 +77,7 @@ class Page(Common):
     advancedIsRecuresiveCheckBox: QCheckBox = None
     advancedIsCaseSensitiveCheckBox: QCheckBox = None
 
-    tabs = ("BASIC", "ADVANCED (SOON!)", "RESULT")
+    tabs = ("BASIC", "ADVANCED", "RESULT")
 
     search_options = {
         "NAME": ("FILES", "FOLDERS"),
@@ -257,7 +257,7 @@ class Response(Page):
         """
 
         # DISABLE THE FUNCTION TEMPORARLY
-        self.metadataComboBox.currentTextChanged.disconnect()
+        self.filetypeComboBox.currentTextChanged.disconnect()
         self.metadataComboBox2.currentTextChanged.disconnect()
         self.metadataComboBox3.currentTextChanged.disconnect()
 
@@ -266,7 +266,7 @@ class Response(Page):
             case 1:
 
                 options = self.metadata_options[
-                    self.metadataComboBox.currentText()
+                    self.filetypeComboBox.currentText()
                 ]
 
                 # 2nd COMBOBOX OPTIONS
@@ -279,7 +279,7 @@ class Response(Page):
             case 2:
 
                 options = self.metadata_options[
-                    self.metadataComboBox.currentText()
+                    self.filetypeComboBox.currentText()
                 ][self.metadataComboBox2.currentText()]
 
             case 3:
@@ -297,7 +297,7 @@ class Response(Page):
                 self.metadataComboBox3.addItem(option)
 
         # ENABLE THE FUNCTION AGAIN
-        self.metadataComboBox.currentTextChanged.connect(
+        self.filetypeComboBox.currentTextChanged.connect(
             lambda: self.md_option_changed(1))
         self.metadataComboBox2.currentTextChanged.connect(
             lambda: self.md_option_changed(2))
@@ -381,7 +381,7 @@ class Response(Page):
             },
 
             "ADVANCED": {
-                "metadataComboBox":         self.metadataComboBox.currentText(),
+                "filetypeComboBox":         self.filetypeComboBox.currentText(),
                 "metadataComboBox2":        self.metadataComboBox2.currentText(),
                 "metadataComboBox3":        self.metadataComboBox3.currentText(),
                 "metadataLineEdit":         self.metadataLineEdit.text(),
@@ -441,7 +441,7 @@ class Response(Page):
             self.advancedIsRecuresiveCheckBox.setChecked(data.get("advancedIsRecuresiveCheckBox"))
             self.advancedIsCaseSensitiveCheckBox.setChecked(data.get("advancedIsCaseSensitiveCheckBox"))
 
-            self.metadataComboBox.setCurrentText(data.get("metadataComboBox"))
+            self.filetypeComboBox.setCurrentText(data.get("filetypeComboBox"))
             self.metadataComboBox2.setCurrentText(data.get("metadataComboBox2"))
             self.metadataComboBox3.setCurrentText(data.get("metadataComboBox3"))
             self.metadataLineEdit.setText(data.get("metadataLineEdit"))
@@ -546,6 +546,37 @@ class Response(Page):
 
                 case "ADVANCED":
                     self.export_tab_cache("ADVANCED")
+                    self.set_clickable_options(False)
+                    
+                    finder = File()
+                    
+                    # EXPERIMENTAL FEATURE ONLY - DIMENSION BASED SEARCH
+                    match self.metadataComboBox2.currentText().strip():
+                        
+                        case "DIMENSIONS":
+                            self.data = finder.match_by_dimension(
+                                path,
+                                int(self.metadataComboBox3.currentText().split("x")[0])
+                            )
+                    
+                    tables["SEARCH"].fill(self.data)
+                                        
+                    self.foundMatchLabel.setText(
+                        f"{len(self.data)} MATCHES FOUND"
+                    )
+                    self.tabsWidget.setCurrentIndex(self.tabs.index("RESULT"))
+
+                    if not self.data:
+                        self.set_clickable_options(False)
+                        self.dialog.show(
+                            "NO DATA HAS BEEN FOUND!",  # MESSAGE
+                            "ITEMS CANNOT BE FOUND!",   # WINDOW TITLE
+                            is_dialog=False             # FALSE = INFORMATIONAL
+                        )
+                        return
+                    
+                    self.set_clickable_options(True)
+                    
 
                 case "RESULT":
                     self.dialog.show(

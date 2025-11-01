@@ -1,11 +1,14 @@
 """
-    ### Classes handle Searching for file/folder if exist(s)
-        * Built-in search algorithms used from lib os
+### Classes handle Searching for file/folder if exist(s)
+    * Built-in search algorithms used from lib os
 """
 
 import os
+from pathlib import Path
 import re
 from typing import Generator
+
+import cv2
 
 
 class Finder:
@@ -26,19 +29,30 @@ class Finder:
 
     def exclude_regex(self, exclude: set):
         """
-            PREPARE REGEX:
-                ACCEPTS ANY STRING CONTAINS ATLEAST ONE OF THE CHOSEN CATEGORY BUT NOT IN THE EXCLUDE SET
+        PREPARE REGEX:
+            ACCEPTS ANY STRING CONTAINS ATLEAST ONE OF THE CHOSEN CATEGORY BUT NOT IN THE EXCLUDE SET
         """
 
         # EXCLUDE CHARACTERS -> str
-        numbers = '|'.join(map(str, exclude))
-        symbols = ''.join(map(re.escape, {x for x in "!@#$%^&*()_+{}\/| ~\-=+<>?\[\],;:'\".\\"}))
-        alphabets = ''.join(map(re.escape, {x for x in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"}))
+        numbers = "|".join(map(str, exclude))
+        symbols = "".join(
+            map(re.escape, {x for x in "!@#$%^&*()_+{}\/| ~\-=+<>?\[\],;:'\".\\"})
+        )
+        alphabets = "".join(
+            map(
+                re.escape,
+                {x for x in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"},
+            )
+        )
 
         # REGEX FORM
         self.regex["NUMBERS EXCLUSION"] = f"^(?=.*\\d)(?!.*({numbers})).+$"
-        self.regex["SYMBOLS EXCLUSION"] = f"^(?=.*[{symbols}])(?!.*[{''.join(map(re.escape, exclude))}]).+$"
-        self.regex["ALPHABETS EXCLUSION"] = f"^(?=.*[{alphabets}])(?!.*[{''.join(map(re.escape, exclude))}]).+$"
+        self.regex["SYMBOLS EXCLUSION"] = (
+            f"^(?=.*[{symbols}])(?!.*[{''.join(map(re.escape, exclude))}]).+$"
+        )
+        self.regex["ALPHABETS EXCLUSION"] = (
+            f"^(?=.*[{alphabets}])(?!.*[{''.join(map(re.escape, exclude))}]).+$"
+        )
 
     def set_path(self, path: str) -> None:
         self.path = path
@@ -53,9 +67,9 @@ class Finder:
     def set_case_sensitive(self, cs: bool) -> None:
         self.is_case_sensitive = cs
 
-    def add_detected_match(self, object_name: str, match: str, root='') -> None:
+    def add_detected_match(self, object_name: str, match: str, root="") -> None:
         """
-            Store the detected file in a dict along its size and root
+        Store the detected file in a dict along its size and root
         """
 
         # fmt: on
@@ -64,19 +78,19 @@ class Finder:
             root = self.path
 
         # CONVERT BYTES TO MB
-        size = os.path.getsize(f"{root}/{match}") / (1024*1024)
+        size = os.path.getsize(f"{root}/{match}") / (1024 * 1024)
 
         # DICT LAYOUT - ACCESSABLE BY INDEX
         # i.e. {file:..., root:..., size:...}
         self.detected_matches[f"{root}//{match}"] = {
             object_name: match,
             "root": root,
-            "size": round(size, 3)
+            "size": round(size, 3),
         }
 
     def get_files(self):
         """
-            Yield files in parent folder
+        Yield files in parent folder
         """
 
         for file in os.listdir(self.path):
@@ -84,7 +98,7 @@ class Finder:
 
     def get_recursive(self):
         """
-            Yields tuple (root, file) recursively thorugh all folders
+        Yields tuple (root, file) recursively thorugh all folders
         """
 
         for root, _, files in os.walk(self.path):
@@ -104,7 +118,9 @@ class Finder:
             for folder in folders:
                 yield (root, folder)
 
-    def update_finder_param(self, path: str, is_recursive: bool, is_case_sensetive: bool) -> None:
+    def update_finder_param(
+        self, path: str, is_recursive: bool, is_case_sensetive: bool
+    ) -> None:
         self.set_path(path)
         self.set_recursive(is_recursive)
         self.set_case_sensitive(is_case_sensetive)
@@ -147,7 +163,7 @@ class Finder:
         match input:
 
             case "ALPHABETS":
-                
+
                 # SPACES ARE IGNORED
                 if check.replace(" ", "").isalpha():
                     return True
@@ -168,10 +184,13 @@ class Finder:
                     if check in input:
                         return True
                 else:
-                    if re.match(re.compile(self.regex.get(input), re.IGNORECASE), check):
+                    if re.match(
+                        re.compile(self.regex.get(input), re.IGNORECASE), check
+                    ):
                         return True
 
         return False
+
 
 class File(Finder):
 
@@ -190,7 +209,7 @@ class File(Finder):
         def is_match(file: str, input: str | list) -> bool:
 
             file_title: str = file[: file.rfind(".")].strip()
-            file_ext: str = file[file.rfind(".")+1:].strip()
+            file_ext: str = file[file.rfind(".") + 1 :].strip()
 
             check = file_title
             if by == "EXTENSION":
@@ -212,7 +231,40 @@ class File(Finder):
 
         return self.detected_matches
 
+    def match_by_dimension(self, folder: str, min_width: int) -> None:
 
+        folder_path = Path(folder)
+        data = {}
+
+        if not folder_path.is_dir():
+            raise NotADirectoryError(f"{folder!r} is not a valid directory")
+
+        # Walk through the directory (non‑recursive, like os.listdir)
+        for entry in folder_path.iterdir():
+            if not entry.is_file():
+                continue
+
+            # Try to open the file with OpenCV
+            cap = cv2.VideoCapture(str(entry))
+            if not cap.isOpened():
+                # Not a readable video – skip silently or log if you wish
+                cap.release()
+                continue
+
+            # Grab width and height from the capture properties
+            width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+
+            cap.release()
+
+            # Report videos that are narrower than the threshold
+            if width < min_width:
+                data[entry.name] = {
+                    "File": f"{entry.name} - {width}px",
+                    "Source": str(entry),
+                    "Size": os.path.getsize(entry) / (1024 * 1024),
+                }
+        return data
+        
 class Folder(Finder):
 
     def __init__(self) -> None:
@@ -220,8 +272,8 @@ class Folder(Finder):
 
     def search(self, by, input: str | list, exclude=[], custom="") -> dict:
         """
-            arg: by 
-                A PLACEHOLDER NEVER USED FOR FOLDER SEARCH ... TO BE FIXED
+        arg: by
+            A PLACEHOLDER NEVER USED FOR FOLDER SEARCH ... TO BE FIXED
         """
 
         # RESET FILES ON EVERY SEARCH
