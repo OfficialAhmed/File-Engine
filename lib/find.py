@@ -79,7 +79,7 @@ class Finder:
 
         # DICT LAYOUT - ACCESSABLE BY INDEX
         # i.e. {file:..., root:..., size:...}
-        self.detected_matches[f"{root}//{match}"] = {
+        self.detected_matches[pathlib.Path(f"{root}//{match}")] = {
             object_name: match,
             "root": root,
             "size": round(size, 3),
