@@ -72,7 +72,7 @@ class Ui(Response):
         self.advancedMetadataGroupBox = QGroupBox(self.ADVANCED)
         self.advancedMetadataGroupBoxGL = QGridLayout(self.advancedMetadataGroupBox)
         self.metadataLineEdit = QLineEdit(self.advancedMetadataGroupBox)
-        self.metadataComboBox = QComboBox(self.advancedMetadataGroupBox)
+        self.filetypeComboBox = QComboBox(self.advancedMetadataGroupBox)
         self.metadataComboBox2 = QComboBox(self.advancedMetadataGroupBox)
         self.metadataComboBox3 = QComboBox(self.advancedMetadataGroupBox)
 
@@ -101,7 +101,7 @@ class Ui(Response):
         self.tabsWidget.addTab(self.ADVANCED, "")
         self.tabsWidget.addTab(self.RESULT, "")
         
-        self.tabsWidget.setTabEnabled(1, False)
+        self.tabsWidget.setTabEnabled(1, True)
 
         self.advancedTitleLineEditeHSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
         self.metadataLineEditHSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
@@ -152,7 +152,7 @@ class Ui(Response):
         self.titleComboBox3.setIconSize(QSize(16, 16))
         self.otherComboBox2.setIconSize(QSize(16, 16))
         self.otherComboBox3.setIconSize(QSize(16, 16))
-        self.metadataComboBox.setIconSize(QSize(16, 16))
+        self.filetypeComboBox.setIconSize(QSize(16, 16))
         self.metadataComboBox2.setIconSize(QSize(16, 16))
         self.metadataComboBox3.setIconSize(QSize(16, 16))
         self.searchTypeComboBox.setIconSize(QSize(16, 16))
@@ -198,7 +198,7 @@ class Ui(Response):
         self.titleComboBox2.setStyleSheet(color)
         self.titleComboBox3.setStyleSheet(color)
         self.metadataLineEdit.setStyleSheet(color)
-        self.metadataComboBox.setStyleSheet(color)
+        self.filetypeComboBox.setStyleSheet(color)
         self.metadataComboBox2.setStyleSheet(color)
         self.metadataComboBox3.setStyleSheet(color)
         self.searchTypeComboBox.setStyleSheet(color)
@@ -235,7 +235,7 @@ class Ui(Response):
         self.advancedTitleGroupBoxGL.addWidget(self.advancedIsRecuresiveCheckBox, 2, 0, 1, 1)
         self.advancedTitleGroupBoxGL.addWidget(self.advancedIsCaseSensitiveCheckBox, 3, 0, 1, 1)
         self.advancedMetadataGroupBoxGL.addWidget(self.metadataComboBox2, 0, 1, 1, 1)
-        self.advancedMetadataGroupBoxGL.addWidget(self.metadataComboBox, 0, 0, 1, 1)
+        self.advancedMetadataGroupBoxGL.addWidget(self.filetypeComboBox, 0, 0, 1, 1)
         self.advancedMetadataGroupBoxGL.addWidget(self.metadataComboBox3, 0, 2, 1, 1)
         self.advancedMetadataGroupBoxGL.addWidget(self.metadataLineEdit, 0, 3, 1, 1)
         self.advancedOtherGroupBoxGL.addWidget(self.otherComboBox, 0, 0, 1, 1)
@@ -281,7 +281,7 @@ class Ui(Response):
         self.titleComboBox3.setFrame(True)
         self.otherComboBox3.setFrame(True)
         self.otherComboBox2.setFrame(True)
-        self.metadataComboBox.setFrame(True)
+        self.filetypeComboBox.setFrame(True)
         self.metadataComboBox2.setFrame(True)
         self.metadataComboBox3.setFrame(True)
         self.searchTypeComboBox.setFrame(True)
@@ -329,7 +329,7 @@ class Ui(Response):
             self.advancedTitleComboBox3: tuple(self.title_options["NAME"]["CONTAIN"]),
 
             # _____   METADATA  ________
-            self.metadataComboBox: tuple(self.metadata_options.keys()),
+            self.filetypeComboBox: tuple(self.metadata_options.keys()),
             self.metadataComboBox2: tuple(self.metadata_options["VIDEO"].keys()),
             self.metadataComboBox3: tuple(self.metadata_options["VIDEO"]["DIMENSIONS"]),
 
@@ -388,7 +388,7 @@ class Ui(Response):
         )
 
         # _________________    ADVANCED METADATA-GROUP BEHAVIOUR   ______________
-        self.metadataComboBox.currentTextChanged.connect(
+        self.filetypeComboBox.currentTextChanged.connect(
             lambda: self.md_option_changed(1)
         )
         self.metadataComboBox2.currentTextChanged.connect(

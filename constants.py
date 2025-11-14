@@ -9,7 +9,7 @@
 from os import getcwd
 from PySide6.QtWidgets import QDialog, QLabel, QVBoxLayout, QDialogButtonBox, QMessageBox
 
-APP_VER = "v1.3.4"
+APP_VER = "v1.3.7"
 
 class Path:
 

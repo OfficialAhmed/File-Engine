@@ -677,7 +677,8 @@ class RestoreWorker(Worker):
                     progress = completed / total_data
                     self.progress_signal.emit(progress)
 
-            self.empty_trash()
+            if self.restore_method == "deleted":
+                self.empty_trash()
             self.is_success_signal.emit(is_all_removed)
 
         except Exception as error:

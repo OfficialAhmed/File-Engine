@@ -1,21 +1,30 @@
 """
-    ### Classes handle Searching for file/folder if exist(s)
-        * Built-in search algorithms used from lib os
+### Classes handle Searching for file/folder if exist(s)
+    * Built-in search algorithms used from lib os
+    ________________________________________________________________________________
+
+    FILE(CLASS) HANDLES GENERAL FILE SEARCHING
+    FOLDER(CLASS) HANDLES GENERAL FOLDER SEARCHING
+    OBJECT(CLASS) HANDLES SPECIFIC FILE TYPE SEARCHING
 """
 
 import os
+import pathlib
 import re
-from typing import Generator
+import cv2
+
+from pathlib import Path
+from param import Video
 
 
 class Finder:
 
-    def __init__(self) -> None:
+    def __init__(self, path: str, is_recursive: bool, is_case_sensetive: bool) -> None:
 
         # fmt: off
-        self.path = ""
-        self.is_recursive = None
-        self.is_case_sensitive = None
+        self.path = path
+        self.is_recursive = is_recursive
+        self.is_case_sensitive = is_case_sensetive
         self.detected_matches = {}
         self.regex = {
             "SYMBOLS":              r"^[!@#$%^&*()_+{}\/| ~\-=+<>?\[\],;:'\".\\]+$",
@@ -26,36 +35,38 @@ class Finder:
 
     def exclude_regex(self, exclude: set):
         """
-            PREPARE REGEX:
-                ACCEPTS ANY STRING CONTAINS ATLEAST ONE OF THE CHOSEN CATEGORY BUT NOT IN THE EXCLUDE SET
+        PREPARE REGEX:
+            ACCEPTS ANY STRING CONTAINS ATLEAST ONE OF THE CHOSEN CATEGORY BUT NOT IN THE EXCLUDE SET
         """
 
         # EXCLUDE CHARACTERS -> str
-        numbers = '|'.join(map(str, exclude))
-        symbols = ''.join(map(re.escape, {x for x in "!@#$%^&*()_+{}\/| ~\-=+<>?\[\],;:'\".\\"}))
-        alphabets = ''.join(map(re.escape, {x for x in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"}))
+        numbers = "|".join(map(str, exclude))
+        symbols = "".join(
+            map(re.escape, {x for x in "!@#$%^&*()_+{}\/| ~\-=+<>?\[\],;:'\".\\"})
+        )
+        alphabets = "".join(
+            map(
+                re.escape,
+                {x for x in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"},
+            )
+        )
 
         # REGEX FORM
         self.regex["NUMBERS EXCLUSION"] = f"^(?=.*\\d)(?!.*({numbers})).+$"
-        self.regex["SYMBOLS EXCLUSION"] = f"^(?=.*[{symbols}])(?!.*[{''.join(map(re.escape, exclude))}]).+$"
-        self.regex["ALPHABETS EXCLUSION"] = f"^(?=.*[{alphabets}])(?!.*[{''.join(map(re.escape, exclude))}]).+$"
-
-    def set_path(self, path: str) -> None:
-        self.path = path
+        self.regex["SYMBOLS EXCLUSION"] = (
+            f"^(?=.*[{symbols}])(?!.*[{''.join(map(re.escape, exclude))}]).+$"
+        )
+        self.regex["ALPHABETS EXCLUSION"] = (
+            f"^(?=.*[{alphabets}])(?!.*[{''.join(map(re.escape, exclude))}]).+$"
+        )
 
     def reset_detected_matches(self) -> None:
         self.folder_counter = 0
         self.detected_folders = {}
 
-    def set_recursive(self, rec: bool):
-        self.is_recursive = rec
-
-    def set_case_sensitive(self, cs: bool) -> None:
-        self.is_case_sensitive = cs
-
-    def add_detected_match(self, object_name: str, match: str, root='') -> None:
+    def add_detected_match(self, object_name: str, match: str, root="") -> None:
         """
-            Store the detected file in a dict along its size and root
+        Store the detected file in a dict along its size and root
         """
 
         # fmt: on
@@ -64,19 +75,19 @@ class Finder:
             root = self.path
 
         # CONVERT BYTES TO MB
-        size = os.path.getsize(f"{root}/{match}") / (1024*1024)
+        size = os.path.getsize(f"{root}/{match}") / (1024 * 1024)
 
         # DICT LAYOUT - ACCESSABLE BY INDEX
         # i.e. {file:..., root:..., size:...}
-        self.detected_matches[f"{root}//{match}"] = {
+        self.detected_matches[pathlib.Path(f"{root}//{match}")] = {
             object_name: match,
             "root": root,
-            "size": round(size, 3)
+            "size": round(size, 3),
         }
 
     def get_files(self):
         """
-            Yield files in parent folder
+        Yield files in parent folder
         """
 
         for file in os.listdir(self.path):
@@ -84,7 +95,7 @@ class Finder:
 
     def get_recursive(self):
         """
-            Yields tuple (root, file) recursively thorugh all folders
+        Yields tuple (root, file) recursively thorugh all folders
         """
 
         for root, _, files in os.walk(self.path):
@@ -103,11 +114,6 @@ class Finder:
 
             for folder in folders:
                 yield (root, folder)
-
-    def update_finder_param(self, path: str, is_recursive: bool, is_case_sensetive: bool) -> None:
-        self.set_path(path)
-        self.set_recursive(is_recursive)
-        self.set_case_sensitive(is_case_sensetive)
 
     def get_by_title(self, input: list) -> dict:
         return self.search("TITLE", input)
@@ -147,7 +153,7 @@ class Finder:
         match input:
 
             case "ALPHABETS":
-                
+
                 # SPACES ARE IGNORED
                 if check.replace(" ", "").isalpha():
                     return True
@@ -168,15 +174,18 @@ class Finder:
                     if check in input:
                         return True
                 else:
-                    if re.match(re.compile(self.regex.get(input), re.IGNORECASE), check):
+                    if re.match(
+                        re.compile(self.regex.get(input), re.IGNORECASE), check
+                    ):
                         return True
 
         return False
 
+
 class File(Finder):
 
-    def __init__(self) -> None:
-        super().__init__()
+    def __init__(self, path: str, is_recursive: bool, is_case_sensetive: bool) -> None:
+        super().__init__(path, is_recursive, is_case_sensetive)
 
     def search(self, by: str, input: str | list, exclude=[], custom="") -> dict:
 
@@ -190,7 +199,7 @@ class File(Finder):
         def is_match(file: str, input: str | list) -> bool:
 
             file_title: str = file[: file.rfind(".")].strip()
-            file_ext: str = file[file.rfind(".")+1:].strip()
+            file_ext: str = file[file.rfind(".") + 1 :].strip()
 
             check = file_title
             if by == "EXTENSION":
@@ -215,13 +224,13 @@ class File(Finder):
 
 class Folder(Finder):
 
-    def __init__(self) -> None:
-        super().__init__()
+    def __init__(self, path: str, is_recursive: bool, is_case_sensetive: bool) -> None:
+        super().__init__(path, is_recursive, is_case_sensetive)
 
     def search(self, by, input: str | list, exclude=[], custom="") -> dict:
         """
-            arg: by 
-                A PLACEHOLDER NEVER USED FOR FOLDER SEARCH ... TO BE FIXED
+        arg: by
+            A PLACEHOLDER NEVER USED FOR FOLDER SEARCH ... TO BE FIXED
         """
 
         # RESET FILES ON EVERY SEARCH
@@ -244,3 +253,71 @@ class Folder(Finder):
                     self.add_detected_match("folder", file)
 
         return self.detected_matches
+
+
+class Object(Finder):
+
+    def __init__(self, path: str, is_recursive: bool, is_case_sensetive: bool):
+        super().__init__(path, is_recursive, is_case_sensetive)
+
+    # fmt: off
+    def match_by_aspect_ratio(self, folder: str, filetype: str, aspect_ratio: str) -> dict:
+        """SEARCH FOR VIDEOS/IMAGES BY DIMENSIONS"""
+
+        match = {}
+        folder_path = Path(folder)
+
+        if not folder_path.is_dir():
+            raise NotADirectoryError(f"{folder!r} is not a valid directory")
+
+        if self.is_recursive:
+            iterator = folder_path.rglob("*")
+        else:
+            iterator = folder_path.iterdir()
+
+        # ITERATE THROUGH ALL FILES IN THE DIRECTORY
+        for entry in iterator:
+            if not entry.is_file():
+                continue
+
+            entry_path = str(entry)
+
+
+            match filetype:                
+                case "VIDEO":
+                    
+                    # TRY OPENING VIDEO FILE
+                    cap = cv2.VideoCapture(entry_path)
+                    if not cap.isOpened():
+                        # NOT READABLE VIDEO FILE, CLOSE SILENTLY AND CONTINUE
+                        # TODO: SHOW NUMBER OF SKIPPED FILES TO USER LATER
+                        cap.release()
+                        continue
+
+                    # FETCH VIDEO DIMENSIONS
+                    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+                    hight = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+                    cap.release()
+
+                    object = Video(entry_path, width, hight)
+
+                case _:
+                    # HERE WE IMPLEMENT IMAGE DIMENSION LOGIC LATER 
+                    continue
+
+            match aspect_ratio:
+                case "Portrait":
+                    if not object.is_portrait:  continue
+                case "Landscape":
+                    if not object.is_landscape: continue
+                case "Custom":  # HERE WE IMPLEMENT CUSTOM DIMENSION LOGIC LATER
+                    continue
+                case _:         # INVALID OPTION
+                    continue
+
+            match[pathlib.Path(entry_path)] = {
+                "File": entry.name,
+                "Source": entry.parent,
+                "Size": round(os.path.getsize(entry_path) / (1024 * 1024), 4),
+            }
+        return match
