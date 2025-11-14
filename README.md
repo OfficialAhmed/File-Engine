@@ -28,7 +28,15 @@ File Engine is a powerful and flexible file management and automation tool that 
 - Python 3.1x
 - [libraries](https://github.com/OfficialAhmed/File-Engine/blob/main/requirements.txt) 
 
+#### Linux (Ubuntu) - REQUIRED PREREQUISITES
+
+  ```bash
+  apt-get update && apt-get install -y libxcb-cursor0 libxcb-xinerama0 libxcb-xinput0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-render-util0 libxcb-shape0 libxcb-sync1 libxcb-xkb1
+  ```
+
 **NOTE: This project is actively under development and may not be fully functional or stable yet. It's included for testing and evaluation purposes. Use it at your own risk, and feel free to provide feedback or report issues to help improve its quality.
+
+
 
 # INTERFACE 
 

@@ -3,6 +3,7 @@ test
 test.py
 trash
 env
+.env
 .vscode
 data
 dev/design/resources/resources_rc.py

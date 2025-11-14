@@ -8,18 +8,22 @@
 
 from os import getcwd
 from PySide6.QtWidgets import QDialog, QLabel, QVBoxLayout, QDialogButtonBox, QMessageBox
+from pathlib import Path 
 
-APP_VER = "v1.3.7"
 
-class Path:
+APP_VER = "v1.3.5"
 
-    RESOURCES_PATH = "frontend/"
-    ROOT_PATH:  str = getcwd() + "\\"
-    DATA_PATH:  str = ROOT_PATH + "data\\"
-    TRASH_PATH: str = DATA_PATH + "trash\\"
-    CACHE_FILE: str = DATA_PATH + "Cache.json"
-    TRASH_CONTENT_FILE = f"{TRASH_PATH}content.json"
-    MOVED_CONTENT_FILE = f"{DATA_PATH}\\moved_content.json"
+class Paths:
+
+    ROOT_PATH = Path(__file__).resolve().parent
+
+    DATA_PATH: Path = ROOT_PATH / "data"
+    RESOURCES_PATH: Path = ROOT_PATH / "frontend"
+    
+    TRASH_PATH: Path = DATA_PATH / "trash"
+    CACHE_FILE: Path = DATA_PATH / "Cache.json"
+    MOVED_CONTENT_FILE: Path = DATA_PATH / "moved_content.json"
+    TRASH_CONTENT_FILE: Path = TRASH_PATH / "content.json"
 
 
 class Dialog:

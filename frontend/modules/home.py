@@ -11,8 +11,7 @@ from .move import Ui as Ui_move
 
 from backend.home import Feature
 from environment import Common, ProgressBar
-from constants import APP_VER, Path
-
+from constants import APP_VER, Paths
 
 class Ui(object):
 
@@ -35,7 +34,7 @@ class Ui(object):
                     QSS UI STYLESHEET
         ////////////////////////////////////////////////
         """
-        qss_file = QFile("frontend\\Design\\styles.qss")
+        qss_file = QFile(str(Paths.RESOURCES_PATH / "design/styles.qss"))
         qss_file.open(QFile.ReadOnly | QFile.Text)
 
         # Apply the CSS stylesheet to the widget
@@ -782,6 +781,6 @@ class Ui(object):
         ext = "svg" if is_icon else "png"
 
         widget.setStyleSheet(
-            f"background-image: url({Path.RESOURCES_PATH}{path}/{name}.{ext});\
+            f"background-image: url({Paths.RESOURCES_PATH}/{path}/{name}.{ext});\
             {extra_style}"
         )

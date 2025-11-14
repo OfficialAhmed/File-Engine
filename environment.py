@@ -33,7 +33,8 @@ from PySide6.QtWidgets import (
     QWidget, QLineEdit, QComboBox, QPushButton, QFileDialog, QProgressBar, QTableWidgetItem, QLabel
 )
 
-from constants import Path, Dialog
+from constants import Dialog
+from constants import Paths
 from datetime import datetime
 from constants import APP_VER
 
@@ -42,6 +43,8 @@ import json
 import lib.move as Move
 import lib.rename as Rename
 import concurrent.futures
+from pathlib import Path
+
 
 
 class Common:
@@ -57,11 +60,11 @@ class Common:
         self.data = {}
 
         self.path_input = ""
-        self.cache_file = Path.CACHE_FILE
+        self.cache_file = Paths.CACHE_FILE
 
         # CREATE DATA FOLDER IF NOT FOUND
         if not os.path.exists("data"):
-            os.mkdir(Path.DATA_PATH)
+            os.mkdir(Paths.DATA_PATH)
 
     def set_controller_widgets(
         self,
@@ -100,7 +103,7 @@ class Common:
     def set_icon(self, widget: QWidget, name: str, size=(18, 18)) -> str:
 
         widget.setIcon(
-            QIcon(f"{Path.RESOURCES_PATH}icons/{name}.svg")
+            QIcon(f"{Paths.RESOURCES_PATH}/icons/{name}.svg")
         )
 
         widget.setIconSize(QSize(*size))
@@ -577,25 +580,25 @@ class MoveWorker(Worker):
 
             if method == "delete":
                 self.FILE_MOVER.set_mover_param(
-                    Path.TRASH_CONTENT_FILE,
-                    Path.TRASH_PATH,
+                    Paths.TRASH_CONTENT_FILE,
+                    Paths.TRASH_PATH,
                     method
                 )
 
                 self.FOLDER_MOVER.set_mover_param(
-                    Path.TRASH_CONTENT_FILE,
-                    Path.TRASH_PATH,
+                    Paths.TRASH_CONTENT_FILE,
+                    Paths.TRASH_PATH,
                     method
                 )
 
             else:
                 self.FILE_MOVER.set_mover_param(
-                    content_file_path=Path.MOVED_CONTENT_FILE,
+                    content_file_path=Paths.MOVED_CONTENT_FILE,
                     method=method
                 )
 
                 self.FOLDER_MOVER.set_mover_param(
-                    content_file_path=Path.MOVED_CONTENT_FILE,
+                    content_file_path=Paths.MOVED_CONTENT_FILE,
                     method=method
                 )
 
@@ -701,8 +704,8 @@ class RenameWorker(Worker):
         self.FOLDER_RENAME = Rename.Folder()
 
         self.FILE_RENAME._set_renaming_param(
-            content_file_path=Path.TRASH_CONTENT_FILE,
-            trash_folder_path=Path.TRASH_PATH,
+            content_file_path=Paths.TRASH_CONTENT_FILE,
+            trash_folder_path=Paths.TRASH_PATH,
             renaming_method=renaming_method,
             renaming_algo=renaming_algo,
             custom_val=custom_value,
@@ -710,8 +713,8 @@ class RenameWorker(Worker):
         )
 
         self.FOLDER_RENAME._set_renaming_param(
-            content_file_path=Path.TRASH_CONTENT_FILE,
-            trash_folder_path=Path.TRASH_PATH,
+            content_file_path=Paths.TRASH_CONTENT_FILE,
+            trash_folder_path=Paths.TRASH_PATH,
             renaming_method=renaming_method,
             renaming_algo=renaming_algo,
             custom_val=custom_value,
