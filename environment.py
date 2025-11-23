@@ -26,6 +26,7 @@
 """
 
 import pathlib
+from re import S
 from time import time
 from PySide6.QtCore import QSize, QCoreApplication, Signal, QObject
 from PySide6.QtGui import QIcon, QPalette, QBrush, QColor, Qt
@@ -34,8 +35,7 @@ from PySide6.QtWidgets import (
     QWidget, QLineEdit, QComboBox, QPushButton, QFileDialog, QProgressBar, QTableWidgetItem, QLabel
 )
 
-from constants import Dialog
-from constants import Paths
+from constants import Dialog, Paths
 from datetime import datetime
 from constants import APP_VER
 
@@ -45,7 +45,6 @@ import lib.move as Move
 import lib.rename as Rename
 import concurrent.futures
 from pathlib import Path
-
 
 
 class Common:
@@ -61,12 +60,11 @@ class Common:
         self.data = {}
 
         self.path_input = ""
-        self.cache_file = Paths.CACHE_FILE
+        self.cache_file = str(Paths.CACHE_FILE)
 
         # CREATE DATA FOLDER IF NOT FOUND
         if not os.path.exists("data"):
-            os.mkdir(Paths.DATA_PATH)
-
+            os.mkdir(str(Paths.DATA_PATH))
     def set_controller_widgets(
         self,
         lookupType:            QPushButton,
@@ -104,7 +102,7 @@ class Common:
     def set_icon(self, widget: QWidget, name: str, size=(18, 18)) -> str:
 
         widget.setIcon(
-            QIcon(f"{Paths.RESOURCES_PATH}/icons/{name}.svg")
+            QIcon(f"{str(Paths.RESOURCES_PATH)}/icons/{name}.svg")
         )
 
         widget.setIconSize(QSize(*size))
@@ -596,25 +594,25 @@ class MoveWorker(Worker):
 
             if method == "delete":
                 self.FILE_MOVER.set_mover_param(
-                    Paths.TRASH_CONTENT_FILE,
-                    Paths.TRASH_PATH,
+                    str(Paths.TRASH_CONTENT_FILE),
+                    str(Paths.TRASH_PATH),
                     method
                 )
 
                 self.FOLDER_MOVER.set_mover_param(
-                    Paths.TRASH_CONTENT_FILE,
-                    Paths.TRASH_PATH,
+                    str(Paths.TRASH_CONTENT_FILE),
+                    str(Paths.TRASH_PATH),
                     method
                 )
 
             else:
                 self.FILE_MOVER.set_mover_param(
-                    content_file_path=Paths.MOVED_CONTENT_FILE,
+                    content_file_path=str(Paths.MOVED_CONTENT_FILE),
                     method=method
                 )
 
                 self.FOLDER_MOVER.set_mover_param(
-                    content_file_path=Paths.MOVED_CONTENT_FILE,
+                    content_file_path=str(Paths.MOVED_CONTENT_FILE),
                     method=method
                 )
 
@@ -623,7 +621,7 @@ class MoveWorker(Worker):
                 # 'max_workers' SET TO MAX AVAILABLE CPU CORES
                 with concurrent.futures.ThreadPoolExecutor(max_workers=None) as executor:
                     tasks = [
-                        executor.submit(self.process, file)
+                        executor.submit(self.process, str(file))
                         for file in self.files
                     ]
 
@@ -720,8 +718,8 @@ class RenameWorker(Worker):
         self.FOLDER_RENAME = Rename.Folder()
 
         self.FILE_RENAME._set_renaming_param(
-            content_file_path=Paths.TRASH_CONTENT_FILE,
-            trash_folder_path=Paths.TRASH_PATH,
+            content_file_path=str(Paths.TRASH_CONTENT_FILE),
+            trash_folder_path=str(Paths.TRASH_PATH),
             renaming_method=renaming_method,
             renaming_algo=renaming_algo,
             custom_val=custom_value,
@@ -729,8 +727,8 @@ class RenameWorker(Worker):
         )
 
         self.FOLDER_RENAME._set_renaming_param(
-            content_file_path=Paths.TRASH_CONTENT_FILE,
-            trash_folder_path=Paths.TRASH_PATH,
+            content_file_path=str(Paths.TRASH_CONTENT_FILE),
+            trash_folder_path=str(Paths.TRASH_PATH),
             renaming_method=renaming_method,
             renaming_algo=renaming_algo,
             custom_val=custom_value,

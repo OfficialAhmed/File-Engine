@@ -2,7 +2,7 @@
 import os
 import json
 import shutil
-from constants import Path
+from constants import Paths
 
 
 class Mover:
@@ -47,19 +47,19 @@ class Mover:
         """
 
         shutil.move(
-            f"{Path.TRASH_PATH}{dest.replace(':', '')}",
+            f"{str(Paths.TRASH_PATH)}{dest.replace(':', '')}",
             dest
         )
 
         # Reset JSON content by overwriting the file
-        open(Path.TRASH_CONTENT_FILE, "w+")
+        open(str(Paths.TRASH_CONTENT_FILE), "w+")
 
     def restore_moved(self, src, dest) -> None:
 
         shutil.move(src, dest)
 
         # Reset JSON content by overwriting the file
-        open(Path.MOVED_CONTENT_FILE, "w+")
+        open(str(Paths.MOVED_CONTENT_FILE), "w+")
 
     def make_trash_dir(self):
 

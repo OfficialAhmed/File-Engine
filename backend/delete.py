@@ -1,11 +1,12 @@
 import os
 import json
-from constants import Path
+import pathlib
+from constants import Paths
 from environment import Common, RestoreWorker, MoveWorker, tables
 
 
 class Response(Common):
-
+    
     def __init__(self, totalRecordsLabel, tableWidget) -> None:
         super().__init__()
 
@@ -27,7 +28,7 @@ class Response(Common):
 
         try:
 
-            trash_file = Path.TRASH_CONTENT_FILE
+            trash_file = str(Paths.TRASH_CONTENT_FILE)
 
             # FILE MUST EXIST AND NOT EMPTY, ELSE TERMINATE PROCESS
             if not os.path.exists(trash_file) or not os.path.getsize(trash_file) > 0:
@@ -106,6 +107,7 @@ class Response(Common):
         self.progressBar.update(0)
 
         to_be_removed = []
+        self.rows_to_remove = []
 
         # FLAG SELECTED TABLE ITEMS
         for indx, cb in enumerate(self.table.checkboxes):
@@ -122,7 +124,7 @@ class Response(Common):
                     indx, 1                                 # EACH ROW, 2ND COLUMN
                 ).text()
 
-                to_be_removed.append(f"{root}//{file}")
+                to_be_removed.append(pathlib.Path(root) / file)
                 self.rows_to_remove.append(indx)
 
         if not to_be_removed:
@@ -151,11 +153,10 @@ class Response(Common):
                 self.totalRecordsLabel
             )
         )
-        self.rows_to_remove.clear()
-
+        
         # SUCCESSFULL ITEMS REMOVAL MESSAGE
         worker.is_success_signal.connect(
-            self.removing_process_state
+            lambda: self.removing_process_state
         )
 
         # UNSUCCESSFULL ITEMS REMOVAL MESSAGE
