@@ -146,7 +146,7 @@ class Response(Common):
 
         # DELETE ROWS FROM THE TABLE
         worker.remove_rows_signal.connect(
-            self.table.remove_rows(
+            lambda: self.table.remove_rows(
                 self.rows_to_remove,
                 self.totalRecordsLabel
             )

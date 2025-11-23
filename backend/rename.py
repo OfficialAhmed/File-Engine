@@ -84,7 +84,7 @@ class Response(Common):
 
         # RENAME ROWS FROM THE TABLE
         worker.remove_rows_signal.connect(
-            tables["RENAME"].remove_rows(
+            lambda: tables["RENAME"].remove_rows(
                 self.rows_to_remove,
                 self.totalRecordsLabel
             )
