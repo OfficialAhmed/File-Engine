@@ -34,7 +34,15 @@ File Engine is a powerful and flexible file management and automation tool that 
   apt-get update && apt-get install -y libxcb-cursor0 libxcb-xinerama0 libxcb-xinput0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-render-util0 libxcb-shape0 libxcb-sync1 libxcb-xkb1
   ```
 
-**NOTE: This project is actively under development and may not be fully functional or stable yet. It's included for testing and evaluation purposes. Use it at your own risk, and feel free to provide feedback or report issues to help improve its quality.
+# HOW TO RUN
+
+| Step              | Linux / macOS                                                                    | Windows (PowerShell)                                                                       |
+|-------------------|----------------------------------------------------------------------------------|------------------------------------------------------------------------------------        |
+| **Clone repo**    | `git clone https://github.com/OfficialAhmed/File-Engine.git`<br>`cd File-Engine` | `git clone https://git  hub.com/OfficialAhmed/File-Engine.git`<br>`cd File-Engine`         |
+| **Create venv**   | `python3 -m venv venv`                                                           | `python -m venv venv`                                                                      |
+| **Activate venv** | `source venv/bin/activate`                                                       | `.\venv\Scripts\Activate.ps1` *(PowerShell)*<br>`.\venv\Scripts\activate.bat` *(cmd.exe)*  |
+| **Install deps**  | `pip install -r dev/requirements.txt`                                            | `pip install -r dev\requirements.txt`                                                      |
+| **Run app**       | `python3 main.py`                                                                | `python main.py`                                                                           |
 
 
 
@@ -48,8 +56,11 @@ File Engine is a powerful and flexible file management and automation tool that 
 
 ![DELETE_PAGE](dev/images/delete%20page.png) 
 
+____
+#### ***NOTE: This project is actively under development and may not be fully functional or stable yet. It's included for testing and evaluation purposes. Use it at your own risk, and feel free to provide feedback or report issues to help improve its quality.***
+
 # LICENSE
 
-File Engine - Copyright (C) 2024 OfficialAhmed
+File Engine - Copyright (C) 2025 OfficialAhmed
 
 This software is free to use, distribute and/or modify it under the terms of the MIT License & Apache [READ](LICENSE)

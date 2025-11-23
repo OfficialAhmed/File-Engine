@@ -25,6 +25,7 @@
     
 """
 
+import pathlib
 from time import time
 from PySide6.QtCore import QSize, QCoreApplication, Signal, QObject
 from PySide6.QtGui import QIcon, QPalette, QBrush, QColor, Qt
@@ -427,6 +428,21 @@ class Table:
 
         return path if path else None
 
+    def _path_to_posix(self, data:dict) -> dict:
+        """
+            CONVERT THE GIVEN KEY IN A DICT TO A POSIX PATH FOR OS COMPATIBILITY
+        """
+
+        s = {
+            Path(key).as_posix(): {
+                k:(str(v) if k == 'Source' else v) 
+                for k, v in value.items()
+            } 
+            for key, value in data.items()
+        }
+
+        return s
+    
     def export_process_clicked(self) -> None:
         """
         EXPORT CURRENT DATA FOR LATER USE (FOR THE LOADING PROCESS)
@@ -444,14 +460,14 @@ class Table:
 
         # GET FILE DESTINATION
         folder_path = self.get_path()
-        path = f"{folder_path}\\{datetime.now().strftime('%d-%m-%Y %H_%M_%S')}.json"
+        path = pathlib.Path(f"{folder_path}/{datetime.now().strftime('%d-%m-%Y %H_%M_%S')}.json")
 
         if folder_path:
 
-            with open(path, "w") as file:
+            with open(str(path), "w") as file:
                 json.dump(
                     {
-                        "data": self.data,
+                        "data": self._path_to_posix(self.data),
                         "meta": {"TITLE": "File Engine", "V": APP_VER}
                     },
                     file

@@ -145,13 +145,21 @@ class Response(Common):
         )
 
         # DELETE ROWS FROM THE TABLE
-        worker.remove_rows_signal.connect(
-            self.table.remove_rows(
-                self.rows_to_remove,
-                self.totalRecordsLabel
+        try:
+            worker.remove_rows_signal.connect(
+                self.table.remove_rows(
+                    self.rows_to_remove,
+                    self.totalRecordsLabel
+                )
             )
-        )
-        self.rows_to_remove.clear()
+            self.rows_to_remove.clear()
+        except TypeError: pass # FIX FOR LINUX 
+        except Exception as e:
+            self.dialog.show(
+                f"ERROR REMOVING ROWS FROM TABLE | {e}",
+                "C",
+                False
+            )
 
         # SUCCESSFULL ITEMS REMOVAL MESSAGE
         worker.is_success_signal.connect(
